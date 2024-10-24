@@ -1,24 +1,37 @@
 {
 	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "uni-app"
-		}
-	},
-	{
 		"path" : "pages/login/login",
 		"style" : 
 		{
-			"navigationBarTitleText" : "登录"
+			"navigationBarTitleText" : ""
 		}
 	},
 	{
 		"path" : "pages/register/register",
 		"style" : 
 		{
-			"navigationBarTitleText" : "注册"
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path": "pages/forgetPassword/forgetPassword",
+		"style": {
+			"navigationBarTitleText": ""
+		}
+	},
+	{
+		"path": "pages/fingerLogin/fingerLogin",
+		"style": {
+			"navigationBarTitleText": ""
 		}
 	}],
+	// "condition": { //模式配置，仅开发期间生效
+	// 		"current": 0, //当前激活的模式（list 的索引项）
+	// 		"list": [{
+	// 			"name": "test", //模式名称
+	// 			"path": "pages/login/login" //启动页面，必选
+	// 		}]
+	// 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

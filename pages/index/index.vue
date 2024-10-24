@@ -3,24 +3,15 @@
 		
 		<view class="intro"></view>
 		<text class="intro">详见：</text>
-		<uni-link :href="href" :text="href"></uni-link>
+		
 	</view>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				href: 'https://uniapp.dcloud.io/component/README?id=uniui'
-			}
-		},
-		methods: {
-
-		}
-	}
+<script setup>
+	
 </script>
 
-<style>
+<style lang="scss">
 	.container {
 		padding: 20px;
 		font-size: 14px;
