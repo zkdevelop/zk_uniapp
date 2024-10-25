@@ -11,7 +11,7 @@
 			<input class="uni-input" focus placeholder="请输入用户名" />
 			<view class="title" style="margin: 15px 0px 7px 0px;">密码</view>
 			<input class="uni-input" password type="text" placeholder="请输入密码" />
-			<button type="primary" style="margin-top: 15px;">登录</button>
+			<button @click="goToTask" type="primary" style="margin-top: 15px;">登录</button>
 		</view>
 		<view class="container">
 			<view class="left">
@@ -53,6 +53,11 @@
 					url: '/pages/fingerLogin/fingerLogin'
 				})
 			},
+			goToTask() {
+				uni.redirectTo({
+					url: '/pages/task/task'
+				})
+			},
 			toggleAutoLogin(e) {
 		        this.autoLogin = e.detail.value.length > 0; // 根据选择框状态更新
 				if (this.autoLogin == true) {
@@ -75,7 +80,7 @@
 		height: 50px;
 	}
 	.iconView{
-		margin-top: 30px;
+		margin-top: 100px;
 	}
 	.text{
 		margin-top: 10px;

@@ -3,26 +3,68 @@
 		"path" : "pages/login/login",
 		"style" : 
 		{
-			"navigationBarTitleText" : ""
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			},
+			"navigationStyle": "custom"
 		}
 	},
 	{
 		"path" : "pages/register/register",
 		"style" : 
 		{
-			"navigationBarTitleText" : ""
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
 		}
 	},
 	{
 		"path": "pages/forgetPassword/forgetPassword",
 		"style": {
-			"navigationBarTitleText": ""
+			"navigationBarTitleText": "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
 		}
 	},
 	{
 		"path": "pages/fingerLogin/fingerLogin",
 		"style": {
-			"navigationBarTitleText": ""
+			"navigationBarTitleText": "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path" : "pages/task/task",
+		"style" : 
+		{
+			"navigationBarTitleText" : "任务",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none",
+				"titleNView": {
+					"autoBackButton": false
+				}
+			}
+		}
+	},
+	{
+		"path" : "pages/task/task_detail/task_detail",
+		"style" : 
+		{
+			"navigationBarTitleText" : "任务列表",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
 		}
 	}],
 	// "condition": { //模式配置，仅开发期间生效
