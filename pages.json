@@ -66,6 +66,20 @@
 				"scrollIndicator": "none"
 			}
 		}
+	},
+	{
+		"path" : "pages/profile/profile",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/tabBar/tabBar",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
 	}],
 	// "condition": { //模式配置，仅开发期间生效
 	// 		"current": 0, //当前激活的模式（list 的索引项）
