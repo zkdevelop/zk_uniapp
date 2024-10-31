@@ -86,6 +86,7 @@
 		}
 	},
 	{
+<<<<<<< HEAD
 		"path" : "pages/task/task_detail/map_test/map_test",
 		"style" : 
 		{
@@ -97,6 +98,19 @@
 		"style" : 
 		{
 			"navigationBarTitleText" : "百度地图测试"
+=======
+		"path" : "pages/profile/profile",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/tabBar/tabBar",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+>>>>>>> e53fd0566838de47f015d6e70ba35efb58cdf580
 		}
 	}],
 	// "condition": { //模式配置，仅开发期间生效
