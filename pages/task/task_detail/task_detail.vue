@@ -123,7 +123,6 @@
 							<view :class="navIndex==0?'activite':''" @click="checkIndex(0)" style="width: 50%; text-align: center;">接收</view>
 							<view :class="navIndex==1?'activite':''" @click="checkIndex(1)" style="width: 50%; text-align: center;">发送</view>
 						</view>
-				
 						<!-- 内容切换 -->
 						<view class="alert_content" v-if="navIndex==0">
 							<uni-collapse ref="collapse" accordion>
@@ -165,7 +164,6 @@
 		</view>
 		<view>
 			<uni-popup ref="alert_form_popup" type="dialog">
-				
 				<view class="example" style="background: #fff; border-radius: 5px; padding: 10px;">
 					<view class="detail_top">
 						<view><text>发布告警</text></view>
@@ -235,7 +233,7 @@
 					{ src: '../../../static/icon/baidu.png', name: '百度地图'},
 					{ src: '../../../static/icon/outline.png', name: '离线地图'},
 					// 继续添加更多图片
-				], 
+				],
 				task_instructions: [
 					{ src: '../../../static/uni.png', sender_name: 'admin', detail: '立即前往执行抓捕任务', isConfirmed: false},
 					{ src: '../../../static/uni.png', sender_name: 'lihua', detail: '立即前往执行抓捕任务', isConfirmed: false},

@@ -27,6 +27,7 @@
 <script>
 import MainPage from '../profile/profile.vue'
 import Messages from '../message/main.vue'
+import TaskPage from '../task/task.vue'
 
 export default {
   name: 'TabBar',
