@@ -3,7 +3,7 @@
 		<view class="condition_icons">
 			<view class="condition_selector">
 				<uni-data-select
-					v-model="value"
+					v-model="taskItem.type"
 					:localdata="range"
 					:clear="false"
 				></uni-data-select>
@@ -39,12 +39,12 @@
 					</view>
 					<view class="divider"></view>
 					<view class="detail_info">
-						<view class="infos"><text>任务名称:  {{ task.task_name }}</text></view>
-						<view class="infos"><text>任务描述:  {{ task.description }}</text></view>
-						<view class="infos"><text>任务国家:  {{ task.country }}</text></view>
-						<view class="infos"><text>任务地点:  {{ task.position }}</text></view>
-						<view class="infos"><text>任务时间:  {{ task.start_time }} - {{task.end_time}}</text></view>
-						<view class="infos"><text>任务口令:  "123456"</text></view>
+						<view class="infos"><text>任务名称:  {{ taskItem.task_name }}</text></view>
+						<view class="infos"><text>任务描述:  {{ taskItem.description }}</text></view>
+						<view class="infos"><text>任务国家:  {{ taskItem.country }}</text></view>
+						<view class="infos"><text>任务地点:  {{ taskItem.position }}</text></view>
+						<view class="infos"><text>任务时间:  {{ taskItem.start_time }} - {{taskItem.end_time}}</text></view>
+						<view class="infos"><text>任务口令:  {{ taskItem.key }}</text></view>
 					</view>
 					<view class="divider"></view>
 					<view class="text_setting">
@@ -194,7 +194,6 @@
 				innerAudioContext: {},
 				selectedIndex: 0, // 地图默认选择0：Google地图
 				navIndex: 0,
-				value: '',
 				filePaths: {
 					imagePath: '',
 					videoPath: '',
@@ -216,17 +215,18 @@
 					{ text: '严重告警', value: '严重告警' },
 					{ text: '紧急告警', value: '紧急告警' },
 				],
-				task:{
-                    task_name: '现地侦察横须滨基地情况',
-					country: '日本',
-                    position: '横须滨',
-                    start_time: '2024.05.03',
-                    end_time: '2026.02.01',
-                    type: '进行中',
-                    status: '待处理',
-					description: '前往目的地展开行动',
-					key: '123456'
-                },
+				// task:{
+    //                 task_name: '现地侦察横须滨基地情况',
+				// 	country: '日本',
+    //                 position: '横须滨',
+    //                 start_time: '2024.05.03',
+    //                 end_time: '2026.02.01',
+    //                 type: '进行中',
+    //                 status: '待处理',
+				// 	description: '前往目的地展开行动',
+				// 	key: '123456'
+    //             },
+				taskItem: {},
 				map_options: [
 					{ src: '../../../static/icon/google.png', name: 'Google地图' },
 					{ src: '../../../static/icon/gaode.png', name: '高德地图' },
@@ -258,11 +258,12 @@
 		},
 		onLoad(options) {
 			if (options.taskItem) {
-				this.value = options.taskItem; // 设置类型
-				console.log(this.value);
+				this.taskItem = JSON.parse(options.taskItem); // 设置类型
+				console.log(this.task);
 			} else {
 				console.error('没有传递类型参数');
 			};
+			
 			this.recorderManager = uni.getRecorderManager();
 			this.innerAudioContext = uni.createInnerAudioContext();
 			

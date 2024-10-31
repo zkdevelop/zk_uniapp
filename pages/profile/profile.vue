@@ -46,7 +46,7 @@
       </view>
 
       <!-- 退出登录按钮 -->
-      <view class="logout">
+      <view class="logout" @click="logout()">
         <text>退出登录</text>
       </view>
 
@@ -120,7 +120,11 @@ export default {
         this.openPicker('storage', '文件本地存储策略', this.storageOptions, this.selectedStorageStrategy);
       } else if (item.label === '定位信息回传间隔') {
         this.openPicker('location', '定位信息回传间隔', this.locationIntervalOptions, this.selectedLocationInterval);
-      }
+      } else if (item.label === '修改密码') {
+		  uni.navigateTo({
+		  	url: '/pages/forgetPassword/forgetPassword'
+		  })
+	  }
     },
     openPicker(type, title, options, selectedValue) {
       this.pickerType = type;
@@ -158,6 +162,11 @@ export default {
       }
       this.showConfirmDialog = false;
     },
+	logout(){
+		uni.redirectTo({
+			url: '/pages/login/login'
+		})
+	}
   }
 }
 </script>
