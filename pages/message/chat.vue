@@ -45,7 +45,7 @@
       新消息
     </view>
 
-    <!-- 遮罩层：用于在附件菜单打开时捕获点击事件，现在设置为透明 -->
+    <!-- 遮罩层：用于在附件菜单打开时捕获点击事件  -->
     <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
   </view>
 </template>
@@ -365,7 +365,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: transparent; // 将背景色改为透明
+  background-color: transparent;  
   z-index: 999;
 }
 </style>

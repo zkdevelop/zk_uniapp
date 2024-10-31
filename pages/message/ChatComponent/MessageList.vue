@@ -29,25 +29,21 @@ export default {
   components: {
     Message
   },
-  props: {
-    // messages: 消息列表数组
+  props: { 
     messages: {
       type: Array,
       required: true
-    },
-    // scrollTop: 滚动条位置
+    }, 
     scrollTop: {
       type: Number,
       default: 0
-    },
-    // scrollIntoView: 需要滚动到的消息ID
+    }, 
     scrollIntoView: {
       type: String,
       default: ''
     }
   },
-  methods: {
-    // onScroll: 处理滚动事件
+  methods: { 
     onScroll(event) {
       this.$emit('scroll', event)
     }

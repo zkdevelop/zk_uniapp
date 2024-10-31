@@ -4,8 +4,9 @@
     <view class="content-area">
       <main-page v-if="currentTab === 3"></main-page>
       <messages v-else-if="currentTab === 1"></messages>
+      <contacts v-else-if="currentTab === 2"></contacts>
       <view v-else class="placeholder-content">
-        <text>这是{{ ['首页', '', '通讯录'][currentTab] }}的内容</text>
+        <text>这是{{ ['首页', '', '', ''][currentTab] }}的内容</text>
       </view>
     </view>
 
@@ -27,17 +28,18 @@
 <script>
 import MainPage from '../profile/profile.vue'
 import Messages from '../message/main.vue'
+import Contacts from './contacts/contacts.vue'
 
 export default {
   name: 'TabBar',
   components: {
     MainPage,
-    Messages
-  
+    Messages,
+    Contacts
   },
   data() {
     return {
-      currentTab: 1, // 默认显示"消息"页面
+      currentTab: 1,
       tabs: [
         { icon: '../../static/c1.png', label: '首页' },
         { icon: '../../static/c1.png', label: '消息' },
