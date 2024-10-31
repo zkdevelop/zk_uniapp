@@ -4,7 +4,7 @@
     "iPhone",
     "iPad"
   ],
-  "id": "",
+  "id": "__UNI__D000952",
   "name": "zk_uniapp",
   "version": {
     "name": "1.0.0",
@@ -17,6 +17,10 @@
     "url": ""
   },
   "permissions": {
+    "Geolocation": {},
+    "Maps": {
+      "coordType": "gcj02"
+    },
     "UniNView": {
       "description": "UniNView原生渲染"
     }
@@ -58,11 +62,34 @@
           "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
           "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
           "<uses-feature android:name=\"android.hardware.camera\"/>",
-          "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+          "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>",
+          "<uses-permission android:name=\"android.permission.RECORD_AUDIO\" />",
+          "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" android:maxSdkVersion=\"32\" />",
+          "<uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />",
+          "<uses-permission android:name=\"android.permission.READ_MEDIA_VIDEO\" />",
+          "<uses-permission android:name=\"android.permission.READ_MEDIA_VISUAL_USER_SELECTED\" />"
         ]
       },
       "apple": {},
       "plugins": {
+        "maps": {
+          "amap": {
+            "name": "tb2751599983",
+            "appkey_ios": "a3aa001dee8b84d305fa977dd504830c",
+            "appkey_android": "a3aa001dee8b84d305fa977dd504830c"
+          }
+        },
+        "geolocation": {
+          "amap": {
+            "name": "tb2751599983",
+            "__platform__": [
+              "ios",
+              "android"
+            ],
+            "appkey_ios": "a3aa001dee8b84d305fa977dd504830c",
+            "appkey_android": "a3aa001dee8b84d305fa977dd504830c"
+          }
+        },
         "audio": {
           "mp3": {
             "description": "Android平台录音支持MP3格式文件"
@@ -75,7 +102,6 @@
       "style": "dark",
       "background": "#F8F8F8"
     },
-    "arguments": "{\"path\":\"pages/task/task\"}",
     "allowsInlineMediaPlayback": true,
     "uni-app": {
       "control": "uni-v3",
@@ -92,5 +118,6 @@
       }
     }
   },
+  "locale": "zh-Hans",
   "launch_path": "__uniappview.html"
 }

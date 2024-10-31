@@ -46,13 +46,10 @@
 		"path" : "pages/task/task",
 		"style" : 
 		{
-			"navigationBarTitleText" : "任务",
+			"navigationBarTitleText" : "",
 			"app-plus": {
 				//app页面不显示滚动条
-				"scrollIndicator": "none",
-				"titleNView": {
-					"autoBackButton": false
-				}
+				"scrollIndicator": "none"
 			}
 		}
 	},
@@ -63,22 +60,65 @@
 			"navigationBarTitleText" : "任务列表",
 			"app-plus": {
 				//app页面不显示滚动条
+				"scrollIndicator": "none",
+				"titleNView": {
+					"buttons": [
+						{
+							"type": "menu"
+						}
+					]
+				}
+			}
+		}
+	},
+	{
+		"path" : "pages/task/task_detail/document/document",
+		"style" : 
+		{
+			"navigationBarTitleText" : "文件",
+			"app-plus": {
+				//app页面不显示滚动条
 				"scrollIndicator": "none"
 			}
+		}
+	},
+	{
+		"path" : "pages/task/task_detail/map_test/map_test",
+		"style" : 
+		{
+			"navigationBarTitleText" : "高德地图测试界面"
+		}
+	},
+	{
+		"path" : "pages/task/task_detail/baidu_map/baidu_map",
+		"style" : 
+		{
+			"navigationBarTitleText" : "百度地图测试"
 		}
 	},
 	{
 		"path" : "pages/profile/profile",
 		"style" : 
 		{
-			"navigationBarTitleText" : ""
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
 		}
 	},
 	{
 		"path" : "pages/tabBar/tabBar",
 		"style" : 
 		{
-			"navigationBarTitleText" : ""
+			"navigationBarTitleText" : "任务",
+			"titleNView": {
+				"autoBackButton": false
+			},
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
 		}
 	}],
 	// "condition": { //模式配置，仅开发期间生效

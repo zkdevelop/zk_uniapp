@@ -2,12 +2,12 @@
   <view class="main-container">
     <!-- 主要内容区域 -->
     <view class="content-area">
-      <main-page v-if="currentTab === 3"></main-page>
-      <messages v-else-if="currentTab === 1"></messages>
-      <contacts v-else-if="currentTab === 2"></contacts>
-      <view v-else class="placeholder-content">
-        <text>这是{{ ['首页', '', '', ''][currentTab] }}的内容</text>
-      </view>
+		<TaskPage v-if="currentTab === 0"></TaskPage>
+		<messages v-else-if="currentTab === 1"></messages>
+		<main-page v-else-if="currentTab === 3"></main-page>
+		<view v-else class="placeholder-content">
+			<text>这是{{ ['首页', '', '通讯录'][currentTab] }}的内容</text>
+		</view>
     </view>
 
     <!-- 底部导航栏 -->
@@ -29,28 +29,35 @@
 import MainPage from '../profile/profile.vue'
 import Messages from '../message/main.vue'
 import Contacts from './contacts/contacts.vue'
+import TaskPage from '../task/task.vue'
 
 export default {
   name: 'TabBar',
   components: {
     MainPage,
     Messages,
-    Contacts
+	TaskPage
   },
   data() {
     return {
-      currentTab: 1,
+      currentTab: 0, // 默认显示"首页"页面
       tabs: [
         { icon: '../../static/c1.png', label: '首页' },
         { icon: '../../static/c1.png', label: '消息' },
         { icon: '../../static/c1.png', label: '通讯录' },
         { icon: '../../static/c1.png', label: '我的' },
       ],
+	  tabs_title: [
+		  '任务', '消息', '通讯录', '我的'
+	  ]
     }
   },
   methods: {
     onTabClick(index) {
       this.currentTab = index;
+	  uni.setNavigationBarTitle({
+	  	title: this.tabs_title[index]
+	  })
     },
     hideTabBar() {
       this.$refs.tabBar.style.display = 'none';

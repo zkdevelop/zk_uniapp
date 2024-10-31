@@ -55,7 +55,7 @@
 			},
 			goToTask() {
 				uni.redirectTo({
-					url: '/pages/task/task'
+					url: '/pages/tabBar/tabBar'
 				})
 			},
 			toggleAutoLogin(e) {

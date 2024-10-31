@@ -1,90 +1,38 @@
 <template>
-    <view class="container">
+    <view>
         <view class="topTabBar">
             <view class="grid" v-for="(item, tbIndex) in handlingType" :key="tbIndex" @tap="showType(tbIndex)">
                 <view class="text" :class="[tbIndex === tabbarIndex ? 'active' : '']">{{ item.value }}</view>
             </view>
         </view>
-        <view class="" style="margin-top: 100upx; padding: 0 20upx;">
-            <block v-if="tabbarIndex === 0">
-                <view class="" v-for="(item, index) in allItems" :key="index">
-                    <!-- <text>{{ item }}</text> -->
-					<view @click="goToDetail" class="task_item">
-						<view class="item_top">
-							<view><text>{{item.task_name}}</text></view>
-							<view><text :style="{background: getColor(item.type)}">{{getTypeString(item.type)}}</text></view>
-						</view>
-						<view class="item_bottom">
-							<view><image src="../../static/icon/location_grey.png" style="width: 15px; height: 15px;"></image></view>
-							<view style="margin-left: 7px;"><text style="line-height: 20px; text-align: center;">{{item.position}}</text></view>
-						</view>
-						<view class="item_bottom">
-							<view><image src="../../static/icon/time_grey.png" style="width: 16px; height: 16px;"></image></view>
-							<view style="margin-left: 7px;"><text>{{item.start_time}} - {{item.end_time}}</text></view>
+        <view class="" style="margin-top: 100upx; padding: 0 20upx 50px 20upx">
+			<view v-for="(top_item, top_index) in 4" :key = 'top_index'>
+				<block v-if="tabbarIndex === top_index">
+					<view class="" v-for="(item, index) in getItems(tabbarIndex)" :key="index">
+						<view @click="goToDetail(index, tabbarIndex)" class="task_item">
+							<view class="item_top">
+								<view><text>{{item.task_name}}</text></view>
+								<view><text :style="{background: getColor(item.type)}">{{getTypeString(item.type)}}</text></view>
+							</view>
+							<view class="item_bottom">
+								<view><image src="../../static/icon/location_grey.png" style="width: 15px; height: 15px;"></image></view>
+								<view style="margin-left: 7px;"><text style="line-height: 20px; text-align: center;">{{item.position}}</text></view>
+							</view>
+							<view class="item_bottom">
+								<view><image src="../../static/icon/time_grey.png" style="width: 16px; height: 16px;"></image></view>
+								<view style="margin-left: 7px;"><text>{{item.start_time}} - {{item.end_time}}</text></view>
+							</view>
 						</view>
 					</view>
-                </view>
-            </block>
-            <block v-if="tabbarIndex === 1">
-                <view class="" v-for="(item, index) in unstartedItems" :key="index">
-                    <view class="task_item">
-                    	<view class="item_top">
-                    		<view><text>{{item.task_name}}</text></view>
-                    		<view><text :style="{background: getColor(item.type)}">{{getTypeString(item.type)}}</text></view>
-                    	</view>
-                    	<view class="item_bottom">
-                    		<view><image src="../../static/icon/location_grey.png" style="width: 15px; height: 15px;"></image></view>
-                    		<view style="margin-left: 7px;"><text style="line-height: 20px; text-align: center;">{{item.position}}</text></view>
-                    	</view>
-                    	<view class="item_bottom">
-                    		<view><image src="../../static/icon/time_grey.png" style="width: 16px; height: 16px;"></image></view>
-                    		<view style="margin-left: 7px;"><text>{{item.start_time}} - {{item.end_time}}</text></view>
-                    	</view>
-                    </view>
-                </view>
-            </block>
-            <block v-if="tabbarIndex === 2">
-                <view class="" v-for="(item, index) in ongoingItems" :key="index">
-                    <view class="task_item">
-                    	<view class="item_top">
-                    		<view><text>{{item.task_name}}</text></view>
-                    		<view><text :style="{background: getColor(item.type)}">{{getTypeString(item.type)}}</text></view>
-                    	</view>
-                    	<view class="item_bottom">
-                    		<view><image src="../../static/icon/location_grey.png" style="width: 15px; height: 15px;"></image></view>
-                    		<view style="margin-left: 7px;"><text style="line-height: 20px; text-align: center;">{{item.position}}</text></view>
-                    	</view>
-                    	<view class="item_bottom">
-                    		<view><image src="../../static/icon/time_grey.png" style="width: 16px; height: 16px;"></image></view>
-                    		<view style="margin-left: 7px;"><text>{{item.start_time}} - {{item.end_time}}</text></view>
-                    	</view>
-                    </view>
-                </view>
-            </block>
-            <block v-if="tabbarIndex === 3">
-                <view class="" v-for="(item, index) in completedItems" :key="index">
-                    <view class="task_item">
-                    	<view class="item_top">
-                    		<view><text>{{item.task_name}}</text></view>
-                    		<view><text :style="{background: getColor(item.type)}">{{getTypeString(item.type)}}</text></view>
-                    	</view>
-                    	<view class="item_bottom">
-                    		<view><image src="../../static/icon/location_grey.png" style="width: 15px; height: 15px;"></image></view>
-                    		<view style="margin-left: 7px;"><text style="line-height: 20px; text-align: center;">{{item.position}}</text></view>
-                    	</view>
-                    	<view class="item_bottom">
-                    		<view><image src="../../static/icon/time_grey.png" style="width: 16px; height: 16px;"></image></view>
-                    		<view style="margin-left: 7px;"><text>{{item.start_time}} - {{item.end_time}}</text></view>
-                    	</view>
-                    </view>
-                </view>
-            </block>
+				</block>
+			</view>
         </view>
     </view>
 </template>
 
 <script>
 export default {
+	name: 'TaskPage',
     data() {
         return {
             currentTime: new Date(),
@@ -95,45 +43,40 @@ export default {
                 { value: '未开始' },
                 { value: '进行中' },
                 { value: '已完成' }
-            ],
-            allItems: [],
-            unstartedItems: [],
-            ongoingItems: [],
-            completedItems: []
+            ]
         };
     },
     mounted() {
         this.initializeTasks(); // 初始化任务
     },
     computed: {
-        upcomingTasks() {
-            return this.filterUpcomingTasks();
-        },
-        comingTasks() {
-            return this.filterComingTasks();
-        },
-        endedTasks() {
-            return this.filterEndedTasks();
-        }
+        
     },
     methods: {
         initializeTasks() {
             this.taskItem = [
-                { task_name: '现地侦察横须滨基地情况', position: '日本横须滨', start_time: '2024.05.03', end_time: '2026.02.01', type: this.getTaskType('2024.05.03', '2026.02.01') },
-                { task_name: '台风情况管控', position: '台湾省台北市', start_time: '2025.05.03', end_time: '2026.03.01', type: this.getTaskType('2025.05.03', '2026.03.01') },
-                { task_name: '其他任务示例', position: '位置A', start_time: '2024.06.01', end_time: '2024.12.01', type: this.getTaskType('2024.06.01', '2024.12.01') },
-                { task_name: '任务示例1', position: '位置B', start_time: '2023.10.01', end_time: '2024.05.01', type: this.getTaskType('2023.10.01', '2024.05.01') },
-                { task_name: '任务示例2', position: '位置C', start_time: '2023.12.01', end_time: '2024.08.01', type: this.getTaskType('2023.12.01', '2024.08.01') },
-                { task_name: '任务示例3', position: '位置D', start_time: '2024.04.01', end_time: '2024.11.01', type: this.getTaskType('2024.04.01', '2024.11.01') },
-                { task_name: '任务示例4', position: '位置E', start_time: '2023.09.01', end_time: '2024.03.01', type: this.getTaskType('2023.09.01', '2024.03.01') },
-                { task_name: '任务示例5', position: '位置F', start_time: '2025.01.01', end_time: '2025.07.01', type: this.getTaskType('2025.01.01', '2025.07.01') },
+                { task_name: '现地侦察横须滨基地情况', country: '日本', position: '日本横须滨', start_time: '2024.05.03', end_time: '2026.02.01', type: this.getTaskType('2024.05.03', '2026.02.01'), description: '描述1', key: '123456'},
+                { task_name: '台风情况管控', country: '日本',position: '台湾省台北市', start_time: '2025.05.03', end_time: '2026.03.01', type: this.getTaskType('2025.05.03', '2026.03.01'), description: '描述1', key: '123456'},
+                { task_name: '其他任务示例', country: '日本',position: '位置A', start_time: '2024.06.01', end_time: '2024.12.01', type: this.getTaskType('2024.06.01', '2024.12.01') , description: '描述1', key: '123456'},
+                { task_name: '任务示例1', country: '日本',position: '位置B', start_time: '2023.10.01', end_time: '2024.05.01', type: this.getTaskType('2023.10.01', '2024.05.01'), description: '描述1', key: '123456'},
+                { task_name: '任务示例2', country: '日本',position: '位置C', start_time: '2023.12.01', end_time: '2024.08.01', type: this.getTaskType('2023.12.01', '2024.08.01'), description: '描述1', key: '123456'},
+                { task_name: '任务示例3', country: '日本',position: '位置D', start_time: '2024.04.01', end_time: '2024.11.01', type: this.getTaskType('2024.04.01', '2024.11.01'), description: '描述1', key: '123456'},
+                { task_name: '任务示例4', country: '日本',position: '位置E', start_time: '2023.09.01', end_time: '2024.03.01', type: this.getTaskType('2023.09.01', '2024.03.01'), description: '描述1', key: '123456'},
+                { task_name: '任务示例5', country: '日本',position: '位置F', start_time: '2025.01.01', end_time: '2025.07.01', type: this.getTaskType('2025.01.01', '2025.07.01'), description: '描述1', key: '123456'},
             ];
-
-            this.allItems = this.taskItem;
-            this.unstartedItems = this.filterUpcomingTasks();
-            this.ongoingItems = this.filterComingTasks();
-            this.completedItems = this.filterEndedTasks();
         },
+		getItems(index){
+			switch(index){
+				case 0:
+					return this.taskItem;
+				case 1:
+					return this.filterUpcomingTasks();
+				case 2:
+					return this.filterComingTasks();
+				case 3:
+					return this.filterEndedTasks();
+			}
+		},
         getTaskType(startTime, endTime) {
             const start = new Date(startTime);
             const end = new Date(endTime);
@@ -180,10 +123,12 @@ export default {
         filterEndedTasks() {
             return this.taskItem.filter(item => item.type === '3');
         },
-		goToDetail(){
+		goToDetail(index, tabbarIndex){
+			var jsonData = this.getItems(tabbarIndex)[index];
+			var strData = JSON.stringify(jsonData);
 			uni.navigateTo({
-				url: "/pages/task/task_detail/task_detail"
-			})
+				url: `/pages/task/task_detail/task_detail?taskItem=${strData}`
+			});
 		}
     }
 };
