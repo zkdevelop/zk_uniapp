@@ -81,5 +81,8 @@
         "usingComponents" : true
     },
     "vueVersion" : "3",
-    "locale" : "zh-Hans"
+    "locale" : "zh-Hans",
+    "h5" : {
+        "template" : "index.html"
+    }
 }
