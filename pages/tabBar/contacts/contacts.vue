@@ -22,7 +22,8 @@
         >
           <view v-for="member in group.members" 
                 :key="member.id" 
-                class="contact-item">
+                class="contact-item"
+                @click="showContactDetail(member)">
             <image class="avatar" 
                    :src="member.avatar" 
                    mode="aspectFill">
@@ -35,24 +36,64 @@
         </view>
       </view>
     </scroll-view>
+
+    <contact-detail 
+      v-if="selectedContact" 
+      :contact="selectedContact"
+      @close="closeContactDetail"
+    ></contact-detail>
   </view>
 </template>
 
 <script>
+import ContactDetail from './ContactDetail.vue'
+
 export default {
   name: 'Contacts',
+  components: {
+    ContactDetail
+  },
   data() {
     return {
+      selectedContact: null,
       groups: [
         {
           id: 'group1',
           name: '分组A',
           expanded: true,
           members: [
-            { id: 1, name: 'admin', title: '称号1', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 2, name: '张宁鹏', title: '称号2', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 3, name: '杨尚基', title: '称号3', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 4, name: '王彦', title: '称号4', avatar: '/placeholder.svg?height=40&width=40' }
+            {
+              id: 1,
+              name: 'admin',
+              title: '称号1',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'admin123',
+              ip: '192.168.1.100'
+            },
+            {
+              id: 2,
+              name: '张宁鹏',
+              title: '称号2',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'zhangningp',
+              ip: '192.168.1.101'
+            },
+            {
+              id: 3,
+              name: '杨尚基',
+              title: '称号3',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'yangshangji',
+              ip: '192.168.1.102'
+            },
+            {
+              id: 4,
+              name: '王彦',
+              title: '称号4',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'wangyan',
+              ip: '192.168.1.103'
+            }
           ]
         },
         {
@@ -60,9 +101,30 @@ export default {
           name: '分组B',
           expanded: false,
           members: [
-            { id: 5, name: '李明', title: '称号5', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 6, name: '赵静', title: '称号6', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 7, name: '周伟', title: '称号7', avatar: '/placeholder.svg?height=40&width=40' }
+            {
+              id: 5,
+              name: '李明',
+              title: '称号5',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'liming',
+              ip: '192.168.1.104'
+            },
+            {
+              id: 6,
+              name: '赵静',
+              title: '称号6',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'zhaojing',
+              ip: '192.168.1.105'
+            },
+            {
+              id: 7,
+              name: '周伟',
+              title: '称号7',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'zhouwei',
+              ip: '192.168.1.106'
+            }
           ]
         },
         {
@@ -70,29 +132,22 @@ export default {
           name: '分组C',
           expanded: false,
           members: [
-            { id: 8, name: '刘芳', title: '称号8', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 9, name: '陈强', title: '称号9', avatar: '/placeholder.svg?height=40&width=40' }
-          ]
-        },
-        {
-          id: 'group4',
-          name: '分组D',
-          expanded: false,
-          members: [
-            { id: 10, name: '张伟', title: '称号10', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 11, name: '王丽', title: '称号11', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 12, name: '李强', title: '称号12', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 13, name: '赵静', title: '称号13', avatar: '/placeholder.svg?height=40&width=40' }
-          ]
-        },
-        {
-          id: 'group5',
-          name: '分组E',
-          expanded: false,
-          members: [
-            { id: 14, name: '周梅', title: '称号14', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 15, name: '吴强', title: '称号15', avatar: '/placeholder.svg?height=40&width=40' },
-            { id: 16, name: '郑洁', title: '称号16', avatar: '/placeholder.svg?height=40&width=40' }
+            {
+              id: 8,
+              name: '刘芳',
+              title: '称号8',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'liufang',
+              ip: '192.168.1.107'
+            },
+            {
+              id: 9,
+              name: '陈强',
+              title: '称号9',
+              avatar: '/placeholder.svg?height=40&width=40',
+              username: 'chenqiang',
+              ip: '192.168.1.108'
+            }
           ]
         }
       ]
@@ -104,6 +159,12 @@ export default {
       if (group) {
         group.expanded = !group.expanded;
       }
+    },
+    showContactDetail(member) {
+      this.selectedContact = member;
+    },
+    closeContactDetail() {
+      this.selectedContact = null;
     }
   }
 }
@@ -115,6 +176,7 @@ export default {
   background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .header {

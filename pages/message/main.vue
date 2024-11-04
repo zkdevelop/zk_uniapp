@@ -1,8 +1,8 @@
 <template>
   <view class="messages-container">
-    <view v-if="!showChat" class="messages-view">
+    <view class="messages-view">
       <view class="messages-header">
-        <text class="header-title">消息(14)</text>
+        <text class="header-title">消息({{ totalMessageCount }})</text>
         <view class="search-icon">
           <text>🔍</text>
         </view>
@@ -12,13 +12,13 @@
         <view class="message-item system-message">
           <view class="message-icon system-icon">
             <text>📢</text>
-            <view class="notification-badge">13</view>
+            <view class="notification-badge">{{ systemMessage.notificationCount }}</view>
           </view>
           <view class="message-content">
-            <view class="message-title">推送消息</view>
-            <view class="message-preview">系统版本更新</view>
+            <view class="message-title">{{ systemMessage.title }}</view>
+            <view class="message-preview">{{ systemMessage.preview }}</view>
           </view>
-          <view class="message-date">7月21日</view>
+          <view class="message-date">{{ systemMessage.date }}</view>
         </view>
         
         <view 
@@ -39,56 +39,78 @@
         </view>
       </scroll-view>
     </view>
-
-    <chat v-else :chatInfo="selectedChat" @goBack="showChat = false"></chat>
   </view>
 </template>
 
 <script>
-// 导入所需的组件
-import Chat from './Chat.vue'
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
 
 export default {
   name: 'Messages',
   components: {
-    Chat,
     GroupAvatar
   },
-  // 组件数据
   data() {
     return {
-      // 消息列表数据
       messages: [
         { id: '1', name: '张宁鹏', avatar: ['../../static/c1.png'], preview: '你好', date: '7月21日', type: 'single' },
         { id: '2', name: '杨尚基', avatar: ['../../static/c2.png'], preview: '[图片]', date: '7月21日', type: 'single' },
         { id: '3', name: '王彦', avatar: ['../../static/c3.png'], preview: '[视频]', date: '7月22日', type: 'single' },
         { id: '4', name: '项目讨论群', avatar: ['../../static/c1.png', '../../static/c2.png', '../../static/c3.png', '../../static/c1.png'], preview: '下周一开会', date: '7月23日', type: 'group' },
-      ],
-      showChat: false, // 控制是否显示聊天界面
-      selectedChat: null // 当前选中的聊天
+      ]
     }
   },
-  // 组件方法
+  computed: {
+    systemMessage() {
+      return {
+        title: '推送消息',
+        preview: '系统版本更新',
+        date: this.getCurrentDate(),
+        notificationCount: Math.floor(Math.random() * 20) + 1
+      }
+    },
+    totalMessageCount() {
+      return this.messages.length + 1
+    }
+  },
+  mounted() {
+    uni.$on('switchToMessages', this.handleSwitchToMessages);
+  },
+  beforeDestroy() {
+    uni.$off('switchToMessages', this.handleSwitchToMessages);
+  },
   methods: {
-    // 打开聊天界面
     openChat(message) { 
-      // 设置选中的聊天信息
-      this.selectedChat = {
+      const chatInfo = {
         id: message.id,
         name: message.name,
         avatar: message.avatar,
         type: message.type
       };
-      this.showChat = true; // 显示聊天界面
-      console.log('打开聊天', this.selectedChat);
+      uni.navigateTo({
+        url: '/pages/message/chat',
+        success: (res) => {
+          res.eventChannel.emit('chatInfo', { chatInfo: chatInfo });
+        },
+        fail: (err) => {
+          console.error('导航到聊天页面失败:', err);
+        }
+      });
+    },
+    getCurrentDate() {
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      return `${month}月${day}日`;
+    },
+    handleSwitchToMessages() {
+      uni.$emit('updateTabBarActiveTab', 1);
     }
   }
 }
 </script>
 
 <style>
-/* 消息列表样式 */
 .messages-container {
   display: flex;
   flex-direction: column;
@@ -137,7 +159,7 @@ export default {
   background-color: #f0f8ff;
 }
 
-.message-icon, .avatar, .avatar-wrap {
+.message-icon, .avatar {
   width: 40px;
   height: 40px;
   border-radius: 5px;
@@ -209,25 +231,5 @@ export default {
   margin-left: 15px;
   flex-shrink: 0;
   align-self: flex-start;
-}
-
-.messages-container > * {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.messages-container > *:not(:first-child) {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.messages-container > *:not(:first-child):not([style*="display: none"]) {
-  opacity: 1;
-}
-
-.messages-container > *:not(:first-child)[style*="display: none"] {
-  opacity: 0;
 }
 </style>
