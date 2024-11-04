@@ -1,12 +1,9 @@
 <template>
   <view class="page">
-    <!-- 聊天头部组件：显示聊天标题、返回按钮和菜单按钮 -->
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
-    <!-- 模拟新消息按钮：用于测试新消息的添加和显示 -->
     <button @click.stop="simulateNewMessage" class="simulate-button">模拟新消息</button>
 
-    <!-- 消息列表组件：显示所有聊天消息，处理滚动和加载更多消息 -->
     <MessageList
       :messages="list"
       :scroll-top="scrollTop"
@@ -16,7 +13,6 @@
       @view-burn-after-reading="viewBurnAfterReadingImage"
     />
 
-    <!-- 聊天输入区域组件：用于用户输入消息和处理附件 -->
     <ChatInputArea 
       @send-message="sendMessage" 
       @attach="handleAttachment"
@@ -25,7 +21,6 @@
       ref="chatInputAreaRef"
     />
 
-    <!-- 阅后即焚组件：显示阅后即焚的图片 -->
     <BurnAfterReading
       v-if="currentBurnAfterReadingImage"
       :imageSrc="currentBurnAfterReadingImage"
@@ -34,18 +29,15 @@
       ref="burnAfterReadingRef"
     />
 
-    <!-- 滚动到底部按钮组件：当有新消息且用户不在底部时显示 -->
     <ScrollToBottomButton
       :show="showScrollToBottom"
       @click.stop="scrollToBottom"
     />
 
-    <!-- 新消息提示：当有新消息且用户不在底部时显示 -->
     <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
       新消息
     </view>
 
-    <!-- 遮罩层：用于在附件菜单打开时捕获点击事件，现在设置为透明 -->
     <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
   </view>
 </template>
@@ -57,7 +49,6 @@ import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 
-// 模拟的群聊历史消息
 const groupChatHistory = [
   { id: 1, name: '张三', avatar: '../../static/c1.png', content: '大家好，我是张三', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:00:00') },
   { id: 2, name: '李四', avatar: '../../static/c2.png', content: '你好张三，我是李四', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:01:00') },
@@ -78,20 +69,14 @@ export default {
     BurnAfterReading,
     ScrollToBottomButton
   },
-  props: {
-    chatInfo: {
-      type: Object,
-      required: true,
-      default: () => ({
+  data() {
+    return {
+      chatInfo: {
         id: '',
         name: '',
         avatar: [],
         type: 'single'
-      })
-    }
-  },
-  data() {
-    return {
+      },
       list: [],
       scrollTop: 0,
       scrollIntoView: '',
@@ -108,8 +93,14 @@ export default {
       hasNewMessages: false,
     };
   },
+  onLoad() {
+    const eventChannel = this.getOpenerEventChannel();
+    eventChannel.on('chatInfo', (data) => {
+      this.chatInfo = data.chatInfo;
+      this.initializeChat();
+    });
+  },
   mounted() {
-    this.initializeChat();
     this.getScrollViewInfo();
     console.log('聊天组件已挂载');
   },
@@ -144,7 +135,22 @@ export default {
       }).exec();
     },
     goBack() {
-      this.$emit('goBack');
+      uni.navigateBack({
+        success: () => {
+          // 返回成功后，触发更新tabBar激活状态的事件
+          uni.$emit('updateTabBarActiveTab', 1);
+        },
+        fail: (err) => {
+          console.error('返回失败:', err);
+          // 如果navigateBack失败，尝试使用reLaunch
+          uni.reLaunch({
+            url: '/pages/tabBar/tabBar',
+            success: () => {
+              uni.$emit('updateTabBarActiveTab', 1);
+            }
+          });
+        }
+      });
     },
     sendMessage(message) {
       if (message.trim()) {
@@ -161,7 +167,7 @@ export default {
       setTimeout(() => {
         const randomMember = groupChatHistory[Math.floor(Math.random() * groupChatHistory.length)];
         this.addNewMessage({
-          content: `这是来自${randomMember.name}的回复`,
+          content:  `这是来自${randomMember.name}的回复`,
           userType: 'friend',
           avatar: randomMember.avatar,
           name: randomMember.name,
@@ -361,11 +367,11 @@ export default {
 
 .overlay {
   position: fixed;
-  top: 0;
+  top:  0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: transparent; // 将背景色改为透明
+  background-color: transparent;
   z-index: 999;
 }
 </style>
