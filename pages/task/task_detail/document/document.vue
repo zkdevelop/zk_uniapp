@@ -15,20 +15,24 @@
 							<image @touchstart="openVideo()" @click="videoShow(item)" src="../../../../static/icon/take_video.png" style="width: 50px; height: 50px;"></image>
 						</view>
 					</uni-grid-item>
+					<uni-grid-item v-if="file_index === 2" v-for="(item, index) in audioPath" :key="index">
+						<view style="background-color: black; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
+							<image @click="openAudioPopup(index)" src="../../../../static/icon/take_video.png" style="width: 50px; height: 50px;"></image>
+						</view>
+					</uni-grid-item>
 				</uni-grid>
-			</uni-section>
-			
-			<uni-section title="音频" type="line" padding>
-				<view v-for="(item, index) in audioPath" :key = 'index' style="height: 80px;">
-					<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="item"></free-audio>
-				</view>
 			</uni-section>
 			<!-- 图片预览组件 -->
 			<q-previewImage ref="previewImage" :urls="imgPath" @onLongpress="" @open="" @close=""></q-previewImage>
+			<!-- 视频预览界面 -->
 			<view v-if="videoPlay">
 				<video id="myVideo" :src="videoUrl" @fullscreenchange="screenChange" style="height: 1px; width: 1px;" controls autoplay></video>
 			</view>
 		</scroll-view>
+		<!-- 音频预览弹窗 -->
+		<uni-popup ref="audioPopup" type="bottom" @maskClick="clickMask()">
+			<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="audioUrl"></free-audio>
+		</uni-popup>
 		<view class="fixed-button">
 			<button type="primary" @tap="uploadVideo" style="width: 50%;">上传视频</button>
 			<button type="primary" @tap="uploadImage" style="width: 50%;">上传图片</button>
@@ -44,7 +48,7 @@
 			return {
 				videoPlay: false,
 				videoUrl: '',
-				musicShow: false,
+				audioUrl: '',
 				imgPath: [
 					'../../../../static/images/taiwan_map.jpg',
 					'../../../../static/images/taiwan_map.jpg',
@@ -72,10 +76,10 @@
 				image_src: [],
 				FileTypes:[
 					{ type: '图片', iconName: 'image'},
-					{ type: '视频', iconName: 'camera'}
+					{ type: '视频', iconName: 'camera'},
+					{ type: '音频', iconName: 'mic'}
 				],
 				videoContext: uni.createVideoContext("myVideo", this),    // this这个是实例对象
-				innerAudioContext: uni.createInnerAudioContext()
 			}
 		},
 		methods: {
@@ -108,6 +112,14 @@
 			},
 			openVideo(){
 				this.videoPlay =  true;
+			},
+			openAudioPopup(index){
+				this.$refs.audioPopup.open()
+				this.audioUrl = this.audioPath[index];
+			},
+			clickMask(){
+				this.$refs.audioPopup.close()
+				uni.$emit('stop')
 			},
 			audioPlay(item){
 				if(this.musicShow){

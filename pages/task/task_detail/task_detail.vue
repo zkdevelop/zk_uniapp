@@ -702,8 +702,8 @@
 		/* 两侧分开 */
 		padding: 15px;
 		width: 100%;
+		// 消除内边距影响
 		box-sizing: border-box;
-		// z-index: 100;
 		position: absolute;
 		top: 0;
 		left: 0;

@@ -169,14 +169,24 @@ if (uni.restoreGlobal) {
       },
       checkLogin() {
         console.log();
+        var that = this;
         login({
           account: this.username,
           password: this.password
         }).then((res) => {
-          formatAppLog("log", "at pages/login/login.vue:81", res);
+          formatAppLog("log", "at pages/login/login.vue:82", res);
           if (res.code == 200) {
+            uni.setStorageSync(
+              "username",
+              that.username
+            );
+            uni.setStorageSync(
+              "password",
+              that.password
+            );
             uni.setStorageSync("token", res.data.token);
             uni.setStorageSync("userInfo", res.data.account);
+            formatAppLog("log", "at pages/login/login.vue:93", uni.getStorageSync("token"));
             uni.showToast({
               title: "登录成功",
               duration: 2e3
@@ -418,29 +428,120 @@ if (uni.restoreGlobal) {
   const _imports_0$4 = "/static/icon/finger.png";
   const _sfc_main$C = {
     data() {
-      return {};
+      return {
+        result: "",
+        disabled: true,
+        show: false
+      };
     },
-    methods: {}
+    onLoad() {
+      if (!plus.fingerprint.isSupport()) {
+        this.result = "此设备不支持指纹识别";
+        this.disabled = true;
+      } else if (!plus.fingerprint.isKeyguardSecure()) {
+        this.result = "此设备未设置密码锁屏，无法使用指纹识别";
+        this.disabled = true;
+      } else if (!plus.fingerprint.isEnrolledFingerprints()) {
+        this.result = "此设备未录入指纹，请到设置中开启";
+        this.disabled = true;
+      } else {
+        this.result = "此设备支持指纹识别";
+        this.disabled = false;
+      }
+    },
+    methods: {
+      printCancel: function() {
+        plus.fingerprint.cancel();
+        this.result = "停止指纹识别";
+      },
+      fingerprint: function() {
+        let that = this;
+        plus.fingerprint.authenticate(function() {
+          plus.nativeUI.closeWaiting();
+          that.show = false;
+          that.result = "指纹识别成功";
+          const username = uni.getStorageSync("username");
+          const password = uni.getStorageSync("password");
+          login({
+            account: username,
+            password
+          }).then((res) => {
+            formatAppLog("log", "at pages/fingerLogin/fingerLogin.vue:68", res);
+            if (res.code == 200) {
+              uni.setStorageSync("token", res.data.token);
+              uni.setStorageSync("userInfo", res.data.account);
+              formatAppLog("log", "at pages/fingerLogin/fingerLogin.vue:72", uni.getStorageSync("token"));
+              uni.showToast({
+                title: "登录成功",
+                duration: 2e3
+              }).then(
+                that.goToTask()
+              );
+            }
+          });
+        }, function(e2) {
+          switch (e2.code) {
+            case e2.AUTHENTICATE_MISMATCH:
+              plus.nativeUI.toast("指纹匹配失败，请重新输入");
+              break;
+            case e2.AUTHENTICATE_OVERLIMIT:
+              plus.nativeUI.closeWaiting();
+              plus.nativeUI.alert("指纹识别失败次数超出限制，请使用其它方式进行认证");
+              break;
+            case e2.CANCEL:
+              plus.nativeUI.toast("已取消识别");
+              break;
+            default:
+              plus.nativeUI.closeWaiting();
+              plus.nativeUI.alert("指纹识别失败，请重试");
+              break;
+          }
+        });
+        if ("Android" == plus.os.name) {
+          this.show = true;
+        }
+      },
+      goToTask() {
+        uni.redirectTo({
+          url: "/pages/tabBar/tabBar"
+        });
+      }
+    }
   };
   function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
-      vue.createElementVNode("view", { class: "fingerView" }, [
+      vue.createElementVNode("view", {
+        class: "fingerView",
+        onClick: _cache[0] || (_cache[0] = ($event) => $options.fingerprint()),
+        disabled: $data.disabled
+      }, [
         vue.createElementVNode("image", {
           src: _imports_0$4,
           class: "fingerIcon"
         })
-      ]),
-      vue.createElementVNode("view", null, [
+      ], 8, ["disabled"]),
+      vue.createElementVNode("view", {
+        onClick: _cache[1] || (_cache[1] = ($event) => $options.fingerprint()),
+        disabled: $data.disabled
+      }, [
         vue.createElementVNode("text", { style: { "color": "rgb(45, 130, 254)" } }, "点击进行指纹认证")
-      ]),
+      ], 8, ["disabled"]),
       vue.createElementVNode("view", { style: { "margin-top": "70px" } }, [
         vue.createElementVNode("text", null, [
           vue.createElementVNode("navigator", {
             url: "/pages/login/login",
-            "open-type": "navigateBack"
+            "open-type": "navigateBack",
+            "hover-class": "null"
           }, "账号密码登录")
         ])
-      ])
+      ]),
+      vue.createElementVNode(
+        "view",
+        { style: { "color": "red" } },
+        vue.toDisplayString($data.result),
+        1
+        /* TEXT */
+      )
     ]);
   }
   const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
@@ -5465,7 +5566,7 @@ ${i3}
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-4dd3c44b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-4dd3c44b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   const _sfc_main$w = {
     name: "uniCollapseItem",
     props: {
@@ -8963,7 +9064,7 @@ ${i3}
   };
   function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$3);
-    const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_1$1);
+    const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_4$1);
     const _component_uni_collapse_item = resolveEasycom(vue.resolveDynamicComponent("uni-collapse-item"), __easycom_2$1);
     const _component_uni_collapse = resolveEasycom(vue.resolveDynamicComponent("uni-collapse"), __easycom_3$1);
     const _component_uni_data_checkbox = resolveEasycom(vue.resolveDynamicComponent("uni-data-checkbox"), __easycom_4);
@@ -10269,7 +10370,7 @@ ${i3}
       return {
         videoPlay: false,
         videoUrl: "",
-        musicShow: false,
+        audioUrl: "",
         imgPath: [
           "../../../../static/images/taiwan_map.jpg",
           "../../../../static/images/taiwan_map.jpg",
@@ -10297,11 +10398,11 @@ ${i3}
         image_src: [],
         FileTypes: [
           { type: "图片", iconName: "image" },
-          { type: "视频", iconName: "camera" }
+          { type: "视频", iconName: "camera" },
+          { type: "音频", iconName: "mic" }
         ],
-        videoContext: uni.createVideoContext("myVideo", this),
+        videoContext: uni.createVideoContext("myVideo", this)
         // this这个是实例对象
-        innerAudioContext: uni.createInnerAudioContext()
       };
     },
     methods: {
@@ -10325,15 +10426,23 @@ ${i3}
       openVideo() {
         this.videoPlay = true;
       },
+      openAudioPopup(index) {
+        this.$refs.audioPopup.open();
+        this.audioUrl = this.audioPath[index];
+      },
+      clickMask() {
+        this.$refs.audioPopup.close();
+        uni.$emit("stop");
+      },
       audioPlay(item) {
         if (this.musicShow) {
-          formatAppLog("log", "at pages/task/task_detail/document/document.vue:114", "播放");
+          formatAppLog("log", "at pages/task/task_detail/document/document.vue:126", "播放");
           const timout = setTimeout(() => {
             clearTimeout(timout);
             innerAudioContext.play();
           }, 500);
         } else {
-          formatAppLog("log", "at pages/task/task_detail/document/document.vue:120", "暂停");
+          formatAppLog("log", "at pages/task/task_detail/document/document.vue:132", "暂停");
           innerAudioContext.pause();
         }
         this.musicShow = !this.musicShow;
@@ -10357,7 +10466,7 @@ ${i3}
           sourceType: ["album", "camera"],
           success: function(res) {
             self.image_src = res.tempFilePaths;
-            formatAppLog("log", "at pages/task/task_detail/document/document.vue:142", self.image_src);
+            formatAppLog("log", "at pages/task/task_detail/document/document.vue:154", self.image_src);
           }
         });
       }
@@ -10367,13 +10476,14 @@ ${i3}
     const _component_uni_grid_item = resolveEasycom(vue.resolveDynamicComponent("uni-grid-item"), __easycom_0);
     const _component_uni_grid = resolveEasycom(vue.resolveDynamicComponent("uni-grid"), __easycom_1);
     const _component_uni_section = resolveEasycom(vue.resolveDynamicComponent("uni-section"), __easycom_2);
-    const _component_free_audio = vue.resolveComponent("free-audio");
     const _component_q_previewImage = resolveEasycom(vue.resolveDynamicComponent("q-previewImage"), __easycom_3);
+    const _component_free_audio = vue.resolveComponent("free-audio");
+    const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_4$1);
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
         style: { "position": "relative" },
-        onScroll: _cache[7] || (_cache[7] = (...args) => _ctx.onScroll && _ctx.onScroll(...args))
+        onScroll: _cache[8] || (_cache[8] = (...args) => _ctx.onScroll && _ctx.onScroll(...args))
       },
       [
         vue.createElementVNode("scroll-view", { style: { "padding-bottom": "40px" } }, [
@@ -10451,6 +10561,33 @@ ${i3}
                           }),
                           128
                           /* KEYED_FRAGMENT */
+                        )) : vue.createCommentVNode("v-if", true),
+                        file_index === 2 ? (vue.openBlock(true), vue.createElementBlock(
+                          vue.Fragment,
+                          { key: 2 },
+                          vue.renderList($data.audioPath, (item, index) => {
+                            return vue.openBlock(), vue.createBlock(
+                              _component_uni_grid_item,
+                              { key: index },
+                              {
+                                default: vue.withCtx(() => [
+                                  vue.createElementVNode("view", { style: { "background-color": "black", "width": "83px", "height": "83px", "display": "flex", "align-items": "center", "justify-content": "center" } }, [
+                                    vue.createElementVNode("image", {
+                                      onClick: ($event) => $options.openAudioPopup(index),
+                                      src: _imports_0$1,
+                                      style: { "width": "50px", "height": "50px" }
+                                    }, null, 8, ["onClick"])
+                                  ])
+                                ]),
+                                _: 2
+                                /* DYNAMIC */
+                              },
+                              1024
+                              /* DYNAMIC_SLOTS */
+                            );
+                          }),
+                          128
+                          /* KEYED_FRAGMENT */
                         )) : vue.createCommentVNode("v-if", true)
                       ]),
                       _: 2
@@ -10467,35 +10604,6 @@ ${i3}
             128
             /* KEYED_FRAGMENT */
           )),
-          vue.createVNode(_component_uni_section, {
-            title: "音频",
-            type: "line",
-            padding: ""
-          }, {
-            default: vue.withCtx(() => [
-              (vue.openBlock(true), vue.createElementBlock(
-                vue.Fragment,
-                null,
-                vue.renderList($data.audioPath, (item, index) => {
-                  return vue.openBlock(), vue.createElementBlock("view", {
-                    key: index,
-                    style: { "height": "80px" }
-                  }, [
-                    vue.createVNode(_component_free_audio, {
-                      startPic: "../../../../static/icon/take_video.png",
-                      endPic: "../../../../static/icon/pause.png",
-                      audioId: "audio1",
-                      url: item
-                    }, null, 8, ["url"])
-                  ]);
-                }),
-                128
-                /* KEYED_FRAGMENT */
-              ))
-            ]),
-            _: 1
-            /* STABLE */
-          }),
           vue.createCommentVNode(" 图片预览组件 "),
           vue.createVNode(_component_q_previewImage, {
             ref: "previewImage",
@@ -10507,6 +10615,7 @@ ${i3}
             onClose: _cache[3] || (_cache[3] = () => {
             })
           }, null, 8, ["urls"]),
+          vue.createCommentVNode(" 视频预览界面 "),
           $data.videoPlay ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
             vue.createElementVNode("video", {
               id: "myVideo",
@@ -10518,15 +10627,38 @@ ${i3}
             }, null, 40, ["src"])
           ])) : vue.createCommentVNode("v-if", true)
         ]),
+        vue.createCommentVNode(" 音频预览弹窗 "),
+        vue.createVNode(
+          _component_uni_popup,
+          {
+            ref: "audioPopup",
+            type: "bottom",
+            onMaskClick: _cache[5] || (_cache[5] = ($event) => $options.clickMask())
+          },
+          {
+            default: vue.withCtx(() => [
+              vue.createVNode(_component_free_audio, {
+                startPic: "../../../../static/icon/take_video.png",
+                endPic: "../../../../static/icon/pause.png",
+                audioId: "audio1",
+                url: $data.audioUrl
+              }, null, 8, ["url"])
+            ]),
+            _: 1
+            /* STABLE */
+          },
+          512
+          /* NEED_PATCH */
+        ),
         vue.createElementVNode("view", { class: "fixed-button" }, [
           vue.createElementVNode("button", {
             type: "primary",
-            onClick: _cache[5] || (_cache[5] = (...args) => $options.uploadVideo && $options.uploadVideo(...args)),
+            onClick: _cache[6] || (_cache[6] = (...args) => $options.uploadVideo && $options.uploadVideo(...args)),
             style: { "width": "50%" }
           }, "上传视频"),
           vue.createElementVNode("button", {
             type: "primary",
-            onClick: _cache[6] || (_cache[6] = (...args) => $options.uploadImage && $options.uploadImage(...args)),
+            onClick: _cache[7] || (_cache[7] = (...args) => $options.uploadImage && $options.uploadImage(...args)),
             style: { "width": "50%" }
           }, "上传图片")
         ])
