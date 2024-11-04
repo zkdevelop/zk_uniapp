@@ -28,7 +28,7 @@
           @click="openChat(message)"
         >
           <group-avatar v-if="message.type === 'group'" :avatar="message.avatar" />
-          <image v-else :src="message.avatar[0]" class="avatar" mode="aspectFill"></image>
+          <image v-else :src="getAvatarSrc(message.avatar[0])" class="avatar" mode="aspectFill"></image>
           <view class="message-content-wrapper">
             <view class="message-content">
               <view class="message-title">{{ message.name }}</view>
@@ -53,11 +53,24 @@ export default {
   data() {
     return {
       messages: [
-        { id: '1', name: '张宁鹏', avatar: ['../../static/c1.png'], preview: '你好', date: '7月21日', type: 'single' },
-        { id: '2', name: '杨尚基', avatar: ['../../static/c2.png'], preview: '[图片]', date: '7月21日', type: 'single' },
-        { id: '3', name: '王彦', avatar: ['../../static/c3.png'], preview: '[视频]', date: '7月22日', type: 'single' },
-        { id: '4', name: '项目讨论群', avatar: ['../../static/c1.png', '../../static/c2.png', '../../static/c3.png', '../../static/c1.png'], preview: '下周一开会', date: '7月23日', type: 'group' },
-      ]
+        { id: '1', name: '张宁鹏', avatar: [ ], preview: '你好', date: '7月21日', type: 'single' },
+        { id: '2', name: '杨尚基', avatar: [ ], preview: '[图片]', date: '7月21日', type: 'single' },
+        { id: '3', name: '王彦', avatar: [ ], preview: '[视频]', date: '7月22日', type: 'single' },
+        { 
+          id: '4', 
+          name: '项目讨论群', 
+          avatar: [
+            '',
+            '',
+            '',
+            ''
+          ], 
+          preview: '下周一开会', 
+          date: '7月23日', 
+          type: 'group' 
+        },
+      ],
+      defaultAvatarPath: '../../static/message/默认头像.png'
     }
   },
   computed: {
@@ -105,6 +118,9 @@ export default {
     },
     handleSwitchToMessages() {
       uni.$emit('updateTabBarActiveTab', 1);
+    },
+    getAvatarSrc(avatar) {
+      return avatar || this.defaultAvatarPath;
     }
   }
 }

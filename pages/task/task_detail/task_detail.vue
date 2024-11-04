@@ -367,17 +367,6 @@
 						value: '紧急告警'
 					},
 				],
-				// task:{
-				//                 task_name: '现地侦察横须滨基地情况',
-				// 	country: '日本',
-				//                 position: '横须滨',
-				//                 start_time: '2024.05.03',
-				//                 end_time: '2026.02.01',
-				//                 type: '进行中',
-				//                 status: '待处理',
-				// 	description: '前往目的地展开行动',
-				// 	key: '123456'
-				//             },
 				taskItem: {},
 				map_options: [{
 						src: '../../../static/icon/google.png',
@@ -484,7 +473,7 @@
 			// 页面加载时执行
 			if (options.taskItem) {
 				this.taskItem = JSON.parse(options.taskItem); // 设置类型
-				console.log(this.task);
+				console.log(this.taskItem);
 			} else {
 				console.error('没有传递类型参数');
 			};
@@ -600,9 +589,20 @@
 			close_task_instructions() {
 				this.$refs.task_instructions.close()
 			},
+			closeDeleteTaskPopup(){
+				this.$refs.deleteTaskPopup.close()
+			},
+			openDeleteTaskPopup(){
+				this.$refs.deleteTaskPopup.open()
+			},
 			goToDocument() {
 				uni.navigateTo({
 					url: '/pages/task/task_detail/document/document'
+				})
+			},
+			goToMainPage(){
+				uni.redirectTo({
+					url: '/pages/tabBar/tabBar'
 				})
 			},
 			selectImage(index) {
@@ -701,7 +701,9 @@
 		justify-content: space-between;
 		/* 两侧分开 */
 		padding: 15px;
-		z-index: 100;
+		width: 100%;
+		// 消除内边距影响
+		box-sizing: border-box;
 		position: absolute;
 		top: 0;
 		left: 0;

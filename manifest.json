@@ -18,10 +18,18 @@
         },
         "modules" : {
             "Geolocation" : {},
-            "Maps" : {}
+            "Maps" : {},
+            "Camera" : {},
+            "Fingerprint" : {},
+            "VideoPlayer" : {},
+            "Record" : {}
         },
         /* 模块配置 */
         "distribute" : {
+            /* 重力感应、横竖屏配置 */
+            "distribute" : {
+                "orientation" : [ "portrait-primary" ]
+            },
             /* 应用发布信息 */
             "android" : {
                 /* android打包配置 */
@@ -46,7 +54,8 @@
                     "<uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />",
                     "<uses-permission android:name=\"android.permission.READ_MEDIA_VIDEO\" />",
                     "<uses-permission android:name=\"android.permission.READ_MEDIA_VISUAL_USER_SELECTED\" />"
-                ]
+                ],
+                "abiFilters" : [ "arm64-v8a", "x86" ]
             },
             "ios" : {},
             /* ios打包配置 */
@@ -61,7 +70,7 @@
                 "geolocation" : {
                     "amap" : {
                         "name" : "tb2751599983",
-                        "__platform__" : [ "ios", "android" ],
+                        "__platform__" : [ "android" ],
                         "appkey_ios" : "a3aa001dee8b84d305fa977dd504830c",
                         "appkey_android" : "a3aa001dee8b84d305fa977dd504830c"
                     }
