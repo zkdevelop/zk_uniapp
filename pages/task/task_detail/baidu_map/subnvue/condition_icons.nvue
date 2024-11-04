@@ -1,0 +1,124 @@
+<template>
+	<view class="condition_icons">
+		
+	</view>
+</template>
+
+<style>
+	.condition_icons {
+		display: flex;
+		justify-content: space-between;
+		/* 两侧分开 */
+		padding: 15px;
+		z-index: 100;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100px;
+		height: 100px;
+	}
+
+	.condition_selector {
+		width: 70px;
+		height: 35px;
+		background: #f9f9f9;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.instructions_alert {
+		width: 50px;
+		height: 50px;
+		background: #f9f9f9;
+		box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+		/* 水平偏移、垂直偏移、模糊半径、颜色 */
+		border-radius: 3px;
+		margin-bottom: 10px;
+	}
+
+	.instructions_instruct {
+		width: 50px;
+		height: 50px;
+		background: #f9f9f9;
+		box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+		/* 水平偏移、垂直偏移、模糊半径、颜色 */
+		border-radius: 3px;
+		margin-bottom: 10px;
+	}
+
+	.instructions_document {
+		width: 50px;
+		height: 100px;
+		background: #f9f9f9;
+		box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+		/* 水平偏移、垂直偏移、模糊半径、颜色 */
+		border-radius: 3px;
+		margin-bottom: 10px;
+	}
+
+	.text_setting {
+		display: flex;
+		align-items: center;
+		/* 垂直居中 */
+		justify-content: center;
+	}
+
+	.divider {
+		height: 1px;
+		background-color: #ccc;
+		/* 分割线的颜色 */
+		margin: 10px 0;
+		/* 分割线的上下间距 */
+	}
+
+	.detail_top {
+		display: flex;
+		justify-content: space-between;
+		/* 两侧分开 */
+	}
+
+	.detail_info {
+		box-sizing: border-box;
+		/* 包括内边距和边框 */
+		width: 100%;
+		padding: 10px;
+		background: #edf2fa;
+	}
+
+	.infos {
+		margin-bottom: 5px;
+	}
+
+	.map_icons {
+		display: flex;
+		align-items: center;
+		/* 垂直居中 */
+		justify-content: center;
+	}
+
+	.selected {
+		border: 2px solid #288ff4;
+		/* 设置选中时的边框 */
+	}
+
+	.head-nav {
+		display: flex;
+		align-items: center;
+		color: #CCCCCC;
+		height: 40px;
+	}
+
+	.activite {
+		color: #04c9c3;
+	}
+
+/* 	.head-nav div {
+		padding-bottom: 10rpx;
+	} */
+
+	.alert_content {
+		/* background: #008000; */
+		height: 100%;
+	}
+</style>
