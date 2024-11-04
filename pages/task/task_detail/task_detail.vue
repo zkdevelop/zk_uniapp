@@ -51,9 +51,16 @@
 						<view style="margin-right: 50px;"><image @click="take_video()" src="../../../static/icon/video.png" style="width: 30px; height: 30px;"></image></view>
 						<view style="margin-right: 50px;"><image @click="take_picture()" src="../../../static/icon/photo.png" style="width: 33px; height: 33px;"></image></view>
 						<view style="margin-right: 50px;"><image @longpress="startRecording()" @touchend="stopRecording()" src="../../../static/icon/micro.png" style="width: 32px; height: 32px;"></image></view>
-						<view><image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"></image></view>
+						<view><image @click="openDeleteTaskPopup()" src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"></image></view>
 					</view>
 				</view>
+			</uni-popup>
+		</view>
+		<view>
+			<!-- 删除任务弹窗 -->
+			<uni-popup ref="deleteTaskPopup" type="dialog">
+				<uni-popup-dialog :type="msgType" cancelText="取消" confirmText="确定" title="" content="你确定要删除当前任务数据吗？" @confirm="goToMainPage()"
+					@close="closeDeleteTaskPopup()"></uni-popup-dialog>
 			</uni-popup>
 		</view>
 		<view>
@@ -215,17 +222,6 @@
 					{ text: '严重告警', value: '严重告警' },
 					{ text: '紧急告警', value: '紧急告警' },
 				],
-				// task:{
-    //                 task_name: '现地侦察横须滨基地情况',
-				// 	country: '日本',
-    //                 position: '横须滨',
-    //                 start_time: '2024.05.03',
-    //                 end_time: '2026.02.01',
-    //                 type: '进行中',
-    //                 status: '待处理',
-				// 	description: '前往目的地展开行动',
-				// 	key: '123456'
-    //             },
 				taskItem: {},
 				map_options: [
 					{ src: '../../../static/icon/google.png', name: 'Google地图' },
@@ -259,7 +255,7 @@
 		onLoad(options) {
 			if (options.taskItem) {
 				this.taskItem = JSON.parse(options.taskItem); // 设置类型
-				console.log(this.task);
+				console.log(this.taskItem);
 			} else {
 				console.error('没有传递类型参数');
 			};
@@ -374,9 +370,20 @@
 			close_task_instructions() {
 				this.$refs.task_instructions.close()
 			},
+			closeDeleteTaskPopup(){
+				this.$refs.deleteTaskPopup.close()
+			},
+			openDeleteTaskPopup(){
+				this.$refs.deleteTaskPopup.open()
+			},
 			goToDocument(){
 				uni.navigateTo({
 					url: '/pages/task/task_detail/document/document'
+				})
+			},
+			goToMainPage(){
+				uni.redirectTo({
+					url: '/pages/tabBar/tabBar'
 				})
 			},
 			selectImage(index) {

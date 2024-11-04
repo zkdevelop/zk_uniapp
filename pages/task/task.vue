@@ -1,23 +1,32 @@
 <template>
     <view>
+		<!-- 顶部Tab菜单 -->
         <view class="topTabBar">
             <view class="grid" v-for="(item, tbIndex) in handlingType" :key="tbIndex" @tap="showType(tbIndex)">
                 <view class="text" :class="[tbIndex === tabbarIndex ? 'active' : '']">{{ item.value }}</view>
             </view>
         </view>
-        <view class="" style="margin-top: 100upx; padding: 0 20upx 50px 20upx">
+		<!-- 任务列表展示区域 -->
+        <view style="margin-top: 100upx; padding: 0 20upx 50px 20upx">
+			<!-- 循环设置四个菜单项 -->
 			<view v-for="(top_item, top_index) in 4" :key = 'top_index'>
+				<!-- 根据top_index决定所属菜单项 -->
 				<block v-if="tabbarIndex === top_index">
-					<view class="" v-for="(item, index) in getItems(tabbarIndex)" :key="index">
+					<!-- 任务列表 -->
+					<view v-for="(item, index) in getItems(tabbarIndex)" :key="index">
+						<!-- 列表项 -->
 						<view @click="goToDetail(index, tabbarIndex)" class="task_item">
+							<!-- 任务名称、任务状态 -->
 							<view class="item_top">
 								<view><text>{{item.task_name}}</text></view>
 								<view><text :style="{background: getColor(item.type)}">{{getTypeString(item.type)}}</text></view>
 							</view>
+							<!-- 任务地点 -->
 							<view class="item_bottom">
 								<view><image src="../../static/icon/location_grey.png" style="width: 15px; height: 15px;"></image></view>
 								<view style="margin-left: 7px;"><text style="line-height: 20px; text-align: center;">{{item.position}}</text></view>
 							</view>
+							<!-- 任务时间 -->
 							<view class="item_bottom">
 								<view><image src="../../static/icon/time_grey.png" style="width: 16px; height: 16px;"></image></view>
 								<view style="margin-left: 7px;"><text>{{item.start_time}} - {{item.end_time}}</text></view>
@@ -168,7 +177,7 @@ export default {
 	box-sizing: border-box; /* 包括内边距和边框 */
 	width: 100%;
 	height: 110px;
-	// background: #0a79ff;
+	background: #ffffff;
 	border-radius: 3px;
 	margin-bottom: 20px;
 	box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2); /* 水平偏移、垂直偏移、模糊半径、颜色 */
