@@ -1,7 +1,6 @@
 <template>
 	<!-- 地图容器 -->
-	<view id="map_container">
-	</view>
+	<view id="map_container"></view>
 	<!-- task_detail -->
 	<view class="layout_task_detail">
 		<!-- 按钮组 -->
@@ -15,7 +14,7 @@
 				<!-- 告警按钮 -->
 				<view class="instructions_alert" @click="open_alert_popup">
 					<view class="alert_img" style="text-align: center; padding-top: 5px;">
-						<image src="../../../static/icon/alert.png" style="width: 22px; height: 22px;"></image>
+						<image src="/static/icon/alert.png" style="width: 22px; height: 22px;"></image>
 					</view>
 					<view class="text_setting" style="text-align: center;"><text
 							style="color: #d81e06; font-size: small;">告警</text></view>
@@ -23,7 +22,7 @@
 				<!-- 指令按钮 -->
 				<view class="instructions_instruct" @click="open_task_instructions">
 					<view class="alert_img" style="text-align: center; padding-top: 5px;">
-						<image src="../../../static/icon/flag.png" style="width: 22px; height: 22px;"></image>
+						<image src="/static/icon/flag.png" style="width: 22px; height: 22px;"></image>
 					</view>
 					<view class="text_setting" style="text-align: center;"><text
 							style="color: #3171d3; font-size: small;">指令</text></view>
@@ -33,7 +32,7 @@
 					<!-- 文件按钮 -->
 					<view class="document" @click="goToDocument">
 						<view class="alert_img" style="text-align: center; padding-top: 5px;">
-							<image src="../../../static/icon/document.png" style="width: 22px; height: 22px;"></image>
+							<image src="/static/icon/document.png" style="width: 22px; height: 22px;"></image>
 						</view>
 						<view class="text_setting" style="text-align: center;"><text
 								style="color: #636363; font-size: small;">文件</text></view>
@@ -41,7 +40,7 @@
 					<!-- 图层按钮 -->
 					<view class="map_selector" @click="open_map_selector">
 						<view class="alert_img" style="text-align: center; padding-top: 5px;">
-							<image src="../../../static/icon/tuceng.png" style="width: 22px; height: 22px;"></image>
+							<image src="/static/icon/tuceng.png" style="width: 22px; height: 22px;"></image>
 						</view>
 						<view class="text_setting" style="text-align: center;"><text
 								style="color: #636363; font-size: small;">图层</text></view>
@@ -56,7 +55,7 @@
 					<view class="detail_top">
 						<view><text>现地侦查横须贺基地情况</text></view>
 						<view style="margin-right: 10px;" @click="close">
-							<image src="../../../static/icon/close.png" style="width: 15px; height: 15px;"></image>
+							<image src="/static/icon/close.png" style="width: 15px; height: 15px;"></image>
 						</view>
 					</view>
 					<view class="divider"></view>
@@ -241,31 +240,89 @@
 	</view>
 </template>
 
-<!-- 引入地图api -->
 <script module="map" lang="renderjs">
+	import {
+		loadBaiduMapScript,
+		loadMapScript
+	} from "./map.js";
+
+	var map = null;
 	export default {
+		data() {
+			return {
+				baiduApiKey: 'A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD',
+				gaodeApiKey: 'caa070a3ebda631bea2feff72972f28c',
+				gaodeSecurityKey: '93849873dba769e7b6235a79330ae7f7'
+			}
+		},
+
+		created() {
+			// ================百度地图==================
+			// loadBaiduMapScript(this.baiduApiKey).then((loadBaiduMapScript) => {
+			// 创建百度地图实例
+			// map = new BMapGL.Map("map_container");
+			// console.log(bmap, 'this.map ')
+			// var point = new BMapGL.Point(116.404, 39.915);
+			// map.centerAndZoom(point, 12); // 初始化地图,设置中心点坐标和地图级别
+			// map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
+			// });
+			// ================加载地图==================
+			loadMapScript(this.baiduApiKey, this.gaodeApiKey, this.gaodeSecurityKey).then(() => {
+				map = new AMap.Map('map_container', {
+					divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
+					zoom: 12, // 初始化地图层级
+					center: [116.397428, 39.90923] // 初始化地图中心点
+				});
+				// 创建点覆盖物
+				var marker = new AMap.Marker({
+					position: new AMap.LngLat(116.39, 39.92),
+					icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+					offset: new AMap.Pixel(-13, -30)
+				});
+				map.add(marker);
+				window.map = map;
+				// 创建百度地图实例
+				// map = new BMapGL.Map("map_container");
+				
+				// var point = new BMapGL.Point(116.404, 39.915);
+				// map.centerAndZoom(point, 12); // 初始化地图,设置中心点坐标和地图级别
+				// map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
+			})
+		},
 		mounted() {
-			console.log('map')
-			this.loadMapScript();
+
 		},
 		methods: {
-			loadMapScript(){
-				const script = document.createElement('script');
-				script.src = `//api.map.baidu.com/api?type=webgl&v=1.0&ak=A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD`;
-				script.onerror = (err) => {
-					console.error('Failed to load script:', err);
-				};
-				document.head.appendChild(script);
+			changeMap(mapType) {
+				switch (mapType) {
+					case 0:
+
+					case 1:
+						map = new AMap.Map('map_container', {
+							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
+							zoom: 11, // 初始化地图层级
+							center: [116.397428, 39.90923] // 初始化地图中心点
+						});
+						window.map = map;
+						break;
+					case 2:
+						console.log(initMap)
+						map = new BMapGL.Map("map_container");
+						map.centerAndZoom(new BMapGL.Point(116.404, 39.915), 12); // 初始化地图,设置中心点坐标和地图级别
+						map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
+						window.map = map;
+						break;
+					case 3:
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
 </script>
 
 <script>
-	import {
-		gaodeApiKey,
-		baiduApiKey
-	} from '@/config.js'
 	export default {
 		data() {
 			return {
@@ -324,18 +381,22 @@
 				taskItem: {},
 				map_options: [{
 						src: '../../../static/icon/google.png',
+						htmlSrc: '/static/html/map_gaode.html',
 						name: 'Google地图'
 					},
 					{
 						src: '../../../static/icon/gaode.png',
+						htmlSrc: '/static/html/map_gaode.html',
 						name: '高德地图'
 					},
 					{
 						src: '../../../static/icon/baidu.png',
+						htmlSrc: '/static/html/map_baidu.html',
 						name: '百度地图'
 					},
 					{
 						src: '../../../static/icon/outline.png',
+						htmlSrc: '/static/html/map_gaode.html',
 						name: '离线地图'
 					},
 					// 继续添加更多图片
@@ -413,14 +474,11 @@
 						alert_content: '行动继续'
 					},
 				],
+				map: null
 			}
 		},
 		onNavigationBarButtonTap() {
 			this.$refs.popup.open('bottom')
-		},
-		beforeCreate() {
-			// 页面创建前执行
-			this.loadMapScript()
 		},
 		onLoad(options) {
 			// 页面加载时执行
@@ -442,11 +500,7 @@
 				console.log('recorder stop' + JSON.stringify(res));
 				self.filePaths.voicePath = res.tempFilePath;
 			});
-		},
-		onReady() {
-			// 页面初次渲染完成时执行
-			// 加载地图
-			this.initMap('baidu');
+
 		},
 		methods: {
 			take_picture() {
@@ -553,15 +607,17 @@
 			},
 			selectImage(index) {
 				this.selectedIndex = index; // 设置选中索引
-				if (index === 1) {
-					uni.navigateTo({
-						url: '/pages/task/task_detail/map_test/map_test'
-					})
-				} else if (index === 2) {
-					uni.navigateTo({
-						url: '/pages/task/task_detail/baidu_map/baidu_map'
-					})
-				}
+				this.changeMap(index)
+				this.$refs.map_selector.close()
+				// if (index === 1) {
+				// 	uni.navigateTo({
+				// 		url: '/pages/task/task_detail/map_test/map_test'
+				// 	})
+				// } else if (index === 2) {
+				// 	uni.navigateTo({
+				// 		url: '/pages/task/task_detail/baidu_map/baidu_map'
+				// 	})
+				// }
 			},
 			receive_instruction(index) {
 				this.task_instructions[index].isConfirmed = true;
@@ -597,37 +653,24 @@
 				this.alert_data_mine.push(this.alert_form_data);
 				this.$refs.alert_form_popup.close()
 			},
-			loadMapScript() {
-				if (typeof document === 'undefined') {
-					// 在app端使用plus.runtime加载外部脚本
-					plus.runtime.getProperty(plus.runtime.appid, (wgtinfo) => {
-						const script = document.createElement('script');
-						script.src = `//api.map.baidu.com/api?v=1.0&type=webgl&ak=${baiduApiKey}$`;
-						script.onload = callback;
-						script.onerror = (err) => {
-							console.error('Failed to load script:', err);
-						};
-						document.head.appendChild(script);
-					});
-				}
-			},
-			initMap(mapType) {
-				let map;
+			changeMap(mapType) {
 				switch (mapType) {
-					case 'google':
-						break;
-					case 'baidu':
-						// 应用在线地图
-						map = new BMapGL.Map('map_container'); // 创建Map实例
-						map.centerAndZoom(new BMapGL.Point(120.686250, 24.182220), 12); // 初始化地图,设置中心点坐标和地图级别
-						map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
-						break;
-					case 'gaode':
-						map = new AMap.Map('map_container', {
-							viewMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 viewMode: '3D'
-							zoom: 11, // 初始化地图层级
+					case 0:
+
+					case 1:
+						window.map = new AMap.Map('map_container', {
+							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
+							zoom: 12, // 初始化地图层级
 							center: [116.397428, 39.90923] // 初始化地图中心点
 						});
+						break;
+					case 2:
+						map = new BMapGL.Map("map_container");
+						map.centerAndZoom(new BMapGL.Point(120.686250, 24.182220), 12); // 初始化地图,设置中心点坐标和地图级别
+						map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
+						window.map = map;
+						break;
+					case 3:
 						break;
 					default:
 						break;
@@ -645,7 +688,7 @@
 	}
 
 	#map_container {
-		height: calc(100vh - 44px);
+		height: 100vh;
 		width: 100%;
 		position: absolute;
 		left: 0;
