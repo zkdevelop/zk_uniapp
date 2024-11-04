@@ -64,6 +64,10 @@
 		methods: {
 			onTabClick(index) {
 				this.currentTab = index;
+				const title = this.tabs[index].label;
+				uni.setNavigationBarTitle({
+					title: title
+				})
 			},
 			hideTabBar() {
 				if (this.$refs.tabBar) {
@@ -124,7 +128,6 @@
 		height: 24px;
 		margin-bottom: 4px;
 	}
-
 	.tab-text {
 		font-size: 12px;
 		color: #999;

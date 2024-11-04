@@ -709,82 +709,6 @@
 }
 /* 水平间距 */
 /* 水平间距 */
-.uni-popup-dialog[data-v-d78c88b7] {
-  width: 300px;
-  border-radius: 11px;
-  background-color: #fff;
-}
-.uni-dialog-title[data-v-d78c88b7] {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding-top: 25px;
-}
-.uni-dialog-title-text[data-v-d78c88b7] {
-  font-size: 16px;
-  font-weight: 500;
-}
-.uni-dialog-content[data-v-d78c88b7] {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-.uni-dialog-content-text[data-v-d78c88b7] {
-  font-size: 14px;
-  color: #6C6C6C;
-}
-.uni-dialog-button-group[data-v-d78c88b7] {
-  display: flex;
-  flex-direction: row;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
-}
-.uni-dialog-button[data-v-d78c88b7] {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 45px;
-}
-.uni-border-left[data-v-d78c88b7] {
-  border-left-color: #f0f0f0;
-  border-left-style: solid;
-  border-left-width: 1px;
-}
-.uni-dialog-button-text[data-v-d78c88b7] {
-  font-size: 16px;
-  color: #333;
-}
-.uni-button-color[data-v-d78c88b7] {
-  color: #007aff;
-}
-.uni-dialog-input[data-v-d78c88b7] {
-  flex: 1;
-  font-size: 14px;
-  border: 1px #eee solid;
-  height: 40px;
-  padding: 0 10px;
-  border-radius: 5px;
-  color: #555;
-}
-.uni-popup__success[data-v-d78c88b7] {
-  color: #4cd964;
-}
-.uni-popup__warn[data-v-d78c88b7] {
-  color: #f0ad4e;
-}
-.uni-popup__error[data-v-d78c88b7] {
-  color: #dd524d;
-}
-.uni-popup__info[data-v-d78c88b7] {
-  color: #909399;
-}
-/* 水平间距 */
-/* 水平间距 */
 .uni-collapse-item[data-v-3d2dde9f] {
   box-sizing: border-box;
 }
@@ -1524,20 +1448,28 @@
 /* 水平间距 */
 /* 水平间距 */
 .layout_task_detail {
-  height: 100vh;
   /* 确保填满整个视口 */
-  background-image: url("../../../static/images/taiwan_map.jpg");
-  /* 替换为你的图片路径 */
-  background-size: cover;
-  /* 使背景图覆盖整个视图 */
-  background-position: center;
-  /* 背景图居中 */
+  height: calc(100vh - 44px);
+  z-index: 20;
+}
+#map_container {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  tip: 0;
+  z-index: 0;
 }
 .condition_icons {
   display: flex;
   justify-content: space-between;
   /* 两侧分开 */
   padding: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .condition_selector {
   width: 70px;

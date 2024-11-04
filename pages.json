@@ -132,7 +132,7 @@
 		"path" : "pages/tabBar/tabBar",
 		"style" : 
 		{
-			"navigationBarTitleText" : "任务",
+			"navigationBarTitleText" : "首页",
 			"titleNView": {
 				"autoBackButton": false
 			},

@@ -701,7 +701,9 @@
 		justify-content: space-between;
 		/* 两侧分开 */
 		padding: 15px;
-		z-index: 100;
+		width: 100%;
+		box-sizing: border-box;
+		// z-index: 100;
 		position: absolute;
 		top: 0;
 		left: 0;
