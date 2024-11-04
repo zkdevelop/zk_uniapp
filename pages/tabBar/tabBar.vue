@@ -14,7 +14,7 @@
 		<!-- 底部导航栏 -->
 		<view class="tab-bar" ref="tabBar">
 			<view v-for="(tab, index) in tabs" :key="index" class="tab-item" @click="onTabClick(index)">
-				<image :src="tab.icon" class="tab-icon" mode="aspectFit"></image>
+				<image :src="currentTab === index ? tab.icon_choice : tab.icon_nochoice" class="tab-icon" mode="aspectFit"></image>
 				<text :class="['tab-text', { 'active': currentTab === index }]">{{ tab.label }}</text>
 			</view>
 		</view>
@@ -39,19 +39,23 @@
 			return {
 				currentTab: 0,
 				tabs: [{
-						icon: '../../static/c1.png',
+						icon_nochoice: '../../static/tabBar/首页-未选中.png',
+						icon_choice: '../../static/tabBar/首页-选中.png',
 						label: '首页'
 					},
 					{
-						icon: '../../static/c1.png',
+						icon_nochoice: '../../static/tabBar/消息-未选中.png',
+						icon_choice: '../../static/tabBar/消息-选中.png',
 						label: '消息'
 					},
 					{
-						icon: '../../static/c1.png',
+						icon_nochoice: '../../static/tabBar/通讯录-未选中.png',
+						icon_choice: '../../static/tabBar/通讯录-选中.png',
 						label: '通讯录'
 					},
 					{
-						icon: '../../static/c1.png',
+						icon_nochoice: '../../static/tabBar/我的-未选中.png',
+						icon_choice: '../../static/tabBar/我的-选中.png',
 						label: '我的'
 					},
 				],
@@ -62,10 +66,14 @@
 				this.currentTab = index;
 			},
 			hideTabBar() {
-				this.$refs.tabBar.style.display = 'none';
+				if (this.$refs.tabBar) {
+					this.$refs.tabBar.style.display = 'none';
+				}
 			},
 			showTabBar() {
-				this.$refs.tabBar.style.display = 'flex';
+				if (this.$refs.tabBar) {
+					this.$refs.tabBar.style.display = 'flex';
+				}
 			}
 		}
 	}

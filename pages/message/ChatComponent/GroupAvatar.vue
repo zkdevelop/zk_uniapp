@@ -1,13 +1,13 @@
 <template>
   <div class="avatar-wrap">
-    <template v-if="avatar.length === 1">
-      <image :src="avatar[0]" class="horizonta-1"></image>
+    <template v-if="processedAvatar.length === 1">
+      <image :src="processedAvatar[0]" class="horizonta-1"></image>
     </template>
-    <template v-else-if="avatar.length >= 2 && avatar.length <= 4">
-      <image v-for="(item, index) in avatar" :key="index" :src="item" class="horizonta-2"></image>
+    <template v-else-if="processedAvatar.length >= 2 && processedAvatar.length <= 4">
+      <image v-for="(item, index) in processedAvatar" :key="index" :src="item" class="horizonta-2"></image>
     </template>
     <template v-else>
-      <image v-for="(item, index) in avatar.slice(0, 4)" :key="index" :src="item" class="horizonta-3"></image>
+      <image v-for="(item, index) in processedAvatar.slice(0, 4)" :key="index" :src="item" class="horizonta-3"></image>
     </template>
   </div>
 </template>
@@ -19,6 +19,19 @@ export default {
     avatar: {
       type: Array,
       default: () => []
+    }
+  },
+  data() {
+    return {
+      defaultAvatarPath: '../../static/message/默认头像.png'
+    }
+  },
+  computed: {
+    processedAvatar() {
+      if (this.avatar.length === 0) {
+        return [this.defaultAvatarPath];
+      }
+      return this.avatar.map(avatarPath => avatarPath || this.defaultAvatarPath);
     }
   }
 }
