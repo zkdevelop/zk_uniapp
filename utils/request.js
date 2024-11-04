@@ -1,7 +1,7 @@
 // request.js
 
 import {backendHost} from '/config.js';
-const BASE_URL = backendHost+"/communicate"; // 替换为你的基础URL
+const BASE_URL = backendHost; // 替换为你的基础URL
 
 // 请求超出时间
 const timeout = 5000
