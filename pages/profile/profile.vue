@@ -163,6 +163,7 @@ export default {
       this.showConfirmDialog = false;
     },
 	logout(){
+		uni.removeStorageSync('token')
 		uni.redirectTo({
 			url: '/pages/login/login'
 		})

@@ -94,7 +94,7 @@ __renderjsModules["66f1555e"] = (() => {
             window.map = map;
             break;
           case 2:
-            __f__("log", "at pages/task/task_detail/task_detail.vue:309", initMap);
+            __f__("log", "at pages/task/task_detail/task_detail.vue:321", initMap);
             map = new BMapGL.Map("map_container");
             map.centerAndZoom(new BMapGL.Point(116.404, 39.915), 12);
             map.enableScrollWheelZoom(true);

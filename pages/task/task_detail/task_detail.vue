@@ -70,20 +70,24 @@
 					</view>
 					<view class="divider"></view>
 					<view class="text_setting">
+						<!-- 录制视频按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_video()" src="../../../static/icon/video.png"
 								style="width: 30px; height: 30px;"></image>
 						</view>
+						<!-- 拍摄照片按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_picture()" src="../../../static/icon/photo.png"
 								style="width: 33px; height: 33px;"></image>
 						</view>
+						<!-- 录制音频按钮 -->
 						<view style="margin-right: 50px;">
 							<image @longpress="startRecording()" @touchend="stopRecording()"
 								src="../../../static/icon/micro.png" style="width: 32px; height: 32px;"></image>
 						</view>
+						<!-- 删除任务按钮 -->
 						<view>
-							<image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"></image>
+							<image @click="openDeleteTaskPopup()" src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"></image>
 						</view>
 					</view>
 				</view>
@@ -213,6 +217,7 @@
 				</view>
 			</uni-popup>
 		</view>
+		<!-- 发布告警弹窗 -->
 		<view>
 			<uni-popup ref="alert_form_popup" type="dialog">
 				<view class="example" style="background: #fff; border-radius: 5px; padding: 10px;">
@@ -235,6 +240,13 @@
 					</uni-forms>
 					<button type="primary" @click="submit('alert_form')">提交</button>
 				</view>
+			</uni-popup>
+		</view>
+		<!-- 删除任务弹窗 -->
+		<view>
+			<uni-popup ref="deleteTaskPopup" type="dialog">
+				<uni-popup-dialog :type="msgType" cancelText="取消" confirmText="确定" title="" content="确认删除此任务吗?" @confirm="goToMainPage()"
+					@close="closeDeleteTaskPopup()"></uni-popup-dialog>
 			</uni-popup>
 		</view>
 	</view>
@@ -524,6 +536,40 @@
 						const tempFilePath = res.tempFilePath;
 						self.filePaths.videoPath = res.tempFilePath;
 						console.log('录像成功，文件路径：', tempFilePath);
+						uni.uploadFile({
+							url: 'http://139.196.11.210:8500/communicate/minio/upload',
+							filePath: tempFilePath,
+							name: 'file',
+							formData: {
+								'isGroup': true,
+								'missionId': '',
+								'receptionId': ''
+							},
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								if (uploadFileRes.data.status === 200) {
+									uni.showToast({
+										title: '视频上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 1秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '视频上传失败！',
+										icon: 'none',
+										//显示持续时间为 1秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
+						});
 					},
 					fail: function(err) {
 						console.error('录像失败：', err);
