@@ -78,7 +78,7 @@
 
 <script>
 import OptionPicker from './OptionPicker.vue'
-
+import { logout } from '@/utils/api/user';
 export default {
   name: 'MainPage',
   components: {
@@ -164,9 +164,20 @@ export default {
     },
 	logout(){
 		uni.removeStorageSync('token')
-		uni.redirectTo({
-			url: '/pages/login/login'
+		uni.showLoading({
+			title: '正在退出登录',
+			mask: true
 		})
+		if (uni.getStorageSync('token') != "") {
+			logout().then(res => {
+				uni.removeStorageSync('token');
+				uni.removeStorageSync('userInfo');
+				uni.redirectTo({
+					url: '/pages/login/login'
+				})
+				uni.hideLoading();
+			})
+		}
 	}
   }
 }
