@@ -43,7 +43,6 @@ plus.runtime.quit = function() {
 				// 退出登录
 				if (uni.getStorageSync('token') != "") {
 					logout().then(res => {
-						console.log(res);
 						uni.removeStorageSync('token');
 						uni.removeStorageSync('userInfo');
 					})

@@ -2,19 +2,12 @@
 import request from '/utils/request.js'
 
 // 查询任务
-export const searchMission = (keyword, curPage, pageSize, statuses) => {
-	const data = {
-		"keyword": keyword,
-		"param": {
-			"curPage": curPage,
-			"pageSize": pageSize,
-		},
-		"statuses": statuses
-	};
+export const searchMission = (query) => {
+	console.log('query', query)
 	return request({
 		url: `/mission/search`,
 		method: 'post',
-		data
+		data:query
 	})
 }
 

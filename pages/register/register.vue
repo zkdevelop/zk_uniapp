@@ -4,8 +4,10 @@
 			<text>欢迎注册！</text>
 		</view>
 		<view class="account" style="margin-top: 25px;">
-			<view class="title" style="margin-bottom: 7px;">用户名</view>
-			<input class="uni-input" focus placeholder="请输入用户名" v-model="username" />
+			<view class="title" style="margin-bottom: 7px;">账户名</view>
+			<input class="uni-input" focus placeholder="请输入账户名" v-model="account" />
+			<view class="title" style="margin-bottom: 7px;">姓名</view>
+			<input class="uni-input" focus placeholder="请输入姓名" v-model="username" />
 			<view class="title" style="margin: 15px 0px 7px 0px;">密码</view>
 			<input class="uni-input" password type="text" placeholder="请输入密码" v-model="password" />
 			<view class="title" style="margin: 15px 0px 7px 0px;">再次输入密码</view>
@@ -26,6 +28,7 @@
 	export default {
 		data() {
 			return {
+				account:"test-app",
 				username: 'test-app',
 				password: 'test123456',
 				confirmPassword: 'test123456',
@@ -45,7 +48,7 @@
 			},
 			submitRegister() {
 				const data = {
-					"account": this.username,
+					"account": this.account,
 					"department": this.department,
 					"name": this.username,
 					"password": this.password,

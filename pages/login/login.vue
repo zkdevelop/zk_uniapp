@@ -73,13 +73,16 @@
 				}
 			},
 			checkLogin() {
-				console.log()
 				var that = this;
+				// 显示加载中
+				uni.showLoading({
+					title: '正在登录',
+					mask:true
+				})
 				login({
 					account: this.username,
 					password: this.password
 				}).then(res => {
-					console.log(res)
 					if (res.code == 200) {
 						// 存储成功登陆的账号密码
 						uni.setStorageSync(
@@ -88,9 +91,11 @@
 						uni.setStorageSync(
 							'password', that.password
 						)
+						console.log(res.data.token, 'token')
 						uni.setStorageSync('token', res.data.token)
 						uni.setStorageSync('userInfo', res.data.account)
-						console.log(uni.getStorageSync('token'));
+						// 关闭加载中
+						uni.hideLoading();
 						uni.showToast({
 							title: '登录成功',
 							duration: 2000
