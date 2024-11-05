@@ -15,55 +15,6 @@
 				height: 100%;
 			}
 		</style>
-	</head>
-
-	<body>
-		<div id="container">
-			<div class="condition_icons">
-				<!-- 左侧-选择任务状态按钮 -->
-				<div class="condition_selector">
-					<uni-data-select v-model="taskItem.type" :localdata="range" :clear="false"></uni-data-select>
-				</div>
-				<!-- 右侧按钮组 -->
-				<div class="right-button-groups">
-					<!-- 告警按钮 -->
-					<div class="instructions_alert" @click="open_alert_popup">
-						<div class="alert_img" style="text-align: center; padding-top: 5px;">
-							<img src="/static/icon/alert.png" style="width: 22px; height: 22px;"></img>
-						</div>
-						<div class="text_setting" style="text-align: center;"><text
-								style="color: #d81e06; font-size: small;">告警</text></div>
-					</div>
-					<!-- 指令按钮 -->
-					<div class="instructions_instruct" @click="open_task_instructions">
-						<div class="alert_img" style="text-align: center; padding-top: 5px;">
-							<img src="/static/icon/flag.png" style="width: 22px; height: 22px;"></img>
-						</div>
-						<div class="text_setting" style="text-align: center;"><text
-								style="color: #3171d3; font-size: small;">指令</text></div>
-					</div>
-					<!-- 文件按钮+图层按钮 -->
-					<div class="instructions_document">
-						<!-- 文件按钮 -->
-						<div class="document" @click="goToDocument">
-							<div class="alert_img" style="text-align: center; padding-top: 5px;">
-								<img src="/static/icon/document.png" style="width: 22px; height: 22px;"></img>
-							</div>
-							<div class="text_setting" style="text-align: center;"><text
-									style="color: #636363; font-size: small;">文件</text></div>
-						</div>
-						<!-- 图层按钮 -->
-						<div class="map_selector" @click="open_map_selector">
-							<div class="alert_img" style="text-align: center; padding-top: 5px;">
-								<img src="/static/icon/tuceng.png" style="width: 22px; height: 22px;"></img>
-							</div>
-							<div class="text_setting" style="text-align: center;"><text
-									style="color: #636363; font-size: small;">图层</text></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 		<!-- 加载安全密钥 -->
 		<script type="text/javascript">
 			window._AMapSecurityConfig = {
@@ -72,12 +23,23 @@
 		</script>
 		<!-- 加载地图JSAPI脚本 -->
 		<script src="https://webapi.amap.com/maps?v=2.0&key=caa070a3ebda631bea2feff72972f28c"></script>
+	</head>
+
+	<body>
+		<div id="container">
+		</div>
+
 		<script>
 			var map = new AMap.Map('container', {
 				divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
 				zoom: 11, // 初始化地图层级
 				center: [116.397428, 39.90923] // 初始化地图中心点
 			});
+			map.add(new AMap.Marker({
+			    position: new AMap.LngLat(116.397428, 39.90923),
+			    icon: '../icon/location_grey.png',
+			    anchor: 'bottom-center',
+			}));
 		</script>
 
 		<style>

@@ -1,7 +1,7 @@
 <template>
 	<!-- 地图容器 -->
-	<view id="map_container" :selectedIndex="selectedIndex" :change:selectedIndex="m.changeMap" :longitude="longitude"
-		:change:longitude='m.getLongitude' :latitude='latitude' :change:latitude='m.getLatitude'></view>
+	<view id="map_container" :selectedIndex="selectedIndex" :change:selectedIndex="m.changeMap" :replay
+		:change:replay='m.replayMission' :position="position" :change:position='m.getPosition' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
 		<!-- 按钮组 -->
@@ -9,6 +9,9 @@
 			<!-- 左侧-选择任务状态按钮 -->
 			<view class="condition_selector">
 				<uni-data-select v-model="taskItem.type" :localdata="range" :clear="false"></uni-data-select>
+			</view>
+			<view class="condition_selector">
+				<button class="mini-btn" type="primary" size="mini" @click="missionReplay">行动回溯</button>
 			</view>
 			<!-- 右侧按钮组 -->
 			<view class="right-button-groups">
@@ -247,7 +250,9 @@
 		loadBaiduMapScript,
 		loadMapScript
 	} from "./map.js";
-
+	import {
+		points
+	} from "../../../static/route/points.js"
 	var map = null;
 	export default {
 		data() {
@@ -255,34 +260,23 @@
 				baiduApiKey: 'A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD',
 				gaodeApiKey: 'caa070a3ebda631bea2feff72972f28c',
 				gaodeSecurityKey: '93849873dba769e7b6235a79330ae7f7',
-				longitude: 116.397428,
-				latitude: 39.90923,
-				mapType: 0
+				position: {
+					longitude: 116.397428,
+					latitude: 39.90923,
+				},
+				mapType: 0,
+				map: null
 			}
 		},
 		mounted() {
 			// ================加载地图==================
-			// loadMapScript(this.baiduApiKey, this.gaodeApiKey, this.gaodeSecurityKey).then(() => {
-			// 	map = new AMap.Map('map_container', {
-			// 		divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
-			// 		zoom: 12, // 初始化地图层级
-			// 		center: [this.longitude, this.latitude] // 初始化地图中心点
-			// 	});
-			// })
 			loadMapScript(this.baiduApiKey, this.gaodeApiKey, this.gaodeSecurityKey).then(() => {
 				this.$ownerInstance.callMethod('setPoint');
 			});
-
 		},
 		methods: {
-			getLatitude(latitude) {
-				this.latitude = latitude;
-				this.$nextTick(() => {
-					this.changeMap(this.mapType);
-				});
-			},
-			getLongitude(longitude) {
-				this.longitude = longitude;
+			getPosition(position) {
+				this.position = position;
 				this.$nextTick(() => {
 					this.changeMap(this.mapType);
 				});
@@ -293,22 +287,100 @@
 					case 0:
 
 					case 1:
+
 						map = new AMap.Map('map_container', {
 							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
 							zoom: 12, // 初始化地图层级
-							center: [this.longitude, this.latitude] // 初始化地图中心点
+							center: [this.position.longitude, this.position.latitude] // 初始化地图中心点
 						});
+						this.map = map;
+						// 加载行动轨迹
+						let prev = null;
+						let index = 0
+						for (let index = 0; index < points.length; index++) {
+							let curr = points[index];
+							// 加载地图点
+							map.add(this.getMarker(curr))
+							// 加载连线
+							if (index > 0) {
+								this.initLine([prev.longitude, prev.latitude], [curr.longitude, curr.latitude])
+							}
+							prev = points[index];
+						}
 						break;
 					case 2:
 						map = new BMapGL.Map("map_container");
-						map.centerAndZoom(new BMapGL.Point(this.longitude, this.latitude), 12); // 初始化地图,设置中心点坐标和地图级别
+						map.centerAndZoom(new BMapGL.Point(this.position.longitude, this.position.latitude),
+							12); // 初始化地图,设置中心点坐标和地图级别
+						this.map = map;
 						break;
 					case 3:
 						break;
 					default:
 						break;
 				}
-			}
+			},
+			replayMission(replay) {
+				// console.log(replay,'replay')
+				switch (this.mapType) {
+					case 0:
+
+					case 1:
+						let index = 0;
+						// const interval = setInterval(() => {
+						// 	if (index >= points.length||this.replay) {
+						// 		clearInterval(interval);
+						// 		return;
+						// 	}
+						// 	const point = points[index];
+						// 	this.map.setCenter([point.longitude, point.latitude]);
+						// 	index++;
+						// }, 5000);
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+					default:
+						break;
+				}
+			},
+			getMarker(point) {
+				let marker = new AMap.Marker({
+					//经纬度位置
+					position: new AMap.LngLat(point.longitude, point.latitude),
+					//便宜量
+					offset: new AMap.Pixel(-10, -24),
+					//图标
+					icon: new AMap.Icon({
+						//大小
+						size: new AMap.Size(20, 25),
+						imageSize: new AMap.Size(20, 25),
+						// image: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/em.jpg'
+						image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
+					}),
+					//图标展示层级，防止被隐藏时编写
+					zIndex: 100,
+					//图标旁边展示内容
+					label: {
+						content: `<view style="display:flex;flex-direction:column"><text>${point.description}</text>
+						<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`,
+						offset: new AMap.Pixel(10, -18)
+					}
+				})
+				return marker;
+			},
+			//绘制点与点之间的线段 Polyline类
+			initLine(start, end) {
+				let polyline = new AMap.Polyline({
+					//颜色
+					strokeColor: '#ff0000',
+					//起点与终点经纬度[[longitudeStart,latitudeStart],[longitudeEnd,latitudeEnd]]
+					path: [start, end]
+				})
+				//添加线段
+				this.map.add(polyline)
+			},
 		}
 	}
 </script>
@@ -362,8 +434,10 @@
 					},
 				],
 				taskItem: {},
-				longitude: 116.397428,
-				latitude: 39.90923,
+				position: {
+					longitude: 116.397428,
+					latitude: 39.90923,
+				},
 				map_options: [{
 						src: '../../../static/icon/google.png',
 						htmlSrc: '/static/html/map_gaode.html',
@@ -459,6 +533,8 @@
 						alert_content: '行动继续'
 					},
 				],
+				// 行动回溯，false停止，true播放
+				replay: false
 			}
 		},
 		onNavigationBarButtonTap() {
@@ -647,29 +723,28 @@
 			},
 			// 设置经纬度
 			setPoint() {
-				console.log('setPoint')
-				this.latitude = this.taskItem.latitude;
-				this.longitude = this.taskItem.longitude;
+				this.position.latitude = this.taskItem.latitude;
+				this.position.longitude = this.taskItem.longitude;
 			},
 			// 删除任务
 			deleteMisson() {
-				const id=this.taskItem.id;
+				const id = this.taskItem.id;
 				uni.showModal({
 					title: '提示',
 					content: '确定删除任务？',
 					success: function(res) {
 						uni.showLoading({
-							title:"正在删除",
-							mask:true
+							title: "正在删除",
+							mask: true
 						});
-						deleteMission(id).then((res)=>{
+						deleteMission(id).then((res) => {
 							uni.hideLoading();
-							if(res.code==200){
+							if (res.code == 200) {
 								uni.showToast({
 									title: '删除成功',
 									duration: 2000
 								})
-							}else{
+							} else {
 								uni.showToast({
 									title: res.msg,
 									duration: 2000
@@ -678,6 +753,9 @@
 						})
 					}
 				});
+			},
+			missionReplay() {
+				this.replay = !this.replay;
 			}
 		}
 	}
