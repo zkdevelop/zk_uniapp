@@ -1,7 +1,12 @@
 <template>
 	<view class="previewImage" v-if="show" @tap="close">
 		<view class="page" v-if="urls.length > 0">
-			<text class="text">{{ current + 1 }} / {{ urls.length }}</text>
+			<view>
+				<text class="text">{{ current + 1 }} / {{ urls.length }}</text>
+			</view>
+			<view>
+				<text class="text">{{ getFileName(urls[current]) }}</text>
+			</view>
 		</view>
 		<swiper class="swiper" :current="current" @change="swiperChange"  @touchstart="handleTouchStart" @touchend="handleTouchEnd">
 			<swiper-item v-for="(item, index) in urls" :key="index">
@@ -37,6 +42,11 @@ export default {
 		};
 	},
 	methods: {
+		getFileName(url){
+			const fileName = url.split('/').pop();
+			const nameWithoutExtension = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
+			return nameWithoutExtension;
+		},
 		//打开
 		open(current) {
 			this.current = this.urls.findIndex(item => item === current);

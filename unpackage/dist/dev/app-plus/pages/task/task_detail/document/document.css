@@ -201,6 +201,13 @@
 }
 
 
+.divider {
+	height: 1px;
+	background-color: #ccc;
+	/* 分割线的颜色 */
+	margin: 10px 0;
+	/* 分割线的上下间距 */
+}
 .grid-item-box {
 	flex: 1;
 	position: relative;
@@ -222,4 +229,4 @@
   border-radius: 5px;
   z-index: 10; /* 确保按钮在其他内容上方 */
   width: 100%;
-}
+} 

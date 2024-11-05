@@ -163,6 +163,7 @@ export default {
       this.showConfirmDialog = false;
     },
 	logout(){
+		uni.removeStorageSync('token')
 		uni.showLoading({
 			title: '正在退出登录',
 			mask: true

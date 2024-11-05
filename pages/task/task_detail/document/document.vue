@@ -31,8 +31,19 @@
 		</scroll-view>
 		<!-- 音频预览弹窗 -->
 		<uni-popup ref="audioPopup" type="bottom" @maskClick="clickMask()">
-			<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="audioUrl"></free-audio>
+			<view style="background: #fff; border-radius: 5px; padding: 10px;">
+				<view style="display: flex; justify-content: space-between;">
+					<view><text>{{ getFileName(audioUrl) }}</text></view>
+					<view style="margin-right: 10px;" @click="clickMask()">
+						<image src="../../../../static/icon/close.png" style="width: 15px; height: 15px;"></image>
+					</view>
+				</view>
+				<view class="divider"></view>
+				<!-- 支持mp3、ogg -->
+				<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="audioUrl"></free-audio>
+			</view>
 		</uni-popup>
+		<!-- 文件上传按钮 -->
 		<view class="fixed-button">
 			<button type="primary" @tap="uploadVideo" style="width: 50%;">上传视频</button>
 			<button type="primary" @tap="uploadImage" style="width: 50%;">上传图片</button>
@@ -46,6 +57,7 @@
 		components: {freeAudio},
 		data() {
 			return {
+				isFullScreen: false,
 				videoPlay: false,
 				videoUrl: '',
 				audioUrl: '',
@@ -67,10 +79,10 @@
 				],
 				audioPath: [
 					'../../../../static/file_source/许嵩 - 玫瑰花的葬礼 [mqms2].mp3',
-					'../../../../static/file_source/许嵩 - 玫瑰花的葬礼 [mqms2].mp3',
-					'../../../../static/file_source/许嵩 - 玫瑰花的葬礼 [mqms2].mp3',
-					'../../../../static/file_source/许嵩 - 玫瑰花的葬礼 [mqms2].mp3',
-					'../../../../static/file_source/许嵩 - 玫瑰花的葬礼 [mqms2].mp3',
+					'../../../../static/file_source/林俊杰 - 修炼爱情 [mqms2].ogg',
+					'../../../../static/file_source/刘至佳&韩瞳 - 时光背面的我 [mqms2].mp3',
+					'../../../../static/file_source/周杰伦 - 半岛铁盒 [mqms2].mgg1.flac',
+					'../../../../static/file_source/周杰伦 - 稻香 [mqms2].qmc0.flac',
 				],
 				video_src: '',
 				image_src: [],
@@ -79,10 +91,15 @@
 					{ type: '视频', iconName: 'camera'},
 					{ type: '音频', iconName: 'mic'}
 				],
-				videoContext: uni.createVideoContext("myVideo", this),    // this这个是实例对象
+				videoContext: uni.createVideoContext("myVideo", this),    // 这个是实例对象
 			}
 		},
 		methods: {
+			getFileName(url){
+				const fileName = url.split('/').pop();
+				const nameWithoutExtension = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
+				return nameWithoutExtension;
+			},
 			preview(url) {
 				// #ifdef MP-WEIXIN
 				this.$nextTick(()=>{
@@ -95,9 +112,9 @@
 				// #endif
 			},
 			screenChange(e) {
-			  let fullScreen = e.detail.fullScreen; // 值true为进入全屏，false为退出全屏
+			  this.isFullScreen = e.detail.fullScreen; // 值true为进入全屏，false为退出全屏
 			  // console.log(e, "全屏");
-			  if (!fullScreen) {
+			  if (!this.isFullScreen) {
 				this.videoPlay = false;
 				// 退出全屏
 				this.videoContext.stop();
@@ -139,19 +156,77 @@
 				uni.chooseVideo({
 					sourceType: ['camera', 'album'],
 					success: function (res) {
-						self.video_src = res.tempFilePath;
+						const tempFilePath = res.tempFilePath;
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							filePath: tempFilePath, 
+							name: 'file',
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '视频上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '视频上传失败！',
+										icon: 'none',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
+						});
 					}
 				});
 			},
 			uploadImage: function() {
 				var self = this;
 				uni.chooseImage({
-					count: 6, //默认9
+					count: 1, //默认9
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'],
 					success: function (res) {
-						self.image_src = res.tempFilePaths;
+						const tempFilePath = res.tempFilePaths[0];
 						console.log(self.image_src);
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							files: tempFilePath,
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '图片上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '图片上传失败！',
+										icon: 'none',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								}
+								console.log(uploadFileRes.data);
+							}
+						});
 					}
 				});
 			}
@@ -160,6 +235,13 @@
 </script>
 
 <style>
+.divider {
+	height: 1px;
+	background-color: #ccc;
+	/* 分割线的颜色 */
+	margin: 10px 0;
+	/* 分割线的上下间距 */
+}
 .grid-item-box {
 	flex: 1;
 	position: relative;
@@ -181,5 +263,5 @@
   border-radius: 5px;
   z-index: 10; /* 确保按钮在其他内容上方 */
   width: 100%;
-}
+} 
 </style>

@@ -74,18 +74,22 @@
 					</view>
 					<view class="divider"></view>
 					<view class="text_setting">
+						<!-- 录制视频按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_video()" src="../../../static/icon/video.png"
 								style="width: 30px; height: 30px;"></image>
 						</view>
+						<!-- 拍摄照片按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_picture()" src="../../../static/icon/photo.png"
 								style="width: 33px; height: 33px;"></image>
 						</view>
+						<!-- 录制音频按钮 -->
 						<view style="margin-right: 50px;">
 							<image @longpress="startRecording()" @touchend="stopRecording()"
 								src="../../../static/icon/micro.png" style="width: 32px; height: 32px;"></image>
 						</view>
+						<!-- 删除任务按钮 -->
 						<view>
 							<image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"
 								@click="deleteMisson"></image>
@@ -218,6 +222,7 @@
 				</view>
 			</uni-popup>
 		</view>
+		<!-- 发布告警弹窗 -->
 		<view>
 			<uni-popup ref="alert_form_popup" type="dialog">
 				<view class="example" style="background: #fff; border-radius: 5px; padding: 10px;">
@@ -454,7 +459,7 @@
 						name: '百度地图'
 					},
 					{
-						src: '../../../static/icon/outline.png',
+						src: '../../../static/icon/offline.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '离线地图'
 					},
@@ -575,6 +580,37 @@
 						uni.previewImage({
 							urls: [tempFilePath]
 						});
+						// 文件上传
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							filePath: tempFilePath,
+							name: 'file',
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '图片上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '图片上传失败！',
+										icon: 'none',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
+						});
 					},
 					fail: function(err) {
 						console.error('拍照失败：', err);
@@ -593,6 +629,37 @@
 						const tempFilePath = res.tempFilePath;
 						self.filePaths.videoPath = res.tempFilePath;
 						console.log('录像成功，文件路径：', tempFilePath);
+						// 文件上传
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							filePath: tempFilePath,
+							name: 'file',
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '视频上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 1秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '视频上传失败！',
+										icon: 'none',
+										//显示持续时间为 1秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
+						});
 					},
 					fail: function(err) {
 						console.error('录像失败：', err);
@@ -657,12 +724,6 @@
 			},
 			close_task_instructions() {
 				this.$refs.task_instructions.close()
-			},
-			closeDeleteTaskPopup() {
-				this.$refs.deleteTaskPopup.close()
-			},
-			openDeleteTaskPopup() {
-				this.$refs.deleteTaskPopup.open()
 			},
 			goToDocument() {
 				uni.navigateTo({
