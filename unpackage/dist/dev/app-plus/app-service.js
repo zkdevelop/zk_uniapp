@@ -5910,6 +5910,7 @@ ${i3}
             longitude: e2.longitude
           }));
           uni.hideLoading();
+          formatAppLog("info", "at pages/task/task.vue:116", this.taskItem[0].id);
         });
       },
       getItems(index) {
@@ -5959,7 +5960,7 @@ ${i3}
       },
       showType(tbIndex) {
         this.tabbarIndex = tbIndex;
-        formatAppLog("info", "at pages/task/task.vue:175", this.tabbarIndex);
+        formatAppLog("info", "at pages/task/task.vue:176", this.tabbarIndex);
       },
       filterUpcomingTasks() {
         return this.taskItem.filter((item) => item.type === "1");
@@ -10158,9 +10159,38 @@ ${i3}
             uni.previewImage({
               urls: [tempFilePath]
             });
+            uni.uploadFile({
+              url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
+              filePath: tempFilePath,
+              name: "file",
+              header: {
+                "Content-Type": "application/form-data;charset=UTF-8",
+                "Authorization": "Bearer " + uni.getStorageSync("token")
+              },
+              success: (uploadFileRes) => {
+                var res2 = JSON.parse(uploadFileRes.data);
+                if (res2.code === 200) {
+                  uni.showToast({
+                    title: "图片上传成功！",
+                    //将值设置为 success 或者直接不用写icon这个参数
+                    icon: "success",
+                    //显示持续时间为 2秒
+                    duration: 2e3
+                  });
+                } else {
+                  uni.showToast({
+                    title: "图片上传失败！",
+                    icon: "none",
+                    //显示持续时间为 2秒
+                    duration: 2e3
+                  });
+                }
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:535", uploadFileRes.data);
+              }
+            });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:509", "拍照失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:540", "拍照失败：", err);
           }
         });
       },
@@ -10176,22 +10206,18 @@ ${i3}
           success: function(res) {
             const tempFilePath = res.tempFilePath;
             self.filePaths.videoPath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:524", "录像成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:555", "录像成功，文件路径：", tempFilePath);
             uni.uploadFile({
-              url: "http://139.196.11.210:8500/communicate/minio/upload",
+              url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
               filePath: tempFilePath,
               name: "file",
-              formData: {
-                "isGroup": true,
-                "missionId": "",
-                "receptionId": ""
-              },
               header: {
                 "Content-Type": "application/form-data;charset=UTF-8",
                 "Authorization": "Bearer " + uni.getStorageSync("token")
               },
               success: (uploadFileRes) => {
-                if (uploadFileRes.data.status === 200) {
+                var res2 = JSON.parse(uploadFileRes.data);
+                if (res2.code === 200) {
                   uni.showToast({
                     title: "视频上传成功！",
                     //将值设置为 success 或者直接不用写icon这个参数
@@ -10207,37 +10233,37 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:556", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:584", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:561", "录像失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:589", "录像失败：", err);
           }
         });
       },
       startRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:566", "开始录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:594", "开始录音");
         this.recorderManager.start();
         uni.showLoading({
           title: "正在录音"
         });
       },
       stopRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:575", "录音结束");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:603", "录音结束");
         this.recorderManager.stop();
         uni.hideLoading();
       },
       playVoice() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:580", "播放录音");
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:581", "this.voicePath", this.filePaths.voicePath);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:608", "播放录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:609", "this.voicePath", this.filePaths.voicePath);
         if (this.filePaths.voicePath) {
           this.innerAudioContext.src = this.filePaths.voicePath;
           this.innerAudioContext.play();
         }
       },
       checkIndex(index) {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:588", index);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:616", index);
         this.navIndex = index;
       },
       delete_alert(index) {
@@ -10301,16 +10327,16 @@ ${i3}
       },
       submit(ref) {
         this.$refs[ref].validate().then((res) => {
-          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:661", "success", res);
+          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:689", "success", res);
           uni.showToast({
             title: `发布成功`
           });
         }).catch((err) => {
-          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:666", "err", err);
+          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:694", "err", err);
         });
         const now = /* @__PURE__ */ new Date();
         const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:674", formattedDateTime);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:702", formattedDateTime);
         this.alert_form_data.alert_time = formattedDateTime;
         this.alert_form_data.sender_name = "lihua";
         this.alert_data.push(this.alert_form_data);
@@ -10319,7 +10345,7 @@ ${i3}
       },
       // 设置经纬度
       setPoint() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:683", "setPoint");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:711", "setPoint");
         this.latitude = this.taskItem.latitude;
         this.longitude = this.taskItem.longitude;
       },

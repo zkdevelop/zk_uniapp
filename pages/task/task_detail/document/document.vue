@@ -156,19 +156,77 @@
 				uni.chooseVideo({
 					sourceType: ['camera', 'album'],
 					success: function (res) {
-						self.video_src = res.tempFilePath;
+						const tempFilePath = res.tempFilePath;
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							filePath: tempFilePath, 
+							name: 'file',
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '视频上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '视频上传失败！',
+										icon: 'none',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
+						});
 					}
 				});
 			},
 			uploadImage: function() {
 				var self = this;
 				uni.chooseImage({
-					count: 6, //默认9
+					count: 1, //默认9
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'],
 					success: function (res) {
-						self.image_src = res.tempFilePaths;
+						const tempFilePath = res.tempFilePaths[0];
 						console.log(self.image_src);
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							files: tempFilePath,
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '图片上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '图片上传失败！',
+										icon: 'none',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								}
+								console.log(uploadFileRes.data);
+							}
+						});
 					}
 				});
 			}
