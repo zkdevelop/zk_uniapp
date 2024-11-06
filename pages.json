@@ -159,6 +159,13 @@
 				"scrollIndicator": "none"
 			}
 		}
+	},
+	{
+		"path" : "pages/task/task_detail/document/uploadfile/uploadfile",
+		"style" : 
+		{
+			"navigationBarTitleText" : "文件上传"
+		}
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
