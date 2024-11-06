@@ -11,18 +11,29 @@ Vue.use(pinia)
 App.mpType = 'app'
 
 const app = new Vue({
+<<<<<<< HEAD
     ...App,
     pinia
+=======
+	...App
+>>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 })
 app.$mount()
 // #endif
 
 // #ifdef VUE3
+<<<<<<< HEAD
 import { createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
+=======
+import {
+	createSSRApp
+} from 'vue'
+>>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 import App from './App.vue'
 
 export function createApp() {
+<<<<<<< HEAD
   const app = createSSRApp(App)
   const pinia = createPinia()
   app.use(pinia)
@@ -30,5 +41,43 @@ export function createApp() {
     app,
     pinia
   }
+=======
+	const app = createSSRApp(App)
+	return {
+		app
+	}
+>>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 }
 // #endif
+
+
+// 修改main.js，在代码段末尾添加内容，这个是安卓版本的供参考
+// #ifdef APP-PLUS 
+import {
+	logout
+} from '@/utils/api/user'
+let main = plus.android.runtimeMainActivity();
+// 重写plus.runtime.quit
+plus.runtime.quit = function() {
+	uni.showModal({
+		title: '提示',
+		content: '是否退出应用？',
+		success: function(res) {
+			if (res.confirm) {
+				// 退出的时候操作的代码
+				// 退出登录
+				if (uni.getStorageSync('token') != "") {
+					logout().then(res => {
+						uni.removeStorageSync('token');
+						uni.removeStorageSync('userInfo');
+					})
+				}
+				// 退出当前应用， 改方法只在App中生效
+				main.finish();
+			} else if (res.cancel) {
+				// console.log('用户点击取消');  
+			}
+		}
+	});
+};
+// #endif 

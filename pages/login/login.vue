@@ -29,6 +29,7 @@
   </view>
 </template>
 
+<<<<<<< HEAD
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/store/userStore'
@@ -109,6 +110,85 @@ const checkLogin = async () => {
     })
   }
 }
+=======
+<script>
+	import {
+		login,
+		register
+	} from '@/utils/api/user.js'
+	export default {
+		data() {
+			return {
+				autoLogin: false, // 初始状态为未选中
+				username: 'test-app',
+				password: 'test123456'
+			};
+		},
+		methods: {
+			goToRegister() {
+				uni.navigateTo({
+					url: '/pages/register/register' // 替换为目标页面的路径
+				});
+			},
+			goToForgetPassword() {
+				uni.navigateTo({
+					url: '/pages/forgetPassword/forgetPassword'
+				})
+			},
+			goToFingerLogin() {
+				uni.navigateTo({
+					url: '/pages/fingerLogin/fingerLogin'
+				})
+			},
+			goToTask() {
+				uni.redirectTo({
+					url: '/pages/tabBar/tabBar'
+				})
+			},
+			toggleAutoLogin(e) {
+				this.autoLogin = e.detail.value.length > 0; // 根据选择框状态更新
+				if (this.autoLogin == true) {
+					uni.navigateTo({
+						url: '/pages/register/register' // 替换为目标页面的路径
+					});
+				}
+			},
+			checkLogin() {
+				var that = this;
+				// 显示加载中
+				uni.showLoading({
+					title: '正在登录',
+					mask:true
+				})
+				login({
+					account: this.username,
+					password: this.password
+				}).then(res => {
+					if (res.code == 200) {
+						// 存储成功登陆的账号密码
+						uni.setStorageSync(
+							'username', that.username
+						)
+						uni.setStorageSync(
+							'password', that.password
+						)
+						console.log(res.data.token, 'token')
+						uni.setStorageSync('token', res.data.token)
+						uni.setStorageSync('userInfo', res.data.account)
+						// 关闭加载中
+						uni.hideLoading();
+						uni.showToast({
+							title: '登录成功',
+							duration: 2000
+						}).then(
+							this.goToTask()
+						)
+					}
+				})
+			}
+		}
+	};
+>>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 </script>
 
 <style lang="scss">

@@ -1,6 +1,7 @@
 <template>
 	<!-- 地图容器 -->
-	<view id="map_container"></view>
+	<view id="map_container" :selectedIndex="selectedIndex" :change:selectedIndex="m.changeMap" :replay
+		:change:replay='m.replayMission' :position="position" :change:position='m.getPosition' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
 		<!-- 按钮组 -->
@@ -8,6 +9,9 @@
 			<!-- 左侧-选择任务状态按钮 -->
 			<view class="condition_selector">
 				<uni-data-select v-model="taskItem.type" :localdata="range" :clear="false"></uni-data-select>
+			</view>
+			<view class="condition_selector">
+				<button class="mini-btn" type="primary" size="mini" @click="missionReplay">行动回溯</button>
 			</view>
 			<!-- 右侧按钮组 -->
 			<view class="right-button-groups">
@@ -53,7 +57,7 @@
 			<uni-popup ref="popup" type="bottom" background-color="#fff" :mask-click="false">
 				<view class="detail" style="padding: 15px;">
 					<view class="detail_top">
-						<view><text>现地侦查横须贺基地情况</text></view>
+						<view><text>{{taskItem.task_name}}</text></view>
 						<view style="margin-right: 10px;" @click="close">
 							<image src="/static/icon/close.png" style="width: 15px; height: 15px;"></image>
 						</view>
@@ -70,20 +74,25 @@
 					</view>
 					<view class="divider"></view>
 					<view class="text_setting">
+						<!-- 录制视频按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_video()" src="../../../static/icon/video.png"
 								style="width: 30px; height: 30px;"></image>
 						</view>
+						<!-- 拍摄照片按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_picture()" src="../../../static/icon/photo.png"
 								style="width: 33px; height: 33px;"></image>
 						</view>
+						<!-- 录制音频按钮 -->
 						<view style="margin-right: 50px;">
 							<image @longpress="startRecording()" @touchend="stopRecording()"
 								src="../../../static/icon/micro.png" style="width: 32px; height: 32px;"></image>
 						</view>
+						<!-- 删除任务按钮 -->
 						<view>
-							<image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"></image>
+							<image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"
+								@click="deleteMisson"></image>
 						</view>
 					</view>
 				</view>
@@ -213,6 +222,7 @@
 				</view>
 			</uni-popup>
 		</view>
+		<!-- 发布告警弹窗 -->
 		<view>
 			<uni-popup ref="alert_form_popup" type="dialog">
 				<view class="example" style="background: #fff; border-radius: 5px; padding: 10px;">
@@ -240,89 +250,150 @@
 	</view>
 </template>
 
-<script module="map" lang="renderjs">
+<script module="m" lang="renderjs">
 	import {
 		loadBaiduMapScript,
 		loadMapScript
 	} from "./map.js";
-
+	import {
+		points
+	} from "../../../static/route/points.js"
 	var map = null;
 	export default {
 		data() {
 			return {
 				baiduApiKey: 'A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD',
 				gaodeApiKey: 'caa070a3ebda631bea2feff72972f28c',
-				gaodeSecurityKey: '93849873dba769e7b6235a79330ae7f7'
+				gaodeSecurityKey: '93849873dba769e7b6235a79330ae7f7',
+				position: {
+					longitude: 116.397428,
+					latitude: 39.90923,
+				},
+				mapType: 0,
+				map: null
 			}
 		},
-
-		created() {
-			// ================百度地图==================
-			// loadBaiduMapScript(this.baiduApiKey).then((loadBaiduMapScript) => {
-			// 创建百度地图实例
-			// map = new BMapGL.Map("map_container");
-			// console.log(bmap, 'this.map ')
-			// var point = new BMapGL.Point(116.404, 39.915);
-			// map.centerAndZoom(point, 12); // 初始化地图,设置中心点坐标和地图级别
-			// map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
-			// });
+		mounted() {
 			// ================加载地图==================
 			loadMapScript(this.baiduApiKey, this.gaodeApiKey, this.gaodeSecurityKey).then(() => {
-				map = new AMap.Map('map_container', {
-					divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
-					zoom: 12, // 初始化地图层级
-					center: [116.397428, 39.90923] // 初始化地图中心点
-				});
-				// 创建点覆盖物
-				var marker = new AMap.Marker({
-					position: new AMap.LngLat(116.39, 39.92),
-					icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
-					offset: new AMap.Pixel(-13, -30)
-				});
-				map.add(marker);
-				window.map = map;
-				// 创建百度地图实例
-				// map = new BMapGL.Map("map_container");
-				
-				// var point = new BMapGL.Point(116.404, 39.915);
-				// map.centerAndZoom(point, 12); // 初始化地图,设置中心点坐标和地图级别
-				// map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
-			})
-		},
-		mounted() {
-
+				this.$ownerInstance.callMethod('setPoint');
+			});
 		},
 		methods: {
+			getPosition(position) {
+				this.position = position;
+				this.$nextTick(() => {
+					this.changeMap(this.mapType);
+				});
+			},
 			changeMap(mapType) {
+				this.mapType = mapType;
 				switch (mapType) {
 					case 0:
 
 					case 1:
+
 						map = new AMap.Map('map_container', {
 							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
-							zoom: 11, // 初始化地图层级
-							center: [116.397428, 39.90923] // 初始化地图中心点
+							zoom: 12, // 初始化地图层级
+							center: [this.position.longitude, this.position.latitude] // 初始化地图中心点
 						});
-						window.map = map;
+						this.map = map;
+						// 加载行动轨迹
+						let prev = null;
+						let index = 0
+						for (let index = 0; index < points.length; index++) {
+							let curr = points[index];
+							// 加载地图点
+							map.add(this.getMarker(curr))
+							// 加载连线
+							if (index > 0) {
+								this.initLine([prev.longitude, prev.latitude], [curr.longitude, curr.latitude])
+							}
+							prev = points[index];
+						}
 						break;
 					case 2:
-						console.log(initMap)
 						map = new BMapGL.Map("map_container");
-						map.centerAndZoom(new BMapGL.Point(116.404, 39.915), 12); // 初始化地图,设置中心点坐标和地图级别
-						map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
-						window.map = map;
+						map.centerAndZoom(new BMapGL.Point(this.position.longitude, this.position.latitude),
+							12); // 初始化地图,设置中心点坐标和地图级别
+						this.map = map;
 						break;
 					case 3:
 						break;
 					default:
 						break;
 				}
-			}
+			},
+			replayMission(replay) {
+				// console.log(replay,'replay')
+				switch (this.mapType) {
+					case 0:
+
+					case 1:
+						let index = 0;
+						// const interval = setInterval(() => {
+						// 	if (index >= points.length||this.replay) {
+						// 		clearInterval(interval);
+						// 		return;
+						// 	}
+						// 	const point = points[index];
+						// 	this.map.setCenter([point.longitude, point.latitude]);
+						// 	index++;
+						// }, 5000);
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+					default:
+						break;
+				}
+			},
+			getMarker(point) {
+				let marker = new AMap.Marker({
+					//经纬度位置
+					position: new AMap.LngLat(point.longitude, point.latitude),
+					//便宜量
+					offset: new AMap.Pixel(-10, -24),
+					//图标
+					icon: new AMap.Icon({
+						//大小
+						size: new AMap.Size(20, 25),
+						imageSize: new AMap.Size(20, 25),
+						// image: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/em.jpg'
+						image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
+					}),
+					//图标展示层级，防止被隐藏时编写
+					zIndex: 100,
+					//图标旁边展示内容
+					label: {
+						content: `<view style="display:flex;flex-direction:column"><text>${point.description}</text>
+						<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`,
+						offset: new AMap.Pixel(10, -18)
+					}
+				})
+				return marker;
+			},
+			//绘制点与点之间的线段 Polyline类
+			initLine(start, end) {
+				let polyline = new AMap.Polyline({
+					//颜色
+					strokeColor: '#ff0000',
+					//起点与终点经纬度[[longitudeStart,latitudeStart],[longitudeEnd,latitudeEnd]]
+					path: [start, end]
+				})
+				//添加线段
+				this.map.add(polyline)
+			},
 		}
 	}
 </script>
 
 <script>
+	import {
+		deleteMission
+	} from '@/utils/api/mission.js'
 	export default {
 		data() {
 			return {
@@ -367,18 +438,11 @@
 						value: '紧急告警'
 					},
 				],
-				// task:{
-				//                 task_name: '现地侦察横须滨基地情况',
-				// 	country: '日本',
-				//                 position: '横须滨',
-				//                 start_time: '2024.05.03',
-				//                 end_time: '2026.02.01',
-				//                 type: '进行中',
-				//                 status: '待处理',
-				// 	description: '前往目的地展开行动',
-				// 	key: '123456'
-				//             },
 				taskItem: {},
+				position: {
+					longitude: 116.397428,
+					latitude: 39.90923,
+				},
 				map_options: [{
 						src: '../../../static/icon/google.png',
 						htmlSrc: '/static/html/map_gaode.html',
@@ -395,7 +459,7 @@
 						name: '百度地图'
 					},
 					{
-						src: '../../../static/icon/outline.png',
+						src: '../../../static/icon/offline.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '离线地图'
 					},
@@ -474,7 +538,8 @@
 						alert_content: '行动继续'
 					},
 				],
-				map: null
+				// 行动回溯，false停止，true播放
+				replay: false
 			}
 		},
 		onNavigationBarButtonTap() {
@@ -484,7 +549,6 @@
 			// 页面加载时执行
 			if (options.taskItem) {
 				this.taskItem = JSON.parse(options.taskItem); // 设置类型
-				console.log(this.task);
 			} else {
 				console.error('没有传递类型参数');
 			};
@@ -500,7 +564,6 @@
 				console.log('recorder stop' + JSON.stringify(res));
 				self.filePaths.voicePath = res.tempFilePath;
 			});
-
 		},
 		methods: {
 			take_picture() {
@@ -516,6 +579,37 @@
 						// 这里可以进行图片的预览、上传等操作
 						uni.previewImage({
 							urls: [tempFilePath]
+						});
+						// 文件上传
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							filePath: tempFilePath,
+							name: 'file',
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '图片上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '图片上传失败！',
+										icon: 'none',
+										//显示持续时间为 2秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
 						});
 					},
 					fail: function(err) {
@@ -535,6 +629,37 @@
 						const tempFilePath = res.tempFilePath;
 						self.filePaths.videoPath = res.tempFilePath;
 						console.log('录像成功，文件路径：', tempFilePath);
+						// 文件上传
+						uni.uploadFile({
+							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							filePath: tempFilePath,
+							name: 'file',
+							header: {
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+							},
+							success: (uploadFileRes) => {
+								var res = JSON.parse(uploadFileRes.data);
+								if (res.code === 200) {
+									uni.showToast({
+										title: '视频上传成功！',
+										//将值设置为 success 或者直接不用写icon这个参数
+										icon: 'success',
+										//显示持续时间为 1秒
+										duration: 2000
+									});
+								} else{
+									uni.showToast({
+										title: '视频上传失败！',
+										icon: 'none',
+										//显示持续时间为 1秒
+										duration: 2000
+									});
+								}
+								
+								console.log(uploadFileRes.data);
+							}
+						});
 					},
 					fail: function(err) {
 						console.error('录像失败：', err);
@@ -605,9 +730,13 @@
 					url: '/pages/task/task_detail/document/document'
 				})
 			},
+			goToMainPage() {
+				uni.redirectTo({
+					url: '/pages/tabBar/tabBar'
+				})
+			},
 			selectImage(index) {
 				this.selectedIndex = index; // 设置选中索引
-				this.changeMap(index)
 				this.$refs.map_selector.close()
 				// if (index === 1) {
 				// 	uni.navigateTo({
@@ -653,28 +782,41 @@
 				this.alert_data_mine.push(this.alert_form_data);
 				this.$refs.alert_form_popup.close()
 			},
-			changeMap(mapType) {
-				switch (mapType) {
-					case 0:
-
-					case 1:
-						window.map = new AMap.Map('map_container', {
-							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
-							zoom: 12, // 初始化地图层级
-							center: [116.397428, 39.90923] // 初始化地图中心点
+			// 设置经纬度
+			setPoint() {
+				this.position.latitude = this.taskItem.latitude;
+				this.position.longitude = this.taskItem.longitude;
+			},
+			// 删除任务
+			deleteMisson() {
+				const id = this.taskItem.id;
+				uni.showModal({
+					title: '提示',
+					content: '确定删除任务？',
+					success: function(res) {
+						uni.showLoading({
+							title: "正在删除",
+							mask: true
 						});
-						break;
-					case 2:
-						map = new BMapGL.Map("map_container");
-						map.centerAndZoom(new BMapGL.Point(120.686250, 24.182220), 12); // 初始化地图,设置中心点坐标和地图级别
-						map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
-						window.map = map;
-						break;
-					case 3:
-						break;
-					default:
-						break;
-				}
+						deleteMission(id).then((res) => {
+							uni.hideLoading();
+							if (res.code == 200) {
+								uni.showToast({
+									title: '删除成功',
+									duration: 2000
+								})
+							} else {
+								uni.showToast({
+									title: res.msg,
+									duration: 2000
+								})
+							}
+						})
+					}
+				});
+			},
+			missionReplay() {
+				this.replay = !this.replay;
 			}
 		}
 	}
@@ -701,7 +843,9 @@
 		justify-content: space-between;
 		/* 两侧分开 */
 		padding: 15px;
-		z-index: 100;
+		width: 100%;
+		// 消除内边距影响
+		box-sizing: border-box;
 		position: absolute;
 		top: 0;
 		left: 0;

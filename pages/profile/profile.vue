@@ -92,49 +92,107 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import OptionPicker from './OptionPicker.vue'
-import { useUserStore } from '@/store/userStore'
-import { useWebSocket } from '@/pages/WebSocket/WebSocketService.vue'
-
-const userStore = useUserStore()
-const { disconnect } = useWebSocket()
-
-const settingItems = reactive([
-  { label: '定位信息回传间隔', value: '5分钟' },
-  { label: '文件本地存储策略', value: '7天' },
-  { label: '修改密码', value: '' },
-])
-
-const showConfirmDialog = ref(false)
-const confirmMessage = ref('')
-const deleteType = ref('')
-const selectedStorageStrategy = ref('7天')
-const storageOptions = [
-  { label: '7天', value: '7天' },
-  { label: '15天', value: '15天' },
-  { label: '30天', value: '30天' },
-]
-const selectedLocationInterval = ref('5分钟')
-const locationIntervalOptions = [
-  { label: '1分钟', value: '1分钟' },
-  { label: '5分钟', value: '5分钟' },
-  { label: '10分钟', value: '10分钟' },
-  { label: '30分钟', value: '30分钟' },
-]
-const showPicker = ref(false)
-const pickerTitle = ref('')
-const pickerOptions = ref([])
-const pickerSelectedValue = ref('')
-const pickerType = ref('')
-
-const onSettingItemClick = (item) => {
-  if (item.label === '文件本地存储策略') {
-    openPicker('storage', '文件本地存储策略', storageOptions, selectedStorageStrategy.value)
-  } else if (item.label === '定位信息回传间隔') {
-    openPicker('location', '定位信息回传间隔', locationIntervalOptions, selectedLocationInterval.value)
-  } else if (item.label === '修改密码') {
-    uni.navigateTo({
-      url: '/pages/forgetPassword/forgetPassword'
-    })
+import { logout } from '@/utils/api/user'; 
+export default {
+  name: 'MainPage',
+  components: {
+    OptionPicker,
+  },
+  data() {
+    return {
+      settingItems: [
+        { label: '定位信息回传间隔', value: '5分钟' },
+        { label: '文件本地存储策略', value: '7天' },
+        { label: '修改密码', value: '' },
+      ],
+      showConfirmDialog: false,
+      confirmMessage: '',
+      deleteType: '',
+      selectedStorageStrategy: '7天',
+      storageOptions: [
+        { label: '7天', value: '7天' },
+        { label: '15天', value: '15天' },
+        { label: '30天', value: '30天' },
+      ],
+      selectedLocationInterval: '5分钟',
+      locationIntervalOptions: [
+        { label: '1分钟', value: '1分钟' },
+        { label: '5分钟', value: '5分钟' },
+        { label: '10分钟', value: '10分钟' },
+        { label: '30分钟', value: '30分钟' },
+      ],
+      showPicker: false,
+      pickerTitle: '',
+      pickerOptions: [],
+      pickerSelectedValue: '',
+      pickerType: '',
+    }
+  },
+  methods: {
+    onSettingItemClick(item) {
+      if (item.label === '文件本地存储策略') {
+        this.openPicker('storage', '文件本地存储策略', this.storageOptions, this.selectedStorageStrategy);
+      } else if (item.label === '定位信息回传间隔') {
+        this.openPicker('location', '定位信息回传间隔', this.locationIntervalOptions, this.selectedLocationInterval);
+      } else if (item.label === '修改密码') {
+		  uni.navigateTo({
+		  	url: '/pages/forgetPassword/forgetPassword'
+		  })
+	  }
+    },
+    openPicker(type, title, options, selectedValue) {
+      this.pickerType = type;
+      this.pickerTitle = title;
+      this.pickerOptions = options;
+      this.pickerSelectedValue = selectedValue;
+      this.showPicker = true;
+    },
+    closePicker() {
+      this.showPicker = false;
+    },
+    selectOption(value) {
+      if (this.pickerType === 'storage') {
+        this.selectedStorageStrategy = value;
+        this.settingItems.find(item => item.label === '文件本地存储策略').value = value;
+      } else if (this.pickerType === 'location') {
+        this.selectedLocationInterval = value;
+        this.settingItems.find(item => item.label === '定位信息回传间隔').value = value;
+      }
+      this.closePicker();
+    },
+    showDeleteConfirm(type) {
+      this.deleteType = type;
+      this.confirmMessage = type === 'chat' ? '确定删除聊天记录吗？' : '您确认要删除所有数据吗？';
+      this.showConfirmDialog = true;
+    },
+    cancelDelete() {
+      this.showConfirmDialog = false;
+    },
+    confirmDelete() {
+      if (this.deleteType === 'chat') {
+        console.log('聊天记录已删除');
+      } else {
+        console.log('所有数据已删除');
+      }
+      this.showConfirmDialog = false;
+    },
+	logout(){
+		uni.removeStorageSync('token')
+		uni.showLoading({
+			title: '正在退出登录',
+			mask: true
+		})
+		if (uni.getStorageSync('token') != "") {
+			logout().then(res => {
+				uni.removeStorageSync('token');
+				uni.removeStorageSync('userInfo');
+				uni.redirectTo({
+					url: '/pages/login/login'
+				})
+				uni.hideLoading();
+			})
+		}
+	}
   }
 }
 

@@ -21,6 +21,10 @@
     "Maps": {
       "coordType": "gcj02"
     },
+    "Camera": {},
+    "Fingerprint": {},
+    "VideoPlayer": {},
+    "Record": {},
     "UniNView": {
       "description": "UniNView原生渲染"
     }
@@ -46,6 +50,11 @@
     "nvueCompiler": "uni-app",
     "nvueStyleCompiler": "uni-app",
     "distribute": {
+      "distribute": {
+        "orientation": [
+          "portrait-primary"
+        ]
+      },
       "google": {
         "permissions": [
           "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
@@ -68,6 +77,10 @@
           "<uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />",
           "<uses-permission android:name=\"android.permission.READ_MEDIA_VIDEO\" />",
           "<uses-permission android:name=\"android.permission.READ_MEDIA_VISUAL_USER_SELECTED\" />"
+        ],
+        "abiFilters": [
+          "arm64-v8a",
+          "x86"
         ]
       },
       "apple": {},
@@ -83,7 +96,6 @@
           "amap": {
             "name": "tb2751599983",
             "__platform__": [
-              "ios",
               "android"
             ],
             "appkey_ios": "a3aa001dee8b84d305fa977dd504830c",

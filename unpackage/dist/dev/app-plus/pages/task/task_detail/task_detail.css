@@ -1448,20 +1448,28 @@
 /* 水平间距 */
 /* 水平间距 */
 .layout_task_detail {
-  height: 100vh;
   /* 确保填满整个视口 */
-  background-image: url("../../../static/images/taiwan_map.jpg");
-  /* 替换为你的图片路径 */
-  background-size: cover;
-  /* 使背景图覆盖整个视图 */
-  background-position: center;
-  /* 背景图居中 */
+  height: calc(100vh - 44px);
+  z-index: 20;
+}
+#map_container {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  tip: 0;
+  z-index: 0;
 }
 .condition_icons {
   display: flex;
   justify-content: space-between;
   /* 两侧分开 */
   padding: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .condition_selector {
   width: 70px;

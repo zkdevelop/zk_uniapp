@@ -16,3 +16,10 @@ export const register = (params) => {
 		data:params
 	})
 }
+// 退出登录
+export const logout = (params) => {
+	return request({
+		url: '/user/logout',
+		method: 'post',
+	})
+}

@@ -1,7 +1,7 @@
 // request.js
 
 import {backendHost} from '/config.js';
-const BASE_URL = backendHost+"/communicate"; // 替换为你的基础URL
+const BASE_URL = backendHost; // 替换为你的基础URL
 
 // 请求超出时间
 const timeout = 5000
@@ -17,6 +17,8 @@ export default (params) => {
 		...params.header
 	}
 	return new Promise((resolve, reject) => {
+		// console.log(BASE_URL + url)
+		// console.log(data)
 		uni.request({
 			url: BASE_URL + url,
 			method: method,
@@ -24,14 +26,16 @@ export default (params) => {
 			data: data,
             timeout,
 			success(response) {
+				// console.log('request-success')
 				const res = response
+				// console.log(res)
 				// 根据返回的状态码做出对应的操作
 				//获取成功
 				// console.log(res.statusCode);
 				if (res.statusCode == 200) {
 					resolve(res.data);
 				} else {
-					uni.clearStorageSync()
+					// uni.clearStorageSync()
 					switch (res.statusCode) {
 						case 404:
 							uni.showToast({
@@ -49,6 +53,7 @@ export default (params) => {
 				}
 			},
 			fail(err) {
+				// console.log('request-fail')
 				console.log(err)
 				if (err.errMsg.indexOf('request:fail') !== -1) {
 					uni.showToast({
@@ -63,7 +68,6 @@ export default (params) => {
 					})
 				}
 				reject(err);
- 
 			},
 			complete() {
 				// 不管成功还是失败都会执行
