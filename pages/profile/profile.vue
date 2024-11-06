@@ -1,23 +1,23 @@
 <template>
   <view>
     <view class="container">
-      <!-- 用户头像和名称 -->
+      <!-- 用户头像、名称、用户名和手机 -->
       <view class="user-info">
-        <image class="avatar" src="/static/avatar-placeholder.png"></image>
-        <view class="name-container">
-          <text class="name">张宁鹏</text>
-          <text class="edit-icon">✎</text>
+        <image class="avatar" :src="userStore.state.avatarUrl || '/static/my/默认头像.svg'"></image>
+        <view class="user-details">
+          <view class="name-container">
+            <text class="name">{{ userStore.state.name }}</text>
+            <image class="edit-icon" src="/static/my/编辑.svg"></image>
+          </view>
+          <view class="info-item">
+            <text class="info-label">用户名：</text>
+            <text class="info-value">{{ userStore.state.account }}</text>
+          </view>
+          <view class="info-item">
+            <text class="info-label">手机：</text>
+            <text class="info-value">{{ userStore.state.phone }}</text>
+          </view>
         </view>
-      </view>
-
-      <!-- 用户名和设备IP -->
-      <view class="info-item">
-        <text class="info-label">用户名:</text>
-        <text class="info-value">zhangningp</text>
-      </view>
-      <view class="info-item">
-        <text class="info-label">设备IP:</text>
-        <text class="info-value">192.168.178.1</text>
       </view>
 
       <!-- 位置共享开关 -->
@@ -28,11 +28,24 @@
 
       <!-- 设置选项列表 -->
       <view class="setting-list">
-        <view class="setting-item" v-for="(item, index) in settingItems" :key="index" @click="onSettingItemClick(item)">
-          <text>{{ item.label }}</text>
+        <view class="setting-item" @click="onSettingItemClick(settingItems[0])">
+          <text>定位信息回传间隔</text>
           <view class="setting-value">
-            <text>{{ item.value }}</text>
-            <text class="arrow">></text>
+            <text class="setting-value-text">5分钟</text>
+            <image class="expand-icon" src="/static/my/展开.svg"></image>
+          </view>
+        </view>
+        <view class="setting-item" @click="onSettingItemClick(settingItems[1])">
+          <text>文件本地存储策略</text>
+          <view class="setting-value">
+            <text class="setting-value-text">7天</text>
+            <image class="expand-icon" src="/static/my/展开.svg"></image>
+          </view>
+        </view>
+        <view class="setting-item" @click="onSettingItemClick(settingItems[2])">
+          <text>修改密码</text>
+          <view class="setting-value">
+            <image class="expand-icon" src="/static/my/展开.svg"></image>
           </view>
         </view>
       </view>
@@ -76,145 +89,166 @@
   </view>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive } from 'vue'
 import OptionPicker from './OptionPicker.vue'
+import { useUserStore } from '@/store/userStore'
+import { useWebSocket } from '@/pages/WebSocket/WebSocketService.vue'
 
-export default {
-  name: 'MainPage',
-  components: {
-    OptionPicker,
-  },
-  data() {
-    return {
-      settingItems: [
-        { label: '定位信息回传间隔', value: '5分钟' },
-        { label: '文件本地存储策略', value: '7天' },
-        { label: '修改密码', value: '' },
-      ],
-      showConfirmDialog: false,
-      confirmMessage: '',
-      deleteType: '',
-      selectedStorageStrategy: '7天',
-      storageOptions: [
-        { label: '7天', value: '7天' },
-        { label: '15天', value: '15天' },
-        { label: '30天', value: '30天' },
-      ],
-      selectedLocationInterval: '5分钟',
-      locationIntervalOptions: [
-        { label: '1分钟', value: '1分钟' },
-        { label: '5分钟', value: '5分钟' },
-        { label: '10分钟', value: '10分钟' },
-        { label: '30分钟', value: '30分钟' },
-      ],
-      showPicker: false,
-      pickerTitle: '',
-      pickerOptions: [],
-      pickerSelectedValue: '',
-      pickerType: '',
-    }
-  },
-  methods: {
-    onSettingItemClick(item) {
-      if (item.label === '文件本地存储策略') {
-        this.openPicker('storage', '文件本地存储策略', this.storageOptions, this.selectedStorageStrategy);
-      } else if (item.label === '定位信息回传间隔') {
-        this.openPicker('location', '定位信息回传间隔', this.locationIntervalOptions, this.selectedLocationInterval);
-      } else if (item.label === '修改密码') {
-		  uni.navigateTo({
-		  	url: '/pages/forgetPassword/forgetPassword'
-		  })
-	  }
-    },
-    openPicker(type, title, options, selectedValue) {
-      this.pickerType = type;
-      this.pickerTitle = title;
-      this.pickerOptions = options;
-      this.pickerSelectedValue = selectedValue;
-      this.showPicker = true;
-    },
-    closePicker() {
-      this.showPicker = false;
-    },
-    selectOption(value) {
-      if (this.pickerType === 'storage') {
-        this.selectedStorageStrategy = value;
-        this.settingItems.find(item => item.label === '文件本地存储策略').value = value;
-      } else if (this.pickerType === 'location') {
-        this.selectedLocationInterval = value;
-        this.settingItems.find(item => item.label === '定位信息回传间隔').value = value;
-      }
-      this.closePicker();
-    },
-    showDeleteConfirm(type) {
-      this.deleteType = type;
-      this.confirmMessage = type === 'chat' ? '确定删除聊天记录吗？' : '您确认要删除所有数据吗？';
-      this.showConfirmDialog = true;
-    },
-    cancelDelete() {
-      this.showConfirmDialog = false;
-    },
-    confirmDelete() {
-      if (this.deleteType === 'chat') {
-        console.log('聊天记录已删除');
-      } else {
-        console.log('所有数据已删除');
-      }
-      this.showConfirmDialog = false;
-    },
-	logout(){
-		uni.redirectTo({
-			url: '/pages/login/login'
-		})
-	}
+const userStore = useUserStore()
+const { disconnect } = useWebSocket()
+
+const settingItems = reactive([
+  { label: '定位信息回传间隔', value: '5分钟' },
+  { label: '文件本地存储策略', value: '7天' },
+  { label: '修改密码', value: '' },
+])
+
+const showConfirmDialog = ref(false)
+const confirmMessage = ref('')
+const deleteType = ref('')
+const selectedStorageStrategy = ref('7天')
+const storageOptions = [
+  { label: '7天', value: '7天' },
+  { label: '15天', value: '15天' },
+  { label: '30天', value: '30天' },
+]
+const selectedLocationInterval = ref('5分钟')
+const locationIntervalOptions = [
+  { label: '1分钟', value: '1分钟' },
+  { label: '5分钟', value: '5分钟' },
+  { label: '10分钟', value: '10分钟' },
+  { label: '30分钟', value: '30分钟' },
+]
+const showPicker = ref(false)
+const pickerTitle = ref('')
+const pickerOptions = ref([])
+const pickerSelectedValue = ref('')
+const pickerType = ref('')
+
+const onSettingItemClick = (item) => {
+  if (item.label === '文件本地存储策略') {
+    openPicker('storage', '文件本地存储策略', storageOptions, selectedStorageStrategy.value)
+  } else if (item.label === '定位信息回传间隔') {
+    openPicker('location', '定位信息回传间隔', locationIntervalOptions, selectedLocationInterval.value)
+  } else if (item.label === '修改密码') {
+    uni.navigateTo({
+      url: '/pages/forgetPassword/forgetPassword'
+    })
   }
+}
+
+const openPicker = (type, title, options, selectedValue) => {
+  pickerType.value = type
+  pickerTitle.value = title
+  pickerOptions.value = options
+  pickerSelectedValue.value = selectedValue
+  showPicker.value = true
+}
+
+const closePicker = () => {
+  showPicker.value = false
+}
+
+const selectOption = (value) => {
+  if (pickerType.value === 'storage') {
+    selectedStorageStrategy.value = value
+    settingItems.find(item => item.label === '文件本地存储策略').value = value
+  } else if (pickerType.value === 'location') {
+    selectedLocationInterval.value = value
+    settingItems.find(item => item.label === '定位信息回传间隔').value = value
+  }
+  closePicker()
+}
+
+const showDeleteConfirm = (type) => {
+  deleteType.value = type
+  confirmMessage.value = type === 'chat' ? '确定删除聊天记录吗？' : '您确认要删除所有数据吗？'
+  showConfirmDialog.value = true
+}
+
+const cancelDelete = () => {
+  showConfirmDialog.value = false
+}
+
+const confirmDelete = () => {
+  if (deleteType.value === 'chat') {
+    console.log('聊天记录已删除')
+  } else {
+    console.log('所有数据已删除')
+  }
+  showConfirmDialog.value = false
+}
+
+const logout = () => {
+  userStore.clearUserData()
+  
+  // 在登出前断开 WebSocket  连接
+  disconnect()
+
+  uni.removeStorageSync('token')
+  uni.removeStorageSync('userInfo')
+  
+  uni.redirectTo({
+    url: '/pages/login/login'
+  })
 }
 </script>
 
 <style>
 .container {
-  padding: 20px;
+  padding: 0;
   background-color: #f5f5f5;
   min-height: 100vh;
-  box-sizing: border-box;
-  padding-bottom: 60px;
 }
 
 .user-info {
   display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  padding: 20px 17px;
+  background-color: #fff;
+  margin-bottom: 1px;
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 73px;
+  height: 73px;
+  border-radius: 4px;
   background-color: #4285f4;
 }
 
+.user-details {
+  margin-left: 14px;
+  flex: 1;
+}
+
 .name-container {
-  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .name {
   font-size: 18px;
   font-weight: bold;
+  margin-right: 10px;
 }
 
 .edit-icon {
-  margin-left: 5px;
-  color: #4285f4;
+  width: 16px;
+  height: 16px;
 }
 
 .info-item {
   display: flex;
-  margin-bottom: 10px;
+  height: 16px;
+  line-height: 16px;
+  margin-bottom: 5px;
 }
 
 .info-label {
   color: #666;
-  width: 80px;
+  min-width: 70px;
 }
 
 .info-value {
@@ -225,20 +259,23 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 20px 0;
+  padding: 15px 20px;
+  background-color: #fff;
 }
 
 .setting-list {
   background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .setting-item {
   display: flex;
   justify-content: space-between;
-  padding: 15px;
+  padding: 15px 20px;
   border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
 }
 
 .setting-value {
@@ -246,25 +283,35 @@ export default {
   align-items: center;
 }
 
-.arrow {
-  color: #ccc;
-  margin-left: 5px;
+.setting-value-text {
+  color: #4285f4;
+  margin-right: 5px;
 }
 
-.delete-chat, .delete-all {
+.expand-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.delete-chat {
   background-color: #fff;
   padding: 15px;
   text-align: center;
-  margin-top: 20px;
-  border-radius: 8px;
+  margin-top: 11px;
+  margin-bottom: 6px;
+}
+
+.delete-all {
+  background-color: #fff;
+  padding: 15px;
+  text-align: center;
+  margin-bottom: 6px;
 }
 
 .logout {
   background-color: #fff;
   padding: 15px;
   text-align: center;
-  margin-top: 20px;
-  border-radius: 8px;
   color: #ff3b30;
 }
 
