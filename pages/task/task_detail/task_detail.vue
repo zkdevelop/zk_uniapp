@@ -1,7 +1,7 @@
 <template>
 	<!-- 地图容器 -->
-	<view id="map_container" :selectedIndex="selectedIndex" :change:selectedIndex="m.changeMap" :replay
-		:change:replay='m.replayMission' :position="position" :change:position='m.getPosition' />
+	<view id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
+		:change:replay='m.getReplay' :position="position" :change:position='m.getPosition' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
 		<!-- 按钮组 -->
@@ -11,7 +11,14 @@
 				<uni-data-select v-model="taskItem.type" :localdata="range" :clear="false"></uni-data-select>
 			</view>
 			<view class="condition_selector">
-				<button class="mini-btn" type="primary" size="mini" @click="missionReplay">行动回溯</button>
+				<button class="mini-btn" type="primary" size="mini" @click="setReplay(!replay)">
+					<text v-if="!replay">
+						行动回溯
+					</text>
+					<text v-else>
+						正在回溯
+					</text>
+				</button>
 			</view>
 			<!-- 右侧按钮组 -->
 			<view class="right-button-groups">
@@ -113,8 +120,11 @@
 						<view class="map_icons">
 							<view v-for="(item, index) in map_options" :key="index">
 								<view class="map_icon" style="margin: 0 15px;">
-									<image :class="{ 'selected': selectedIndex === index }" @click="selectImage(index)"
-										:src=item.src style="width: 55px; height: 55px; border-radius: 15px;"></image>
+									<!-- 									<image :class="{ 'selected': selectedIndex === index }" @click="selectImage(index)"
+										:src=item.src style="width: 55px; height: 55px; border-radius: 15px;"></image> -->
+									<image :class="{ 'selected': selectedMap === item.key }"
+										@click="selectImage(item.key)" :src=item.src
+										style="width: 55px; height: 55px; border-radius: 15px;"></image>
 								</view>
 								<view style="text-align: center;"><text>{{ item.name }}</text></view>
 							</view>
@@ -269,7 +279,7 @@
 					longitude: 116.397428,
 					latitude: 39.90923,
 				},
-				mapType: 0,
+				mapType: '',
 				map: null
 			}
 		},
@@ -286,13 +296,15 @@
 					this.changeMap(this.mapType);
 				});
 			},
+			setMapType(value) {
+				this.mapType = value;
+				this.changeMap(this.mapType);
+			},
 			changeMap(mapType) {
-				this.mapType = mapType;
 				switch (mapType) {
-					case 0:
+					case 'google':
 
-					case 1:
-
+					case 'gaode':
 						map = new AMap.Map('map_container', {
 							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
 							zoom: 12, // 初始化地图层级
@@ -300,79 +312,89 @@
 						});
 						this.map = map;
 						// 加载行动轨迹
-						let prev = null;
-						let index = 0
-						for (let index = 0; index < points.length; index++) {
-							let curr = points[index];
-							// 加载地图点
-							map.add(this.getMarker(curr))
-							// 加载连线
-							if (index > 0) {
-								this.initLine([prev.longitude, prev.latitude], [curr.longitude, curr.latitude])
-							}
-							prev = points[index];
-						}
+						this.getLine();
 						break;
-					case 2:
+					case 'baidu':
 						map = new BMapGL.Map("map_container");
 						map.centerAndZoom(new BMapGL.Point(this.position.longitude, this.position.latitude),
 							12); // 初始化地图,设置中心点坐标和地图级别
 						this.map = map;
 						break;
-					case 3:
+					case 'local':
 						break;
 					default:
 						break;
 				}
 			},
-			replayMission(replay) {
-				// console.log(replay,'replay')
+			getReplay(replay) {
+				this.replay = replay;
+				if (replay) {
+					this.replayMission();
+				}
+			},
+			replayMission() {
 				switch (this.mapType) {
-					case 0:
+					case 'google':
 
-					case 1:
-						let index = 0;
-						// const interval = setInterval(() => {
-						// 	if (index >= points.length||this.replay) {
-						// 		clearInterval(interval);
-						// 		return;
-						// 	}
-						// 	const point = points[index];
-						// 	this.map.setCenter([point.longitude, point.latitude]);
-						// 	index++;
-						// }, 5000);
+					case 'gaode':
+						let index = 1;
+						this.map.setZoomAndCenter(15, [points[0].longitude, points[0].latitude], true);
+						const interval = setInterval(() => {
+							if (index >= points.length || !this.replay) {
+								clearInterval(interval);
+								return;
+							}
+							const point = points[index];
+							this.map.setZoomAndCenter(15, [point.longitude, point.latitude], false);
+							index++;
+						}, 4000);
+						// 设置回溯状态为false
+						this.$ownerInstance.callMethod('setPoint', false);
 						break;
-					case 2:
+					case 'baidu':
 						break;
-					case 3:
+					case 'local':
 						break;
 					default:
 						break;
 				}
 			},
 			getMarker(point) {
-				let marker = new AMap.Marker({
-					//经纬度位置
-					position: new AMap.LngLat(point.longitude, point.latitude),
-					//便宜量
-					offset: new AMap.Pixel(-10, -24),
-					//图标
-					icon: new AMap.Icon({
-						//大小
-						size: new AMap.Size(20, 25),
-						imageSize: new AMap.Size(20, 25),
-						// image: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/em.jpg'
-						image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
-					}),
-					//图标展示层级，防止被隐藏时编写
-					zIndex: 100,
-					//图标旁边展示内容
-					label: {
-						content: `<view style="display:flex;flex-direction:column"><text>${point.description}</text>
-						<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`,
-						offset: new AMap.Pixel(10, -18)
-					}
-				})
+				let marker = null;
+				switch (this.mapType) {
+					case 'google':
+					case 'gaode':
+						marker = new AMap.Marker({
+							//经纬度位置
+							position: new AMap.LngLat(point.longitude, point.latitude),
+							//偏移量
+							offset: new AMap.Pixel(-10, -24),
+							//图标
+							icon: new AMap.Icon({
+								//大小
+								size: new AMap.Size(20, 25),
+								imageSize: new AMap.Size(20, 25),
+								// image: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/em.jpg'
+								image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
+							}),
+							//图标展示层级，防止被隐藏时编写
+							zIndex: 100,
+							//图标旁边展示内容
+							label: {
+								content: `<view style="display:flex;flex-direction:column"><text>${point.description}</text>
+							<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`,
+								offset: new AMap.Pixel(10, -18)
+							}
+						})
+						break;
+					case 'baidu':
+						break;
+					case 'local':
+						break;
+					default:
+						break;
+				}
+
 				return marker;
 			},
 			//绘制点与点之间的线段 Polyline类
@@ -386,6 +408,21 @@
 				//添加线段
 				this.map.add(polyline)
 			},
+			getLine() {
+				// 加载行动轨迹
+				let prev = null;
+				let index = 0
+				for (let index = 0; index < points.length; index++) {
+					let curr = points[index];
+					// 加载地图点
+					this.map.add(this.getMarker(curr))
+					// 加载连线
+					if (index > 0) {
+						this.initLine([prev.longitude, prev.latitude], [curr.longitude, curr.latitude])
+					}
+					prev = points[index];
+				}
+			}
 		}
 	}
 </script>
@@ -394,12 +431,15 @@
 	import {
 		deleteMission
 	} from '@/utils/api/mission.js'
+	import {
+		backendHost
+	} from '/config.js';
 	export default {
 		data() {
 			return {
 				recorderManager: {},
 				innerAudioContext: {},
-				selectedIndex: 0, // 地图默认选择0：Google地图
+				selectedMap: '', //当前地图
 				navIndex: 0,
 				filePaths: {
 					imagePath: '',
@@ -444,21 +484,25 @@
 					latitude: 39.90923,
 				},
 				map_options: [{
+						key: 'google',
 						src: '../../../static/icon/google.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: 'Google地图'
 					},
 					{
+						key: 'gaode',
 						src: '../../../static/icon/gaode.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '高德地图'
 					},
 					{
+						key: 'baidu',
 						src: '../../../static/icon/baidu.png',
 						htmlSrc: '/static/html/map_baidu.html',
 						name: '百度地图'
 					},
 					{
+						key: 'local',
 						src: '../../../static/icon/offline.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '离线地图'
@@ -564,6 +608,8 @@
 				console.log('recorder stop' + JSON.stringify(res));
 				self.filePaths.voicePath = res.tempFilePath;
 			});
+			// 设置地图
+			this.selectedMap = 'gaode'
 		},
 		methods: {
 			take_picture() {
@@ -582,12 +628,12 @@
 						});
 						// 文件上传
 						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
 							filePath: tempFilePath,
 							name: 'file',
 							header: {
 								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
 								var res = JSON.parse(uploadFileRes.data);
@@ -599,7 +645,7 @@
 										//显示持续时间为 2秒
 										duration: 2000
 									});
-								} else{
+								} else {
 									uni.showToast({
 										title: '图片上传失败！',
 										icon: 'none',
@@ -607,7 +653,7 @@
 										duration: 2000
 									});
 								}
-								
+
 								console.log(uploadFileRes.data);
 							}
 						});
@@ -631,12 +677,12 @@
 						console.log('录像成功，文件路径：', tempFilePath);
 						// 文件上传
 						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
 							filePath: tempFilePath,
 							name: 'file',
 							header: {
 								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer '+uni.getStorageSync('token'),
+								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
 								var res = JSON.parse(uploadFileRes.data);
@@ -648,7 +694,7 @@
 										//显示持续时间为 1秒
 										duration: 2000
 									});
-								} else{
+								} else {
 									uni.showToast({
 										title: '视频上传失败！',
 										icon: 'none',
@@ -656,7 +702,7 @@
 										duration: 2000
 									});
 								}
-								
+
 								console.log(uploadFileRes.data);
 							}
 						});
@@ -735,18 +781,11 @@
 					url: '/pages/tabBar/tabBar'
 				})
 			},
-			selectImage(index) {
-				this.selectedIndex = index; // 设置选中索引
+			selectImage(value) {
+				// this.selectedIndex = index; // 设置选中索引
+				this.selectedMap = value; // 设置选中地图
+				console.log(this.selectedMap)
 				this.$refs.map_selector.close()
-				// if (index === 1) {
-				// 	uni.navigateTo({
-				// 		url: '/pages/task/task_detail/map_test/map_test'
-				// 	})
-				// } else if (index === 2) {
-				// 	uni.navigateTo({
-				// 		url: '/pages/task/task_detail/baidu_map/baidu_map'
-				// 	})
-				// }
 			},
 			receive_instruction(index) {
 				this.task_instructions[index].isConfirmed = true;
@@ -815,9 +854,9 @@
 					}
 				});
 			},
-			missionReplay() {
-				this.replay = !this.replay;
-			}
+			setReplay(value) {
+				this.replay = value;
+			},
 		}
 	}
 </script>
