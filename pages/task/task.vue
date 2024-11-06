@@ -113,7 +113,6 @@
 						longitude:e.longitude
 					}));
 					uni.hideLoading()
-					console.info(this.taskItem[0].id)
 				});
 				// this.taskItem = [
 				// 	{ task_name: '现地侦察横须滨基地情况', country: '日本', position: '日本横须滨', start_time: '2024.05.03', end_time: '2026.02.01', type: this.getTaskType('2024.05.03', '2026.02.01'), description: '描述1', key: '123456' },
