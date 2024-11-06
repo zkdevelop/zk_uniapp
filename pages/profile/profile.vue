@@ -168,6 +168,9 @@ export default {
 			title: '正在退出登录',
 			mask: true
 		})
+		uni.redirectTo({
+			url: '/pages/login/login'
+		})
 		if (uni.getStorageSync('token') != "") {
 			logout().then(res => {
 				uni.removeStorageSync('token');

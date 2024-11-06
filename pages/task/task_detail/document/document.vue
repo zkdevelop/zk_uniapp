@@ -1,23 +1,23 @@
 <template>
 	<view style="position: relative;" @scroll="onScroll">
-		<scroll-view style="padding-bottom: 40px;">
+		<scroll-view style="padding-bottom: 40px; padding-left: 7px; box-sizing: border-box;">
 			<uni-section v-for="(file,file_index) in FileTypes" :key = file_index :title=file.type type="line">
-				<uni-grid :column="4">
+				<uni-grid :column="4" :show-border="false">
 					<!-- 图片 -->
 					<uni-grid-item v-if="file_index === 0" v-for="(item, index) in imgPath" :key="index">
-						<view class="grid-item-box" style="background-color: #fff; width: 83px; height: 83px;">
-							<image :src="item" @click="preview(item)" style="width: 80px; height: 60px;"></image>
+						<view style="border-radius: 3px; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
+							<image :src="item" @click="preview(item)" style="width: 83px; height: 83px;"></image>
 						</view>
 					</uni-grid-item>
 					<!-- 视频 -->
 					<uni-grid-item v-if="file_index === 1" v-for="(item, index) in videoPath" :key="index">				
-						<view style="background-color: black; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
+						<view style="background-color: black; border-radius: 3px; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
 							<image @touchstart="openVideo()" @click="videoShow(item)" src="../../../../static/icon/take_video.png" style="width: 50px; height: 50px;"></image>
 						</view>
 					</uni-grid-item>
 					<uni-grid-item v-if="file_index === 2" v-for="(item, index) in audioPath" :key="index">
-						<view style="background-color: black; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
-							<image @click="openAudioPopup(index)" src="../../../../static/icon/take_video.png" style="width: 50px; height: 50px;"></image>
+						<view style="background-color: lightgrey; border-radius: 3px; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
+							<image @click="openAudioPopup(index)" src="../../../../static/icon/audio.png" style="width: 35px; height: 35px;"></image>
 						</view>
 					</uni-grid-item>
 				</uni-grid>
@@ -39,24 +39,38 @@
 					</view>
 				</view>
 				<view class="divider"></view>
-				<!-- 支持mp3、ogg -->
+				<!-- 支持mp3、ogg等 -->
 				<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="audioUrl"></free-audio>
 			</view>
 		</uni-popup>
 		<!-- 文件上传按钮 -->
 		<view class="fixed-button">
-			<button type="primary" @tap="uploadVideo" style="width: 50%;">上传视频</button>
-			<button type="primary" @tap="uploadImage" style="width: 50%;">上传图片</button>
+			<!-- <button type="primary" @tap="uploadVideo" style="width: 50%;">上传视频</button>
+			<button type="primary" @tap="uploadImage" style="width: 50%;">上传图片</button> -->
+			<button type="primary" @tap="goToUpload()" style="width: 100%;">上传文件</button>
+			<ysh-file-manager ref="filemanager" @result="resultPath"></ysh-file-manager>
+		</view>
+		<view>
+			<uni-fab
+				:pattern="pattern"
+				:content="content"
+				:horizontal="horizontal"
+				:vertical="vertical"
+				:direction="direction"
+				@trigger="trigger"
+			></uni-fab>
 		</view>
 	</view>
 </template>
 
 <script>
 	import freeAudio from '@/components/chengpeng-audio/free-audio.vue'
+	import yshFileManager from "@/components/ysh-file-manager/ysh-file-manager.vue"
 	export default {
-		components: {freeAudio},
+		components: {freeAudio,yshFileManager},
 		data() {
 			return {
+				resultPath: '',
 				isFullScreen: false,
 				videoPlay: false,
 				videoUrl: '',
@@ -95,6 +109,12 @@
 			}
 		},
 		methods: {
+			goToUpload(){
+				// uni.navigateTo({
+				// 	url: '/pages/task/task_detail/document/uploadfile/uploadfile'
+				// })
+				this.$refs.filemanager._openFile()
+			},
 			getFileName(url){
 				const fileName = url.split('/').pop();
 				const nameWithoutExtension = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
@@ -151,85 +171,85 @@
 				}
 				this.musicShow=!this.musicShow;
 			},
-			uploadVideo: function () {
-				var self = this;
-				uni.chooseVideo({
-					sourceType: ['camera', 'album'],
-					success: function (res) {
-						const tempFilePath = res.tempFilePath;
-						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
-							filePath: tempFilePath, 
-							name: 'file',
-							header: {
-								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer '+uni.getStorageSync('token'),
-							},
-							success: (uploadFileRes) => {
-								var res = JSON.parse(uploadFileRes.data);
-								if (res.code === 200) {
-									uni.showToast({
-										title: '视频上传成功！',
-										//将值设置为 success 或者直接不用写icon这个参数
-										icon: 'success',
-										//显示持续时间为 2秒
-										duration: 2000
-									});
-								} else{
-									uni.showToast({
-										title: '视频上传失败！',
-										icon: 'none',
-										//显示持续时间为 2秒
-										duration: 2000
-									});
-								}
+			// uploadVideo: function () {
+			// 	var self = this;
+			// 	uni.chooseVideo({
+			// 		sourceType: ['camera', 'album'],
+			// 		success: function (res) {
+			// 			const tempFilePath = res.tempFilePath;
+			// 			uni.uploadFile({
+			// 				url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+			// 				filePath: tempFilePath, 
+			// 				name: 'file',
+			// 				header: {
+			// 					'Content-Type': 'application/form-data;charset=UTF-8',
+			// 					'Authorization': 'Bearer '+uni.getStorageSync('token'),
+			// 				},
+			// 				success: (uploadFileRes) => {
+			// 					var res = JSON.parse(uploadFileRes.data);
+			// 					if (res.code === 200) {
+			// 						uni.showToast({
+			// 							title: '视频上传成功！',
+			// 							//将值设置为 success 或者直接不用写icon这个参数
+			// 							icon: 'success',
+			// 							//显示持续时间为 2秒
+			// 							duration: 2000
+			// 						});
+			// 					} else{
+			// 						uni.showToast({
+			// 							title: '视频上传失败！',
+			// 							icon: 'none',
+			// 							//显示持续时间为 2秒
+			// 							duration: 2000
+			// 						});
+			// 					}
 								
-								console.log(uploadFileRes.data);
-							}
-						});
-					}
-				});
-			},
-			uploadImage: function() {
-				var self = this;
-				uni.chooseImage({
-					count: 1, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-					sourceType: ['album', 'camera'],
-					success: function (res) {
-						const tempFilePath = res.tempFilePaths[0];
-						console.log(self.image_src);
-						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
-							files: tempFilePath,
-							header: {
-								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer '+uni.getStorageSync('token'),
-							},
-							success: (uploadFileRes) => {
-								var res = JSON.parse(uploadFileRes.data);
-								if (res.code === 200) {
-									uni.showToast({
-										title: '图片上传成功！',
-										//将值设置为 success 或者直接不用写icon这个参数
-										icon: 'success',
-										//显示持续时间为 2秒
-										duration: 2000
-									});
-								} else{
-									uni.showToast({
-										title: '图片上传失败！',
-										icon: 'none',
-										//显示持续时间为 2秒
-										duration: 2000
-									});
-								}
-								console.log(uploadFileRes.data);
-							}
-						});
-					}
-				});
-			}
+			// 					console.log(uploadFileRes.data);
+			// 				}
+			// 			});
+			// 		}
+			// 	});
+			// },
+			// uploadImage: function() {
+			// 	var self = this;
+			// 	uni.chooseImage({
+			// 		count: 1, //默认9
+			// 		sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+			// 		sourceType: ['album', 'camera'],
+			// 		success: function (res) {
+			// 			const tempFilePath = res.tempFilePaths[0];
+			// 			console.log(self.image_src);
+			// 			uni.uploadFile({
+			// 				url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+			// 				filePath: tempFilePath,
+			// 				header: {
+			// 					'Content-Type': 'application/form-data;charset=UTF-8',
+			// 					'Authorization': 'Bearer '+uni.getStorageSync('token'),
+			// 				},
+			// 				success: (uploadFileRes) => {
+			// 					var res = JSON.parse(uploadFileRes.data);
+			// 					if (res.code === 200) {
+			// 						uni.showToast({
+			// 							title: '图片上传成功！',
+			// 							//将值设置为 success 或者直接不用写icon这个参数
+			// 							icon: 'success',
+			// 							//显示持续时间为 2秒
+			// 							duration: 2000
+			// 						});
+			// 					} else{
+			// 						uni.showToast({
+			// 							title: '图片上传失败！',
+			// 							icon: 'none',
+			// 							//显示持续时间为 2秒
+			// 							duration: 2000
+			// 						});
+			// 					}
+			// 					console.log(uploadFileRes.data);
+			// 				}
+			// 			});
+			// 		}
+			// 	});
+			// }
 		}
 	}
 </script>
@@ -241,17 +261,6 @@
 	/* 分割线的颜色 */
 	margin: 10px 0;
 	/* 分割线的上下间距 */
-}
-.grid-item-box {
-	flex: 1;
-	position: relative;
-	/* #ifndef APP-NVUE */
-	display: flex;
-	/* #endif */
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 15px 0;
 }
 .fixed-button {
   position: fixed;
