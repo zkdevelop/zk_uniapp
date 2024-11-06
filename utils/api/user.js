@@ -3,9 +3,15 @@ import request from '/utils/request.js'
  
 // 用户登录
 export const login = (params) => {
+	const data={
+		account:params.account,
+		password:params.password
+	}
 	return request({
-		url: `/user/login?account=${params.account}&password=${params.password}`,
+		// url: `/user/login?account=${params.account}&password=${params.password}`,
+		url: `/user/login`,
 		method: 'post',
+		data
 	})
 }
 // 用户注册

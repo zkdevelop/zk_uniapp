@@ -29,15 +29,15 @@
   </view>
 </template>
 
-<<<<<<< HEAD
 <script setup>
 import { ref } from 'vue'
-import { useUserStore } from '@/store/userStore'
 import { login } from '@/utils/api/user.js'
-import { useWebSocket } from '@/pages/WebSocket/WebSocketService.vue'
+import { useUserStore } from '@/store/userStore'
+import { useWebSocket } from '@/pages//WebSocket/WebSocketService.vue'
+
+const { connect } = useWebSocket()
 
 const userStore = useUserStore()
-const { connect } = useWebSocket()
 
 const autoLogin = ref(false)
 const username = ref('test-app')
@@ -76,119 +76,66 @@ const toggleAutoLogin = (e) => {
   }
 }
 
-const checkLogin = async () => {
-  try {
-    const res = await login({
-      account: username.value,
-      password: password.value
-    })
-    if (res.code == 200) {
-      userStore.setUserData(res.data)
+const checkLogin = () => {
+  uni.showLoading({
+    title: '正在登录',
+    mask: true
+  })
+
+  login({
+    account: username.value,
+    password: password.value
+  }).then(res => {
+    if (res.code === 200) {
+      // 存储成功登录的账号密码
+      uni.setStorageSync('username', username.value)
+      uni.setStorageSync('password', password.value)
       uni.setStorageSync('token', res.data.token)
-      uni.setStorageSync('userInfo', res.data.account)
       
-      // 登录成功后连接到 WebSocket，传递 用户 ID
+      // 设置用户数据到 store
+      const userData = {
+        id: res.data.id,
+        account: res.data.account,
+        name: res.data.name,
+        department: res.data.department,
+        role: res.data.role,
+        phone: res.data.phone,
+        created: res.data.created,
+        avatar: res.data.avatar,
+        avatarUrl: res.data.avatarUrl,
+        token: res.data.token,
+        status: res.data.status
+      }
+      userStore.setUserData(userData)
+
+      // Establish WebSocket connection
       connect(res.data.id)
 
-      await uni.showToast({
+      // 将整个用户信息对象存储到本地存储
+      uni.setStorageSync('userInfo', userData)
+
+      console.log('Login successful. User data:', userData)
+
+      uni.hideLoading()
+      uni.showToast({
         title: '登录成功',
         duration: 2000
+      }).then(() => {
+        goToTask()
       })
-      goToTask()
     } else {
-      uni.showToast({
-        title: '登录失败',
-        icon: 'none',
-        duration: 2000
-      })
+      throw new Error(res.message || '登录失败')
     }
-  } catch (error) {
+  }).catch(error => {
+    console.error('登录失败:', error)
+    uni.hideLoading()
     uni.showToast({
-      title: '登录出错',
+      title: error.message || '登录失败',
       icon: 'none',
       duration: 2000
     })
-  }
+  })
 }
-=======
-<script>
-	import {
-		login,
-		register
-	} from '@/utils/api/user.js'
-	export default {
-		data() {
-			return {
-				autoLogin: false, // 初始状态为未选中
-				username: 'test-app',
-				password: 'test123456'
-			};
-		},
-		methods: {
-			goToRegister() {
-				uni.navigateTo({
-					url: '/pages/register/register' // 替换为目标页面的路径
-				});
-			},
-			goToForgetPassword() {
-				uni.navigateTo({
-					url: '/pages/forgetPassword/forgetPassword'
-				})
-			},
-			goToFingerLogin() {
-				uni.navigateTo({
-					url: '/pages/fingerLogin/fingerLogin'
-				})
-			},
-			goToTask() {
-				uni.redirectTo({
-					url: '/pages/tabBar/tabBar'
-				})
-			},
-			toggleAutoLogin(e) {
-				this.autoLogin = e.detail.value.length > 0; // 根据选择框状态更新
-				if (this.autoLogin == true) {
-					uni.navigateTo({
-						url: '/pages/register/register' // 替换为目标页面的路径
-					});
-				}
-			},
-			checkLogin() {
-				var that = this;
-				// 显示加载中
-				uni.showLoading({
-					title: '正在登录',
-					mask:true
-				})
-				login({
-					account: this.username,
-					password: this.password
-				}).then(res => {
-					if (res.code == 200) {
-						// 存储成功登陆的账号密码
-						uni.setStorageSync(
-							'username', that.username
-						)
-						uni.setStorageSync(
-							'password', that.password
-						)
-						console.log(res.data.token, 'token')
-						uni.setStorageSync('token', res.data.token)
-						uni.setStorageSync('userInfo', res.data.account)
-						// 关闭加载中
-						uni.hideLoading();
-						uni.showToast({
-							title: '登录成功',
-							duration: 2000
-						}).then(
-							this.goToTask()
-						)
-					}
-				})
-			}
-		}
-	};
->>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 </script>
 
 <style lang="scss">

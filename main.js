@@ -11,29 +11,18 @@ Vue.use(pinia)
 App.mpType = 'app'
 
 const app = new Vue({
-<<<<<<< HEAD
     ...App,
     pinia
-=======
-	...App
->>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 })
 app.$mount()
 // #endif
 
 // #ifdef VUE3
-<<<<<<< HEAD
 import { createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
-=======
-import {
-	createSSRApp
-} from 'vue'
->>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 import App from './App.vue'
 
 export function createApp() {
-<<<<<<< HEAD
   const app = createSSRApp(App)
   const pinia = createPinia()
   app.use(pinia)
@@ -41,12 +30,6 @@ export function createApp() {
     app,
     pinia
   }
-=======
-	const app = createSSRApp(App)
-	return {
-		app
-	}
->>>>>>> f64a0c284883b6f4fa420c39e82157454e366d22
 }
 // #endif
 

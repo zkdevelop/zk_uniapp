@@ -6,8 +6,6 @@ export const useUserStore = defineStore('user', () => {
   const state = reactive({
     id: '',
     account: '',
-    username: '',
-    password: '',
     name: '',
     department: '',
     role: '',
@@ -20,23 +18,13 @@ export const useUserStore = defineStore('user', () => {
   })
 
   function setUserData(data) {
-    if (Object.isExtensible(state)) {
-      Object.keys(data).forEach(key => {
-        if (key in state) {
-          state[key] = data[key]
-        }
-      })
-    } else {
-      const newState = { ...state }
-      Object.keys(data).forEach(key => {
-        if (key in newState) {
-          newState[key] = data[key]
-        }
-      })
-      Object.keys(state).forEach(key => {
-        state[key] = newState[key]
-      })
-    }
+    console.log('Setting user data:', data)
+    Object.keys(data).forEach(key => {
+      if (key in state) {
+        state[key] = data[key]
+      }
+    })
+    console.log('Updated state:', state)
   }
 
   function clearUserData() {
@@ -45,5 +33,9 @@ export const useUserStore = defineStore('user', () => {
     })
   }
 
-  return { state, setUserData, clearUserData }
+  function getUserData() {
+    return { ...state }
+  }
+
+  return { state, setUserData, clearUserData, getUserData }
 })

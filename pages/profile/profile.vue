@@ -1,83 +1,81 @@
 <template>
-  <view>
-    <view class="container">
-      <!-- 用户头像、名称、用户名和手机 -->
-      <view class="user-info">
-        <image class="avatar" :src="userStore.state.avatarUrl || '/static/my/默认头像.svg'"></image>
-        <view class="user-details">
-          <view class="name-container">
-            <text class="name">{{ userStore.state.name }}</text>
-            <image class="edit-icon" src="/static/my/编辑.svg"></image>
-          </view>
-          <view class="info-item">
-            <text class="info-label">用户名：</text>
-            <text class="info-value">{{ userStore.state.account }}</text>
-          </view>
-          <view class="info-item">
-            <text class="info-label">手机：</text>
-            <text class="info-value">{{ userStore.state.phone }}</text>
-          </view>
+  <view class="container">
+    <!-- User avatar, name, username, and phone -->
+    <view class="user-info">
+      <image class="avatar" :src="userData.avatarUrl || '/static/my/默认头像.svg'"></image>
+      <view class="user-details">
+        <view class="name-container">
+          <text class="name">{{ userData.name || '未设置' }}</text>
+          <image class="edit-icon" src="/static/my/编辑.svg"></image>
+        </view>
+        <view class="info-item">
+          <text class="info-label">用户名：</text>
+          <text class="info-value">{{ userData.account || '未设置' }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">手机：</text>
+          <text class="info-value">{{ userData.phone || '未设置' }}</text>
         </view>
       </view>
+    </view>
 
-      <!-- 位置共享开关 -->
-      <view class="switch-item">
-        <text>是否开启位置共享</text>
-        <switch color="#4285f4" />
-      </view>
+    <!-- Location sharing switch -->
+    <view class="switch-item">
+      <text>是否开启位置共享</text>
+      <switch color="#4285f4" v-model="locationSharing" />
+    </view>
 
-      <!-- 设置选项列表 -->
-      <view class="setting-list">
-        <view class="setting-item" @click="onSettingItemClick(settingItems[0])">
-          <text>定位信息回传间隔</text>
-          <view class="setting-value">
-            <text class="setting-value-text">5分钟</text>
-            <image class="expand-icon" src="/static/my/展开.svg"></image>
-          </view>
-        </view>
-        <view class="setting-item" @click="onSettingItemClick(settingItems[1])">
-          <text>文件本地存储策略</text>
-          <view class="setting-value">
-            <text class="setting-value-text">7天</text>
-            <image class="expand-icon" src="/static/my/展开.svg"></image>
-          </view>
-        </view>
-        <view class="setting-item" @click="onSettingItemClick(settingItems[2])">
-          <text>修改密码</text>
-          <view class="setting-value">
-            <image class="expand-icon" src="/static/my/展开.svg"></image>
-          </view>
+    <!-- Settings list -->
+    <view class="setting-list">
+      <view class="setting-item" @click="onSettingItemClick(settingItems[0])">
+        <text>定位信息回传间隔</text>
+        <view class="setting-value">
+          <text class="setting-value-text">{{ selectedLocationInterval }}</text>
+          <image class="expand-icon" src="/static/my/展开.svg"></image>
         </view>
       </view>
-
-      <!-- 删除聊天记录按钮 -->
-      <view class="delete-chat" @click="showDeleteConfirm('chat')">
-        <text>删除聊天记录</text>
+      <view class="setting-item" @click="onSettingItemClick(settingItems[1])">
+        <text>文件本地存储策略</text>
+        <view class="setting-value">
+          <text class="setting-value-text">{{ selectedStorageStrategy }}</text>
+          <image class="expand-icon" src="/static/my/展开.svg"></image>
+        </view>
       </view>
-      <view class="delete-all" @click="showDeleteConfirm('all')">
-        <text>一键删除</text>
+      <view class="setting-item" @click="onSettingItemClick(settingItems[2])">
+        <text>修改密码</text>
+        <view class="setting-value">
+          <image class="expand-icon" src="/static/my/展开.svg"></image>
+        </view>
       </view>
+    </view>
 
-      <!-- 退出登录按钮 -->
-      <view class="logout" @click="logout()">
-        <text>退出登录</text>
-      </view>
+    <!-- Delete chat history button -->
+    <view class="delete-chat" @click="showDeleteConfirm('chat')">
+      <text>删除聊天记录</text>
+    </view>
+    <view class="delete-all" @click="showDeleteConfirm('all')">
+      <text>一键删除</text>
+    </view>
 
-      <!-- 确认弹窗 -->
-      <view v-if="showConfirmDialog" class="dialog-overlay">
-        <view class="dialog-content">
-          <view class="dialog-body">
-            <text>{{ confirmMessage }}</text>
-          </view>
-          <view class="dialog-footer">
-            <button class="dialog-btn cancel-btn" @click="cancelDelete">取消</button>
-            <button class="dialog-btn confirm-btn" @click="confirmDelete">确认</button>
-          </view>
+    <!-- Logout button -->
+    <view class="logout" @click="performLogout">
+      <text>退出登录</text>
+    </view>
+
+    <!-- Confirmation dialog -->
+    <view v-if="showConfirmDialog" class="dialog-overlay">
+      <view class="dialog-content">
+        <view class="dialog-body">
+          <text>{{ confirmMessage }}</text>
+        </view>
+        <view class="dialog-footer">
+          <button class="dialog-btn cancel-btn" @click="cancelDelete">取消</button>
+          <button class="dialog-btn confirm-btn" @click="confirmDelete">确认</button>
         </view>
       </view>
     </view>
     
-    <!-- 选项选择器 -->
+    <!-- Option picker -->
     <OptionPicker
       v-if="showPicker"
       :title="pickerTitle"
@@ -90,109 +88,114 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import OptionPicker from './OptionPicker.vue'
-import { logout } from '@/utils/api/user'; 
-export default {
-  name: 'MainPage',
-  components: {
-    OptionPicker,
-  },
-  data() {
-    return {
-      settingItems: [
-        { label: '定位信息回传间隔', value: '5分钟' },
-        { label: '文件本地存储策略', value: '7天' },
-        { label: '修改密码', value: '' },
-      ],
-      showConfirmDialog: false,
-      confirmMessage: '',
-      deleteType: '',
-      selectedStorageStrategy: '7天',
-      storageOptions: [
-        { label: '7天', value: '7天' },
-        { label: '15天', value: '15天' },
-        { label: '30天', value: '30天' },
-      ],
-      selectedLocationInterval: '5分钟',
-      locationIntervalOptions: [
-        { label: '1分钟', value: '1分钟' },
-        { label: '5分钟', value: '5分钟' },
-        { label: '10分钟', value: '10分钟' },
-        { label: '30分钟', value: '30分钟' },
-      ],
-      showPicker: false,
-      pickerTitle: '',
-      pickerOptions: [],
-      pickerSelectedValue: '',
-      pickerType: '',
+import { useUserStore } from '@/store/userStore'
+import { logout } from '@/utils/api/user'
+
+const userStore = useUserStore()
+
+const userData = computed(() => userStore.state)
+
+const locationSharing = ref(false)
+const showConfirmDialog = ref(false)
+const confirmMessage = ref('')
+const deleteType = ref('')
+const selectedStorageStrategy = ref('7天')
+const storageOptions = [
+  { label: '7天', value: '7天' },
+  { label: '15天', value: '15天' },
+  { label: '30天', value: '30天' },
+]
+const selectedLocationInterval = ref('5分钟')
+const locationIntervalOptions = [
+  { label: '1分钟', value: '1分钟' },
+  { label: '5分钟', value: '5分钟' },
+  { label: '10分钟', value: '10分钟' },
+  { label: '30分钟', value: '30分钟' },
+]
+const showPicker = ref(false)
+const pickerTitle = ref('')
+const pickerOptions = ref([])
+const pickerSelectedValue = ref('')
+const pickerType = ref('')
+
+const settingItems = reactive([
+  { label: '定位信息回传间隔', value: '5分钟' },
+  { label: '文件本地存储策略', value: '7天' },
+  { label: '修改密码', value: '' },
+])
+
+const loadUserData = async () => {
+  console.log('loadUserData 开始执行')
+  if (!userData.value.id) {
+    console.log('userData 中没有 id，尝试从本地存储获取')
+    const userInfo = uni.getStorageSync('userInfo')
+    console.log('从本地存储获取的 userInfo:', userInfo)
+    if (userInfo && typeof userInfo === 'object') {
+      console.log('从本地存储获取到有效的 userInfo，更新 userStore')
+      userStore.setUserData(userInfo)
+    } else {
+      console.log('本地存储中没有有效的 userInfo，尝试从服务器获取')
+      await fetchUserInfo()
     }
-  },
-  methods: {
-    onSettingItemClick(item) {
-      if (item.label === '文件本地存储策略') {
-        this.openPicker('storage', '文件本地存储策略', this.storageOptions, this.selectedStorageStrategy);
-      } else if (item.label === '定位信息回传间隔') {
-        this.openPicker('location', '定位信息回传间隔', this.locationIntervalOptions, this.selectedLocationInterval);
-      } else if (item.label === '修改密码') {
-		  uni.navigateTo({
-		  	url: '/pages/forgetPassword/forgetPassword'
-		  })
-	  }
-    },
-    openPicker(type, title, options, selectedValue) {
-      this.pickerType = type;
-      this.pickerTitle = title;
-      this.pickerOptions = options;
-      this.pickerSelectedValue = selectedValue;
-      this.showPicker = true;
-    },
-    closePicker() {
-      this.showPicker = false;
-    },
-    selectOption(value) {
-      if (this.pickerType === 'storage') {
-        this.selectedStorageStrategy = value;
-        this.settingItems.find(item => item.label === '文件本地存储策略').value = value;
-      } else if (this.pickerType === 'location') {
-        this.selectedLocationInterval = value;
-        this.settingItems.find(item => item.label === '定位信息回传间隔').value = value;
-      }
-      this.closePicker();
-    },
-    showDeleteConfirm(type) {
-      this.deleteType = type;
-      this.confirmMessage = type === 'chat' ? '确定删除聊天记录吗？' : '您确认要删除所有数据吗？';
-      this.showConfirmDialog = true;
-    },
-    cancelDelete() {
-      this.showConfirmDialog = false;
-    },
-    confirmDelete() {
-      if (this.deleteType === 'chat') {
-        console.log('聊天记录已删除');
-      } else {
-        console.log('所有数据已删除');
-      }
-      this.showConfirmDialog = false;
-    },
-	logout(){
-		uni.removeStorageSync('token')
-		uni.showLoading({
-			title: '正在退出登录',
-			mask: true
-		})
-		if (uni.getStorageSync('token') != "") {
-			logout().then(res => {
-				uni.removeStorageSync('token');
-				uni.removeStorageSync('userInfo');
-				uni.redirectTo({
-					url: '/pages/login/login'
-				})
-				uni.hideLoading();
-			})
-		}
-	}
+  } else {
+    console.log('userData 中已有 id:', userData.value.id)
+  }
+  console.log('loadUserData 执行完毕')
+}
+
+const fetchUserInfo = async () => {
+  console.log('fetchUserInfo 开始执行')
+  uni.showLoading({ title: '加载中...', mask: true })
+  try {
+    console.log('从 userStore 获取用户信息')
+    const userInfo = userStore.state
+    console.log('获取到的原始 userInfo:', userInfo)
+
+    const userData = {
+      id: userInfo.id,
+      name: userInfo.name,
+      account: userInfo.account,
+      phone: userInfo.phone,
+      avatarUrl: userInfo.avatarUrl
+    }
+    console.log('处理后的 userData:', userData)
+
+    console.log('更新 userStore')
+    userStore.setUserData(userData)
+
+    console.log('保存用户信息到本地存储')
+    uni.setStorageSync('userInfo', userData)
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+    uni.showToast({ title: '获取用户信息失败', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+    console.log('fetchUserInfo 执行完毕')
+  }
+}
+
+onMounted(() => {
+  console.log('profile 组件 onMounted')
+  loadUserData()
+})
+
+onShow(() => {
+  console.log('profile 组件 onShow')
+  loadUserData()
+})
+
+const onSettingItemClick = (item) => {
+  if (item.label === '文件本地存储策略') {
+    openPicker('storage', '文件本地存储策略', storageOptions, selectedStorageStrategy.value)
+  } else if (item.label === '定位信息回传间隔') {
+    openPicker('location', '定位信息回传间隔', locationIntervalOptions, selectedLocationInterval.value)
+  } else if (item.label === '修改密码') {
+    uni.navigateTo({
+      url: '/pages/forgetPassword/forgetPassword'
+    })
   }
 }
 
@@ -238,18 +241,27 @@ const confirmDelete = () => {
   showConfirmDialog.value = false
 }
 
-const logout = () => {
-  userStore.clearUserData()
-  
-  // 在登出前断开 WebSocket  连接
-  disconnect()
-
-  uni.removeStorageSync('token')
-  uni.removeStorageSync('userInfo')
-  
-  uni.redirectTo({
-    url: '/pages/login/login'
+const performLogout = async () => {
+  uni.showLoading({
+    title: '正在退出登录',
+    mask: true
   })
+
+  try {
+    if (uni.getStorageSync('token')) {
+      await logout()
+    }
+  } catch (error) {
+    console.error('退出登录失败:', error)
+  } finally {
+    uni.removeStorageSync('token')
+    uni.removeStorageSync('userInfo')
+    userStore.clearUserData()
+    uni.redirectTo({
+      url: '/pages/login/login'
+    })
+    uni.hideLoading()
+  }
 }
 </script>
 
