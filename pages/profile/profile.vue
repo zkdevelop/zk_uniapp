@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <!-- User avatar, name, username, and phone -->
+    <!-- 用户头像、姓名、用户名和电话 -->
     <view class="user-info">
       <image class="avatar" :src="userData.avatarUrl || '/static/my/默认头像.svg'"></image>
       <view class="user-details">
@@ -19,13 +19,13 @@
       </view>
     </view>
 
-    <!-- Location sharing switch -->
+    <!-- 位置共享开关 -->
     <view class="switch-item">
       <text>是否开启位置共享</text>
-      <switch color="#4285f4" v-model="locationSharing" />
+      <switch color="#4285f4" :checked="locationSharing" @change="onLocationSharingChange" />
     </view>
 
-    <!-- Settings list -->
+    <!-- 设置列表 -->
     <view class="setting-list">
       <view class="setting-item" @click="onSettingItemClick(settingItems[0])">
         <text>定位信息回传间隔</text>
@@ -49,7 +49,7 @@
       </view>
     </view>
 
-    <!-- Delete chat history button -->
+    <!-- 删除聊天记录按钮 -->
     <view class="delete-chat" @click="showDeleteConfirm('chat')">
       <text>删除聊天记录</text>
     </view>
@@ -57,12 +57,12 @@
       <text>一键删除</text>
     </view>
 
-    <!-- Logout button -->
+    <!-- 退出登录按钮 -->
     <view class="logout" @click="performLogout">
       <text>退出登录</text>
     </view>
 
-    <!-- Confirmation dialog -->
+    <!-- 确认对话框 -->
     <view v-if="showConfirmDialog" class="dialog-overlay">
       <view class="dialog-content">
         <view class="dialog-body">
@@ -75,7 +75,7 @@
       </view>
     </view>
     
-    <!-- Option picker -->
+    <!-- 选项选择器 -->
     <OptionPicker
       v-if="showPicker"
       :title="pickerTitle"
@@ -96,7 +96,7 @@ import { logout } from '@/utils/api/user'
 
 const userStore = useUserStore()
 
-const userData = computed(() => userStore.state)
+const userData = computed(() => userStore.getUserData())
 
 const locationSharing = ref(false)
 const showConfirmDialog = ref(false)
@@ -128,63 +128,39 @@ const settingItems = reactive([
 ])
 
 const loadUserData = async () => {
-  console.log('loadUserData 开始执行')
   if (!userData.value.id) {
-    console.log('userData 中没有 id，尝试从本地存储获取')
     const userInfo = uni.getStorageSync('userInfo')
-    console.log('从本地存储获取的 userInfo:', userInfo)
     if (userInfo && typeof userInfo === 'object') {
-      console.log('从本地存储获取到有效的 userInfo，更新 userStore')
       userStore.setUserData(userInfo)
     } else {
-      console.log('本地存储中没有有效的 userInfo，尝试从服务器获取')
       await fetchUserInfo()
     }
-  } else {
-    console.log('userData 中已有 id:', userData.value.id)
   }
-  console.log('loadUserData 执行完毕')
 }
 
 const fetchUserInfo = async () => {
-  console.log('fetchUserInfo 开始执行')
   uni.showLoading({ title: '加载中...', mask: true })
   try {
-    console.log('从 userStore 获取用户信息')
-    const userInfo = userStore.state
-    console.log('获取到的原始 userInfo:', userInfo)
-
-    const userData = {
-      id: userInfo.id,
-      name: userInfo.name,
-      account: userInfo.account,
-      phone: userInfo.phone,
-      avatarUrl: userInfo.avatarUrl
-    }
-    console.log('处理后的 userData:', userData)
-
-    console.log('更新 userStore')
-    userStore.setUserData(userData)
-
-    console.log('保存用户信息到本地存储')
-    uni.setStorageSync('userInfo', userData)
+    // Assuming you have an API call to get user info
+    const userInfo = await someApiCall()
+    userStore.setUserData(userInfo)
+    uni.setStorageSync('userInfo', userInfo)
   } catch (error) {
     console.error('获取用户信息失败:', error)
     uni.showToast({ title: '获取用户信息失败', icon: 'none' })
   } finally {
     uni.hideLoading()
-    console.log('fetchUserInfo 执行完毕')
   }
 }
 
 onMounted(() => {
-  console.log('profile 组件 onMounted')
   loadUserData()
 })
 
 onShow(() => {
-  console.log('profile 组件 onShow')
-  loadUserData()
+  loadUserData().catch(error => {
+    console.error('onShow 中出现错误:', error)
+  })
 })
 
 const onSettingItemClick = (item) => {
@@ -262,6 +238,10 @@ const performLogout = async () => {
     })
     uni.hideLoading()
   }
+}
+
+const onLocationSharingChange = (e) => {
+  locationSharing.value = e.detail.value
 }
 </script>
 
