@@ -33,7 +33,7 @@
 import { ref } from 'vue'
 import { login } from '@/utils/api/user.js'
 import { useUserStore } from '@/store/userStore'
-import { useWebSocket } from '@/pages//WebSocket/WebSocketService.vue'
+import { useWebSocket } from '@/pages/WebSocket/WebSocketService.vue'
 
 const { connect } = useWebSocket()
 
@@ -108,13 +108,13 @@ const checkLogin = () => {
       }
       userStore.setUserData(userData)
 
-      // Establish WebSocket connection
-      connect(res.data.id)
+      // 建立 WebSocket 连接，传入 userId 和 token
+      connect(res.data.id, res.data.token)
 
       // 将整个用户信息对象存储到本地存储
       uni.setStorageSync('userInfo', userData)
 
-      console.log('Login successful. User data:', userData)
+      console.log('登录成功。用户数据:', userData)
 
       uni.hideLoading()
       uni.showToast({

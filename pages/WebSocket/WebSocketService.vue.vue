@@ -13,9 +13,9 @@ export const useWebSocket = () => {
   const maxReconnectAttempts = 5
   const reconnectInterval = 5000 // 5 seconds
 
-  const connect = (userId) => {
-    if (!userId) {
-      console.error('WebSocket 连接失败: userId 未提供', { userId })
+  const connect = (userId, token) => {
+    if (!userId || !token) {
+      console.error('WebSocket 连接失败: userId 或 token 未提供', { userId, token })
       return
     }
 
@@ -25,12 +25,13 @@ export const useWebSocket = () => {
     }
 
     const wsProtocol = backendHost.startsWith('https') ? 'wss' : 'ws'
-    const wsUrl = `${wsProtocol}://${backendHost.split('://')[1]}/communicate/chat/${userId}`
+    const wsUrl = `${wsProtocol}://${backendHost.split('://')[1]}/chat/${userId}`
     
     console.log('尝试连接 WebSocket:', wsUrl)
 
     try {
-      ws.value = new WebSocket(wsUrl)
+      // 使用token作为子协议
+      ws.value = new WebSocket(wsUrl, [token])
 
       ws.value.onopen = (event) => {
         console.log('WebSocket 已连接', event)
@@ -45,6 +46,14 @@ export const useWebSocket = () => {
           const message = JSON.parse(event.data)
           // 根据消息类型进行不同的处理
           switch (message.type) {
+            case 'auth':
+              if (message.status === 'success') {
+                console.log('认证成功')
+              } else {
+                console.error('认证失败:', message.error)
+                disconnect()
+              }
+              break
             case 'chat':
               // 处理聊天消息
               break
@@ -80,11 +89,13 @@ export const useWebSocket = () => {
         stopPingInterval()
         
         if (reconnectAttempts.value < maxReconnectAttempts) {
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.value), 30000)
+          console.log(`将在 ${delay}ms 后尝试重新连接...`)
           setTimeout(() => {
             console.log(`尝试重新连接... (${reconnectAttempts.value + 1}/${maxReconnectAttempts})`)
             reconnectAttempts.value++
-            connect(userId)
-          }, reconnectInterval)
+            connect(userId, token)
+          }, delay)
         } else {
           console.error('WebSocket 重连失败，请检查网络连接或联系管理员')
         }

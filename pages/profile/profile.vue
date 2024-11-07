@@ -140,7 +140,6 @@ const loadUserData = async () => {
       console.log('本地存储中没有有效的 userInfo，尝试从服务器获取')
       await fetchUserInfo()
     }
-<<<<<<< HEAD
   } else {
     console.log('userData 中已有 id:', userData.value.id)
   }
@@ -262,77 +261,6 @@ const performLogout = async () => {
       url: '/pages/login/login'
     })
     uni.hideLoading()
-=======
-  },
-  methods: {
-    onSettingItemClick(item) {
-      if (item.label === '文件本地存储策略') {
-        this.openPicker('storage', '文件本地存储策略', this.storageOptions, this.selectedStorageStrategy);
-      } else if (item.label === '定位信息回传间隔') {
-        this.openPicker('location', '定位信息回传间隔', this.locationIntervalOptions, this.selectedLocationInterval);
-      } else if (item.label === '修改密码') {
-		  uni.navigateTo({
-		  	url: '/pages/forgetPassword/forgetPassword'
-		  })
-	  }
-    },
-    openPicker(type, title, options, selectedValue) {
-      this.pickerType = type;
-      this.pickerTitle = title;
-      this.pickerOptions = options;
-      this.pickerSelectedValue = selectedValue;
-      this.showPicker = true;
-    },
-    closePicker() {
-      this.showPicker = false;
-    },
-    selectOption(value) {
-      if (this.pickerType === 'storage') {
-        this.selectedStorageStrategy = value;
-        this.settingItems.find(item => item.label === '文件本地存储策略').value = value;
-      } else if (this.pickerType === 'location') {
-        this.selectedLocationInterval = value;
-        this.settingItems.find(item => item.label === '定位信息回传间隔').value = value;
-      }
-      this.closePicker();
-    },
-    showDeleteConfirm(type) {
-      this.deleteType = type;
-      this.confirmMessage = type === 'chat' ? '确定删除聊天记录吗？' : '您确认要删除所有数据吗？';
-      this.showConfirmDialog = true;
-    },
-    cancelDelete() {
-      this.showConfirmDialog = false;
-    },
-    confirmDelete() {
-      if (this.deleteType === 'chat') {
-        console.log('聊天记录已删除');
-      } else {
-        console.log('所有数据已删除');
-      }
-      this.showConfirmDialog = false;
-    },
-	logout(){
-		uni.removeStorageSync('token')
-		uni.showLoading({
-			title: '正在退出登录',
-			mask: true
-		})
-		uni.redirectTo({
-			url: '/pages/login/login'
-		})
-		if (uni.getStorageSync('token') != "") {
-			logout().then(res => {
-				uni.removeStorageSync('token');
-				uni.removeStorageSync('userInfo');
-				uni.redirectTo({
-					url: '/pages/login/login'
-				})
-				uni.hideLoading();
-			})
-		}
-	}
->>>>>>> a279b34c5416f69008cfcaef6fbbf5775b4f8ca4
   }
 }
 </script>
