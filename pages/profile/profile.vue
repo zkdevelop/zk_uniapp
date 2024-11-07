@@ -140,9 +140,7 @@ const loadUserData = async () => {
 
 const fetchUserInfo = async () => {
   uni.showLoading({ title: '加载中...', mask: true })
-  try {
-    // Assuming you have an API call to get user info
-    const userInfo = await someApiCall()
+  try { 
     userStore.setUserData(userInfo)
     uni.setStorageSync('userInfo', userInfo)
   } catch (error) {
