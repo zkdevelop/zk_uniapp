@@ -47,6 +47,50 @@ __renderjsModules["55b5cda2"] = (() => {
     });
   }
 
+  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/route/points.js
+  var points = [
+    {
+      id: "point-1",
+      latitude: "24.182220",
+      longitude: "120.686250",
+      image: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/car.png",
+      time: "2024-11-5 16:02:00",
+      description: "\u4EFB\u52A1\u5F00\u59CB"
+    },
+    {
+      id: "point-2",
+      latitude: "24.120192",
+      longitude: "120.667024",
+      image: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/car.png",
+      time: "2024-11-5 16:12:00",
+      description: "\u5230\u8FBE\u5730\u70B91"
+    },
+    {
+      id: "point-3",
+      latitude: "24.142751",
+      longitude: "120.699296",
+      image: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/car.png",
+      time: "2024-11-5 16:22:00",
+      description: "\u5230\u8FBE\u5730\u70B92"
+    },
+    {
+      id: "point-4",
+      latitude: "24.138365",
+      longitude: "120.728135",
+      image: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/car.png",
+      time: "2024-11-5 16:32:00",
+      description: "\u5B8C\u6210\u884C\u52A8\u76EE\u6807"
+    },
+    {
+      id: "point-5",
+      latitude: "24.133979",
+      longitude: "120.69655",
+      image: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/car.png",
+      time: "2024-11-5 16:42:00",
+      description: "\u4EFB\u52A1\u7ED3\u675F"
+    }
+  ];
+
   // <stdin>
   var map = null;
   var stdin_default = {
@@ -55,9 +99,12 @@ __renderjsModules["55b5cda2"] = (() => {
         baiduApiKey: "A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD",
         gaodeApiKey: "caa070a3ebda631bea2feff72972f28c",
         gaodeSecurityKey: "93849873dba769e7b6235a79330ae7f7",
-        longitude: 116.397428,
-        latitude: 39.90923,
-        mapType: 0
+        position: {
+          longitude: 116.397428,
+          latitude: 39.90923
+        },
+        mapType: "",
+        map: null
       };
     },
     mounted() {
@@ -66,40 +113,133 @@ __renderjsModules["55b5cda2"] = (() => {
       });
     },
     methods: {
-      getLatitude(latitude) {
-        this.latitude = latitude;
+      getPosition(position) {
+        this.position = position;
         this.$nextTick(() => {
           this.changeMap(this.mapType);
         });
       },
-      getLongitude(longitude) {
-        this.longitude = longitude;
-        this.$nextTick(() => {
-          this.changeMap(this.mapType);
-        });
+      setMapType(value) {
+        this.mapType = value;
+        this.changeMap(this.mapType);
       },
       changeMap(mapType) {
-        this.mapType = mapType;
         switch (mapType) {
-          case 0:
-          case 1:
+          case "google":
+          case "gaode":
             map = new AMap.Map("map_container", {
               divMode: "2D",
               // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
               zoom: 12,
               // 初始化地图层级
-              center: [this.longitude, this.latitude]
+              center: [this.position.longitude, this.position.latitude]
               // 初始化地图中心点
             });
+            this.map = map;
+            this.getLine();
             break;
-          case 2:
+          case "baidu":
             map = new BMapGL.Map("map_container");
-            map.centerAndZoom(new BMapGL.Point(this.longitude, this.latitude), 12);
+            map.centerAndZoom(
+              new BMapGL.Point(this.position.longitude, this.position.latitude),
+              12
+            );
+            this.map = map;
             break;
-          case 3:
+          case "local":
             break;
           default:
             break;
+        }
+      },
+      getReplay(replay) {
+        this.replay = replay;
+        if (replay) {
+          this.replayMission();
+        }
+      },
+      replayMission() {
+        switch (this.mapType) {
+          case "google":
+          case "gaode":
+            let index = 1;
+            this.map.setZoomAndCenter(15, [points[0].longitude, points[0].latitude], true);
+            const interval = setInterval(() => {
+              if (index >= points.length || !this.replay) {
+                clearInterval(interval);
+                return;
+              }
+              const point = points[index];
+              this.map.setZoomAndCenter(15, [point.longitude, point.latitude], false);
+              index++;
+            }, 4e3);
+            this.$ownerInstance.callMethod("setPoint", false);
+            break;
+          case "baidu":
+            break;
+          case "local":
+            break;
+          default:
+            break;
+        }
+      },
+      getMarker(point) {
+        let marker = null;
+        switch (this.mapType) {
+          case "google":
+          case "gaode":
+            marker = new AMap.Marker({
+              //经纬度位置
+              position: new AMap.LngLat(point.longitude, point.latitude),
+              //偏移量
+              offset: new AMap.Pixel(-10, -24),
+              //图标
+              icon: new AMap.Icon({
+                //大小
+                size: new AMap.Size(20, 25),
+                imageSize: new AMap.Size(20, 25),
+                // image: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/em.jpg'
+                image: "https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
+              }),
+              //图标展示层级，防止被隐藏时编写
+              zIndex: 100,
+              //图标旁边展示内容
+              label: {
+                content: `<view style="display:flex;flex-direction:column"><text>${point.description}</text>
+							<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`,
+                offset: new AMap.Pixel(10, -18)
+              }
+            });
+            break;
+          case "baidu":
+            break;
+          case "local":
+            break;
+          default:
+            break;
+        }
+        return marker;
+      },
+      //绘制点与点之间的线段 Polyline类
+      initLine(start, end) {
+        let polyline = new AMap.Polyline({
+          //颜色
+          strokeColor: "#ff0000",
+          //起点与终点经纬度[[longitudeStart,latitudeStart],[longitudeEnd,latitudeEnd]]
+          path: [start, end]
+        });
+        this.map.add(polyline);
+      },
+      getLine() {
+        let prev = null;
+        let index = 0;
+        for (let index2 = 0; index2 < points.length; index2++) {
+          let curr = points[index2];
+          this.map.add(this.getMarker(curr));
+          if (index2 > 0) {
+            this.initLine([prev.longitude, prev.latitude], [curr.longitude, curr.latitude]);
+          }
+          prev = points[index2];
         }
       }
     }

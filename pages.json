@@ -166,6 +166,14 @@
 		{
 			"navigationBarTitleText" : "文件上传"
 		}
+	},
+	{
+		"path" : "pages/login/camouflageLogin/camouflageLogin",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"navigationStyle": "custom"
+		}
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

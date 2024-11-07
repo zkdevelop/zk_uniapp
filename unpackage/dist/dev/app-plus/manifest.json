@@ -114,6 +114,7 @@
       "style": "dark",
       "background": "#F8F8F8"
     },
+    "arguments": "{\"path\":\"pages/task/task_detail/document/document\"}",
     "allowsInlineMediaPlayback": true,
     "uni-app": {
       "control": "uni-v3",

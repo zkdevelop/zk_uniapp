@@ -859,14 +859,3 @@
 	margin: 10px 0;
 	/* 分割线的上下间距 */
 }
-.fixed-button {
-  position: fixed;
-  display: flex;
-  bottom: 0px; /* 距离屏幕底部20px */
-  background-color: #007AFF;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  z-index: 10; /* 确保按钮在其他内容上方 */
-  width: 100%;
-} 

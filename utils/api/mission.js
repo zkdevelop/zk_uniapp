@@ -26,3 +26,26 @@ export const deleteMission = (missionId) => {
 		method: 'delete'
 	})
 }
+
+// 查询文件信息
+export const getMissionFileById = (missionId, curPage, pageSize) => {
+	return request({
+		url: `/missionFile/get/${missionId}/${curPage}/${pageSize}`,
+		method: 'get'
+	})
+}
+export const getMissionFile = (curPage, pageSize) => {
+	return request({
+		url: `/missionFile/get/${curPage}/${pageSize}`,
+		method: 'get'
+	})
+}
+
+// 获取文件Url
+export const generateUrl = (query) => {
+	return request({
+		url: `/minio/generateUrl`,
+		method: 'get',
+		data: query
+	})
+}
