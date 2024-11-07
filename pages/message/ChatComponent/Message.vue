@@ -4,7 +4,7 @@
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content">
       <!-- 头像 -->
-      <image :src="message.avatar" class="avatar" mode="aspectFill"></image>
+      <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <!-- 好友名称（仅在好友消息中显示） -->
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
@@ -42,14 +42,12 @@
 export default {
   name: 'Message',
   props: {
-    // message: 消息对象，包含消息的所有相关信息
     message: {
       type: Object,
       required: true
     }
   },
   methods: {
-    // formatTime: 格式化时间戳为可读的时间字符串
     formatTime(timestamp) {
       const date = new Date(timestamp);
       const month = date.getMonth() + 1;

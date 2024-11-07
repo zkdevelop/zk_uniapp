@@ -3,7 +3,9 @@
     <!-- 聊天输入框和按钮区域 -->
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
       <!-- 语音按钮 -->
-      <text class="voice-button">🎤</text>
+      <view class="voice-button">
+        <image src="/static/message/语音输入.png" class="voice-icon" />
+      </view>
       
       <!-- 文本输入框 -->
       <input 
@@ -177,8 +179,7 @@ export default {
 }
 </script>
 
-<style>
-/* 聊天输入区域样式 */
+<style> 
 .chat-input-area {
   position: fixed;
   bottom: 0;
@@ -188,13 +189,14 @@ export default {
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  background-color: #FFFFFF;
 }
 
 .chat-input {
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: #F3F3F3;
   border-top: 1px solid #e0e0e0;
   z-index: 1001;
 }
@@ -203,7 +205,22 @@ export default {
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.voice-button, .attach-button, .send-button {
+.voice-button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  border-radius: 11px;
+  margin-right: 10px;
+}
+
+.voice-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.attach-button {
   font-size: 24px;
   color: #7f7f7f;
   margin: 0 10px;
@@ -215,14 +232,14 @@ export default {
   border: 1px solid #e0e0e0;
   border-radius: 20px;
   font-size: 16px;
-  background-color: #fff;
+  background-color: #FFFFFF;
 }
 
 .send-button {
   padding: 8px 15px;
-  background-color: #007AFF;
+  background-color: #4479F0;
   color: #fff;
-  border-radius: 20px;
+  border-radius: 18px;
   font-size: 16px;
 }
 </style>
