@@ -133,23 +133,23 @@ const loadUserData = async () => {
     if (userInfo && typeof userInfo === 'object') {
       userStore.setUserData(userInfo)
     } else {
-      await fetchUserInfo()
+      // await fetchUserInfo()
     }
   }
 }
 
-const fetchUserInfo = async () => {
-  uni.showLoading({ title: '加载中...', mask: true })
-  try { 
-    userStore.setUserData(userInfo)
-    uni.setStorageSync('userInfo', userInfo)
-  } catch (error) {
-    console.error('获取用户信息失败:', error)
-    uni.showToast({ title: '获取用户信息失败', icon: 'none' })
-  } finally {
-    uni.hideLoading()
-  }
-}
+// const fetchUserInfo = async () => {
+//   uni.showLoading({ title: '加载中...', mask: true })
+//   try { 
+//     userStore.setUserData(userInfo)
+//     uni.setStorageSync('userInfo', userInfo)
+//   } catch (error) {
+//     console.error('获取用户信息失败:', error)
+//     uni.showToast({ title: '获取用户信息失败', icon: 'none' })
+//   } finally {
+//     uni.hideLoading()
+//   }
+// }
 
 onMounted(() => {
   loadUserData()
