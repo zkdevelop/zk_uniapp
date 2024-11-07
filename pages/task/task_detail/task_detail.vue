@@ -89,7 +89,7 @@
 						<!-- 拍摄照片按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_picture()" src="../../../static/icon/photo.png"
-								style="width: 33px; height: 33px;"></image>
+								style="width: 36px; height: 33px;"></image>
 						</view>
 						<!-- 录制音频按钮 -->
 						<view style="margin-right: 50px;">
@@ -98,7 +98,7 @@
 						</view>
 						<!-- 删除任务按钮 -->
 						<view>
-							<image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"
+							<image src="../../../static/icon/delete.png" style="width: 25px; height: 25px;"
 								@click="deleteMisson"></image>
 						</view>
 					</view>
@@ -660,15 +660,20 @@
 						});
 						// 文件上传
 						uni.uploadFile({
-							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							url: `http://139.196.11.210:8500/communicate/minio/upload`,
 							filePath: tempFilePath,
-							name: 'file',
+							name: 'files',
+							formData: {
+								"isGroup": false,
+								"missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
+								"receptionId": "f7c6e52d7aae493db0b9593202885062"
+							},
 							header: {
-								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
+								'Content-Type': 'multipart/form-data;', 
+								'Authorization': 'Bearer '+ uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
-								var res = JSON.parse(uploadFileRes.data);
+								const res = JSON.parse(uploadFileRes.data);
 								if (res.code === 200) {
 									uni.showToast({
 										title: '图片上传成功！',
@@ -677,7 +682,7 @@
 										//显示持续时间为 2秒
 										duration: 2000
 									});
-								} else {
+								} else{
 									uni.showToast({
 										title: '图片上传失败！',
 										icon: 'none',
@@ -685,7 +690,6 @@
 										duration: 2000
 									});
 								}
-
 								console.log(uploadFileRes.data);
 							}
 						});
@@ -709,32 +713,36 @@
 						console.log('录像成功，文件路径：', tempFilePath);
 						// 文件上传
 						uni.uploadFile({
-							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							url: `http://139.196.11.210:8500/communicate/minio/upload`,
 							filePath: tempFilePath,
-							name: 'file',
+							name: 'files',
+							formData: {
+								"isGroup": false,
+								"missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
+								"receptionId": "f7c6e52d7aae493db0b9593202885062"
+							},
 							header: {
-								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
+								'Content-Type': 'multipart/form-data;', 
+								'Authorization': 'Bearer '+ uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
-								var res = JSON.parse(uploadFileRes.data);
+								const res = JSON.parse(uploadFileRes.data);
 								if (res.code === 200) {
 									uni.showToast({
 										title: '视频上传成功！',
 										//将值设置为 success 或者直接不用写icon这个参数
 										icon: 'success',
-										//显示持续时间为 1秒
+										//显示持续时间为 2秒
 										duration: 2000
 									});
-								} else {
+								} else{
 									uni.showToast({
 										title: '视频上传失败！',
 										icon: 'none',
-										//显示持续时间为 1秒
+										//显示持续时间为 2秒
 										duration: 2000
 									});
 								}
-
 								console.log(uploadFileRes.data);
 							}
 						});
@@ -805,7 +813,7 @@
 			},
 			goToDocument() {
 				uni.navigateTo({
-					url: '/pages/task/task_detail/document/document'
+					url: `/pages/task/task_detail/document/document?missionId=${this.taskItem.id}`
 				})
 			},
 			goToMainPage() {
