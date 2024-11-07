@@ -50,14 +50,14 @@ import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 
 const groupChatHistory = [
-  { id: 1, name: '张三', avatar: '../../static/c1.png', content: '大家好，我是张三', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:00:00') },
-  { id: 2, name: '李四', avatar: '../../static/c2.png', content: '你好张三，我是李四', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:01:00') },
-  { id: 3, name: '王五', avatar: '../../static/c3.png', content: '大家好，我是王五', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:02:00') },
-  { id: 4, name: '赵六', avatar: '../../static/c4.png', content: '../../static/image1.jpg', userType: 'friend', messageType: 'image', timestamp: new Date('2023-07-21T10:03:00') },
-  { id: 5, name: '张三', avatar: '../../static/c1.png', content: '这是一个很有意思的话题', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:04:00') },
-  { id: 6, name: '李四', avatar: '../../static/c2.png', content: { name: '会议纪要.docx', size: '2.5MB' }, userType: 'friend', messageType: 'file', timestamp: new Date('2023-07-21T10:05:00') },
-  { id: 7, name: '王五', avatar: '../../static/c3.png', content: '我同意张三的观点', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:06:00') },
-  { id: 8, name: '赵六', avatar: '../../static/c4.png', content: '我们下周一开会讨论这个问题吧', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:07:00') },
+  { id: 1, name: '张三', avatar: '/static/c1.png', content: '大家好，我是张三', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:00:00') },
+  { id: 2, name: '李四', avatar: '/static/c2.png', content: '你好张三，我是李四', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:01:00') },
+  { id: 3, name: '王五', avatar: '/static/c3.png', content: '大家好，我是王五', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:02:00') },
+  { id: 4, name: '赵六', avatar: '/static/c4.png', content: '/static/image1.jpg', userType: 'friend', messageType: 'image', timestamp: new Date('2023-07-21T10:03:00') },
+  { id: 5, name: '张三', avatar: '/static/c1.png', content: '1111', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:04:00') },
+  { id: 6, name: '李四', avatar: '/static/c2.png', content: { name: '会议纪要.docx', size: '2.5MB' }, userType: 'friend', messageType: 'file', timestamp: new Date('2023-07-21T10:05:00') },
+  { id: 7, name: '王五', avatar: '/static/c3.png', content: '22222', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:06:00') },
+  { id: 8, name: '赵六', avatar: '/static/c4.png', content: '33333', userType: 'friend', messageType: 'text', timestamp: new Date('2023-07-21T10:07:00') },
 ];
 
 export default {
@@ -80,7 +80,7 @@ export default {
       list: [],
       scrollTop: 0,
       scrollIntoView: '',
-      _selfAvatar: '/static/avatar/avatar5.jpeg',
+      _selfAvatar: '',
       showAttachMenu: false,
       burnAfterReadingDuration: 5,
       currentBurnAfterReadingImage: '',
@@ -106,21 +106,28 @@ export default {
   },
   methods: {
     initializeChat() {
-      this.list = this.chatInfo.type === 'group' ? groupChatHistory : [
-        {
-          content: '对方历史回复消息',
-          userType: 'friend',
-          avatar: this.chatInfo.avatar[0],
-          name: this.chatInfo.name,
-          timestamp: new Date('2023-07-21T09:58:00')
-        },
-        {
-          content: '历史消息',
-          userType: 'self',
-          avatar: this._selfAvatar,
-          timestamp: new Date('2023-07-21T09:59:00')
-        }
-      ];
+      if (this.chatInfo.type === 'group') {
+        this.list = groupChatHistory.map(message => ({
+          ...message,
+          avatar: message.avatar 
+        }));
+      } else {
+        this.list = [
+          {
+            content: '对方历史回复消息',
+            userType: 'friend',
+            avatar: this.chatInfo.avatar[0] ,
+            name: this.chatInfo.name,
+            timestamp: new Date('2023-07-21T09:58:00')
+          },
+          {
+            content: '历史消息',
+            userType: 'self',
+            avatar: this._selfAvatar ,
+            timestamp: new Date('2023-07-21T09:59:00')
+          }
+        ];
+      }
       this.$nextTick(this.scrollToBottom);
     },
     getScrollViewInfo() {
@@ -137,12 +144,10 @@ export default {
     goBack() {
       uni.navigateBack({
         success: () => {
-          // 返回成功后，触发更新tabBar激活状态的事件
           uni.$emit('updateTabBarActiveTab', 1);
         },
         fail: (err) => {
           console.error('返回失败:', err);
-          // 如果navigateBack失败，尝试使用reLaunch
           uni.reLaunch({
             url: '/pages/tabBar/tabBar',
             success: () => {
@@ -167,7 +172,7 @@ export default {
       setTimeout(() => {
         const randomMember = groupChatHistory[Math.floor(Math.random() * groupChatHistory.length)];
         this.addNewMessage({
-          content:  `这是来自${randomMember.name}的回复`,
+          content: `这是来自${randomMember.name}的回复`,
           userType: 'friend',
           avatar: randomMember.avatar,
           name: randomMember.name,
@@ -359,7 +364,7 @@ export default {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px  10px;
+  padding: 5px 10px;
   border-radius: 15px;
   font-size: 14px;
   z-index: 1000;
@@ -367,7 +372,7 @@ export default {
 
 .overlay {
   position: fixed;
-  top:  0;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;

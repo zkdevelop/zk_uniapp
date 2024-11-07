@@ -25,7 +25,7 @@
                 class="contact-item"
                 @click="showContactDetail(member)">
             <image class="avatar" 
-                   :src="member.avatar" 
+                   :src="getAvatarSrc(member.avatar)" 
                    mode="aspectFill">
             </image>
             <view class="contact-info">
@@ -56,6 +56,7 @@ export default {
   data() {
     return {
       selectedContact: null,
+      defaultAvatarPath: '../../static/message/默认头像.png',
       groups: [
         {
           id: 'group1',
@@ -66,7 +67,7 @@ export default {
               id: 1,
               name: 'admin',
               title: '称号1',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'admin123',
               ip: '192.168.1.100'
             },
@@ -74,7 +75,7 @@ export default {
               id: 2,
               name: '张宁鹏',
               title: '称号2',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'zhangningp',
               ip: '192.168.1.101'
             },
@@ -82,7 +83,7 @@ export default {
               id: 3,
               name: '杨尚基',
               title: '称号3',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'yangshangji',
               ip: '192.168.1.102'
             },
@@ -90,7 +91,7 @@ export default {
               id: 4,
               name: '王彦',
               title: '称号4',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'wangyan',
               ip: '192.168.1.103'
             }
@@ -105,7 +106,7 @@ export default {
               id: 5,
               name: '李明',
               title: '称号5',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'liming',
               ip: '192.168.1.104'
             },
@@ -113,7 +114,7 @@ export default {
               id: 6,
               name: '赵静',
               title: '称号6',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'zhaojing',
               ip: '192.168.1.105'
             },
@@ -121,7 +122,7 @@ export default {
               id: 7,
               name: '周伟',
               title: '称号7',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'zhouwei',
               ip: '192.168.1.106'
             }
@@ -136,7 +137,7 @@ export default {
               id: 8,
               name: '刘芳',
               title: '称号8',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'liufang',
               ip: '192.168.1.107'
             },
@@ -144,7 +145,7 @@ export default {
               id: 9,
               name: '陈强',
               title: '称号9',
-              avatar: '/placeholder.svg?height=40&width=40',
+              avatar: '',
               username: 'chenqiang',
               ip: '192.168.1.108'
             }
@@ -165,6 +166,9 @@ export default {
     },
     closeContactDetail() {
       this.selectedContact = null;
+    },
+    getAvatarSrc(avatar) {
+      return avatar || this.defaultAvatarPath;
     }
   }
 }

@@ -27,7 +27,7 @@
           class="message-item"
           @click="openChat(message)"
         >
-          <group-avatar v-if="message.type === 'group'" :avatar="message.avatar" />
+          <group-avatar v-if="message.type === 'group'" :avatar="message.avatar" class="avatar" />
           <image v-else :src="getAvatarSrc(message.avatar[0])" class="avatar" mode="aspectFill"></image>
           <view class="message-content-wrapper">
             <view class="message-content">
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+// script部分保持不变
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
 
 export default {
@@ -53,9 +54,9 @@ export default {
   data() {
     return {
       messages: [
-        { id: '1', name: '张宁鹏', avatar: [ ], preview: '你好', date: '7月21日', type: 'single' },
-        { id: '2', name: '杨尚基', avatar: [ ], preview: '[图片]', date: '7月21日', type: 'single' },
-        { id: '3', name: '王彦', avatar: [ ], preview: '[视频]', date: '7月22日', type: 'single' },
+        { id: '1', name: '张宁鹏', avatar: [''], preview: '你好', date: '7月21日', type: 'single' },
+        { id: '2', name: '杨尚基', avatar: [''], preview: '[图片]', date: '7月21日', type: 'single' },
+        { id: '3', name: '王彦', avatar: [''], preview: '[视频]', date: '7月22日', type: 'single' },
         { 
           id: '4', 
           name: '项目讨论群', 
@@ -166,7 +167,7 @@ export default {
 .message-item {
   display: flex;
   align-items: flex-start;
-  padding: 15px;
+  padding: 12px 15px;
   background-color: #fff;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -179,7 +180,7 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 5px;
-  margin-right: 15px;
+  margin-right: 12px;
   flex-shrink: 0;
 }
 
@@ -213,8 +214,8 @@ export default {
   flex: 1;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   min-width: 0;
+  padding-top: 2px;
 }
 
 .message-content {
@@ -222,15 +223,16 @@ export default {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .message-title {
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .message-preview {
@@ -239,6 +241,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .message-date {
@@ -246,6 +249,5 @@ export default {
   color: #999;
   margin-left: 15px;
   flex-shrink: 0;
-  align-self: flex-start;
 }
 </style>
