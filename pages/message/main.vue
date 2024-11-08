@@ -4,11 +4,11 @@
       <view class="messages-header">
         <text class="header-title">消息({{ totalMessageCount }})</text>
         <view class="search-icon">
-          <text>🔍</text>
+          <image src="/static/message/搜索.png" mode="aspectFit" class="search-image"></image>
         </view>
       </view>
       
-      <scroll-view class="messages-list" scroll-y>
+      <scroll-view class="messages-list" scroll-y enable-flex :style="{ height: scrollViewHeight + 'px' }">
         <view class="message-item system-message">
           <view class="message-icon system-icon">
             <text>📢</text>
@@ -25,6 +25,7 @@
           v-for="(message, index) in messages" 
           :key="index" 
           class="message-item"
+          :class="{ 'personal-chat': message.type === 'single' }"
           @click="openChat(message)"
         >
           <group-avatar v-if="message.type === 'group'" :avatar="message.avatar" class="avatar" />
@@ -70,8 +71,14 @@ export default {
           date: '7月23日', 
           type: 'group' 
         },
+        { id: '5', name: '测试用户1', avatar: [''], preview: '这是一条测试消息', date: '7月24日', type: 'single' },
+        { id: '6', name: '测试用户2', avatar: [''], preview: '这是另一条测试消息', date: '7月24日', type: 'single' },
+        { id: '7', name: '测试用户3', avatar: [''], preview: '这是第三条测试消息', date: '7月24日', type: 'single' },
+        { id: '8', name: '测试用户4', avatar: [''], preview: '这是第四条测试消息', date: '7月24日', type: 'single' },
+        { id: '9', name: '测试用户5', avatar: [''], preview: '这是第五条测试消息', date: '7月24日', type: 'single' },
       ],
-      defaultAvatarPath: '../../static/message/默认头像.png'
+      defaultAvatarPath: '../../static/message/默认头像.png',
+      scrollViewHeight: 0,
     }
   },
   computed: {
@@ -88,6 +95,7 @@ export default {
     }
   },
   mounted() {
+    this.calculateScrollViewHeight();
     uni.$on('switchToMessages', this.handleSwitchToMessages);
   },
   beforeDestroy() {
@@ -122,6 +130,12 @@ export default {
     },
     getAvatarSrc(avatar) {
       return avatar || this.defaultAvatarPath;
+    },
+    calculateScrollViewHeight() {
+      const systemInfo = uni.getSystemInfoSync();
+      const headerHeight = 44; // 消息头部的大致高度
+      const tabBarHeight = 50; // 底部标签栏的大致高度，如果有的话
+      this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
     }
   }
 }
@@ -133,6 +147,7 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
+  overflow: hidden; /* 防止整个容器出现滚动条 */
 }
 
 .messages-view {
@@ -151,23 +166,31 @@ export default {
 }
 
 .header-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 .search-icon {
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-image {
+  width: 20px;
+  height: 20px;
 }
 
 .messages-list {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch; /* 为iOS提供平滑滚动 */
 }
 
 .message-item {
   display: flex;
   align-items: flex-start;
-  padding: 12px 15px;
+  padding: 15px 15px;
   background-color: #fff;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -177,10 +200,10 @@ export default {
 }
 
 .message-icon, .avatar {
-  width: 40px;
-  height: 40px;
+  width: 54px;
+  height: 54px;
   border-radius: 5px;
-  margin-right: 12px;
+  margin-right: 10px;
   flex-shrink: 0;
 }
 
@@ -190,7 +213,7 @@ export default {
   justify-content: center;
   align-items: center;
   color: #fff;
-  font-size: 24px;
+  font-size: 20px;
   position: relative;
 }
 
@@ -200,11 +223,11 @@ export default {
   right: -5px;
   background-color: #ff3b30;
   color: #fff;
-  font-size: 12px;
-  padding: 2px 5px;
-  border-radius: 10px;
-  min-width: 18px;
-  height: 18px;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 8px;
+  min-width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -223,11 +246,11 @@ export default {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .message-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -236,7 +259,7 @@ export default {
 }
 
 .message-preview {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
   white-space: nowrap;
   overflow: hidden;
@@ -245,9 +268,66 @@ export default {
 }
 
 .message-date {
-  font-size: 12px;
+  font-size: 11px;
   color: #999;
-  margin-left: 15px;
+  margin-left: 10px;
   flex-shrink: 0;
+}
+
+.personal-chat {
+  padding: 12px 15px;
+}
+
+.personal-chat .message-icon,
+.personal-chat .avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.personal-chat .message-title {
+  font-size: 13px;
+}
+
+.personal-chat .message-preview {
+  font-size: 11px;
+}
+
+.personal-chat .message-date {
+  font-size: 10px;
+}
+
+@media screen and (max-width: 375px) {
+  .message-item {
+    padding: 12px 12px;
+  }
+
+  .message-icon, .avatar {
+    width: 48px;
+    height: 48px;
+    margin-right: 8px;
+  }
+
+  .message-title {
+    font-size: 13px;
+  }
+
+  .message-preview {
+    font-size: 11px;
+  }
+
+  .message-date {
+    font-size: 10px;
+    margin-left: 8px;
+  }
+
+  .personal-chat {
+    padding: 9px 12px;
+  }
+
+  .personal-chat .message-icon,
+  .personal-chat .avatar {
+    width: 42px;
+    height: 42px;
+  }
 }
 </style>

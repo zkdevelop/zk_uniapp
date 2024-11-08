@@ -2,7 +2,7 @@
   <view class="page">
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
-    <button @click.stop="simulateNewMessage" class="simulate-button">模拟新消息</button>
+  <!--  <button @click.stop="simulateNewMessage" class="simulate-button">模拟新消息</button -->
 
     <MessageList
       :messages="list"
