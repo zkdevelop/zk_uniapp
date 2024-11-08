@@ -41,7 +41,7 @@ const userStore = useUserStore()
 
 const autoLogin = ref(false)
 const username = ref('test-app')
-const password = ref('test123456')
+const password = ref('Test123456')
 
 const goToRegister = () => {
   uni.navigateTo({

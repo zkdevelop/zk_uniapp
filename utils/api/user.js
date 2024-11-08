@@ -11,6 +11,9 @@ export const login = (params) => {
 		// url: `/user/login?account=${params.account}&password=${params.password}`,
 		url: `/user/login`,
 		method: 'post',
+		header: {
+			'Authorization': ''
+		},
 		data
 	})
 }

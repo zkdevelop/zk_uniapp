@@ -100,29 +100,32 @@
 				})
 				searchMission(this.query).then(res => {
 					this.taskItem = res.data.records.map(e => ({
-						id:e.id,
+						id: e.id,
 						task_name: e.missionName,
 						country: e.missionCountry,
-						position: e.missionCountry,
+						position: e.missionCity,
 						start_time: e.missionStartTime,
 						end_time: e.missionEndTime,
 						type: this.getTaskType(e.missionStartTime, e.missionEndTime),
 						description: e.missionDescription,
 						key: e.missionPassword,
-						latitude:e.latitude,
-						longitude:e.longitude
+						latitude: e.latitude,
+						longitude: e.longitude
 					}));
+					// console.log(res);
 					uni.hideLoading()
 				});
-				// this.taskItem = [
-				// 	{ task_name: '现地侦察横须滨基地情况', country: '日本', position: '日本横须滨', start_time: '2024.05.03', end_time: '2026.02.01', type: this.getTaskType('2024.05.03', '2026.02.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '台风情况管控', country: '日本', position: '台湾省台北市', start_time: '2025.05.03', end_time: '2026.03.01', type: this.getTaskType('2025.05.03', '2026.03.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '其他任务示例', country: '日本', position: '位置A', start_time: '2024.06.01', end_time: '2024.12.01', type: this.getTaskType('2024.06.01', '2024.12.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '任务示例1', country: '日本', position: '位置B', start_time: '2023.10.01', end_time: '2024.05.01', type: this.getTaskType('2023.10.01', '2024.05.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '任务示例2', country: '日本', position: '位置C', start_time: '2023.12.01', end_time: '2024.08.01', type: this.getTaskType('2023.12.01', '2024.08.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '任务示例3', country: '日本', position: '位置D', start_time: '2024.04.01', end_time: '2024.11.01', type: this.getTaskType('2024.04.01', '2024.11.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '任务示例4', country: '日本', position: '位置E', start_time: '2023.09.01', end_time: '2024.03.01', type: this.getTaskType('2023.09.01', '2024.03.01'), description: '描述1', key: '123456' },
-				// 	{ task_name: '任务示例5', country: '日本', position: '位置F', start_time: '2025.01.01', end_time: '2025.07.01', type: this.getTaskType('2025.01.01', '2025.07.01'), description: '描述1', key: '123456' },
+				// 		this.taskItem = [
+				// { task_name: '现地侦察横须滨基地情况', country: '日本', position: '日本横须滨', start_time: '2024.05.03', end_time: '2026.02.01', type: this.getTaskType('2024.05.03', '2026.02.01'), description: '描述1', key: '123456',  latitude: "24.182220",
+				// longitude: "120.686250"},
+				// { task_name: '台风情况管控', country: '日本', position: '台湾省台北市', start_time: '2025.05.03', end_time: '2026.03.01', type: this.getTaskType('2025.05.03', '2026.03.01'), description: '描述1', key: '123456',latitude: "24.182220",
+				// longitude: "120.686250" },
+				// { task_name: '其他任务示例', country: '日本', position: '位置A', start_time: '2024.06.01', end_time: '2024.12.01', type: this.getTaskType('2024.06.01', '2024.12.01'), description: '描述1', key: '123456' },
+				// { task_name: '任务示例1', country: '日本', position: '位置B', start_time: '2023.10.01', end_time: '2024.05.01', type: this.getTaskType('2023.10.01', '2024.05.01'), description: '描述1', key: '123456' },
+				// { task_name: '任务示例2', country: '日本', position: '位置C', start_time: '2023.12.01', end_time: '2024.08.01', type: this.getTaskType('2023.12.01', '2024.08.01'), description: '描述1', key: '123456' },
+				// { task_name: '任务示例3', country: '日本', position: '位置D', start_time: '2024.04.01', end_time: '2024.11.01', type: this.getTaskType('2024.04.01', '2024.11.01'), description: '描述1', key: '123456' },
+				// { task_name: '任务示例4', country: '日本', position: '位置E', start_time: '2023.09.01', end_time: '2024.03.01', type: this.getTaskType('2023.09.01', '2024.03.01'), description: '描述1', key: '123456' },
+				// { task_name: '任务示例5', country: '日本', position: '位置F', start_time: '2025.01.01', end_time: '2025.07.01', type: this.getTaskType('2025.01.01', '2025.07.01'), description: '描述1', key: '123456' },
 				// ];
 			},
 			getItems(index) {

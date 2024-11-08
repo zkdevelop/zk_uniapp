@@ -30,8 +30,8 @@
 			return {
 				account:"test-app",
 				username: 'test-app',
-				password: 'test123456',
-				confirmPassword: 'test123456',
+				password: 'Test123456',
+				confirmPassword: 'Test123456',
 				phone: '13888888888',
 				department: "二十一室",
 				departments: []

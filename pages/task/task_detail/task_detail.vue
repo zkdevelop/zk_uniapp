@@ -1,6 +1,6 @@
 <template>
 	<!-- 地图容器 -->
-	<view id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
+	<div id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
 		:change:replay='m.getReplay' :position="position" :change:position='m.getPosition' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
@@ -89,7 +89,7 @@
 						<!-- 拍摄照片按钮 -->
 						<view style="margin-right: 50px;">
 							<image @click="take_picture()" src="../../../static/icon/photo.png"
-								style="width: 36px; height: 33px;"></image>
+								style="width: 33px; height: 33px;"></image>
 						</view>
 						<!-- 录制音频按钮 -->
 						<view style="margin-right: 50px;">
@@ -98,7 +98,7 @@
 						</view>
 						<!-- 删除任务按钮 -->
 						<view>
-							<image src="../../../static/icon/delete.png" style="width: 25px; height: 25px;"
+							<image src="../../../static/icon/delete.png" style="width: 28px; height: 28px;"
 								@click="deleteMisson"></image>
 						</view>
 					</view>
@@ -262,13 +262,15 @@
 
 <script module="m" lang="renderjs">
 	import {
-		loadBaiduMapScript,
-		loadMapScript
-	} from "./map.js";
-	import {
 		points
 	} from "../../../static/route/points.js"
-	var map = null;
+	import {
+		tileUrls
+	} from "../../../config.js"
+	import "../../../static/leaflet/leaflet.js"
+	let map = null;
+	let baseTileLayer = null;
+	let markers = [];
 	export default {
 		data() {
 			return {
@@ -276,56 +278,83 @@
 				gaodeApiKey: 'caa070a3ebda631bea2feff72972f28c',
 				gaodeSecurityKey: '93849873dba769e7b6235a79330ae7f7',
 				position: {
-					longitude: 116.397428,
-					latitude: 39.90923,
+					longitude: 120.686250,
+					latitude: 24.182220,
 				},
-				mapType: '',
-				map: null
+				mapType: 'gaode',
 			}
 		},
+		created() {
+
+		},
 		mounted() {
-			// ================加载地图==================
-			loadMapScript(this.baiduApiKey, this.gaodeApiKey, this.gaodeSecurityKey).then(() => {
-				this.$ownerInstance.callMethod('setPoint');
-			});
+			// 设置当前地图中心点
+			this.$ownerInstance.callMethod('setPoint');
 		},
 		methods: {
+			/** position变更时调用方法
+			 * @param {Object} position
+			 */
 			getPosition(position) {
 				this.position = position;
-				this.$nextTick(() => {
-					this.changeMap(this.mapType);
-				});
+				console.log(this.position, 'position')
+				if (map == null) {
+					this.initMap();
+				}
+				if (map != null) {
+					map.setView(L.latLng(this.position.latitude,this.position.longitude), 12);
+					// 加载行动轨迹
+					this.getLine();
+				}
 			},
+			/** mathType变更时调用方法
+			 * @param {Object} position
+			 */
 			setMapType(value) {
 				this.mapType = value;
 				this.changeMap(this.mapType);
 			},
-			changeMap(mapType) {
-				switch (mapType) {
-					case 'google':
-
-					case 'gaode':
-						map = new AMap.Map('map_container', {
-							divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
-							zoom: 12, // 初始化地图层级
-							center: [this.position.longitude, this.position.latitude] // 初始化地图中心点
-						});
-						this.map = map;
-						// 加载行动轨迹
-						this.getLine();
-						break;
-					case 'baidu':
-						map = new BMapGL.Map("map_container");
-						map.centerAndZoom(new BMapGL.Point(this.position.longitude, this.position.latitude),
-							12); // 初始化地图,设置中心点坐标和地图级别
-						this.map = map;
-						break;
-					case 'local':
-						break;
-					default:
-						break;
+			/** 初始化地图
+			 */
+			initMap() {
+				var container = L.DomUtil.get('map_container');
+				if (container != null) {
+					container._leaflet_id = null;
+					L.DomUtil.empty(container);
 				}
+				// 初始化地图容器
+				map = L.map('map_container', {
+					zoom: 12,
+					center: [this.position.latitude, this.position.longitude],
+					zoomControl: false, //禁用 + - 按钮
+					attributionControl: false, // 移除右下角leaflet标识
+				});
+				// 添加底图图层
+				baseTileLayer = L.tileLayer(tileUrls['gaode'].url)
+				baseTileLayer.addTo(map);
+				// 取消右下角版权表leaflet前缀,添加至地图
+				L.control.attribution({
+					prefix: ''
+				}).addTo(map);
 			},
+			/**  切换地图
+			 * @param {String} mapType 地图类型
+			 */
+			changeMap(mapType) {
+				console.log("change-to-" + mapType)
+				// 移除原底图图层
+				baseTileLayer.remove();
+				// 添加对应图层
+				baseTileLayer = L.tileLayer(
+					tileUrls[mapType].url, {
+						attribution: `&copy;${tileUrls[mapType].name}`
+					}
+				)
+				baseTileLayer.addTo(map);
+			},
+			/** 任务回溯状态变更时调用方法
+			 * @param {Boolean} replay
+			 */
 			getReplay(replay) {
 				this.replay = replay;
 				if (replay) {
@@ -333,95 +362,57 @@
 				}
 			},
 			replayMission() {
-				switch (this.mapType) {
-					case 'google':
-
-					case 'gaode':
-						let index = 1;
-						this.map.setZoomAndCenter(15, [points[0].longitude, points[0].latitude], true);
-						const interval = setInterval(() => {
-							if (index >= points.length || !this.replay) {
-								clearInterval(interval);
-								return;
-							}
-							const point = points[index];
-							this.map.setZoomAndCenter(15, [point.longitude, point.latitude], false);
-							index++;
-						}, 4000);
+				let index = 1;
+				// 设置起始点
+				map.flyTo([points[0].latitude, points[0].longitude], 15);
+				marker[0].openPopup();
+				// 定时器回溯
+				const interval = setInterval(() => {
+					// 回溯结束
+					if (index >= points.length || !this.replay) {
+						clearInterval(interval);
 						// 设置回溯状态为false
-						this.$ownerInstance.callMethod('setPoint', false);
-						break;
-					case 'baidu':
-						break;
-					case 'local':
-						break;
-					default:
-						break;
-				}
+						this.$ownerInstance.callMethod('setReplay', false);
+						return;
+					}
+					const point = points[index];
+					// 移动至对应点
+					map.flyTo([point.latitude, point.longitude], 15);
+					// 弹出点标记
+					markers[index].openPopup();
+					index++;
+				}, 4000);
 			},
-			getMarker(point) {
-				let marker = null;
-				switch (this.mapType) {
-					case 'google':
-					case 'gaode':
-						marker = new AMap.Marker({
-							//经纬度位置
-							position: new AMap.LngLat(point.longitude, point.latitude),
-							//偏移量
-							offset: new AMap.Pixel(-10, -24),
-							//图标
-							icon: new AMap.Icon({
-								//大小
-								size: new AMap.Size(20, 25),
-								imageSize: new AMap.Size(20, 25),
-								// image: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/em.jpg'
-								image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
-							}),
-							//图标展示层级，防止被隐藏时编写
-							zIndex: 100,
-							//图标旁边展示内容
-							label: {
-								content: `<view style="display:flex;flex-direction:column"><text>${point.description}</text>
-							<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`,
-								offset: new AMap.Pixel(10, -18)
-							}
-						})
-						break;
-					case 'baidu':
-						break;
-					case 'local':
-						break;
-					default:
-						break;
-				}
-
-				return marker;
+			/** 绘制点与点之间的线段
+			 * @param {Array} points 轨迹点
+			 */
+			addLine(points) {
+				let latlngs = points.map(point => [point.latitude, point.longitude])
+				var polyline = L.polyline(latlngs, {
+					color: 'red'
+				}).addTo(map).bringToFront();
 			},
-			//绘制点与点之间的线段 Polyline类
-			initLine(start, end) {
-				let polyline = new AMap.Polyline({
-					//颜色
-					strokeColor: '#ff0000',
-					//起点与终点经纬度[[longitudeStart,latitudeStart],[longitudeEnd,latitudeEnd]]
-					path: [start, end]
-				})
-				//添加线段
-				this.map.add(polyline)
+			/** 添加点标记
+			 * @param {Object} point
+			 */
+			addMarker(point) {
+				var marker = L.marker([point.latitude, point.longitude]).addTo(map);
+				marker.bindPopup(`<view style="display:flex;flex-direction:column"><text>${point.description}</text>
+							<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`);
+				markers.push(marker);
 			},
 			getLine() {
 				// 加载行动轨迹
 				let prev = null;
-				let index = 0
+				let index = 0;
+
 				for (let index = 0; index < points.length; index++) {
 					let curr = points[index];
 					// 加载地图点
-					this.map.add(this.getMarker(curr))
+					this.addMarker(curr);
 					// 加载连线
-					if (index > 0) {
-						this.initLine([prev.longitude, prev.latitude], [curr.longitude, curr.latitude])
-					}
-					prev = points[index];
-				}
+				};
+				this.addLine(points);
 			}
 		}
 	}
@@ -439,7 +430,7 @@
 			return {
 				recorderManager: {},
 				innerAudioContext: {},
-				selectedMap: '', //当前地图
+				selectedMap: 'gaode', //当前地图
 				navIndex: 0,
 				filePaths: {
 					imagePath: '',
@@ -480,8 +471,8 @@
 				],
 				taskItem: {},
 				position: {
-					longitude: 116.397428,
-					latitude: 39.90923,
+					longitude: '120.686250',
+					latitude: '24.182220',
 				},
 				map_options: [{
 						key: 'google',
@@ -592,7 +583,7 @@
 		onLoad(options) {
 			// 页面加载时执行
 			if (options.taskItem) {
-				this.taskItem = JSON.parse(options.taskItem);
+				this.taskItem = JSON.parse(options.taskItem); // 设置类型
 			} else {
 				console.error('没有传递类型参数');
 			};
@@ -607,41 +598,7 @@
 			this.recorderManager.onStop(function(res) {
 				console.log('recorder stop' + JSON.stringify(res));
 				self.filePaths.voicePath = res.tempFilePath;
-				const tempFilePath = res.tempFilePath;
-				// 文件上传
-				uni.uploadFile({
-					url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
-					filePath: tempFilePath,
-					name: 'file',
-					header: {
-						'Content-Type': 'application/form-data;charset=UTF-8',
-						'Authorization': 'Bearer '+uni.getStorageSync('token'),
-					},
-					success: (uploadFileRes) => {
-						var res = JSON.parse(uploadFileRes.data);
-						if (res.code === 200) {
-							uni.showToast({
-								title: '音频上传成功！',
-								//将值设置为 success 或者直接不用写icon这个参数
-								icon: 'success',
-								//显示持续时间为 1秒
-								duration: 2000
-							});
-						} else{
-							uni.showToast({
-								title: '音频上传失败！',
-								icon: 'none',
-								//显示持续时间为 1秒
-								duration: 2000
-							});
-						}
-						
-						console.log(uploadFileRes.data);
-					}
-				});
 			});
-			// 设置地图
-			this.selectedMap = 'gaode'
 		},
 		methods: {
 			take_picture() {
@@ -660,20 +617,15 @@
 						});
 						// 文件上传
 						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload`,
+							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
 							filePath: tempFilePath,
-							name: 'files',
-							formData: {
-								"isGroup": false,
-								"missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
-								"receptionId": "f7c6e52d7aae493db0b9593202885062"
-							},
+							name: 'file',
 							header: {
-								'Content-Type': 'multipart/form-data;', 
-								'Authorization': 'Bearer '+ uni.getStorageSync('token'),
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
-								const res = JSON.parse(uploadFileRes.data);
+								var res = JSON.parse(uploadFileRes.data);
 								if (res.code === 200) {
 									uni.showToast({
 										title: '图片上传成功！',
@@ -682,7 +634,7 @@
 										//显示持续时间为 2秒
 										duration: 2000
 									});
-								} else{
+								} else {
 									uni.showToast({
 										title: '图片上传失败！',
 										icon: 'none',
@@ -690,6 +642,7 @@
 										duration: 2000
 									});
 								}
+
 								console.log(uploadFileRes.data);
 							}
 						});
@@ -713,36 +666,32 @@
 						console.log('录像成功，文件路径：', tempFilePath);
 						// 文件上传
 						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload`,
+							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
 							filePath: tempFilePath,
-							name: 'files',
-							formData: {
-								"isGroup": false,
-								"missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
-								"receptionId": "f7c6e52d7aae493db0b9593202885062"
-							},
+							name: 'file',
 							header: {
-								'Content-Type': 'multipart/form-data;', 
-								'Authorization': 'Bearer '+ uni.getStorageSync('token'),
+								'Content-Type': 'application/form-data;charset=UTF-8',
+								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
-								const res = JSON.parse(uploadFileRes.data);
+								var res = JSON.parse(uploadFileRes.data);
 								if (res.code === 200) {
 									uni.showToast({
 										title: '视频上传成功！',
 										//将值设置为 success 或者直接不用写icon这个参数
 										icon: 'success',
-										//显示持续时间为 2秒
+										//显示持续时间为 1秒
 										duration: 2000
 									});
-								} else{
+								} else {
 									uni.showToast({
 										title: '视频上传失败！',
 										icon: 'none',
-										//显示持续时间为 2秒
+										//显示持续时间为 1秒
 										duration: 2000
 									});
 								}
+
 								console.log(uploadFileRes.data);
 							}
 						});
@@ -813,7 +762,7 @@
 			},
 			goToDocument() {
 				uni.navigateTo({
-					url: `/pages/task/task_detail/document/document?missionId=${this.taskItem.id}`
+					url: '/pages/task/task_detail/document/document'
 				})
 			},
 			goToMainPage() {
@@ -824,7 +773,6 @@
 			selectImage(value) {
 				// this.selectedIndex = index; // 设置选中索引
 				this.selectedMap = value; // 设置选中地图
-				console.log(this.selectedMap)
 				this.$refs.map_selector.close()
 			},
 			receive_instruction(index) {
@@ -902,14 +850,16 @@
 </script>
 
 <style lang="scss">
+	@import url("/static/leaflet/leaflet.css");
+
 	.layout_task_detail {
 		/* 确保填满整个视口 */
-		height: calc(100vh - 44px);
+		height: 100vh;
 		z-index: 20;
 	}
 
 	#map_container {
-		height: 100vh;
+		height: 100%;
 		width: 100%;
 		position: absolute;
 		left: 0;

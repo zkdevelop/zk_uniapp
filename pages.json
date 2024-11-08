@@ -92,26 +92,7 @@
 	{
 		"path": "pages/task/task_detail/baidu_map/baidu_map",
 		"style": {
-			"navigationBarTitleText": "百度地图测试",
-			"app-plus": {
-				"subNVues": [
-					{
-						"id": "condition_icons",
-						"path": "pages/task/task_detail/baidu_map/subnvue/condition_icons",
-						"style": {
-							"display": "flex",
-							"justify-content": "space-between",
-							"padding": "15px",
-							"zIndex": "100",
-							"position": "absolute",
-							"top": "0",
-							"left": "0",
-							"width": "100px",
-							"height": "40px"
-						}
-					}
-				]
-			}
+			"navigationBarTitleText": "百度地图测试"
 		}
 	},
 	{
