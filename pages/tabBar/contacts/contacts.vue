@@ -10,8 +10,10 @@
       </view>
     </view>
 
-    <scroll-view class="contact-list" scroll-y>
-      <view v-for="group in groups" :key="group.id" class="group">
+    <scroll-view class="contact-list" scroll-y @scrolltolower="loadMoreContacts">
+      <view v-if="loading" class="loading">加载中...</view>
+      <view v-else-if="groups.length === 0" class="no-contacts">暂无联系人</view>
+      <view v-else v-for="group in groups" :key="group.id" class="group">
         <view class="group-header" @click="toggleGroup(group.id)">
           <text class="group-title">{{ group.name }} ({{ group.members.length }}人)</text>
           <text class="group-arrow" :class="{ 'expanded': group.expanded }">›</text>
@@ -47,6 +49,7 @@
 
 <script>
 import ContactDetail from './ContactDetail.vue'
+import { searchUsers } from '/utils/api/contacts.js'
 
 export default {
   name: 'Contacts',
@@ -57,104 +60,77 @@ export default {
     return {
       selectedContact: null,
       defaultAvatarPath: '../../static/message/默认头像.png',
-      groups: [
-        {
-          id: 'group1',
-          name: '分组A',
-          expanded: true,
-          members: [
-            {
-              id: 1,
-              name: 'admin',
-              title: '称号1',
-              avatar: '',
-              username: 'admin123',
-              ip: '192.168.1.100'
-            },
-            {
-              id: 2,
-              name: '张宁鹏',
-              title: '称号2',
-              avatar: '',
-              username: 'zhangningp',
-              ip: '192.168.1.101'
-            },
-            {
-              id: 3,
-              name: '杨尚基',
-              title: '称号3',
-              avatar: '',
-              username: 'yangshangji',
-              ip: '192.168.1.102'
-            },
-            {
-              id: 4,
-              name: '王彦',
-              title: '称号4',
-              avatar: '',
-              username: 'wangyan',
-              ip: '192.168.1.103'
-            }
-          ]
-        },
-        {
-          id: 'group2',
-          name: '分组B',
-          expanded: false,
-          members: [
-            {
-              id: 5,
-              name: '李明',
-              title: '称号5',
-              avatar: '',
-              username: 'liming',
-              ip: '192.168.1.104'
-            },
-            {
-              id: 6,
-              name: '赵静',
-              title: '称号6',
-              avatar: '',
-              username: 'zhaojing',
-              ip: '192.168.1.105'
-            },
-            {
-              id: 7,
-              name: '周伟',
-              title: '称号7',
-              avatar: '',
-              username: 'zhouwei',
-              ip: '192.168.1.106'
-            }
-          ]
-        },
-        {
-          id: 'group3',
-          name: '分组C',
-          expanded: false,
-          members: [
-            {
-              id: 8,
-              name: '刘芳',
-              title: '称号8',
-              avatar: '',
-              username: 'liufang',
-              ip: '192.168.1.107'
-            },
-            {
-              id: 9,
-              name: '陈强',
-              title: '称号9',
-              avatar: '',
-              username: 'chenqiang',
-              ip: '192.168.1.108'
-            }
-          ]
-        }
-      ]
+      groups: [],
+      loading: false,
+      curPage: 1,
+      pageSize: 10,
+      total: 0
     }
   },
+  mounted() {
+    this.loadContacts()
+  },
   methods: {
+    async loadContacts() {
+      this.loading = true
+      try {
+        const response = await searchUsers({
+          keyword: "",
+          param: {
+            curPage: this.curPage,
+            pageSize: this.pageSize
+          }
+        })
+        if (response.code === 200) {
+          this.total = response.data.total
+          const users = response.data.records
+          if (this.curPage === 1) {
+            this.groups = [{
+              id: 'allUsers',
+              name: '所有用户',
+              expanded: true,
+              members: users.map(user => ({
+                id: user.id,
+                name: user.name,
+                title: user.department,
+                avatar: user.avatarUrl,
+                username: user.account,
+                phone: user.phone,
+                role: user.role
+              }))
+            }]
+          } else {
+            this.groups[0].members.push(...users.map(user => ({
+              id: user.id,
+              name: user.name,
+              title: user.department,
+              avatar: user.avatarUrl,
+              username: user.account,
+              phone: user.phone,
+              role: user.role
+            })))
+          }
+        } else {
+          uni.showToast({
+            title: '加载联系人失败',
+            icon: 'none'
+          })
+        }
+      } catch (error) {
+        console.error('加载联系人时出错:', error)
+        uni.showToast({
+          title: '加载联系人失败',
+          icon: 'none'
+        })
+      } finally {
+        this.loading = false
+      }
+    },
+    async loadMoreContacts() {
+      if (this.loading || this.groups[0].members.length >= this.total) return
+      this.curPage++
+      await this.loadContacts()
+    },
     toggleGroup(groupId) {
       const group = this.groups.find(g => g.id === groupId);
       if (group) {
@@ -292,5 +268,11 @@ export default {
   font-size: 14px;
   color: #999;
   line-height: 1.2;
+}
+
+.loading, .no-contacts {
+  padding: 20px;
+  text-align: center;
+  color: #999;
 }
 </style>

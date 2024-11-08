@@ -1,31 +1,24 @@
 <template>
   <view class="chat-header">
-    <!-- 返回按钮 -->
-    <text class="back-button"   @click="$emit('goBack')">&#8592;</text>
-    <!-- 聊天标题容器 -->
+    <div class="uni-page-head-hd" @click="$emit('goBack')">
+      <div class="uni-page-head-btn">
+        <image src="/static/message/返回.png" class="back-icon" mode="aspectFit"></image>
+      </div>
+    </div>
     <view class="chat-title-container">
-      <!-- 群聊头像 -->
-      <group-avatar v-if="chatInfo.type === 'group'" :avatar="chatInfo.avatar" />
-      <!-- 单聊头像 -->
-      <image v-else :src="chatInfo.avatar[0]" class="avatar" mode="aspectFill"></image>
-      <!-- 聊天标题 -->
       <text class="chat-title">{{ chatInfo.name }}</text>
     </view>
-    <!-- 菜单按钮 -->
     <text class="menu-button">...</text>
   </view>
 </template>
 
-<script>
-import GroupAvatar from './GroupAvatar.vue'
+<script> 
 
 export default {
   name: 'ChatHeader',
-  components: {
-    GroupAvatar
+  components: { 
   },
   props: {
-    // chatInfo: 聊天信息对象，包含聊天的基本信息
     chatInfo: {
       type: Object,
       required: true
@@ -39,34 +32,74 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  background-color: #12b7f5;
-  color: #fff;
+  padding: 0;
+  background-color: #FFFFFF;
+  color: #000000;
   position: sticky;
   top: 0;
   z-index: 100;
+  height: 50px;
+  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.11);
 }
 
 .chat-title-container {
+  position: absolute;
+  left: 0;
+  right: 0;
   display: flex;
+  justify-content: center;
   align-items: center;
-}
-
-.chat-title-container .avatar,
-.chat-title-container .avatar-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  margin-right: 10px;
-}
-
-.back-button, .menu-button {
-  font-size: 20px;
-  color: #fff;
+  pointer-events: none;
 }
 
 .chat-title {
+  font-family: NotoSansCJKsc-Bold;
   font-size: 18px;
-  font-weight: bold;
+  color: #000000;
+  letter-spacing: 0;
+  line-height: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.uni-page-head-hd, .menu-button {
+  z-index: 1;
+}
+
+.uni-page-head-hd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+.uni-page-head-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.back-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.menu-button {
+  font-size: 24px;
+  color: #000000;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 375px) {
+  .chat-title {
+    font-size: 16px;
+  }
 }
 </style>

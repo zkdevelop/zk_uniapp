@@ -77,28 +77,9 @@ export default {
       if (this.newMessage.trim()) {
         this.$emit('send-message', this.newMessage);
         this.newMessage = ''; // 清空输入框
-        this.$nextTick(() => {
-          this.focusInput(); // 重新聚焦到输入框
-        });
       }
     },
-    // 聚焦输入框
-    focusInput() {
-      if (this.$refs.messageInput) {
-        // 使用 uni.createSelectorQuery() 来获取输入框元素并设置焦点
-        const query = uni.createSelectorQuery().in(this);
-        query.select('.text-input').boundingClientRect(data => {
-          if (data) {
-            uni.createSelectorQuery().in(this).select('.text-input').fields({
-              context: true,
-              size: true,
-            }, res => {
-              res.context.focus();
-            }).exec();
-          }
-        }).exec();
-      }
-    },
+ 
     // 切换附件菜单的显示状态
     toggleAttachMenu() {
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
@@ -170,12 +151,7 @@ export default {
       });
     }
   },
-  mounted() {
-    // 组件挂载后聚焦输入框
-    this.$nextTick(() => {
-      this.focusInput();
-    });
-  }
+ 
 }
 </script>
 

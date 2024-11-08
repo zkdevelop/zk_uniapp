@@ -4,6 +4,7 @@
       <view class="back-button" @click="handleClose">
         <text class="icon">←</text>
       </view>
+      <text class="header-title">通讯录</text>
       <view class="more-options">
         <text class="icon">⋯</text>
       </view>
@@ -13,20 +14,22 @@
       <view class="main-info">
         <view class="profile-section">
           <image class="avatar" :src="contact.avatar" mode="aspectFill"></image>
-          <view class="name-container">
-            <view class="name-badge-container">
-              <text class="name">{{ contact.name }}</text>
-              <view class="badge">
-                <text class="badge-text">{{ contact.title }}</text>
+          <view class="info-section">
+            <view class="name-section">
+              <text class="name">{{contact.name}}</text>
+              <view class="badge-section">
+                <text class="badge">{{ contact.title }}</text>
               </view>
             </view>
-            <view class="info-item">
-              <text class="info-label">用户名</text>
-              <text class="info-value">{{ contact.username }}</text>
-            </view>
-            <view class="info-item">
-              <text class="info-label">设备IP</text>
-              <text class="info-value">{{ contact.ip }}</text>
+            <view class="details-section">
+              <view class="detail-item">
+                <text class="detail-label">用户名</text>
+                <text class="detail-value">{{ contact.username }}</text>
+              </view>
+              <view class="detail-item">
+                <text class="detail-label">设备IP</text>
+                <text class="detail-value">{{ contact.ip }}</text>
+              </view>
             </view>
           </view>
         </view>
@@ -97,14 +100,12 @@ export default {
     handleClearHistory() {
       this.showConfirmDialog('您确认要删除所有聊天记录吗？', () => {
         console.log('清空聊天记录');
-        // TODO: 实现清空聊天记录的逻辑
       });
     },
     
     handleDelete() {
       this.showConfirmDialog('您确认要删除此联系人吗？', () => {
         console.log('删除联系人');
-        // TODO: 实现删除联系人的逻辑
         this.$emit('close');
       });
     },
@@ -168,6 +169,15 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+  border-bottom: 1px solid #eee;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .back-button, .more-options {
@@ -186,12 +196,14 @@ export default {
 .content {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
 }
 
 .main-info {
   background-color: #fff;
   margin-bottom: 8px;
-  padding: 16px;
+  padding: 20px 16px;
 }
 
 .profile-section {
@@ -200,59 +212,67 @@ export default {
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
   border-radius: 4px;
   margin-right: 16px;
+  flex-shrink: 0;
 }
 
-.name-container {
+.info-section {
   flex: 1;
+  min-width: 0;
+  padding-left:10px
 }
 
-.name-badge-container {
+.name-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 2px;
 }
 
 .name {
   font-size: 20px;
-  font-weight: 500;
+  font-weight: bold;
   color: #333;
 }
 
+.badge-section {
+  margin-bottom: 16px;
+}
+
 .badge {
+  display: inline-block;
   background-color: #e6f0ff;
   padding: 2px 8px;
   border-radius: 4px;
-}
-
-.badge-text {
   color: #007AFF;
   font-size: 14px;
 }
 
-.info-item {
-  display: flex;
-  margin-bottom: 12px;
+.details-section { 
 }
 
-.info-item:last-child {
+.detail-item {
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.detail-item:last-child {
   margin-bottom: 0;
 }
 
-.info-label {
-  width: 60px;
+.detail-label {
   color: #666;
   font-size: 15px;
 }
 
-.info-value {
-  flex: 1;
+.detail-value {
   color: #333;
   font-size: 15px;
+  margin-left: 3px;
 }
 
 .remark-section {
@@ -294,12 +314,7 @@ export default {
 .delete-contact .button-text {
   color: #ff3b30;
 }
-
-.content {
-  padding-bottom: 16px;
-}
-
-/* 自定义弹窗样式 */
+ 
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -348,5 +363,35 @@ export default {
 
 .modal-button.confirm {
   color: #FF3B30;
+}
+
+@media screen and (max-width: 375px) {
+  .main-info {
+    padding: 16px;
+  }
+  
+  .avatar {
+    width: 60px;
+    height: 60px;
+    margin-right: 6px;
+    margin-top: 16px;
+	margin-left: 10px;
+  }
+
+  .name {
+    font-size: 18px;
+  }
+
+  .badge {
+    font-size: 12px;
+  }
+
+  .detail-label, .detail-value {
+    font-size: 14px;
+  }
+
+  .action-text, .button-text {
+    font-size: 15px;
+  }
 }
 </style>
