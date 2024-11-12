@@ -37,6 +37,7 @@
             </view>
             <view class="message-date">{{ message.date }}</view>
           </view>
+          <view v-if="message.unreadCount > 0" class="unread-badge">{{ message.unreadCount }}</view>
         </view>
       </scroll-view>
     </view>
@@ -44,9 +45,9 @@
 </template>
 
 <script>
-// script部分保持不变
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
-
+import { searchUsers  } from '@/utils/api/contacts.js'
+import {  getChatList } from '@/utils/api/message.js'
 export default {
   name: 'Messages',
   components: {
@@ -54,29 +55,16 @@ export default {
   },
   data() {
     return {
-      messages: [
-        { id: '1', name: '张宁鹏', avatar: [''], preview: '你好', date: '7月21日', type: 'single' },
-        { id: '2', name: '杨尚基', avatar: [''], preview: '[图片]', date: '7月21日', type: 'single' },
-        { id: '3', name: '王彦', avatar: [''], preview: '[视频]', date: '7月22日', type: 'single' },
-        { 
-          id: '4', 
-          name: '项目讨论群', 
-          avatar: [
-            '',
-            '',
-            '',
-            ''
-          ], 
-          preview: '下周一开会', 
-          date: '7月23日', 
-          type: 'group' 
-        },
-        { id: '5', name: '测试用户1', avatar: [''], preview: '这是一条测试消息', date: '7月24日', type: 'single' },
-        { id: '6', name: '测试用户2', avatar: [''], preview: '这是另一条测试消息', date: '7月24日', type: 'single' },
-        { id: '7', name: '测试用户3', avatar: [''], preview: '这是第三条测试消息', date: '7月24日', type: 'single' },
-        { id: '8', name: '测试用户4', avatar: [''], preview: '这是第四条测试消息', date: '7月24日', type: 'single' },
-        { id: '9', name: '测试用户5', avatar: [''], preview: '这是第五条测试消息', date: '7月24日', type: 'single' },
-      ],
+      messages: [],
+      groupChatDemo: {
+        id: '4', 
+        name: '项目讨论群', 
+        avatar: ['', '', '', ''], 
+        preview: '下周一开会', 
+        date: '7月23日', 
+        type: 'group',
+        unreadCount: 0
+      },
       defaultAvatarPath: '../../static/message/默认头像.png',
       scrollViewHeight: 0,
     }
@@ -91,12 +79,14 @@ export default {
       }
     },
     totalMessageCount() {
-      return this.messages.length + 1
+      const totalUnread = this.messages.reduce((sum, message) => sum + (message.unreadCount || 0), 0);
+      return this.messages.length + totalUnread;
     }
   },
   mounted() {
     this.calculateScrollViewHeight();
     uni.$on('switchToMessages', this.handleSwitchToMessages);
+    this.fetchChatList();
   },
   beforeDestroy() {
     uni.$off('switchToMessages', this.handleSwitchToMessages);
@@ -136,6 +126,35 @@ export default {
       const headerHeight = 44; // 消息头部的大致高度
       const tabBarHeight = 50; // 底部标签栏的大致高度，如果有的话
       this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
+    },
+    async fetchChatList() {
+      try {
+        const response = await getChatList();
+        if (response.code === 200) {
+          this.messages = response.data.map(item => ({
+            id: item.userId,
+            name: item.userName,
+            avatar: [''], // 这里需要根据实际情况设置头像
+            preview: item.latestMessage,
+            date: this.formatDate(item.sendTime),
+            type: item.group ? 'group' : 'single',
+            unreadCount: item.unreadCount
+          }));
+          
+          // 添加群聊演示数据
+          this.messages.push(this.groupChatDemo);
+        } else {
+          console.error('获取聊天列表失败:', response.msg);
+        }
+      } catch (error) {
+        console.error('获取聊天列表出错:', error);
+      }
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      return `${month}月${day}日`;
     }
   }
 }
@@ -193,6 +212,7 @@ export default {
   padding: 15px 15px;
   background-color: #fff;
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
 }
 
 .system-message {
@@ -294,6 +314,19 @@ export default {
 
 .personal-chat .message-date {
   font-size: 10px;
+}
+
+.unread-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff3b30;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
 }
 
 @media screen and (max-width: 375px) {
