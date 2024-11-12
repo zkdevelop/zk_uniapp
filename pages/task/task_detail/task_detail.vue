@@ -268,15 +268,28 @@
 		tileUrls
 	} from "../../../config.js"
 	import "../../../static/leaflet/leaflet.js"
+	import "../../../static/leaflet/proj4.js"
+	import "../../../static/leaflet/proj4leaflet.js"
 	let map = null;
 	let baseTileLayer = null;
 	let markers = [];
+	L.CRS.Baidu = new L.Proj.CRS('EPSG:900913',
+		'+proj=merc +a=6378206 +b=6356584.314245179 +lat_ts=0.0 +lon_0=0.0 +x_0=0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs', {
+			resolutions: function() {
+				var level = 21
+				var res = [];
+				res[0] = Math.pow(2, 18);
+				for (var i = 1; i < level; i++) {
+					res[i] = Math.pow(2, (18 - i))
+				}
+				return res;
+			}(),
+			origin: [0, 0],
+			bounds: L.bounds([20037508.342789244, 0], [0, 20037508.342789244])
+		});
 	export default {
 		data() {
 			return {
-				baiduApiKey: 'A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD',
-				gaodeApiKey: 'caa070a3ebda631bea2feff72972f28c',
-				gaodeSecurityKey: '93849873dba769e7b6235a79330ae7f7',
 				position: {
 					longitude: 120.686250,
 					latitude: 24.182220,
@@ -290,6 +303,8 @@
 		mounted() {
 			// 设置当前地图中心点
 			this.$ownerInstance.callMethod('setPoint');
+			this.initMap();
+			this.getLine();
 		},
 		methods: {
 			/** position变更时调用方法
@@ -297,41 +312,72 @@
 			 */
 			getPosition(position) {
 				this.position = position;
-				console.log(this.position, 'position')
-				if (map == null) {
-					this.initMap();
-				}
 				if (map != null) {
-					map.setView(L.latLng(this.position.latitude,this.position.longitude), 12);
-					// 加载行动轨迹
-					this.getLine();
+					map.setView(L.latLng(this.position.latitude, this.position.longitude), 12);
 				}
 			},
 			/** mathType变更时调用方法
 			 * @param {Object} position
 			 */
 			setMapType(value) {
-				this.mapType = value;
-				this.changeMap(this.mapType);
+				if (this.mapType == 'baidu' || value == 'baidu') {
+					console.log('baidu')
+					this.mapType = value;
+					this.initMap();
+					// 加载行动轨迹
+					this.getLine();
+				} else {
+					console.log('not-baidu')
+					this.mapType = value;
+					this.changeMap(this.mapType);
+				}
 			},
 			/** 初始化地图
 			 */
 			initMap() {
+				// 清除原有地图容器
 				var container = L.DomUtil.get('map_container');
 				if (container != null) {
 					container._leaflet_id = null;
 					L.DomUtil.empty(container);
 				}
-				// 初始化地图容器
-				map = L.map('map_container', {
-					zoom: 12,
-					center: [this.position.latitude, this.position.longitude],
-					zoomControl: false, //禁用 + - 按钮
-					attributionControl: false, // 移除右下角leaflet标识
-				});
-				// 添加底图图层
-				baseTileLayer = L.tileLayer(tileUrls['gaode'].url)
-				baseTileLayer.addTo(map);
+				// 判断是否为百度地图
+				if (this.mapType == 'baidu') {
+					console.log('initBaiduMap')
+					// 初始化地图容器
+					map = L.map('map_container', {
+						crs: L.CRS.Baidu,
+						zoom: 12,
+						center: [this.position.latitude, this.position.longitude],
+						zoomControl: false, //禁用 + - 按钮
+						attributionControl: false, // 移除右下角leaflet标识
+					});
+					// 添加底图图层
+					baseTileLayer = L.tileLayer(tileUrls[this.mapType].url, {
+						tms: true,
+						subdomains: tileUrls[this.mapType].subdomains,
+						attribution: `&copy;${tileUrls[this.mapType].name}`,
+					})
+					baseTileLayer.addTo(map);
+					console.log('baidu', L.CRS.Baidu)
+				} else {
+					console.log('initGaodeMap')
+					// 初始化地图容器
+					map = L.map('map_container', {
+						zoom: 12,
+						center: [this.position.latitude, this.position.longitude],
+						zoomControl: false, //禁用 + - 按钮
+						attributionControl: false, // 移除右下角leaflet标识
+					});
+					console.log(tileUrls[this.mapType].name)
+					// 添加底图图层
+					baseTileLayer = L.tileLayer(tileUrls[this.mapType].url, {
+						subdomains: tileUrls[this.mapType].subdomains,
+						attribution: `&copy;${tileUrls[this.mapType].name}`,
+					})
+					baseTileLayer.addTo(map);
+				}
+
 				// 取消右下角版权表leaflet前缀,添加至地图
 				L.control.attribution({
 					prefix: ''
@@ -343,11 +389,14 @@
 			changeMap(mapType) {
 				console.log("change-to-" + mapType)
 				// 移除原底图图层
-				baseTileLayer.remove();
+				if (baseTileLayer != null) {
+					baseTileLayer.remove();
+				}
 				// 添加对应图层
 				baseTileLayer = L.tileLayer(
 					tileUrls[mapType].url, {
-						attribution: `&copy;${tileUrls[mapType].name}`
+						attribution: `&copy;${tileUrls[mapType].name}`,
+						subdomains: tileUrls[this.mapType].subdomains
 					}
 				)
 				baseTileLayer.addTo(map);
@@ -365,7 +414,7 @@
 				let index = 1;
 				// 设置起始点
 				map.flyTo([points[0].latitude, points[0].longitude], 15);
-				marker[0].openPopup();
+				markers[0].openPopup();
 				// 定时器回溯
 				const interval = setInterval(() => {
 					// 回溯结束
@@ -377,7 +426,7 @@
 					}
 					const point = points[index];
 					// 移动至对应点
-					map.flyTo([point.latitude, point.longitude], 15);
+					map.panTo([point.latitude, point.longitude], 15);
 					// 弹出点标记
 					markers[index].openPopup();
 					index++;
@@ -405,7 +454,7 @@
 				// 加载行动轨迹
 				let prev = null;
 				let index = 0;
-
+				markers = [];
 				for (let index = 0; index < points.length; index++) {
 					let curr = points[index];
 					// 加载地图点
@@ -478,7 +527,7 @@
 						key: 'google',
 						src: '../../../static/icon/google.png',
 						htmlSrc: '/static/html/map_gaode.html',
-						name: 'Google地图'
+						name: '谷歌地图'
 					},
 					{
 						key: 'gaode',
