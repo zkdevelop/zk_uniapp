@@ -1,11 +1,11 @@
 // 引入 request 文件
 import request from '/utils/request.js'
- 
+
 // 用户登录
 export const login = (params) => {
-	const data={
-		account:params.account,
-		password:params.password
+	const data = {
+		account: params.account,
+		password: params.password
 	}
 	return request({
 		// url: `/user/login?account=${params.account}&password=${params.password}`,
@@ -22,7 +22,7 @@ export const register = (params) => {
 	return request({
 		url: '/user/register',
 		method: 'post',
-		data:params
+		data: params
 	})
 }
 // 退出登录
@@ -30,5 +30,13 @@ export const logout = (params) => {
 	return request({
 		url: '/user/logout',
 		method: 'post',
+	})
+}
+
+// 根据用户id查询用户信息
+export const searchUser = (id) => {
+	return request({
+		url:`/user/search/${id}`,
+		method:'get'
 	})
 }

@@ -270,6 +270,7 @@
 	import "../../../static/leaflet/leaflet.js"
 	import "../../../static/leaflet/proj4.js"
 	import "../../../static/leaflet/proj4leaflet.js"
+	// 引入leaflet库
 	let map = null;
 	let baseTileLayer = null;
 	let markers = [];
@@ -321,13 +322,11 @@
 			 */
 			setMapType(value) {
 				if (this.mapType == 'baidu' || value == 'baidu') {
-					console.log('baidu')
 					this.mapType = value;
 					this.initMap();
 					// 加载行动轨迹
 					this.getLine();
 				} else {
-					console.log('not-baidu')
 					this.mapType = value;
 					this.changeMap(this.mapType);
 				}
@@ -343,7 +342,6 @@
 				}
 				// 判断是否为百度地图
 				if (this.mapType == 'baidu') {
-					console.log('initBaiduMap')
 					// 初始化地图容器
 					map = L.map('map_container', {
 						crs: L.CRS.Baidu,
@@ -359,9 +357,7 @@
 						attribution: `&copy;${tileUrls[this.mapType].name}`,
 					})
 					baseTileLayer.addTo(map);
-					console.log('baidu', L.CRS.Baidu)
 				} else {
-					console.log('initGaodeMap')
 					// 初始化地图容器
 					map = L.map('map_container', {
 						zoom: 12,
@@ -369,7 +365,6 @@
 						zoomControl: false, //禁用 + - 按钮
 						attributionControl: false, // 移除右下角leaflet标识
 					});
-					console.log(tileUrls[this.mapType].name)
 					// 添加底图图层
 					baseTileLayer = L.tileLayer(tileUrls[this.mapType].url, {
 						subdomains: tileUrls[this.mapType].subdomains,
@@ -387,10 +382,16 @@
 			 * @param {String} mapType 地图类型
 			 */
 			changeMap(mapType) {
-				console.log("change-to-" + mapType)
 				// 移除原底图图层
 				if (baseTileLayer != null) {
 					baseTileLayer.remove();
+					// 移除所有 attribution 信息
+					const attributions = map.attributionControl._attributions;
+					for (const attr in attributions) {
+						if (attributions.hasOwnProperty(attr)) {
+							map.attributionControl.removeAttribution(attr);
+						}
+					}
 				}
 				// 添加对应图层
 				baseTileLayer = L.tileLayer(
@@ -426,7 +427,7 @@
 					}
 					const point = points[index];
 					// 移动至对应点
-					map.panTo([point.latitude, point.longitude], 15);
+					map.flyTo([point.latitude, point.longitude], 15);
 					// 弹出点标记
 					markers[index].openPopup();
 					index++;
@@ -469,11 +470,20 @@
 
 <script>
 	import {
-		deleteMission
+		deleteMission,
+		getMissionDetails
 	} from '@/utils/api/mission.js'
 	import {
 		backendHost
 	} from '/config.js';
+	import {
+		getOrderList,
+		getWarningList,
+		sendWarning
+	} from '@/utils/api/order.js'
+	import {
+		searchUser
+	} from '@/utils/api/user.js'
 	export default {
 		data() {
 			return {
@@ -549,78 +559,81 @@
 					},
 					// 继续添加更多图片
 				],
-				task_instructions: [{
-						src: '../../../static/uni.png',
-						sender_name: 'admin',
-						detail: '立即前往执行抓捕任务',
-						isConfirmed: false
-					},
-					{
-						src: '../../../static/uni.png',
-						sender_name: 'lihua',
-						detail: '立即前往执行抓捕任务',
-						isConfirmed: false
-					},
-					{
-						src: '../../../static/uni.png',
-						sender_name: 'wanghao',
-						detail: '立即前往执行抓捕任务',
-						isConfirmed: false
-					},
+				task_instructions: [
+					// {
+					// 	src: '../../../static/uni.png',
+					// 	sender_name: 'admin',
+					// 	detail: '111,
+					// 	isConfirmed: false
+					// },
+					// {
+					// 	src: '../../../static/uni.png',
+					// 	sender_name: 'lihua',
+					// 	detail: '222',
+					// 	isConfirmed: false
+					// },
+					// {
+					// 	src: '../../../static/uni.png',
+					// 	sender_name: 'wanghao',
+					// 	detail: '333',
+					// 	isConfirmed: false
+					// },
 				],
-				alert_data: [{
-						alert_grade: '重要告警',
-						alert_time: '2024.5.1',
-						sender_name: '张三',
-						alert_content: '靠近目标，开始行动！1',
-						isConfirmed: false
-					},
-					{
-						alert_grade: '一般告警',
-						alert_time: '2024.2.6',
-						sender_name: '李四',
-						alert_content: '靠近目标，开始行动！2',
-						isConfirmed: false
-					},
-					{
-						alert_grade: '重要告警',
-						alert_time: '2024.1.3',
-						sender_name: '张三',
-						alert_content: '靠近目标，开始行动！3',
-						isConfirmed: false
-					},
-					{
-						alert_grade: '严重告警',
-						alert_time: '2024.7.9',
-						sender_name: '张三',
-						alert_content: '靠近目标，开始行动！4',
-						isConfirmed: false
-					},
+				alert_data: [
+					// {
+					// 	alert_grade: '重要告警',
+					// 	alert_time: '2024.5.1',
+					// 	sender_name: '张三',
+					// 	alert_content: '靠近目标，开始行动！1',
+					// 	isConfirmed: false
+					// },
+					// {
+					// 	alert_grade: '一般告警',
+					// 	alert_time: '2024.2.6',
+					// 	sender_name: '李四',
+					// 	alert_content: '靠近目标，开始行动！2',
+					// 	isConfirmed: false
+					// },
+					// {
+					// 	alert_grade: '重要告警',
+					// 	alert_time: '2024.1.3',
+					// 	sender_name: '张三',
+					// 	alert_content: '靠近目标，开始行动！3',
+					// 	isConfirmed: false
+					// },
+					// {
+					// 	alert_grade: '严重告警',
+					// 	alert_time: '2024.7.9',
+					// 	sender_name: '张三',
+					// 	alert_content: '靠近目标，开始行动！4',
+					// 	isConfirmed: false
+					// },
 				],
-				alert_data_mine: [{
-						alert_grade: '一般告警',
-						alert_time: '2024.5.1',
-						sender_name: '张三',
-						alert_content: '目标视野丢失'
-					},
-					{
-						alert_grade: '一般告警',
-						alert_time: '2024.2.6',
-						sender_name: '李四',
-						alert_content: '发现嫌疑人'
-					},
-					{
-						alert_grade: '重要告警',
-						alert_time: '2024.1.3',
-						sender_name: '张三',
-						alert_content: '行动暂停'
-					},
-					{
-						alert_grade: '严重告警',
-						alert_time: '2024.7.9',
-						sender_name: '张三',
-						alert_content: '行动继续'
-					},
+				alert_data_mine: [
+					// {
+					// 	alert_grade: '一般告警',
+					// 	alert_time: '2024.5.1',
+					// 	sender_name: '张三',
+					// 	alert_content: '目标视野丢失'
+					// },
+					// {
+					// 	alert_grade: '一般告警',
+					// 	alert_time: '2024.2.6',
+					// 	sender_name: '李四',
+					// 	alert_content: '发现嫌疑人'
+					// },
+					// {
+					// 	alert_grade: '重要告警',
+					// 	alert_time: '2024.1.3',
+					// 	sender_name: '张三',
+					// 	alert_content: '行动暂停'
+					// },
+					// {
+					// 	alert_grade: '严重告警',
+					// 	alert_time: '2024.7.9',
+					// 	sender_name: '张三',
+					// 	alert_content: '行动继续'
+					// },
 				],
 				// 行动回溯，false停止，true播放
 				replay: false
@@ -628,6 +641,10 @@
 		},
 		onNavigationBarButtonTap() {
 			this.$refs.popup.open('bottom')
+		},
+		mounted() {
+			this.getOrder();
+			this.getWarning();
 		},
 		onLoad(options) {
 			// 页面加载时执行
@@ -773,7 +790,7 @@
 				}
 			},
 			checkIndex(index) {
-				console.log(index)
+				// console.log(index)
 				this.navIndex = index;
 			},
 			delete_alert(index) {
@@ -804,7 +821,7 @@
 				this.$refs.map_selector.close()
 			},
 			open_task_instructions() {
-				this.$refs.task_instructions.open()
+				this.$refs.task_instructions.open();
 			},
 			close_task_instructions() {
 				this.$refs.task_instructions.close()
@@ -837,26 +854,43 @@
 				return this.alert_data[index].isConfirmed ? "已确认" : "确认";
 			},
 			submit(ref) {
-				this.$refs[ref].validate().then(res => {
-					console.log('success', res);
-					uni.showToast({
-						title: `发布成功`
-					})
-				}).catch(err => {
-					console.log('err', err);
-				});
-				// 获取当前时间
-				const now = new Date();
-
-				// 格式化为 YYYY-MM-DD HH:mm:ss
-				const formattedDateTime =
-					`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-				console.log(formattedDateTime); // 输出格式为 YYYY-MM-DD HH:mm:ss
-				this.alert_form_data.alert_time = formattedDateTime;
-				this.alert_form_data.sender_name = "lihua";
-				this.alert_data.push(this.alert_form_data);
-				this.alert_data_mine.push(this.alert_form_data);
+				uni.showLoading({
+					title: '正在发送',
+					mask: true
+				})
+				console.log(this.taskItem.memberIds, 'memberIds')
+				let data = {
+					isOrder: false,
+					message: this.alert_form_data.alert_content,
+					receiverMissionMemberIds: [],
+					relatedMissionId: this.taskItem.id
+				}
+				// 获取receiverMissionMemberIds信息
+				getMissionDetails({
+					missionId: this.taskItem.id
+				}).then(res => {
+					if (res.code === 200) {
+						console.log(res, 'getMissionDetails');
+						// sendWarning(data).then(res => {
+						// 	if (res.code === 200) {
+						// 		uni.showToast({
+						// 			title: '发送成功',
+						// 			duration: 2000
+						// 		})
+						// 	} else {
+						// 		uni.showToast({
+						// 			title: '发送失败',
+						// 			icon: 'none',
+						// 			duration: 2000
+						// 		})
+						// 	}
+						// 	uni.hideLoading();
+						// })
+					}
+				})
 				this.$refs.alert_form_popup.close()
+				// 重新加载告警
+				this.getWarning();
 			},
 			// 设置经纬度
 			setPoint() {
@@ -894,6 +928,76 @@
 			setReplay(value) {
 				this.replay = value;
 			},
+			getOrder() {
+				// 加载指令
+				getOrderList({
+					missionId: this.taskItem.id,
+					curPage: 1,
+					pageSize: 20
+				}).then(res => {
+					if (res.code === 200) {
+						// console.log(res.data.records)
+						this.task_instructions = res.data.records.map(item => ({
+							src: '../../../static/uni.png',
+							sender_name: item.senderId,
+							detail: item.message,
+							isConfirmed: item.isRead
+						}))
+						// 根据用户id查询账号名称
+						for (let order of this.task_instructions) {
+							searchUser(order.sender_name).then(res => {
+								if (res.code === 200) {
+									order.sender_name = res.data.name;
+								}
+							})
+						}
+					}
+				})
+			},
+			getWarning() {
+				// 加载告警
+				getWarningList({
+					missionId: this.taskItem.id,
+					curPage: 1,
+					pageSize: 20
+				}).then(res => {
+					if (res.code === 200) {
+						const userInfo = uni.getStorageSync('userInfo')
+						// 筛选收到的告警信息
+						this.alert_data = res.data.records.filter(item => item.receiverId === userInfo.id).map(
+							item => ({
+								alert_grade: '严重告警',
+								alert_time: item.sendTime,
+								sender_name: item.senderId,
+								alert_content: item.message,
+								isConfirmed: item.isRead
+							}))
+						// 筛选发送的告警信息
+						this.alert_data_mine = res.data.records.filter(item => item.senderId === userInfo.id).map(
+							item => ({
+								alert_grade: '严重告警',
+								alert_time: item.sendTime,
+								sender_name: item.senderId,
+								alert_content: item.message,
+							}))
+						// 根据用户id查询账号名称
+						for (let order of this.alert_data) {
+							searchUser(order.sender_name).then(res => {
+								if (res.code === 200) {
+									order.sender_name = res.data.name;
+								}
+							})
+						}
+						for (let order of this.alert_data_mine) {
+							searchUser(order.sender_name).then(res => {
+								if (res.code === 200) {
+									order.sender_name = res.data.name;
+								}
+							})
+						}
+					}
+				})
+			}
 		}
 	}
 </script>
