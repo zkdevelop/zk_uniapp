@@ -1,38 +1,18 @@
+<!-- Message.vue -->
 <template>
   <view class="message" :class="[message.userType]">
-    <!-- 消息时间 -->
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content">
-      <!-- 头像 -->
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
-        <!-- 好友名称（仅在好友消息中显示） -->
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <!-- 图片消息 -->
-        <view class="content" v-if="message.messageType === 'image'">
-          <image :src="message.content" mode="widthFix"></image>
-        </view>
-        <!-- 文件消息 -->
-        <view class="content file-message" v-else-if="message.messageType === 'file'">
-          <view class="file-icon">📄</view>
-          <view class="file-info">
-            <text class="file-name">{{ message.content.name }}</text>
-            <text class="file-size">{{ message.content.size }}</text>
-          </view>
-        </view>
-        <!-- 阅后即焚消息 -->
-        <view class="content burn-after-reading" v-else-if="message.messageType === 'burn-after-reading'">
-          <image 
-            :src="message.content.mosaicPath" 
-            mode="widthFix" 
-            @click="$emit('view-burn-after-reading', message)"
-          ></image>
-          <text class="burn-after-reading-text">阅后即焚</text>
-        </view>
-        <!-- 文本消息 -->
-        <view class="content" v-else>
+        <view class="content">
           {{ message.content }}
         </view>
+      </view>
+      <view v-if="message.userType === 'self'" class="message-status">
+        <view v-if="status === 'sending'" class="loading-icon"></view>
+        <view v-else-if="status === 'failed'" class="failed-icon">!</view>
       </view>
     </view>
   </view>
@@ -45,6 +25,10 @@ export default {
     message: {
       type: Object,
       required: true
+    },
+    status: {
+      type: String,
+      default: 'sent'
     }
   },
   methods: {
@@ -97,9 +81,6 @@ export default {
     padding: 20rpx;
     border-radius: 10rpx;
     background: #fff;
-    image {
-      width: 200rpx;
-    }
   }
 
   &.self {
@@ -116,6 +97,7 @@ export default {
     }
     align-items: flex-end;
   }
+
   &.friend {
     .message-content {
       flex-direction: row;
@@ -128,45 +110,37 @@ export default {
   }
 }
 
-.file-message {
+.message-status {
+  margin-left: 5px;
   display: flex;
   align-items: center;
 }
 
-.file-icon {
-  font-size: 40rpx;
-  margin-right: 20rpx;
+.loading-icon {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ccc;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.file-info {
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.failed-icon {
+  width: 15px;
+  height: 15px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
-}
-
-.file-name {
+  justify-content: center;
+  align-items: center;
   font-weight: bold;
-  margin-bottom: 5rpx;
-}
-
-.file-size {
-  font-size: 24rpx;
-  color: #888;
-}
-
-.burn-after-reading {
-  position: relative;
-  overflow: hidden;
-}
-
-.burn-after-reading-text {
-  position: absolute;
-  bottom: 10rpx;
-  right: 10rpx;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  padding: 5rpx 10rpx;
-  border-radius: 5rpx;
-  font-size: 24rpx;
+  font-size: 12px;
 }
 
 .content-wrapper {

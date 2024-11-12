@@ -1,5 +1,4 @@
-<template>
-  <!-- 这是一个空模板，因为这是一个服务文件 -->
+<template> 
 </template>
 
 <script>
@@ -157,7 +156,4 @@ export const useWebSocket = () => {
   }
 }
 </script>
-
-<style scoped>
-/* 这个文件不需要样式 */
-</style>
+ 

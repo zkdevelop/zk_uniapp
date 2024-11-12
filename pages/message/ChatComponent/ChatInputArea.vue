@@ -1,13 +1,11 @@
+<!-- ChatInputArea.vue -->
 <template>
   <view class="chat-input-area">
-    <!-- 聊天输入框和按钮区域 -->
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
-      <!-- 语音按钮 -->
       <view class="voice-button">
         <image src="/static/message/语音输入.png" class="voice-icon" />
       </view>
       
-      <!-- 文本输入框 -->
       <input 
         type="text" 
         class="text-input" 
@@ -17,20 +15,16 @@
         ref="messageInput"
       />
       
-      <!-- 附件按钮（当附件菜单未显示时） -->
       <text v-if="!showAttachMenu" class="attach-button" @click="toggleAttachMenu">+</text>
       
-      <!-- 发送按钮（当附件菜单显示时） -->
       <text v-if="showAttachMenu" class="send-button" @click="sendMessage">发送</text>
     </view>
 
-    <!-- 附件菜单组件 -->
     <attachment-menu 
       v-if="showAttachMenu" 
       @attach="attachItem"
       @close="closeAttachMenu"
     >
-      <!-- 为未实现的功能预留插槽 -->
       <template v-slot:album>
         <!-- 相册功能的自定义内容 -->
       </template>
@@ -45,7 +39,6 @@
       </template>
     </attachment-menu>
 
-    <!-- 文件传输组件 -->
     <file-transfer ref="fileTransfer" @file-selected="handleFileSelected" />
   </view>
 </template>
@@ -53,6 +46,7 @@
 <script>
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
 import FileTransfer from './ChatInputAreaComponent/FileTransfer.vue'
+import { sendMessageToUser } from '@/utils/api/message.js'
 
 export default {
   name: 'ChatInputArea',
@@ -64,46 +58,66 @@ export default {
     showAttachMenu: {
       type: Boolean,
       default: false
+    },
+    recipientId: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
-      newMessage: '', // 存储用户输入的消息
+      newMessage: '',
     }
   },
   methods: {
-    // 发送消息
-    sendMessage() {
+    async sendMessage() {
       if (this.newMessage.trim()) {
-        this.$emit('send-message', this.newMessage);
-        this.newMessage = ''; // 清空输入框
+        const messageData = {
+          message: this.newMessage,
+          recipientId: this.recipientId
+        };
+        
+        this.$emit('send-message', {
+          content: this.newMessage,
+          status: 'sending'
+        });
+        
+        try {
+          const response = await sendMessageToUser(messageData);
+          if (response.code === 200) {
+            this.$emit('message-sent', response.data);
+          } else {
+            this.$emit('message-failed', this.newMessage);
+          }
+        } catch (error) {
+          console.error('发送消息失败:', error);
+          this.$emit('message-failed', this.newMessage);
+        }
+        
+        this.newMessage = '';
       }
     },
- 
-    // 切换附件菜单的显示状态
     toggleAttachMenu() {
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
     },
-    // 关闭附件菜单
     closeAttachMenu() {
       this.$emit('toggle-attach-menu', false);
     },
-    // 处理附件项的点击
     attachItem(action) {
       if (action === 'file') {
         this.$refs.fileTransfer.chooseFile();
       } else if (action === 'burn-after-reading') {
         this.chooseBurnAfterReadingImage();
+      } else if (action === 'camera') {
+        this.takePhoto();
       } else {
         this.$emit('attach', action);
       }
       this.closeAttachMenu();
     },
-    // 处理文件选择
     handleFileSelected(fileData) {
       this.$emit('attach', 'file', fileData);
     },
-    // 选择阅后即焚图片
     chooseBurnAfterReadingImage() {
       uni.chooseImage({
         count: 1,
@@ -113,7 +127,7 @@ export default {
             this.$emit('attach', 'burn-after-reading', {
               originalPath: image,
               mosaicPath: mosaicImage,
-              duration: 5 // 默认持续时间为5秒
+              duration: 5
             });
           });
         },
@@ -122,14 +136,11 @@ export default {
         }
       });
     },
-    // 应用马赛克效果到图片
     applyMosaicEffect(imagePath, callback) {
       const ctx = uni.createCanvasContext('mosaicCanvas');
       
-      // 在画布上绘制原始图片
       ctx.drawImage(imagePath, 0, 0, 300, 300);
       
-      // 应用马赛克效果
       ctx.setFillStyle('rgba(0, 0, 0, 0.5)');
       for (let y = 0; y < 300; y += 10) {
         for (let x = 0; x < 300; x += 10) {
@@ -137,7 +148,6 @@ export default {
         }
       }
       
-      // 将处理后的图像保存为临时文件
       ctx.draw(false, () => {
         uni.canvasToTempFilePath({
           canvasId: 'mosaicCanvas',
@@ -149,13 +159,53 @@ export default {
           }
         });
       });
+    },
+    async takePhoto() {
+      uni.chooseImage({
+        count: 1,
+        sourceType: ['camera'],
+        success: async (res) => {
+          const tempFilePath = res.tempFilePaths[0];
+          try {
+            const response = await sendMessageToUser({
+              recipientId: this.recipientId,
+              content: tempFilePath,
+              messageType: 'IMAGE'
+            });
+            if (response.code === 200) {
+              this.$emit('send-message', {
+                type: 'image',
+                content: tempFilePath
+              });
+            } else {
+              console.error('发送图片消息失败:', response.msg);
+              uni.showToast({
+                title: '发送失败，请重试',
+                icon: 'none'
+              });
+            }
+          } catch (error) {
+            console.error('发送图片消息出错:', error);
+            uni.showToast({
+              title: '发送失败，请重试',
+              icon: 'none'
+            });
+          }
+        },
+        fail: (err) => {
+          console.error('拍照失败:', err);
+          uni.showToast({
+            title: '拍照失败',
+            icon: 'none'
+          });
+        }
+      });
     }
   },
- 
 }
 </script>
 
-<style> 
+<style>
 .chat-input-area {
   position: fixed;
   bottom: 0;

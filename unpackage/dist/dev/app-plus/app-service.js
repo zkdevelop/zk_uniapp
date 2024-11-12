@@ -119,6 +119,9 @@ if (uni.restoreGlobal) {
       // url: `/user/login?account=${params.account}&password=${params.password}`,
       url: `/user/login`,
       method: "post",
+      header: {
+        "Authorization": ""
+      },
       data
     });
   };
@@ -1623,16 +1626,16 @@ This will fail in production.`);
     const maxReconnectAttempts = 5;
     const connect = (userId, token) => {
       if (!userId || !token) {
-        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:17", "WebSocket 连接失败: userId 或 token 未提供", { userId, token });
+        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:16", "WebSocket 连接失败: userId 或 token 未提供", { userId, token });
         return;
       }
       if (isConnected.value) {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:22", "WebSocket 已经连接");
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:21", "WebSocket 已经连接");
         return;
       }
       const wsProtocol = backendHost.startsWith("https") ? "wss" : "ws";
       const wsUrl = `${wsProtocol}://${backendHost.split("://")[1]}/chat/${userId}`;
-      formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:29", "尝试连接 WebSocket:", wsUrl);
+      formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:28", "尝试连接 WebSocket:", wsUrl);
       uni.connectSocket({
         url: wsUrl,
         header: {
@@ -1640,28 +1643,28 @@ This will fail in production.`);
         },
         protocols: [token],
         success: () => {
-          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:38", "WebSocket 连接成功");
+          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:37", "WebSocket 连接成功");
         },
         fail: (error) => {
-          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:41", "WebSocket 连接失败:", error);
+          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:40", "WebSocket 连接失败:", error);
         }
       });
       uni.onSocketOpen((res) => {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:46", "WebSocket 已连接", res);
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:45", "WebSocket 已连接", res);
         isConnected.value = true;
         reconnectAttempts.value = 0;
         startPingInterval();
       });
       uni.onSocketMessage((res) => {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:53", "收到消息:", res.data);
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:52", "收到消息:", res.data);
         try {
           const message = JSON.parse(res.data);
           switch (message.type) {
             case "auth":
               if (message.status === "success") {
-                formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:60", "认证成功");
+                formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:59", "认证成功");
               } else {
-                formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:62", "认证失败:", message.error);
+                formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:61", "认证失败:", message.error);
                 disconnect();
               }
               break;
@@ -1670,32 +1673,32 @@ This will fail in production.`);
             case "notification":
               break;
             case "pong":
-              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:73", "收到服务器的 pong 响应");
+              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:72", "收到服务器的 pong 响应");
               break;
             default:
-              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:76", "未知消息类型:", message.type);
+              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:75", "未知消息类型:", message.type);
           }
         } catch (error) {
-          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:79", "解析消息失败:", error);
+          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:78", "解析消息失败:", error);
         }
       });
       uni.onSocketError((res) => {
-        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:84", "WebSocket 错误:", res);
+        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:83", "WebSocket 错误:", res);
       });
       uni.onSocketClose((res) => {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:88", "WebSocket 已断开", res);
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:87", "WebSocket 已断开", res);
         isConnected.value = false;
         stopPingInterval();
         if (reconnectAttempts.value < maxReconnectAttempts) {
           const delay = Math.min(1e3 * Math.pow(2, reconnectAttempts.value), 3e4);
-          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:94", `将在 ${delay}ms 后尝试重新连接...`);
+          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:93", `将在 ${delay}ms 后尝试重新连接...`);
           setTimeout(() => {
-            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:96", `尝试重新连接... (${reconnectAttempts.value + 1}/${maxReconnectAttempts})`);
+            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:95", `尝试重新连接... (${reconnectAttempts.value + 1}/${maxReconnectAttempts})`);
             reconnectAttempts.value++;
             connect(userId, token);
           }, delay);
         } else {
-          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:101", "WebSocket 重连失败，请检查网络连接或联系管理员");
+          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:100", "WebSocket 重连失败，请检查网络连接或联系管理员");
         }
       });
     };
@@ -1703,7 +1706,7 @@ This will fail in production.`);
       if (isConnected.value) {
         uni.closeSocket({
           success: () => {
-            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:110", "WebSocket 已关闭");
+            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:109", "WebSocket 已关闭");
             isConnected.value = false;
             reconnectAttempts.value = 0;
             stopPingInterval();
@@ -1716,14 +1719,14 @@ This will fail in production.`);
         uni.sendSocketMessage({
           data: JSON.stringify(message),
           success: () => {
-            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:124", "消息发送成功");
+            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:123", "消息发送成功");
           },
           fail: (error) => {
-            formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:127", "消息发送失败:", error);
+            formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:126", "消息发送失败:", error);
           }
         });
       } else {
-        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:131", "WebSocket 未连接，无法发送消息");
+        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:130", "WebSocket 未连接，无法发送消息");
       }
     };
     const ping = () => {
@@ -1756,7 +1759,7 @@ This will fail in production.`);
       const userStore = useUserStore();
       const autoLogin = vue.ref(false);
       const username = vue.ref("test-app");
-      const password = vue.ref("test123456");
+      const password = vue.ref("Test123456");
       const goToRegister = () => {
         uni.navigateTo({
           url: "/pages/register/register"
@@ -3202,26 +3205,7 @@ This will fail in production.`);
     {
       path: "pages/task/task_detail/baidu_map/baidu_map",
       style: {
-        navigationBarTitleText: "百度地图测试",
-        "app-plus": {
-          subNVues: [
-            {
-              id: "condition_icons",
-              path: "pages/task/task_detail/baidu_map/subnvue/condition_icons",
-              style: {
-                display: "flex",
-                "justify-content": "space-between",
-                padding: "15px",
-                zIndex: "100",
-                position: "absolute",
-                top: "0",
-                left: "0",
-                width: "100px",
-                height: "40px"
-              }
-            }
-          ]
-        }
+        navigationBarTitleText: "百度地图测试"
       }
     },
     {
@@ -7158,8 +7142,8 @@ ${i3}
       return {
         account: "test-app",
         username: "test-app",
-        password: "test123456",
-        confirmPassword: "test123456",
+        password: "Test123456",
+        confirmPassword: "Test123456",
         phone: "13888888888",
         department: "二十一室",
         departments: []
@@ -7556,7 +7540,7 @@ ${i3}
             id: e2.id,
             task_name: e2.missionName,
             country: e2.missionCountry,
-            position: e2.missionCountry,
+            position: e2.missionCity,
             start_time: e2.missionStartTime,
             end_time: e2.missionEndTime,
             type: this.getTaskType(e2.missionStartTime, e2.missionEndTime),
@@ -7615,7 +7599,7 @@ ${i3}
       },
       showType(tbIndex) {
         this.tabbarIndex = tbIndex;
-        formatAppLog("info", "at pages/task/task.vue:175", this.tabbarIndex);
+        formatAppLog("info", "at pages/task/task.vue:178", this.tabbarIndex);
       },
       filterUpcomingTasks() {
         return this.taskItem.filter((item) => item.type === "1");
@@ -11636,7 +11620,7 @@ ${i3}
       return {
         recorderManager: {},
         innerAudioContext: {},
-        selectedMap: "",
+        selectedMap: "gaode",
         //当前地图
         navIndex: 0,
         filePaths: {
@@ -11680,8 +11664,8 @@ ${i3}
         ],
         taskItem: {},
         position: {
-          longitude: 116.397428,
-          latitude: 39.90923
+          longitude: "120.686250",
+          latitude: "24.182220"
         },
         map_options: [
           {
@@ -11797,48 +11781,17 @@ ${i3}
       if (options.taskItem) {
         this.taskItem = JSON.parse(options.taskItem);
       } else {
-        formatAppLog("error", "at pages/task/task_detail/task_detail.vue:597", "没有传递类型参数");
+        formatAppLog("error", "at pages/task/task_detail/task_detail.vue:588", "没有传递类型参数");
       }
       this.recorderManager = uni.getRecorderManager();
       this.innerAudioContext = uni.createInnerAudioContext();
       this.innerAudioContext.autoplay = true;
-      formatAppLog("log", "at pages/task/task_detail/task_detail.vue:605", "uni.getRecorderManager()", uni.getRecorderManager());
+      formatAppLog("log", "at pages/task/task_detail/task_detail.vue:596", "uni.getRecorderManager()", uni.getRecorderManager());
       let self2 = this;
       this.recorderManager.onStop(function(res) {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:608", "recorder stop" + JSON.stringify(res));
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:599", "recorder stop" + JSON.stringify(res));
         self2.filePaths.voicePath = res.tempFilePath;
-        const tempFilePath = res.tempFilePath;
-        uni.uploadFile({
-          url: `http://139.196.11.210:8500/communicate/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
-          filePath: tempFilePath,
-          name: "file",
-          header: {
-            "Content-Type": "application/form-data;charset=UTF-8",
-            "Authorization": "Bearer " + uni.getStorageSync("token")
-          },
-          success: (uploadFileRes) => {
-            var res2 = JSON.parse(uploadFileRes.data);
-            if (res2.code === 200) {
-              uni.showToast({
-                title: "音频上传成功！",
-                //将值设置为 success 或者直接不用写icon这个参数
-                icon: "success",
-                //显示持续时间为 1秒
-                duration: 2e3
-              });
-            } else {
-              uni.showToast({
-                title: "音频上传失败！",
-                icon: "none",
-                //显示持续时间为 1秒
-                duration: 2e3
-              });
-            }
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:639", uploadFileRes.data);
-          }
-        });
       });
-      this.selectedMap = "gaode";
     },
     methods: {
       take_picture() {
@@ -11849,25 +11802,20 @@ ${i3}
           // 只允许从相机拍照
           success: function(res) {
             const tempFilePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:655", "拍照成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:612", "拍照成功，文件路径：", tempFilePath);
             uni.previewImage({
               urls: [tempFilePath]
             });
             uni.uploadFile({
-              url: `http://139.196.11.210:8500/communicate/minio/upload`,
+              url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
               filePath: tempFilePath,
-              name: "files",
-              formData: {
-                "isGroup": false,
-                "missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
-                "receptionId": "f7c6e52d7aae493db0b9593202885062"
-              },
+              name: "file",
               header: {
-                "Content-Type": "multipart/form-data;",
+                "Content-Type": "application/form-data;charset=UTF-8",
                 "Authorization": "Bearer " + uni.getStorageSync("token")
               },
               success: (uploadFileRes) => {
-                const res2 = JSON.parse(uploadFileRes.data);
+                var res2 = JSON.parse(uploadFileRes.data);
                 if (res2.code === 200) {
                   uni.showToast({
                     title: "图片上传成功！",
@@ -11884,12 +11832,12 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:693", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:646", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:698", "拍照失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:651", "拍照失败：", err);
           }
         });
       },
@@ -11905,69 +11853,64 @@ ${i3}
           success: function(res) {
             const tempFilePath = res.tempFilePath;
             self2.filePaths.videoPath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:713", "录像成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:666", "录像成功，文件路径：", tempFilePath);
             uni.uploadFile({
-              url: `http://139.196.11.210:8500/communicate/minio/upload`,
+              url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
               filePath: tempFilePath,
-              name: "files",
-              formData: {
-                "isGroup": false,
-                "missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
-                "receptionId": "f7c6e52d7aae493db0b9593202885062"
-              },
+              name: "file",
               header: {
-                "Content-Type": "multipart/form-data;",
+                "Content-Type": "application/form-data;charset=UTF-8",
                 "Authorization": "Bearer " + uni.getStorageSync("token")
               },
               success: (uploadFileRes) => {
-                const res2 = JSON.parse(uploadFileRes.data);
+                var res2 = JSON.parse(uploadFileRes.data);
                 if (res2.code === 200) {
                   uni.showToast({
                     title: "视频上传成功！",
                     //将值设置为 success 或者直接不用写icon这个参数
                     icon: "success",
-                    //显示持续时间为 2秒
+                    //显示持续时间为 1秒
                     duration: 2e3
                   });
                 } else {
                   uni.showToast({
                     title: "视频上传失败！",
                     icon: "none",
-                    //显示持续时间为 2秒
+                    //显示持续时间为 1秒
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:746", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:695", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:751", "录像失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:700", "录像失败：", err);
           }
         });
       },
       startRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:756", "开始录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:705", "开始录音");
         this.recorderManager.start();
         uni.showLoading({
           title: "正在录音"
         });
       },
       stopRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:765", "录音结束");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:714", "录音结束");
         this.recorderManager.stop();
         uni.hideLoading();
       },
       playVoice() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:770", "播放录音");
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:771", "this.voicePath", this.filePaths.voicePath);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:719", "播放录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:720", "this.voicePath", this.filePaths.voicePath);
         if (this.filePaths.voicePath) {
           this.innerAudioContext.src = this.filePaths.voicePath;
           this.innerAudioContext.play();
         }
       },
       checkIndex(index) {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:778", index);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:727", index);
         this.navIndex = index;
       },
       delete_alert(index) {
@@ -12005,7 +11948,7 @@ ${i3}
       },
       goToDocument() {
         uni.navigateTo({
-          url: `/pages/task/task_detail/document/document?missionId=${this.taskItem.id}`
+          url: "/pages/task/task_detail/document/document"
         });
       },
       goToMainPage() {
@@ -12015,7 +11958,6 @@ ${i3}
       },
       selectImage(value) {
         this.selectedMap = value;
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:827", this.selectedMap);
         this.$refs.map_selector.close();
       },
       receive_instruction(index) {
@@ -12032,16 +11974,16 @@ ${i3}
       },
       submit(ref) {
         this.$refs[ref].validate().then((res) => {
-          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:844", "success", res);
+          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:792", "success", res);
           uni.showToast({
             title: `发布成功`
           });
         }).catch((err) => {
-          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:849", "err", err);
+          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:797", "err", err);
         });
         const now2 = /* @__PURE__ */ new Date();
         const formattedDateTime = `${now2.getFullYear()}-${String(now2.getMonth() + 1).padStart(2, "0")}-${String(now2.getDate()).padStart(2, "0")} ${String(now2.getHours()).padStart(2, "0")}:${String(now2.getMinutes()).padStart(2, "0")}:${String(now2.getSeconds()).padStart(2, "0")}`;
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:857", formattedDateTime);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:805", formattedDateTime);
         this.alert_form_data.alert_time = formattedDateTime;
         this.alert_form_data.sender_name = "lihua";
         this.alert_data.push(this.alert_form_data);
@@ -12100,7 +12042,7 @@ ${i3}
       null,
       [
         vue.createCommentVNode(" 地图容器 "),
-        vue.createElementVNode("view", {
+        vue.createElementVNode("div", {
           id: "map_container",
           selectedMap: vue.wp($data.selectedMap),
           "change:selectedMap": _ctx.m.setMapType,
@@ -12331,7 +12273,7 @@ ${i3}
                         vue.createElementVNode("image", {
                           onClick: _cache[8] || (_cache[8] = ($event) => $options.take_picture()),
                           src: _imports_6,
-                          style: { "width": "36px", "height": "33px" }
+                          style: { "width": "33px", "height": "33px" }
                         })
                       ]),
                       vue.createCommentVNode(" 录制音频按钮 "),
@@ -12353,7 +12295,7 @@ ${i3}
                       vue.createElementVNode("view", null, [
                         vue.createElementVNode("image", {
                           src: _imports_8,
-                          style: { "width": "25px", "height": "25px" },
+                          style: { "width": "28px", "height": "28px" },
                           onClick: _cache[11] || (_cache[11] = (...args) => $options.deleteMisson && $options.deleteMisson(...args))
                         })
                       ])
@@ -14851,6 +14793,29 @@ ${i3}
     ]);
   }
   const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-afb5909c"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
+  const searchUsers = (params) => {
+    return request({
+      url: "/user/searchUsers",
+      method: "post",
+      data: params
+    });
+  };
+  const getChatList = () => {
+    return request({
+      url: "/message/chatList",
+      method: "get"
+    });
+  };
+  const sendMessageToUser = (data) => {
+    return request({
+      url: "/message/send/user",
+      method: "post",
+      data: {
+        message: data.message,
+        recipientId: data.recipientId
+      }
+    });
+  };
   const _imports_0$3 = "/static/message/搜索.png";
   const _sfc_main$f = {
     name: "Messages",
@@ -14859,29 +14824,16 @@ ${i3}
     },
     data() {
       return {
-        messages: [
-          { id: "1", name: "张宁鹏", avatar: [""], preview: "你好", date: "7月21日", type: "single" },
-          { id: "2", name: "杨尚基", avatar: [""], preview: "[图片]", date: "7月21日", type: "single" },
-          { id: "3", name: "王彦", avatar: [""], preview: "[视频]", date: "7月22日", type: "single" },
-          {
-            id: "4",
-            name: "项目讨论群",
-            avatar: [
-              "",
-              "",
-              "",
-              ""
-            ],
-            preview: "下周一开会",
-            date: "7月23日",
-            type: "group"
-          },
-          { id: "5", name: "测试用户1", avatar: [""], preview: "这是一条测试消息", date: "7月24日", type: "single" },
-          { id: "6", name: "测试用户2", avatar: [""], preview: "这是另一条测试消息", date: "7月24日", type: "single" },
-          { id: "7", name: "测试用户3", avatar: [""], preview: "这是第三条测试消息", date: "7月24日", type: "single" },
-          { id: "8", name: "测试用户4", avatar: [""], preview: "这是第四条测试消息", date: "7月24日", type: "single" },
-          { id: "9", name: "测试用户5", avatar: [""], preview: "这是第五条测试消息", date: "7月24日", type: "single" }
-        ],
+        messages: [],
+        groupChatDemo: {
+          id: "4",
+          name: "项目讨论群",
+          avatar: ["", "", "", ""],
+          preview: "下周一开会",
+          date: "7月23日",
+          type: "group",
+          unreadCount: 0
+        },
         defaultAvatarPath: "../../static/message/默认头像.png",
         scrollViewHeight: 0
       };
@@ -14896,12 +14848,14 @@ ${i3}
         };
       },
       totalMessageCount() {
-        return this.messages.length + 1;
+        const totalUnread = this.messages.reduce((sum, message) => sum + (message.unreadCount || 0), 0);
+        return this.messages.length + totalUnread;
       }
     },
     mounted() {
       this.calculateScrollViewHeight();
       uni.$on("switchToMessages", this.handleSwitchToMessages);
+      this.fetchChatList();
     },
     beforeDestroy() {
       uni.$off("switchToMessages", this.handleSwitchToMessages);
@@ -14920,7 +14874,7 @@ ${i3}
             res.eventChannel.emit("chatInfo", { chatInfo });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/main.vue:118", "导航到聊天页面失败:", err);
+            formatAppLog("error", "at pages/message/main.vue:108", "导航到聊天页面失败:", err);
           }
         });
       },
@@ -14941,6 +14895,34 @@ ${i3}
         const headerHeight = 44;
         const tabBarHeight = 50;
         this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
+      },
+      async fetchChatList() {
+        try {
+          const response = await getChatList();
+          if (response.code === 200) {
+            this.messages = response.data.map((item) => ({
+              id: item.userId,
+              name: item.userName,
+              avatar: [""],
+              // 这里需要根据实际情况设置头像
+              preview: item.latestMessage,
+              date: this.formatDate(item.sendTime),
+              type: item.group ? "group" : "single",
+              unreadCount: item.unreadCount
+            }));
+            this.messages.push(this.groupChatDemo);
+          } else {
+            formatAppLog("error", "at pages/message/main.vue:147", "获取聊天列表失败:", response.msg);
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/message/main.vue:150", "获取聊天列表出错:", error);
+        }
+      },
+      formatDate(dateString) {
+        const date = new Date(dateString);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}月${day}日`;
       }
     }
   };
@@ -15051,7 +15033,17 @@ ${i3}
                       1
                       /* TEXT */
                     )
-                  ])
+                  ]),
+                  message.unreadCount > 0 ? (vue.openBlock(), vue.createElementBlock(
+                    "view",
+                    {
+                      key: 2,
+                      class: "unread-badge"
+                    },
+                    vue.toDisplayString(message.unreadCount),
+                    1
+                    /* TEXT */
+                  )) : vue.createCommentVNode("v-if", true)
                 ], 10, ["onClick"]);
               }),
               128
@@ -15109,6 +15101,10 @@ ${i3}
       message: {
         type: Object,
         required: true
+      },
+      status: {
+        type: String,
+        default: "sent"
       }
     },
     methods: {
@@ -15129,7 +15125,6 @@ ${i3}
         class: vue.normalizeClass(["message", [$props.message.userType]])
       },
       [
-        vue.createCommentVNode(" 消息时间 "),
         vue.createElementVNode(
           "view",
           { class: "message-time" },
@@ -15138,14 +15133,12 @@ ${i3}
           /* TEXT */
         ),
         vue.createElementVNode("view", { class: "message-content" }, [
-          vue.createCommentVNode(" 头像 "),
           vue.createElementVNode("image", {
             src: $props.message.avatar || "/static/message/默认头像.png",
             class: "avatar",
             mode: "aspectFill"
           }, null, 8, ["src"]),
           vue.createElementVNode("view", { class: "content-wrapper" }, [
-            vue.createCommentVNode(" 好友名称（仅在好友消息中显示） "),
             $props.message.userType === "friend" ? (vue.openBlock(), vue.createElementBlock(
               "view",
               {
@@ -15156,75 +15149,26 @@ ${i3}
               1
               /* TEXT */
             )) : vue.createCommentVNode("v-if", true),
-            vue.createCommentVNode(" 图片消息 "),
-            $props.message.messageType === "image" ? (vue.openBlock(), vue.createElementBlock("view", {
+            vue.createElementVNode(
+              "view",
+              { class: "content" },
+              vue.toDisplayString($props.message.content),
+              1
+              /* TEXT */
+            )
+          ]),
+          $props.message.userType === "self" ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "message-status"
+          }, [
+            $props.status === "sending" ? (vue.openBlock(), vue.createElementBlock("view", {
+              key: 0,
+              class: "loading-icon"
+            })) : $props.status === "failed" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 1,
-              class: "content"
-            }, [
-              vue.createElementVNode("image", {
-                src: $props.message.content,
-                mode: "widthFix"
-              }, null, 8, ["src"])
-            ])) : $props.message.messageType === "file" ? (vue.openBlock(), vue.createElementBlock(
-              vue.Fragment,
-              { key: 2 },
-              [
-                vue.createCommentVNode(" 文件消息 "),
-                vue.createElementVNode("view", { class: "content file-message" }, [
-                  vue.createElementVNode("view", { class: "file-icon" }, "📄"),
-                  vue.createElementVNode("view", { class: "file-info" }, [
-                    vue.createElementVNode(
-                      "text",
-                      { class: "file-name" },
-                      vue.toDisplayString($props.message.content.name),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createElementVNode(
-                      "text",
-                      { class: "file-size" },
-                      vue.toDisplayString($props.message.content.size),
-                      1
-                      /* TEXT */
-                    )
-                  ])
-                ])
-              ],
-              2112
-              /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-            )) : $props.message.messageType === "burn-after-reading" ? (vue.openBlock(), vue.createElementBlock(
-              vue.Fragment,
-              { key: 3 },
-              [
-                vue.createCommentVNode(" 阅后即焚消息 "),
-                vue.createElementVNode("view", { class: "content burn-after-reading" }, [
-                  vue.createElementVNode("image", {
-                    src: $props.message.content.mosaicPath,
-                    mode: "widthFix",
-                    onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("view-burn-after-reading", $props.message))
-                  }, null, 8, ["src"]),
-                  vue.createElementVNode("text", { class: "burn-after-reading-text" }, "阅后即焚")
-                ])
-              ],
-              2112
-              /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-            )) : (vue.openBlock(), vue.createElementBlock(
-              vue.Fragment,
-              { key: 4 },
-              [
-                vue.createCommentVNode(" 文本消息 "),
-                vue.createElementVNode(
-                  "view",
-                  { class: "content" },
-                  vue.toDisplayString($props.message.content),
-                  1
-                  /* TEXT */
-                )
-              ],
-              2112
-              /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-            ))
-          ])
+              class: "failed-icon"
+            }, "!")) : vue.createCommentVNode("v-if", true)
+          ])) : vue.createCommentVNode("v-if", true)
         ])
       ],
       2
@@ -15462,46 +15406,63 @@ ${i3}
       showAttachMenu: {
         type: Boolean,
         default: false
+      },
+      recipientId: {
+        type: String,
+        required: true
       }
     },
     data() {
       return {
         newMessage: ""
-        // 存储用户输入的消息
       };
     },
     methods: {
-      // 发送消息
-      sendMessage() {
+      async sendMessage() {
         if (this.newMessage.trim()) {
-          this.$emit("send-message", this.newMessage);
+          const messageData = {
+            message: this.newMessage,
+            recipientId: this.recipientId
+          };
+          this.$emit("send-message", {
+            content: this.newMessage,
+            status: "sending"
+          });
+          try {
+            const response = await sendMessageToUser(messageData);
+            if (response.code === 200) {
+              this.$emit("message-sent", response.data);
+            } else {
+              this.$emit("message-failed", this.newMessage);
+            }
+          } catch (error) {
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:93", "发送消息失败:", error);
+            this.$emit("message-failed", this.newMessage);
+          }
           this.newMessage = "";
         }
       },
-      // 切换附件菜单的显示状态
       toggleAttachMenu() {
         this.$emit("toggle-attach-menu", !this.showAttachMenu);
       },
-      // 关闭附件菜单
       closeAttachMenu() {
         this.$emit("toggle-attach-menu", false);
       },
-      // 处理附件项的点击
       attachItem(action) {
         if (action === "file") {
           this.$refs.fileTransfer.chooseFile();
         } else if (action === "burn-after-reading") {
           this.chooseBurnAfterReadingImage();
+        } else if (action === "camera") {
+          this.takePhoto();
         } else {
           this.$emit("attach", action);
         }
         this.closeAttachMenu();
       },
-      // 处理文件选择
       handleFileSelected(fileData) {
         this.$emit("attach", "file", fileData);
       },
-      // 选择阅后即焚图片
       chooseBurnAfterReadingImage() {
         uni.chooseImage({
           count: 1,
@@ -15512,16 +15473,14 @@ ${i3}
                 originalPath: image,
                 mosaicPath: mosaicImage,
                 duration: 5
-                // 默认持续时间为5秒
               });
             });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:121", "选择图片失败", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:135", "选择图片失败", err);
           }
         });
       },
-      // 应用马赛克效果到图片
       applyMosaicEffect(imagePath, callback) {
         const ctx = uni.createCanvasContext("mosaicCanvas");
         ctx.drawImage(imagePath, 0, 0, 300, 300);
@@ -15538,9 +15497,50 @@ ${i3}
               callback(res.tempFilePath);
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:148", "马赛克处理失败", err);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:158", "马赛克处理失败", err);
             }
           });
+        });
+      },
+      async takePhoto() {
+        uni.chooseImage({
+          count: 1,
+          sourceType: ["camera"],
+          success: async (res) => {
+            const tempFilePath = res.tempFilePaths[0];
+            try {
+              const response = await sendMessageToUser({
+                recipientId: this.recipientId,
+                content: tempFilePath,
+                messageType: "IMAGE"
+              });
+              if (response.code === 200) {
+                this.$emit("send-message", {
+                  type: "image",
+                  content: tempFilePath
+                });
+              } else {
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:181", "发送图片消息失败:", response.msg);
+                uni.showToast({
+                  title: "发送失败，请重试",
+                  icon: "none"
+                });
+              }
+            } catch (error) {
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:188", "发送图片消息出错:", error);
+              uni.showToast({
+                title: "发送失败，请重试",
+                icon: "none"
+              });
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:196", "拍照失败:", err);
+            uni.showToast({
+              title: "拍照失败",
+              icon: "none"
+            });
+          }
         });
       }
     }
@@ -15549,21 +15549,18 @@ ${i3}
     const _component_attachment_menu = vue.resolveComponent("attachment-menu");
     const _component_file_transfer = vue.resolveComponent("file-transfer");
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-input-area" }, [
-      vue.createCommentVNode(" 聊天输入框和按钮区域 "),
       vue.createElementVNode(
         "view",
         {
           class: vue.normalizeClass(["chat-input", { "elevated": $props.showAttachMenu }])
         },
         [
-          vue.createCommentVNode(" 语音按钮 "),
           vue.createElementVNode("view", { class: "voice-button" }, [
             vue.createElementVNode("image", {
               src: _imports_0$1,
               class: "voice-icon"
             })
           ]),
-          vue.createCommentVNode(" 文本输入框 "),
           vue.withDirectives(vue.createElementVNode(
             "input",
             {
@@ -15580,13 +15577,11 @@ ${i3}
           ), [
             [vue.vModelText, $data.newMessage]
           ]),
-          vue.createCommentVNode(" 附件按钮（当附件菜单未显示时） "),
           !$props.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("text", {
             key: 0,
             class: "attach-button",
             onClick: _cache[2] || (_cache[2] = (...args) => $options.toggleAttachMenu && $options.toggleAttachMenu(...args))
           }, "+")) : vue.createCommentVNode("v-if", true),
-          vue.createCommentVNode(" 发送按钮（当附件菜单显示时） "),
           $props.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("text", {
             key: 1,
             class: "send-button",
@@ -15596,7 +15591,6 @@ ${i3}
         2
         /* CLASS */
       ),
-      vue.createCommentVNode(" 附件菜单组件 "),
       $props.showAttachMenu ? (vue.openBlock(), vue.createBlock(_component_attachment_menu, {
         key: 0,
         onAttach: $options.attachItem,
@@ -15617,7 +15611,6 @@ ${i3}
         _: 1
         /* STABLE */
       }, 8, ["onAttach", "onClose"])) : vue.createCommentVNode("v-if", true),
-      vue.createCommentVNode(" 文件传输组件 "),
       vue.createVNode(_component_file_transfer, {
         ref: "fileTransfer",
         onFileSelected: $options.handleFileSelected
@@ -15728,16 +15721,6 @@ ${i3}
     ])) : vue.createCommentVNode("v-if", true);
   }
   const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-92969997"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
-  const groupChatHistory = [
-    { id: 1, name: "张三", avatar: "/static/c1.png", content: "大家好，我是张三", userType: "friend", messageType: "text", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:00:00") },
-    { id: 2, name: "李四", avatar: "/static/c2.png", content: "你好张三，我是李四", userType: "friend", messageType: "text", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:01:00") },
-    { id: 3, name: "王五", avatar: "/static/c3.png", content: "大家好，我是王五", userType: "friend", messageType: "text", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:02:00") },
-    { id: 4, name: "赵六", avatar: "/static/c4.png", content: "/static/image1.jpg", userType: "friend", messageType: "image", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:03:00") },
-    { id: 5, name: "张三", avatar: "/static/c1.png", content: "1111", userType: "friend", messageType: "text", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:04:00") },
-    { id: 6, name: "李四", avatar: "/static/c2.png", content: { name: "会议纪要.docx", size: "2.5MB" }, userType: "friend", messageType: "file", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:05:00") },
-    { id: 7, name: "王五", avatar: "/static/c3.png", content: "22222", userType: "friend", messageType: "text", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:06:00") },
-    { id: 8, name: "赵六", avatar: "/static/c4.png", content: "33333", userType: "friend", messageType: "text", timestamp: /* @__PURE__ */ new Date("2023-07-21T10:07:00") }
-  ];
   const _sfc_main$6 = {
     name: "Chat",
     components: {
@@ -15768,7 +15751,8 @@ ${i3}
         scrollViewScrollHeight: 0,
         showScrollToBottom: false,
         showNewMessageTip: false,
-        hasNewMessages: false
+        hasNewMessages: false,
+        messageStatuses: {}
       };
     },
     onLoad() {
@@ -15780,233 +15764,57 @@ ${i3}
     },
     mounted() {
       this.getScrollViewInfo();
-      formatAppLog("log", "at pages/message/chat.vue:105", "聊天组件已挂载");
+      formatAppLog("log", "at pages/message/chat.vue:96", "聊天组件已挂载");
     },
     methods: {
       initializeChat() {
-        if (this.chatInfo.type === "group") {
-          this.list = groupChatHistory.map((message) => ({
-            ...message,
-            avatar: message.avatar
-          }));
-        } else {
-          this.list = [
-            {
-              content: "对方历史回复消息",
-              userType: "friend",
-              avatar: this.chatInfo.avatar[0],
-              name: this.chatInfo.name,
-              timestamp: /* @__PURE__ */ new Date("2023-07-21T09:58:00")
-            },
-            {
-              content: "历史消息",
-              userType: "self",
-              avatar: this._selfAvatar,
-              timestamp: /* @__PURE__ */ new Date("2023-07-21T09:59:00")
-            }
-          ];
-        }
-        this.$nextTick(this.scrollToBottom);
-      },
-      getScrollViewInfo() {
-        const query = uni.createSelectorQuery().in(this);
-        query.select(".scroll-view").boundingClientRect((data) => {
-          if (data) {
-            this.scrollViewHeight = data.height;
-            formatAppLog("log", "at pages/message/chat.vue:138", "滚动视图高度:", this.scrollViewHeight);
-          } else {
-            formatAppLog("log", "at pages/message/chat.vue:140", "获取滚动视图高度失败");
-          }
-        }).exec();
       },
       goBack() {
-        uni.navigateBack({
-          success: () => {
-            uni.$emit("updateTabBarActiveTab", 1);
-          },
-          fail: (err) => {
-            formatAppLog("error", "at pages/message/chat.vue:150", "返回失败:", err);
-            uni.reLaunch({
-              url: "/pages/tabBar/tabBar",
-              success: () => {
-                uni.$emit("updateTabBarActiveTab", 1);
-              }
-            });
-          }
-        });
+        uni.navigateBack();
       },
-      sendMessage(message) {
-        if (message.trim()) {
-          this.addNewMessage({
-            content: message,
-            userType: "self",
-            avatar: this._selfAvatar,
-            timestamp: /* @__PURE__ */ new Date()
-          });
-          this.chatInfo.type === "group" ? this.simulateGroupResponse() : this.simulateSingleResponse();
-        }
+      loadMoreMessages() {
       },
-      simulateGroupResponse() {
-        setTimeout(() => {
-          const randomMember = groupChatHistory[Math.floor(Math.random() * groupChatHistory.length)];
-          this.addNewMessage({
-            content: `这是来自${randomMember.name}的回复`,
-            userType: "friend",
-            avatar: randomMember.avatar,
-            name: randomMember.name,
-            timestamp: /* @__PURE__ */ new Date()
-          });
-        }, 1500);
-      },
-      simulateSingleResponse() {
-        setTimeout(() => {
-          this.addNewMessage({
-            content: "这是对方的回复",
-            userType: "friend",
-            avatar: this.chatInfo.avatar[0],
-            name: this.chatInfo.name,
-            timestamp: /* @__PURE__ */ new Date()
-          });
-        }, 1500);
-      },
-      handleAttachment(type, data) {
-        const handlers = {
-          album: this.chooseImage,
-          file: () => this.handleFileTransfer(data),
-          "burn-after-reading": () => this.handleBurnAfterReading(data)
-        };
-        handlers[type] && handlers[type]();
-      },
-      chooseImage() {
-        uni.chooseImage({
-          success: (res) => {
-            this.addNewMessage({
-              content: res.tempFilePaths[0],
-              userType: "self",
-              messageType: "image",
-              avatar: this._selfAvatar,
-              timestamp: /* @__PURE__ */ new Date()
-            });
-            setTimeout(() => {
-              this.addNewMessage({
-                content: "你好呀，朋友~",
-                userType: "friend",
-                avatar: this.chatInfo.avatar[0],
-                name: this.chatInfo.name,
-                timestamp: /* @__PURE__ */ new Date()
-              });
-            }, 1500);
-          }
-        });
-      },
-      handleFileTransfer(fileData) {
-        this.addNewMessage({
-          content: fileData,
-          userType: "self",
-          messageType: "file",
-          avatar: this._selfAvatar,
-          timestamp: /* @__PURE__ */ new Date()
-        });
-        setTimeout(() => {
-          this.addNewMessage({
-            content: "收到文件了，谢谢！",
-            userType: "friend",
-            avatar: this.chatInfo.avatar[0],
-            name: this.chatInfo.name,
-            timestamp: /* @__PURE__ */ new Date()
-          });
-        }, 1500);
-      },
-      handleBurnAfterReading(imageData) {
-        this.addNewMessage({
-          content: imageData,
-          userType: "self",
-          messageType: "burn-after-reading",
-          avatar: this._selfAvatar,
-          timestamp: /* @__PURE__ */ new Date()
-        });
-        setTimeout(() => {
-          this.addNewMessage({
-            content: "收到了一张阅后即焚的图片",
-            userType: "friend",
-            avatar: this.chatInfo.avatar[0],
-            name: this.chatInfo.name,
-            timestamp: /* @__PURE__ */ new Date()
-          });
-        }, 1500);
+      onScroll(e2) {
       },
       viewBurnAfterReadingImage(message) {
-        this.currentBurnAfterReadingImage = message.content.originalPath;
-        this.currentBurnAfterReadingMessage = message;
-        this.$nextTick(() => {
-          this.$refs.burnAfterReadingRef.open();
-        });
       },
-      closeBurnAfterReadingPreview() {
-        this.currentBurnAfterReadingImage = "";
-        if (this.currentBurnAfterReadingMessage) {
-          const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
-          if (index > -1) {
-            this.list.splice(index, 1);
-          }
-          this.currentBurnAfterReadingMessage = null;
+      sendMessage(message) {
+        const tempId = Date.now().toString();
+        this.list.push({
+          id: tempId,
+          content: message.content,
+          userType: "self",
+          timestamp: /* @__PURE__ */ new Date()
+        });
+        this.$set(this.messageStatuses, tempId, "sending");
+        this.scrollToBottom();
+      },
+      handleMessageSent(sentMessage) {
+        const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
+        if (tempMessage) {
+          tempMessage.id = sentMessage.id;
+          this.$delete(this.messageStatuses, tempMessage.id);
         }
+      },
+      handleMessageFailed(failedMessage) {
+        const tempMessage = this.list.find((m2) => m2.content === failedMessage);
+        if (tempMessage) {
+          this.$set(this.messageStatuses, tempMessage.id, "failed");
+        }
+      },
+      handleAttachment(type, data) {
       },
       toggleAttachMenu(show) {
         this.showAttachMenu = show;
-        formatAppLog("log", "at pages/message/chat.vue:279", "附件菜单切换:", show);
       },
       handleOverlayClick() {
         this.showAttachMenu = false;
-        formatAppLog("log", "at pages/message/chat.vue:283", "附件菜单已关闭");
       },
       scrollToBottom() {
-        this.$nextTick(() => {
-          const lastMessageIndex = this.list.length - 1;
-          this.scrollIntoView = `message-${lastMessageIndex}`;
-          this.showScrollToBottom = false;
-          this.showNewMessageTip = false;
-          this.hasNewMessages = false;
-          this.isScrolledToBottom = true;
-          formatAppLog("log", "at pages/message/chat.vue:293", "滚动到底部");
-        });
       },
-      onScroll(event2) {
-        const { scrollTop, scrollHeight } = event2.detail;
-        this.scrollViewScrollHeight = scrollHeight;
-        const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
-        this.isScrolledToBottom = isAtBottom;
-        this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
-        this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
-        if (isAtBottom) {
-          this.hasNewMessages = false;
-          this.showNewMessageTip = false;
-        }
-        formatAppLog("log", "at pages/message/chat.vue:308", "滚动事件:", { scrollTop, scrollHeight, isAtBottom });
+      getScrollViewInfo() {
       },
-      loadMoreMessages() {
-        formatAppLog("log", "at pages/message/chat.vue:311", "加载更多消息");
-      },
-      addNewMessage(message) {
-        this.list.push(message);
-        if (!this.isScrolledToBottom) {
-          this.hasNewMessages = true;
-          this.showScrollToBottom = true;
-          this.showNewMessageTip = true;
-        } else {
-          this.scrollToBottom();
-        }
-        formatAppLog("log", "at pages/message/chat.vue:322", "新消息已添加:", message);
-      },
-      simulateNewMessage() {
-        const randomMember = groupChatHistory[Math.floor(Math.random() * groupChatHistory.length)];
-        this.addNewMessage({
-          content: `这是一条新消息，来自${randomMember.name}`,
-          userType: "friend",
-          avatar: randomMember.avatar,
-          name: randomMember.name,
-          timestamp: /* @__PURE__ */ new Date()
-        });
+      closeBurnAfterReadingPreview() {
       }
     }
   };
@@ -16021,7 +15829,6 @@ ${i3}
         "chat-info": $data.chatInfo,
         onGoBack: $options.goBack
       }, null, 8, ["chat-info", "onGoBack"]),
-      vue.createCommentVNode('  <button @click.stop="simulateNewMessage" class="simulate-button">模拟新消息</button '),
       vue.createVNode(_component_MessageList, {
         messages: $data.list,
         "scroll-top": $data.scrollTop,
@@ -16032,11 +15839,13 @@ ${i3}
       }, null, 8, ["messages", "scroll-top", "scroll-into-view", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
       vue.createVNode(_component_ChatInputArea, {
         onSendMessage: $options.sendMessage,
+        onMessageSent: $options.handleMessageSent,
+        onMessageFailed: $options.handleMessageFailed,
         onAttach: $options.handleAttachment,
-        onToggleAttachMenu: $options.toggleAttachMenu,
         "show-attach-menu": $data.showAttachMenu,
-        ref: "chatInputAreaRef"
-      }, null, 8, ["onSendMessage", "onAttach", "onToggleAttachMenu", "show-attach-menu"]),
+        onToggleAttachMenu: $options.toggleAttachMenu,
+        recipientId: $data.chatInfo.id
+      }, null, 8, ["onSendMessage", "onMessageSent", "onMessageFailed", "onAttach", "show-attach-menu", "onToggleAttachMenu", "recipientId"]),
       $data.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
         key: 0,
         imageSrc: $data.currentBurnAfterReadingImage,
@@ -16255,13 +16064,6 @@ ${i3}
     ]);
   }
   const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-8c0c75e8"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
-  const searchUsers = (params) => {
-    return request({
-      url: "/user/searchUsers",
-      method: "post",
-      data: params
-    });
-  };
   const _sfc_main$4 = {
     name: "Contacts",
     components: {

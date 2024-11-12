@@ -103,9 +103,6 @@
   border-radius: 0.3125rem;
   background: #fff;
 }
-.message .content uni-image[data-v-1cea873d] {
-  width: 6.25rem;
-}
 .message.self[data-v-1cea873d] {
   align-items: flex-end;
 }
@@ -130,39 +127,38 @@
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.file-message[data-v-1cea873d] {
+.message-status[data-v-1cea873d] {
+  margin-left: 5px;
   display: flex;
   align-items: center;
 }
-.file-icon[data-v-1cea873d] {
-  font-size: 1.25rem;
-  margin-right: 0.625rem;
+.loading-icon[data-v-1cea873d] {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ccc;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin-1cea873d 1s linear infinite;
 }
-.file-info[data-v-1cea873d] {
+@keyframes spin-1cea873d {
+0% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(360deg);
+}
+}
+.failed-icon[data-v-1cea873d] {
+  width: 15px;
+  height: 15px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
-}
-.file-name[data-v-1cea873d] {
+  justify-content: center;
+  align-items: center;
   font-weight: bold;
-  margin-bottom: 0.15625rem;
-}
-.file-size[data-v-1cea873d] {
-  font-size: 0.75rem;
-  color: #888;
-}
-.burn-after-reading[data-v-1cea873d] {
-  position: relative;
-  overflow: hidden;
-}
-.burn-after-reading-text[data-v-1cea873d] {
-  position: absolute;
-  bottom: 0.3125rem;
-  right: 0.3125rem;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  padding: 0.15625rem 0.3125rem;
-  border-radius: 0.15625rem;
-  font-size: 0.75rem;
+  font-size: 12px;
 }
 .content-wrapper[data-v-1cea873d] {
   display: flex;
@@ -369,19 +365,6 @@
   flex-direction: column;
   height: 100vh;
   position: relative;
-}
-.simulate-button[data-v-013fa921] {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 4px;
 }
 .new-message-tip[data-v-013fa921] {
   position: fixed;
