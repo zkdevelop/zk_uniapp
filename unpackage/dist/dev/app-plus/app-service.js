@@ -14939,15 +14939,15 @@ ${i3}
     data() {
       return {
         demoMessages: [
-          // {
-          //   id: '1',
-          //   name: '张三',
-          //   avatar: ['/static/avatar/avatar1.png'],
-          //   preview: '你好，最近怎么样？',
-          //   date: '2024-11-25T10:00:00',
-          //   type: 'single',
-          //   unreadCount: 2
-          // },
+          {
+            id: "1",
+            name: "张三",
+            avatar: ["/static/avatar/avatar1.png"],
+            preview: "你好，最近怎么样？",
+            date: "2024-11-25T10:00:00",
+            type: "single",
+            unreadCount: 2
+          },
           {
             id: "2",
             name: "项目讨论群",
@@ -15027,7 +15027,6 @@ ${i3}
       async fetchChatList() {
         try {
           const response = await getChatList();
-          formatAppLog("log", "at pages/message/main.vue:148", response, "response");
           if (response.code === 200) {
             this.realMessages = response.data.map((item) => ({
               ...item,
@@ -15036,10 +15035,10 @@ ${i3}
               date: item.sendTime
             }));
           } else {
-            formatAppLog("error", "at pages/message/main.vue:157", "获取聊天列表失败:", response.msg);
+            formatAppLog("error", "at pages/message/main.vue:156", "获取聊天列表失败:", response.msg);
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/main.vue:160", "获取聊天列表出错:", error);
+          formatAppLog("error", "at pages/message/main.vue:159", "获取聊天列表出错:", error);
         }
       },
       formatDate(dateString) {
@@ -15702,28 +15701,36 @@ ${i3}
     },
     methods: {
       async sendMessage() {
-        if (this.newMessage.trim()) {
-          const messageData = {
-            message: this.newMessage,
-            recipientId: this.recipientId
-          };
-          this.$emit("send-message", {
-            content: this.newMessage,
-            status: "sending"
-          });
-          try {
-            const response = await sendMessageToUser(messageData);
-            if (response.code === 200) {
-              this.$emit("message-sent", response.data);
-            } else {
-              this.$emit("message-failed", this.newMessage);
-            }
-          } catch (error) {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:98", "发送消息失败:", error);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:79", "sendMessage 方法被调用");
+        if (!this.newMessage.trim()) {
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:81", "消息为空，不发送");
+          return;
+        }
+        const messageData = {
+          message: this.newMessage,
+          recipientId: this.recipientId
+        };
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:90", "准备发送消息:", messageData);
+        this.$emit("send-message", {
+          content: this.newMessage,
+          status: "sending"
+        });
+        try {
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:98", "调用 sendMessageToUser");
+          const response = await sendMessageToUser(messageData);
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:100", "sendMessageToUser 响应:", response);
+          if (response.code === 200) {
+            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:102", "消息发送成功");
+            this.$emit("message-sent", response.data);
+          } else {
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:105", "消息发送失败:", response.msg);
             this.$emit("message-failed", this.newMessage);
           }
-          this.newMessage = "";
+        } catch (error) {
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:109", "发送消息失败:", error);
+          this.$emit("message-failed", this.newMessage);
         }
+        this.newMessage = "";
       },
       toggleAttachMenu() {
         this.$emit("toggle-attach-menu", !this.showAttachMenu);
@@ -15767,7 +15774,7 @@ ${i3}
             });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:147", "选择图片失败", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:157", "选择图片失败", err);
           }
         });
       },
@@ -15787,7 +15794,7 @@ ${i3}
               callback(res.tempFilePath);
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:170", "马赛克处理失败", err);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:180", "马赛克处理失败", err);
             }
           });
         });
@@ -15810,14 +15817,14 @@ ${i3}
                   content: tempFilePath
                 });
               } else {
-                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:193", "发送图片消息失败:", response.msg);
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:203", "发送图片消息失败:", response.msg);
                 uni.showToast({
                   title: "发送失败，请重试",
                   icon: "none"
                 });
               }
             } catch (error) {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:200", "发送图片消息出错:", error);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:210", "发送图片消息出错:", error);
               uni.showToast({
                 title: "发送失败，请重试",
                 icon: "none"
@@ -15825,7 +15832,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:208", "拍照失败:", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:218", "拍照失败:", err);
             uni.showToast({
               title: "拍照失败",
               icon: "none"
@@ -15851,12 +15858,14 @@ ${i3}
                   content: tempFilePath
                 });
               } else {
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:244", "发送图片消息失败:", response.msg);
                 uni.showToast({
                   title: "发送失败，请重试",
                   icon: "none"
                 });
               }
             } catch (error) {
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:251", "发送图片消息出错:", error);
               uni.showToast({
                 title: "发送失败，请重试",
                 icon: "none"
@@ -15864,6 +15873,7 @@ ${i3}
             }
           },
           fail: (err) => {
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:259", "选择图片失败:", err);
             uni.showToast({
               title: "选择图片失败",
               icon: "none"
@@ -16103,68 +16113,184 @@ ${i3}
         },
         list: [],
         scrollTop: 0,
+        scrollIntoView: "",
+        _selfAvatar: "/static/avatar/avatar5.jpeg",
         showAttachMenu: false,
         burnAfterReadingDuration: 5,
         currentBurnAfterReadingImage: "",
         currentBurnAfterReadingMessage: null,
         isScrolledToBottom: true,
         scrollViewHeight: 0,
+        scrollViewScrollHeight: 0,
         showScrollToBottom: false,
         showNewMessageTip: false,
         hasNewMessages: false,
-        messageStatuses: {},
         currentPage: 1,
         pageSize: 10,
         hasMoreMessages: true,
-        isLoading: false,
-        initialLoadComplete: false,
-        style: {
-          pageHeight: 0,
-          contentViewHeight: 0,
-          footViewHeight: 90,
-          mitemHeight: 0
-        }
+        isLoading: false
       };
     },
     onLoad() {
-      formatAppLog("log", "at pages/message/chat.vue:108", "[onLoad] Chat component loaded");
-      this.calculateScrollViewHeight();
       const eventChannel = this.getOpenerEventChannel();
       eventChannel.on("chatInfo", (data) => {
-        formatAppLog("log", "at pages/message/chat.vue:112", "[onLoad] Received chatInfo:", data);
         this.chatInfo = data.chatInfo;
         this.initializeChat();
       });
     },
     mounted() {
-      formatAppLog("log", "at pages/message/chat.vue:118", "[mounted] Chat component mounted");
-      const res = uni.getSystemInfoSync();
-      this.style.pageHeight = res.windowHeight;
-      this.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * 100 - 70;
-      this.scrollToBottom();
+      this.getScrollViewInfo();
+      formatAppLog("log", "at pages/message/chat.vue:100", "聊天组件已挂载");
     },
     methods: {
-      calculateScrollViewHeight() {
-        const systemInfo = uni.getSystemInfoSync();
-        const headerHeight = 44;
-        const inputAreaHeight = 50;
-        this.scrollViewHeight = systemInfo.windowHeight - headerHeight - inputAreaHeight;
-        formatAppLog("log", "at pages/message/chat.vue:130", "[calculateScrollViewHeight] Calculated scroll view height:", this.scrollViewHeight);
-      },
       async initializeChat() {
-        formatAppLog("log", "at pages/message/chat.vue:133", "[initializeChat] Initializing chat");
         await this.loadHistoryMessages();
-        this.initialLoadComplete = true;
-        this.$nextTick(() => {
-          formatAppLog("log", "at pages/message/chat.vue:137", "[initializeChat] Initial load complete, scrolling to bottom");
-          this.scrollToBottom();
-        });
+        this.$nextTick(this.scrollToBottom);
+      },
+      getScrollViewInfo() {
+        const query = uni.createSelectorQuery().in(this);
+        query.select(".scroll-view").boundingClientRect((data) => {
+          if (data) {
+            this.scrollViewHeight = data.height;
+            formatAppLog("log", "at pages/message/chat.vue:112", "滚动视图高度:", this.scrollViewHeight);
+          } else {
+            formatAppLog("log", "at pages/message/chat.vue:114", "获取滚动视图高度失败");
+          }
+        }).exec();
       },
       goBack() {
-        uni.navigateBack();
+        uni.navigateBack({
+          success: () => {
+            uni.$emit("updateTabBarActiveTab", 1);
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/message/chat.vue:124", "返回失败:", err);
+            uni.reLaunch({
+              url: "/pages/tabBar/tabBar",
+              success: () => {
+                uni.$emit("updateTabBarActiveTab", 1);
+              }
+            });
+          }
+        });
+      },
+      sendMessage(message) {
+        formatAppLog("log", "at pages/message/chat.vue:135", "[sendMessage] 发送消息:", message);
+        if (message.content && message.content.trim()) {
+          const newMessage = {
+            id: Date.now().toString(),
+            content: message.content,
+            userType: "self",
+            avatar: this._selfAvatar,
+            timestamp: /* @__PURE__ */ new Date(),
+            status: "sending"
+          };
+          this.addNewMessage(newMessage);
+        }
+      },
+      handleMessageSent(sentMessage) {
+        formatAppLog("log", "at pages/message/chat.vue:149", "[handleMessageSent] 消息已发送:", sentMessage);
+        const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
+        if (tempMessage) {
+          tempMessage.id = sentMessage.id;
+          tempMessage.status = "sent";
+        }
+      },
+      handleMessageFailed(failedMessage) {
+        formatAppLog("log", "at pages/message/chat.vue:157", "[handleMessageFailed] 消息发送失败:", failedMessage);
+        const tempMessage = this.list.find((m2) => m2.content === failedMessage);
+        if (tempMessage) {
+          tempMessage.status = "failed";
+        }
+      },
+      handleAttachment(type, data) {
+        const handlers = {
+          album: this.chooseImage,
+          file: () => this.handleFileTransfer(data),
+          "burn-after-reading": () => this.handleBurnAfterReading(data)
+        };
+        handlers[type] && handlers[type]();
+      },
+      chooseImage() {
+        uni.chooseImage({
+          success: (res) => {
+            this.addNewMessage({
+              content: res.tempFilePaths[0],
+              userType: "self",
+              messageType: "image",
+              avatar: this._selfAvatar,
+              timestamp: /* @__PURE__ */ new Date()
+            });
+          }
+        });
+      },
+      handleFileTransfer(fileData) {
+        this.addNewMessage({
+          content: fileData,
+          userType: "self",
+          messageType: "file",
+          avatar: this._selfAvatar,
+          timestamp: /* @__PURE__ */ new Date()
+        });
+      },
+      handleBurnAfterReading(imageData) {
+        this.addNewMessage({
+          content: imageData,
+          userType: "self",
+          messageType: "burn-after-reading",
+          avatar: this._selfAvatar,
+          timestamp: /* @__PURE__ */ new Date()
+        });
+      },
+      viewBurnAfterReadingImage(message) {
+        this.currentBurnAfterReadingImage = message.content.originalPath;
+        this.currentBurnAfterReadingMessage = message;
+        this.$nextTick(() => {
+          this.$refs.burnAfterReadingRef.open();
+        });
+      },
+      closeBurnAfterReadingPreview() {
+        this.currentBurnAfterReadingImage = "";
+        if (this.currentBurnAfterReadingMessage) {
+          const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
+          if (index > -1) {
+            this.list.splice(index, 1);
+          }
+          this.currentBurnAfterReadingMessage = null;
+        }
+      },
+      toggleAttachMenu(show) {
+        this.showAttachMenu = show;
+        formatAppLog("log", "at pages/message/chat.vue:221", "附件菜单切换:", show);
+      },
+      handleOverlayClick() {
+        this.showAttachMenu = false;
+        formatAppLog("log", "at pages/message/chat.vue:225", "附件菜单已关闭");
+      },
+      scrollToBottom() {
+        this.$nextTick(() => {
+          const lastMessageIndex = this.list.length - 1;
+          this.scrollIntoView = `message-${lastMessageIndex}`;
+          this.showScrollToBottom = false;
+          this.showNewMessageTip = false;
+          this.hasNewMessages = false;
+          this.isScrolledToBottom = true;
+          formatAppLog("log", "at pages/message/chat.vue:235", "滚动到底部");
+        });
+      },
+      onScroll(event2) {
+        const { scrollTop, scrollHeight } = event2.detail;
+        this.scrollViewScrollHeight = scrollHeight;
+        const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
+        this.isScrolledToBottom = isAtBottom;
+        this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
+        this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
+        if (isAtBottom) {
+          this.hasNewMessages = false;
+          this.showNewMessageTip = false;
+        }
       },
       async loadMoreMessages() {
-        formatAppLog("log", "at pages/message/chat.vue:145", "[loadMoreMessages] Loading more messages");
         if (this.hasMoreMessages && !this.isLoading) {
           this.isLoading = true;
           this.currentPage++;
@@ -16172,85 +16298,26 @@ ${i3}
           this.isLoading = false;
         }
       },
-      onScroll(e2) {
-        const { scrollTop, scrollHeight } = e2.detail;
-        this.isScrolledToBottom = scrollHeight - scrollTop <= this.scrollViewHeight + 10;
-        this.showScrollToBottom = !this.isScrolledToBottom;
-        formatAppLog("log", "at pages/message/chat.vue:157", "[onScroll] Scroll event:", { scrollTop, scrollHeight, isScrolledToBottom: this.isScrolledToBottom });
-      },
-      viewBurnAfterReadingImage(message) {
-        this.currentBurnAfterReadingImage = message.content;
-        this.currentBurnAfterReadingMessage = message;
-      },
-      sendMessage(message) {
-        formatAppLog("log", "at pages/message/chat.vue:164", "[sendMessage] Sending message:", message);
-        const tempId = Date.now().toString();
-        this.list.push({
-          id: tempId,
-          content: message.content,
-          userType: "self",
-          timestamp: /* @__PURE__ */ new Date()
-        });
-        this.$set(this.messageStatuses, tempId, "sending");
-        this.$nextTick(() => {
+      addNewMessage(message) {
+        this.list.push(message);
+        if (!this.isScrolledToBottom) {
+          this.hasNewMessages = true;
+          this.showScrollToBottom = true;
+          this.showNewMessageTip = true;
+        } else {
           this.scrollToBottom();
-        });
-      },
-      handleMessageSent(sentMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:178", "[handleMessageSent] Message sent:", sentMessage);
-        const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
-        if (tempMessage) {
-          tempMessage.id = sentMessage.id;
-          this.$set(this.messageStatuses, tempMessage.id, null);
-          this.messageStatuses = { ...this.messageStatuses };
         }
-      },
-      handleMessageFailed(failedMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:187", "[handleMessageFailed] Message failed:", failedMessage);
-        const tempMessage = this.list.find((m2) => m2.content === failedMessage);
-        if (tempMessage) {
-          this.$set(this.messageStatuses, tempMessage.id, "failed");
-        }
-      },
-      handleAttachment(type, data) {
-        formatAppLog("log", "at pages/message/chat.vue:194", "[handleAttachment] Handling attachment:", type, data);
-      },
-      toggleAttachMenu(show) {
-        this.showAttachMenu = show;
-      },
-      handleOverlayClick() {
-        this.showAttachMenu = false;
-      },
-      scrollToBottom() {
-        formatAppLog("log", "at pages/message/chat.vue:203", "[scrollToBottom] Scrolling to bottom");
-        let that = this;
-        let query = uni.createSelectorQuery().in(this);
-        query.selectAll(".m-item").boundingClientRect();
-        query.select("#scrollview").boundingClientRect();
-        query.exec((res) => {
-          that.style.mitemHeight = 0;
-          res[0].forEach((rect) => that.style.mitemHeight = that.style.mitemHeight + rect.height + 40);
-          setTimeout(() => {
-            if (that.style.mitemHeight > that.style.contentViewHeight - 100) {
-              that.scrollTop = that.style.mitemHeight - that.style.contentViewHeight;
-              formatAppLog("log", "at pages/message/chat.vue:214", "[scrollToBottom] Setting scrollTop to:", that.scrollTop);
-            }
-          }, 100);
-        });
-      },
-      closeBurnAfterReadingPreview() {
-        this.currentBurnAfterReadingImage = "";
-        this.currentBurnAfterReadingMessage = null;
+        formatAppLog("log", "at pages/message/chat.vue:270", "新消息已添加:", message);
       },
       async loadHistoryMessages(isLoadingMore = false) {
-        formatAppLog("log", "at pages/message/chat.vue:224", "[loadHistoryMessages] Loading history messages", { isLoadingMore, currentPage: this.currentPage });
+        formatAppLog("log", "at pages/message/chat.vue:273", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, currentPage: this.currentPage });
         try {
           const response = await getHistoryChatMessages({
             opponentId: this.chatInfo.id,
             curPage: this.currentPage,
             pageSize: this.pageSize
           });
-          formatAppLog("log", "at pages/message/chat.vue:233", "[loadHistoryMessages] History messages response:", response);
+          formatAppLog("log", "at pages/message/chat.vue:282", "[loadHistoryMessages] 历史消息响应:", response);
           if (response.code === 200) {
             const newMessages = response.data.records.map((msg) => ({
               id: msg.id,
@@ -16266,23 +16333,23 @@ ${i3}
               this.list = [...this.list, ...newMessages];
             }
             this.hasMoreMessages = response.data.records.length === this.pageSize;
-            formatAppLog("log", "at pages/message/chat.vue:253", "[loadHistoryMessages] Updated message list:", this.list);
-            formatAppLog("log", "at pages/message/chat.vue:254", "[loadHistoryMessages] Has more messages:", this.hasMoreMessages);
+            formatAppLog("log", "at pages/message/chat.vue:302", "[loadHistoryMessages] 更新后的消息列表:", this.list);
+            formatAppLog("log", "at pages/message/chat.vue:303", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
             this.$nextTick(() => {
               if (!isLoadingMore) {
-                formatAppLog("log", "at pages/message/chat.vue:258", "[loadHistoryMessages] Scrolling to bottom after loading initial messages");
+                formatAppLog("log", "at pages/message/chat.vue:307", "[loadHistoryMessages] 加载初始消息后滚动到底部");
                 this.scrollToBottom();
               }
             });
           } else {
-            formatAppLog("error", "at pages/message/chat.vue:263", "[loadHistoryMessages] Failed to load history messages:", response.msg);
+            formatAppLog("error", "at pages/message/chat.vue:312", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
             uni.showToast({
               title: "加载历史消息失败",
               icon: "none"
             });
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:270", "[loadHistoryMessages] Error loading history messages:", error);
+          formatAppLog("error", "at pages/message/chat.vue:319", "[loadHistoryMessages] 加载历史消息出错:", error);
           uni.showToast({
             title: "网络错误，请稍后重试",
             icon: "none"
@@ -16297,43 +16364,29 @@ ${i3}
     const _component_ChatInputArea = vue.resolveComponent("ChatInputArea");
     const _component_BurnAfterReading = vue.resolveComponent("BurnAfterReading");
     const _component_ScrollToBottomButton = vue.resolveComponent("ScrollToBottomButton");
-    return vue.openBlock(), vue.createElementBlock("view", { class: "chat-page" }, [
+    return vue.openBlock(), vue.createElementBlock("view", { class: "page" }, [
       vue.createVNode(_component_ChatHeader, {
         "chat-info": $data.chatInfo,
         onGoBack: $options.goBack
       }, null, 8, ["chat-info", "onGoBack"]),
-      vue.createElementVNode("scroll-view", {
-        id: "scrollview",
-        class: "message-list",
-        "scroll-y": "",
+      vue.createVNode(_component_MessageList, {
+        messages: $data.list,
         "scroll-top": $data.scrollTop,
-        "scroll-with-animation": true,
-        onScrolltoupper: _cache[0] || (_cache[0] = (...args) => $options.loadMoreMessages && $options.loadMoreMessages(...args)),
-        onScroll: _cache[1] || (_cache[1] = (...args) => $options.onScroll && $options.onScroll(...args)),
-        style: vue.normalizeStyle({ height: `${$data.scrollViewHeight}px` })
-      }, [
-        $data.isLoading ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 0,
-          class: "loading-indicator"
-        }, [
-          vue.createElementVNode("text", null, "加载中...")
-        ])) : vue.createCommentVNode("v-if", true),
-        vue.createElementVNode("view", { class: "messages-container" }, [
-          vue.createVNode(_component_MessageList, {
-            messages: $data.list,
-            onViewBurnAfterReading: $options.viewBurnAfterReadingImage
-          }, null, 8, ["messages", "onViewBurnAfterReading"])
-        ])
-      ], 44, ["scroll-top"]),
+        "scroll-into-view": $data.scrollIntoView,
+        onLoadMore: $options.loadMoreMessages,
+        onScroll: $options.onScroll,
+        onViewBurnAfterReading: $options.viewBurnAfterReadingImage
+      }, null, 8, ["messages", "scroll-top", "scroll-into-view", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
       vue.createVNode(_component_ChatInputArea, {
         onSendMessage: $options.sendMessage,
         onMessageSent: $options.handleMessageSent,
         onMessageFailed: $options.handleMessageFailed,
         onAttach: $options.handleAttachment,
-        "show-attach-menu": $data.showAttachMenu,
         onToggleAttachMenu: $options.toggleAttachMenu,
-        recipientId: $data.chatInfo.id
-      }, null, 8, ["onSendMessage", "onMessageSent", "onMessageFailed", "onAttach", "show-attach-menu", "onToggleAttachMenu", "recipientId"]),
+        "show-attach-menu": $data.showAttachMenu,
+        recipientId: $data.chatInfo.id,
+        ref: "chatInputAreaRef"
+      }, null, 8, ["onSendMessage", "onMessageSent", "onMessageFailed", "onAttach", "onToggleAttachMenu", "show-attach-menu", "recipientId"]),
       $data.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
         key: 0,
         imageSrc: $data.currentBurnAfterReadingImage,
@@ -16343,17 +16396,17 @@ ${i3}
       }, null, 8, ["imageSrc", "duration", "onClose"])) : vue.createCommentVNode("v-if", true),
       vue.createVNode(_component_ScrollToBottomButton, {
         show: $data.showScrollToBottom,
-        onClick: $options.scrollToBottom
+        onClick: vue.withModifiers($options.scrollToBottom, ["stop"])
       }, null, 8, ["show", "onClick"]),
       $data.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
         class: "new-message-tip",
-        onClick: _cache[2] || (_cache[2] = (...args) => $options.scrollToBottom && $options.scrollToBottom(...args))
+        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.scrollToBottom && $options.scrollToBottom(...args), ["stop"]))
       }, " 新消息 ")) : vue.createCommentVNode("v-if", true),
-      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("view", {
+      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
         key: 2,
         class: "overlay",
-        onClick: _cache[3] || (_cache[3] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
+        onClick: _cache[1] || (_cache[1] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }

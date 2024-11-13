@@ -1,36 +1,25 @@
 <template>
-  <view class="chat-page">
+  <view class="page">
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
-    <scroll-view
-      id="scrollview"
-      class="message-list"
-      scroll-y
+    <MessageList
+      :messages="list"
       :scroll-top="scrollTop"
-      :scroll-with-animation="true"
-      @scrolltoupper="loadMoreMessages"
+      :scroll-into-view="scrollIntoView"
+      @load-more="loadMoreMessages"
       @scroll="onScroll"
-      :style="{ height: `${scrollViewHeight}px` }"
-    >
-      <view v-if="isLoading" class="loading-indicator">
-        <text>加载中...</text>
-      </view>
-      <view class="messages-container">
-        <MessageList
-          :messages="list"
-          @view-burn-after-reading="viewBurnAfterReadingImage"
-        />
-      </view>
-    </scroll-view>
+      @view-burn-after-reading="viewBurnAfterReadingImage"
+    />
 
     <ChatInputArea 
       @send-message="sendMessage" 
       @message-sent="handleMessageSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
-      :show-attach-menu="showAttachMenu"
       @toggle-attach-menu="toggleAttachMenu"
+      :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
+      ref="chatInputAreaRef"
     />
 
     <BurnAfterReading
@@ -43,14 +32,14 @@
 
     <ScrollToBottomButton
       :show="showScrollToBottom"
-      @click="scrollToBottom"
+      @click.stop="scrollToBottom"
     />
 
-    <view v-if="showNewMessageTip" class="new-message-tip" @click="scrollToBottom">
+    <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
       新消息
     </view>
 
-    <view v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></view>
+    <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
   </view>
 </template>
 
@@ -81,68 +70,187 @@ export default {
       },
       list: [],
       scrollTop: 0,
+      scrollIntoView: '',
+      _selfAvatar: '/static/avatar/avatar5.jpeg',
       showAttachMenu: false,
       burnAfterReadingDuration: 5,
       currentBurnAfterReadingImage: '',
       currentBurnAfterReadingMessage: null,
       isScrolledToBottom: true,
       scrollViewHeight: 0,
+      scrollViewScrollHeight: 0,
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
-      messageStatuses: {},
       currentPage: 1,
       pageSize: 10,
       hasMoreMessages: true,
       isLoading: false,
-      initialLoadComplete: false,
-      style: {
-        pageHeight: 0,
-        contentViewHeight: 0,
-        footViewHeight: 90,
-        mitemHeight: 0
-      }
     };
   },
   onLoad() {
-    console.log('[onLoad] Chat component loaded');
-    this.calculateScrollViewHeight();
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('chatInfo', (data) => {
-      console.log('[onLoad] Received chatInfo:', data);
       this.chatInfo = data.chatInfo;
       this.initializeChat();
     });
   },
   mounted() {
-    console.log('[mounted] Chat component mounted');
-    const res = uni.getSystemInfoSync();
-    this.style.pageHeight = res.windowHeight;
-    this.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * 100 - 70;
-    this.scrollToBottom();
+    this.getScrollViewInfo();
+    console.log('聊天组件已挂载');
   },
   methods: {
-    calculateScrollViewHeight() {
-      const systemInfo = uni.getSystemInfoSync();
-      const headerHeight = 44; // 根据实际头部高度调整
-      const inputAreaHeight = 50; // 根据实际输入区域高度调整
-      this.scrollViewHeight = systemInfo.windowHeight - headerHeight - inputAreaHeight;
-      console.log('[calculateScrollViewHeight] Calculated scroll view height:', this.scrollViewHeight);
-    },
     async initializeChat() {
-      console.log('[initializeChat] Initializing chat');
       await this.loadHistoryMessages();
-      this.initialLoadComplete = true;
-      this.$nextTick(() => {
-        console.log('[initializeChat] Initial load complete, scrolling to bottom');
-        this.scrollToBottom();
-      });
+      this.$nextTick(this.scrollToBottom);
+    },
+    getScrollViewInfo() {
+      const query = uni.createSelectorQuery().in(this);
+      query.select('.scroll-view').boundingClientRect(data => {
+        if (data) {
+          this.scrollViewHeight = data.height;
+          console.log('滚动视图高度:', this.scrollViewHeight);
+        } else {
+          console.log('获取滚动视图高度失败');
+        }
+      }).exec();
     },
     goBack() {
-      uni.navigateBack();
+      uni.navigateBack({
+        success: () => {
+          uni.$emit('updateTabBarActiveTab', 1);
+        },
+        fail: (err) => {
+          console.error('返回失败:', err);
+          uni.reLaunch({
+            url: '/pages/tabBar/tabBar',
+            success: () => {
+              uni.$emit('updateTabBarActiveTab', 1);
+            }
+          });
+        }
+      });
+    },
+    sendMessage(message) {
+      console.log('[sendMessage] 发送消息:', message);
+      if (message.content && message.content.trim()) {
+        const newMessage = {
+          id: Date.now().toString(),
+          content: message.content,
+          userType: 'self',
+          avatar: this._selfAvatar,
+          timestamp: new Date(),
+          status: 'sending'
+        };
+        this.addNewMessage(newMessage);
+      }
+    },
+    handleMessageSent(sentMessage) {
+      console.log('[handleMessageSent] 消息已发送:', sentMessage);
+      const tempMessage = this.list.find(m => m.content === sentMessage.message);
+      if (tempMessage) {
+        tempMessage.id = sentMessage.id;
+        tempMessage.status = 'sent';
+      }
+    },
+    handleMessageFailed(failedMessage) {
+      console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
+      const tempMessage = this.list.find(m => m.content === failedMessage);
+      if (tempMessage) {
+        tempMessage.status = 'failed';
+      }
+    },
+    handleAttachment(type, data) {
+      const handlers = {
+        album: this.chooseImage,
+        file: () => this.handleFileTransfer(data),
+        'burn-after-reading': () => this.handleBurnAfterReading(data)
+      };
+      handlers[type] && handlers[type]();
+    },
+    chooseImage() {
+      uni.chooseImage({
+        success: (res) => {
+          this.addNewMessage({
+            content: res.tempFilePaths[0],
+            userType: 'self',
+            messageType: 'image',
+            avatar: this._selfAvatar,
+            timestamp: new Date()
+          });
+        }
+      });
+    },
+    handleFileTransfer(fileData) {
+      this.addNewMessage({
+        content: fileData,
+        userType: 'self',
+        messageType: 'file',
+        avatar: this._selfAvatar,
+        timestamp: new Date()
+      });
+    },
+    handleBurnAfterReading(imageData) {
+      this.addNewMessage({
+        content: imageData,
+        userType: 'self',
+        messageType: 'burn-after-reading',
+        avatar: this._selfAvatar,
+        timestamp: new Date()
+      });
+    },
+    viewBurnAfterReadingImage(message) {
+      this.currentBurnAfterReadingImage = message.content.originalPath;
+      this.currentBurnAfterReadingMessage = message;
+      this.$nextTick(() => {
+        this.$refs.burnAfterReadingRef.open();
+      });
+    },
+    closeBurnAfterReadingPreview() {
+      this.currentBurnAfterReadingImage = '';
+      if (this.currentBurnAfterReadingMessage) {
+        const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
+        if (index > -1) {
+          this.list.splice(index, 1);
+        }
+        this.currentBurnAfterReadingMessage = null;
+      }
+    },
+    toggleAttachMenu(show) {
+      this.showAttachMenu = show;
+      console.log('附件菜单切换:', show);
+    },
+    handleOverlayClick() {
+      this.showAttachMenu = false;
+      console.log('附件菜单已关闭');
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const lastMessageIndex = this.list.length - 1;
+        this.scrollIntoView = `message-${lastMessageIndex}`;
+        this.showScrollToBottom = false;
+        this.showNewMessageTip = false;
+        this.hasNewMessages = false;
+        this.isScrolledToBottom = true;
+        console.log('滚动到底部');
+      });
+    },
+    onScroll(event) {
+      const { scrollTop, scrollHeight } = event.detail;
+      this.scrollViewScrollHeight = scrollHeight;
+      const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
+      
+      this.isScrolledToBottom = isAtBottom;
+      this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
+      this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
+      if (isAtBottom) {
+        this.hasNewMessages = false;
+        this.showNewMessageTip = false;
+      }
+      // console.log('滚动事件:', { scrollTop, scrollHeight, isAtBottom });
     },
     async loadMoreMessages() {
-      console.log('[loadMoreMessages] Loading more messages');
+      // console.log('加载更多消息');
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
         this.currentPage++;
@@ -150,78 +258,19 @@ export default {
         this.isLoading = false;
       }
     },
-    onScroll(e) {
-      const { scrollTop, scrollHeight } = e.detail;
-      this.isScrolledToBottom = scrollHeight - scrollTop <= this.scrollViewHeight + 10;
-      this.showScrollToBottom = !this.isScrolledToBottom;
-      console.log('[onScroll] Scroll event:', { scrollTop, scrollHeight, isScrolledToBottom: this.isScrolledToBottom });
-    },
-    viewBurnAfterReadingImage(message) {
-      this.currentBurnAfterReadingImage = message.content;
-      this.currentBurnAfterReadingMessage = message;
-    },
-    sendMessage(message) {
-      console.log('[sendMessage] Sending message:', message);
-      const tempId = Date.now().toString();
-      this.list.push({
-        id: tempId,
-        content: message.content,
-        userType: 'self',
-        timestamp: new Date()
-      });
-      this.$set(this.messageStatuses, tempId, 'sending');
-      this.$nextTick(() => {
+    addNewMessage(message) {
+      this.list.push(message);
+      if (!this.isScrolledToBottom) {
+        this.hasNewMessages = true;
+        this.showScrollToBottom = true;
+        this.showNewMessageTip = true;
+      } else {
         this.scrollToBottom();
-      });
-    },
-    handleMessageSent(sentMessage) {
-      console.log('[handleMessageSent] Message sent:', sentMessage);
-      const tempMessage = this.list.find(m => m.content === sentMessage.message);
-      if (tempMessage) {
-        tempMessage.id = sentMessage.id;
-        this.$set(this.messageStatuses, tempMessage.id, null);
-        this.messageStatuses = { ...this.messageStatuses };
       }
-    },
-    handleMessageFailed(failedMessage) {
-      console.log('[handleMessageFailed] Message failed:', failedMessage);
-      const tempMessage = this.list.find(m => m.content === failedMessage);
-      if (tempMessage) {
-        this.$set(this.messageStatuses, tempMessage.id, 'failed');
-      }
-    },
-    handleAttachment(type, data) {
-      console.log('[handleAttachment] Handling attachment:', type, data);
-    },
-    toggleAttachMenu(show) {
-      this.showAttachMenu = show;
-    },
-    handleOverlayClick() {
-      this.showAttachMenu = false;
-    },
-    scrollToBottom() {
-      console.log('[scrollToBottom] Scrolling to bottom');
-      let that = this;
-      let query = uni.createSelectorQuery().in(this);
-      query.selectAll('.m-item').boundingClientRect();
-      query.select('#scrollview').boundingClientRect();
-      query.exec((res) => {
-        that.style.mitemHeight = 0;
-        res[0].forEach((rect) => that.style.mitemHeight = that.style.mitemHeight + rect.height + 40);
-        setTimeout(() => {
-          if (that.style.mitemHeight > (that.style.contentViewHeight - 100)) {
-            that.scrollTop = that.style.mitemHeight - that.style.contentViewHeight;
-            console.log('[scrollToBottom] Setting scrollTop to:', that.scrollTop);
-          }
-        }, 100);
-      });
-    },
-    closeBurnAfterReadingPreview() {
-      this.currentBurnAfterReadingImage = '';
-      this.currentBurnAfterReadingMessage = null;
+      console.log('新消息已添加:', message);
     },
     async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] Loading history messages', { isLoadingMore, currentPage: this.currentPage });
+      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, currentPage: this.currentPage });
 
       try {
         const response = await getHistoryChatMessages({
@@ -230,7 +279,7 @@ export default {
           pageSize: this.pageSize
         });
 
-        console.log('[loadHistoryMessages] History messages response:', response);
+        console.log('[loadHistoryMessages] 历史消息响应:', response);
 
         if (response.code === 200) {
           const newMessages = response.data.records.map(msg => ({
@@ -250,24 +299,24 @@ export default {
           
           this.hasMoreMessages = response.data.records.length === this.pageSize;
 
-          console.log('[loadHistoryMessages] Updated message list:', this.list);
-          console.log('[loadHistoryMessages] Has more messages:', this.hasMoreMessages);
+          console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
+          console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
 
           this.$nextTick(() => {
             if (!isLoadingMore) {
-              console.log('[loadHistoryMessages] Scrolling to bottom after loading initial messages');
+              console.log('[loadHistoryMessages] 加载初始消息后滚动到底部');
               this.scrollToBottom();
             }
           });
         } else {
-          console.error('[loadHistoryMessages] Failed to load history messages:', response.msg);
+          console.error('[loadHistoryMessages] 加载历史消息失败:', response.msg);
           uni.showToast({
             title: '加载历史消息失败',
             icon: 'none'
           });
         }
       } catch (error) {
-        console.error('[loadHistoryMessages] Error loading history messages:', error);
+        console.error('[loadHistoryMessages] 加载历史消息出错:', error);
         uni.showToast({
           title: '网络错误，请稍后重试',
           icon: 'none'
@@ -279,21 +328,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chat-page {
+.page {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-.message-list {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.messages-container {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
 .new-message-tip {
@@ -303,7 +342,7 @@ export default {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px 10px;
+  padding: 5px  10px;
   border-radius: 15px;
   font-size: 14px;
   z-index: 1000;
@@ -311,18 +350,11 @@ export default {
 
 .overlay {
   position: fixed;
-  top: 0;
+  top:  0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: transparent;
   z-index: 999;
-}
-
-.loading-indicator {
-  text-align: center;
-  padding: 10px 0;
-  color: #999;
-  font-size: 14px;
 }
 </style>

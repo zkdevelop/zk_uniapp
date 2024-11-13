@@ -46,7 +46,7 @@
 
 <script>
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
-import { searchUsers  } from '@/utils/api/contacts.js'
+import { searchUsers } from '@/utils/api/contacts.js'
 import { getChatList } from '@/utils/api/message.js'
 
 export default {
@@ -57,15 +57,15 @@ export default {
   data() {
     return {
       demoMessages: [
-        // {
-        //   id: '1',
-        //   name: '张三',
-        //   avatar: ['/static/avatar/avatar1.png'],
-        //   preview: '你好，最近怎么样？',
-        //   date: '2024-11-25T10:00:00',
-        //   type: 'single',
-        //   unreadCount: 2
-        // },
+        {
+          id: '1',
+          name: '张三',
+          avatar: ['/static/avatar/avatar1.png'],
+          preview: '你好，最近怎么样？',
+          date: '2024-11-25T10:00:00',
+          type: 'single',
+          unreadCount: 2
+        },
         {
           id: '2',
           name: '项目讨论群',
@@ -138,14 +138,13 @@ export default {
     },
     calculateScrollViewHeight() {
       const systemInfo = uni.getSystemInfoSync();
-      const headerHeight = 44;
-      const tabBarHeight = 50;
+      const headerHeight = 44; // 根据实际头部高度调整
+      const tabBarHeight = 50; // 根据实际底部 tabBar 高度调整
       this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
     },
     async fetchChatList() {
       try {
         const response = await getChatList();
-		console.log(response,'response')
         if (response.code === 200) {
           this.realMessages = response.data.map(item => ({
             ...item,

@@ -75,32 +75,42 @@ export default {
     }
   },
   methods: {
-    async sendMessage() {
-      if (this.newMessage.trim()) {
-        const messageData = {
-          message: this.newMessage,
-          recipientId: this.recipientId
-        };
-        
-        this.$emit('send-message', {
-          content: this.newMessage,
-          status: 'sending'
-        });
-        
-        try {
-          const response = await sendMessageToUser(messageData);
-          if (response.code === 200) {
-            this.$emit('message-sent', response.data);
-          } else {
-            this.$emit('message-failed', this.newMessage);
-          }
-        } catch (error) {
-          console.error('发送消息失败:', error);
+    async sendMessage() { 
+      console.log('sendMessage 方法被调用');
+      if (!this.newMessage.trim()) {
+        console.log('消息为空，不发送');
+        return;
+      }
+
+      const messageData = {
+        message: this.newMessage,
+        recipientId: this.recipientId
+      };
+      
+      console.log('准备发送消息:', messageData);
+      
+      this.$emit('send-message', {
+        content: this.newMessage,
+        status: 'sending'
+      });
+      
+      try {
+        console.log('调用 sendMessageToUser');
+        const response = await sendMessageToUser(messageData);
+        console.log('sendMessageToUser 响应:', response);
+        if (response.code === 200) {
+          console.log('消息发送成功');
+          this.$emit('message-sent', response.data);
+        } else {
+          console.error('消息发送失败:', response.msg);
           this.$emit('message-failed', this.newMessage);
         }
-        
-        this.newMessage = '';
+      } catch (error) {
+        console.error('发送消息失败:', error);
+        this.$emit('message-failed', this.newMessage);
       }
+      
+      this.newMessage = ''; 
     },
     toggleAttachMenu() { 
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
@@ -231,14 +241,14 @@ export default {
                 content: tempFilePath
               });
             } else {
-              // console.error('发送图片消息失败:', response.msg);
+              console.error('发送图片消息失败:', response.msg);
               uni.showToast({
                 title: '发送失败，请重试',
                 icon: 'none'
               });
             }
           } catch (error) {
-            // console.error('发送图片消息出错:', error);
+            console.error('发送图片消息出错:', error);
             uni.showToast({
               title: '发送失败，请重试',
               icon: 'none'
@@ -246,7 +256,7 @@ export default {
           }
         },
         fail: (err) => {
-          // console.error('选择图片失败:', err);
+          console.error('选择图片失败:', err);
           uni.showToast({
             title: '选择图片失败',
             icon: 'none'
