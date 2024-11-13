@@ -22,20 +22,20 @@
         </view>
         
         <view 
-          v-for="(message, index) in messages" 
+          v-for="(message, index) in combinedMessages" 
           :key="index" 
           class="message-item"
-          :class="{ 'personal-chat': message.type === 'single' }"
+          :class="{ 'personal-chat': !message.group }"
           @click="openChat(message)"
         >
-          <group-avatar v-if="message.type === 'group'" :avatar="message.avatar" class="avatar" />
-          <image v-else :src="getAvatarSrc(message.avatar[0])" class="avatar" mode="aspectFill"></image>
+          <group-avatar v-if="message.group" :avatar="message.avatar" class="avatar" />
+          <image v-else :src="getAvatarSrc(message.avatar)" class="avatar" mode="aspectFill"></image>
           <view class="message-content-wrapper">
             <view class="message-content">
-              <view class="message-title">{{ message.name }}</view>
-              <view class="message-preview">{{ message.preview }}</view>
+              <view class="message-title">{{ message.name || message.userName }}</view>
+              <view class="message-preview">{{ message.preview || message.latestMessage }}</view>
             </view>
-            <view class="message-date">{{ message.date }}</view>
+            <view class="message-date">{{ formatDate(message.date || message.sendTime) }}</view>
           </view>
           <view v-if="message.unreadCount > 0" class="unread-badge">{{ message.unreadCount }}</view>
         </view>
@@ -46,8 +46,9 @@
 
 <script>
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
-import { searchUsers  } from '@/utils/api/contacts.js'
-import {  getChatList } from '@/utils/api/message.js'
+import { searchUsers } from '@/utils/api/contacts.js'
+import { getChatList } from '@/utils/api/message.js'
+
 export default {
   name: 'Messages',
   components: {
@@ -55,16 +56,27 @@ export default {
   },
   data() {
     return {
-      messages: [],
-      groupChatDemo: {
-        id: '4', 
-        name: '项目讨论群', 
-        avatar: ['', '', '', ''], 
-        preview: '下周一开会', 
-        date: '7月23日', 
-        type: 'group',
-        unreadCount: 0
-      },
+      demoMessages: [
+        {
+          id: '1',
+          name: '张三',
+          avatar: ['/static/avatar/avatar1.png'],
+          preview: '你好，最近怎么样？',
+          date: '2024-11-25T10:00:00',
+          type: 'single',
+          unreadCount: 2
+        },
+        {
+          id: '2',
+          name: '项目讨论群',
+          avatar: ['/static/avatar/group1.png', '/static/avatar/group2.png', '/static/avatar/group3.png'],
+          preview: '下周一开会，请大家准时参加',
+          date: '2024-11-24T15:30:00',
+          type: 'group',
+          unreadCount: 5
+        }
+      ],
+      realMessages: [],
       defaultAvatarPath: '../../static/message/默认头像.png',
       scrollViewHeight: 0,
     }
@@ -78,9 +90,12 @@ export default {
         notificationCount: Math.floor(Math.random() * 20) + 1
       }
     },
+    combinedMessages() {
+      return [...this.demoMessages, ...this.realMessages];
+    },
     totalMessageCount() {
-      const totalUnread = this.messages.reduce((sum, message) => sum + (message.unreadCount || 0), 0);
-      return this.messages.length + totalUnread;
+      const totalUnread = this.combinedMessages.reduce((sum, message) => sum + (message.unreadCount || 0), 0);
+      return this.combinedMessages.length + totalUnread;
     }
   },
   mounted() {
@@ -94,10 +109,10 @@ export default {
   methods: {
     openChat(message) { 
       const chatInfo = {
-        id: message.id,
-        name: message.name,
-        avatar: message.avatar,
-        type: message.type
+        id: message.id || message.userId,
+        name: message.name || message.userName,
+        avatar: message.avatar || this.defaultAvatarPath,
+        type: message.group ? 'group' : 'single'
       };
       uni.navigateTo({
         url: '/pages/message/chat',
@@ -119,30 +134,24 @@ export default {
       uni.$emit('updateTabBarActiveTab', 1);
     },
     getAvatarSrc(avatar) {
-      return avatar || this.defaultAvatarPath;
+      return Array.isArray(avatar) ? avatar[0] : (avatar || this.defaultAvatarPath);
     },
     calculateScrollViewHeight() {
       const systemInfo = uni.getSystemInfoSync();
-      const headerHeight = 44; // 消息头部的大致高度
-      const tabBarHeight = 50; // 底部标签栏的大致高度，如果有的话
+      const headerHeight = 44; // 根据实际头部高度调整
+      const tabBarHeight = 50; // 根据实际底部 tabBar 高度调整
       this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
     },
     async fetchChatList() {
       try {
         const response = await getChatList();
         if (response.code === 200) {
-          this.messages = response.data.map(item => ({
-            id: item.userId,
-            name: item.userName,
-            avatar: [''], // 这里需要根据实际情况设置头像
+          this.realMessages = response.data.map(item => ({
+            ...item,
+            avatar: this.defaultAvatarPath,
             preview: item.latestMessage,
-            date: this.formatDate(item.sendTime),
-            type: item.group ? 'group' : 'single',
-            unreadCount: item.unreadCount
+            date: item.sendTime
           }));
-          
-          // 添加群聊演示数据
-          this.messages.push(this.groupChatDemo);
         } else {
           console.error('获取聊天列表失败:', response.msg);
         }
@@ -152,9 +161,26 @@ export default {
     },
     formatDate(dateString) {
       const date = new Date(dateString);
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      return `${month}月${day}日`;
+      const now = new Date();
+      const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) {
+        return this.formatTime(date);
+      } else if (diffDays === 1) {
+        return '昨天';
+      } else if (diffDays < 7) {
+        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        return weekdays[date.getDay()];
+      } else {
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}月${day}日`;
+      }
+    },
+    formatTime(date) {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     }
   }
 }
@@ -166,7 +192,7 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
-  overflow: hidden; /* 防止整个容器出现滚动条 */
+  overflow: hidden;
 }
 
 .messages-view {
@@ -203,7 +229,7 @@ export default {
 .messages-list {
   flex: 1;
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; /* 为iOS提供平滑滚动 */
+  -webkit-overflow-scrolling: touch;
 }
 
 .message-item {

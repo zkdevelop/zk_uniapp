@@ -1,4 +1,3 @@
-<!-- chat.vue -->
 <template>
   <view class="page">
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
@@ -17,9 +16,10 @@
       @message-sent="handleMessageSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
-      :show-attach-menu="showAttachMenu"
       @toggle-attach-menu="toggleAttachMenu"
+      :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
+      ref="chatInputAreaRef"
     />
 
     <BurnAfterReading
@@ -49,6 +49,7 @@ import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
+import { getHistoryChatMessages } from '@/utils/api/message.js'
 
 export default {
   name: 'Chat',
@@ -70,7 +71,7 @@ export default {
       list: [],
       scrollTop: 0,
       scrollIntoView: '',
-      _selfAvatar: '',
+      _selfAvatar: '/static/avatar/avatar5.jpeg',
       showAttachMenu: false,
       burnAfterReadingDuration: 5,
       currentBurnAfterReadingImage: '',
@@ -81,7 +82,10 @@ export default {
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
-      messageStatuses: {},
+      currentPage: 1,
+      pageSize: 10,
+      hasMoreMessages: true,
+      isLoading: false,
     };
   },
   onLoad() {
@@ -96,63 +100,229 @@ export default {
     console.log('聊天组件已挂载');
   },
   methods: {
-    initializeChat() {
-      // 初始化聊天逻辑
+    async initializeChat() {
+      await this.loadHistoryMessages();
+      this.$nextTick(this.scrollToBottom);
+    },
+    getScrollViewInfo() {
+      const query = uni.createSelectorQuery().in(this);
+      query.select('.scroll-view').boundingClientRect(data => {
+        if (data) {
+          this.scrollViewHeight = data.height;
+          console.log('滚动视图高度:', this.scrollViewHeight);
+        } else {
+          console.log('获取滚动视图高度失败');
+        }
+      }).exec();
     },
     goBack() {
-      uni.navigateBack();
-    },
-    loadMoreMessages() {
-      // 加载更多消息的逻辑
-    },
-    onScroll(e) {
-      // 滚动处理逻辑
-    },
-    viewBurnAfterReadingImage(message) {
-      // 查看阅后即焚图片的逻辑
+      uni.navigateBack({
+        success: () => {
+          uni.$emit('updateTabBarActiveTab', 1);
+        },
+        fail: (err) => {
+          console.error('返回失败:', err);
+          uni.reLaunch({
+            url: '/pages/tabBar/tabBar',
+            success: () => {
+              uni.$emit('updateTabBarActiveTab', 1);
+            }
+          });
+        }
+      });
     },
     sendMessage(message) {
-      const tempId = Date.now().toString();
-      this.list.push({
-        id: tempId,
-        content: message.content,
-        userType: 'self',
-        timestamp: new Date()
-      });
-      this.$set(this.messageStatuses, tempId, 'sending');
-      this.scrollToBottom();
+      console.log('[sendMessage] 发送消息:', message);
+      if (message.content && message.content.trim()) {
+        const newMessage = {
+          id: Date.now().toString(),
+          content: message.content,
+          userType: 'self',
+          avatar: this._selfAvatar,
+          timestamp: new Date(),
+          status: 'sending'
+        };
+        this.addNewMessage(newMessage);
+      }
     },
     handleMessageSent(sentMessage) {
+      console.log('[handleMessageSent] 消息已发送:', sentMessage);
       const tempMessage = this.list.find(m => m.content === sentMessage.message);
       if (tempMessage) {
         tempMessage.id = sentMessage.id;
-        this.$delete(this.messageStatuses, tempMessage.id);
+        tempMessage.status = 'sent';
       }
     },
     handleMessageFailed(failedMessage) {
+      console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
       const tempMessage = this.list.find(m => m.content === failedMessage);
       if (tempMessage) {
-        this.$set(this.messageStatuses, tempMessage.id, 'failed');
+        tempMessage.status = 'failed';
       }
     },
     handleAttachment(type, data) {
-      // 处理附件的逻辑
+      const handlers = {
+        album: this.chooseImage,
+        file: () => this.handleFileTransfer(data),
+        'burn-after-reading': () => this.handleBurnAfterReading(data)
+      };
+      handlers[type] && handlers[type]();
+    },
+    chooseImage() {
+      uni.chooseImage({
+        success: (res) => {
+          this.addNewMessage({
+            content: res.tempFilePaths[0],
+            userType: 'self',
+            messageType: 'image',
+            avatar: this._selfAvatar,
+            timestamp: new Date()
+          });
+        }
+      });
+    },
+    handleFileTransfer(fileData) {
+      this.addNewMessage({
+        content: fileData,
+        userType: 'self',
+        messageType: 'file',
+        avatar: this._selfAvatar,
+        timestamp: new Date()
+      });
+    },
+    handleBurnAfterReading(imageData) {
+      this.addNewMessage({
+        content: imageData,
+        userType: 'self',
+        messageType: 'burn-after-reading',
+        avatar: this._selfAvatar,
+        timestamp: new Date()
+      });
+    },
+    viewBurnAfterReadingImage(message) {
+      this.currentBurnAfterReadingImage = message.content.originalPath;
+      this.currentBurnAfterReadingMessage = message;
+      this.$nextTick(() => {
+        this.$refs.burnAfterReadingRef.open();
+      });
+    },
+    closeBurnAfterReadingPreview() {
+      this.currentBurnAfterReadingImage = '';
+      if (this.currentBurnAfterReadingMessage) {
+        const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
+        if (index > -1) {
+          this.list.splice(index, 1);
+        }
+        this.currentBurnAfterReadingMessage = null;
+      }
     },
     toggleAttachMenu(show) {
       this.showAttachMenu = show;
+      console.log('附件菜单切换:', show);
     },
     handleOverlayClick() {
       this.showAttachMenu = false;
+      console.log('附件菜单已关闭');
     },
     scrollToBottom() {
-      // 滚动到底部的逻辑
+      this.$nextTick(() => {
+        const lastMessageIndex = this.list.length - 1;
+        this.scrollIntoView = `message-${lastMessageIndex}`;
+        this.showScrollToBottom = false;
+        this.showNewMessageTip = false;
+        this.hasNewMessages = false;
+        this.isScrolledToBottom = true;
+        console.log('滚动到底部');
+      });
     },
-    getScrollViewInfo() {
-      // 获取滚动视图信息的逻辑
+    onScroll(event) {
+      const { scrollTop, scrollHeight } = event.detail;
+      this.scrollViewScrollHeight = scrollHeight;
+      const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
+      
+      this.isScrolledToBottom = isAtBottom;
+      this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
+      this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
+      if (isAtBottom) {
+        this.hasNewMessages = false;
+        this.showNewMessageTip = false;
+      }
+      // console.log('滚动事件:', { scrollTop, scrollHeight, isAtBottom });
     },
-    closeBurnAfterReadingPreview() {
-      // 关闭阅后即焚预览的逻辑
-    }
+    async loadMoreMessages() {
+      // console.log('加载更多消息');
+      if (this.hasMoreMessages && !this.isLoading) {
+        this.isLoading = true;
+        this.currentPage++;
+        await this.loadHistoryMessages(true);
+        this.isLoading = false;
+      }
+    },
+    addNewMessage(message) {
+      this.list.push(message);
+      if (!this.isScrolledToBottom) {
+        this.hasNewMessages = true;
+        this.showScrollToBottom = true;
+        this.showNewMessageTip = true;
+      } else {
+        this.scrollToBottom();
+      }
+      console.log('新消息已添加:', message);
+    },
+    async loadHistoryMessages(isLoadingMore = false) {
+      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, currentPage: this.currentPage });
+
+      try {
+        const response = await getHistoryChatMessages({
+          opponentId: this.chatInfo.id,
+          curPage: this.currentPage,
+          pageSize: this.pageSize
+        });
+
+        console.log('[loadHistoryMessages] 历史消息响应:', response);
+
+        if (response.code === 200) {
+          const newMessages = response.data.records.map(msg => ({
+            id: msg.id,
+            content: msg.message,
+            userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+            timestamp: new Date(msg.sendTime),
+            messageType: msg.messageType,
+            isRead: msg.isRead
+          }));
+
+          if (isLoadingMore) {
+            this.list = [...newMessages.reverse(), ...this.list];
+          } else {
+            this.list = [...this.list, ...newMessages];
+          }
+          
+          this.hasMoreMessages = response.data.records.length === this.pageSize;
+
+          console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
+          console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
+
+          this.$nextTick(() => {
+            if (!isLoadingMore) {
+              console.log('[loadHistoryMessages] 加载初始消息后滚动到底部');
+              this.scrollToBottom();
+            }
+          });
+        } else {
+          console.error('[loadHistoryMessages] 加载历史消息失败:', response.msg);
+          uni.showToast({
+            title: '加载历史消息失败',
+            icon: 'none'
+          });
+        }
+      } catch (error) {
+        console.error('[loadHistoryMessages] 加载历史消息出错:', error);
+        uni.showToast({
+          title: '网络错误，请稍后重试',
+          icon: 'none'
+        });
+      }
+    },
   }
 }
 </script>
@@ -172,7 +342,7 @@ export default {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px 10px;
+  padding: 5px  10px;
   border-radius: 15px;
   font-size: 14px;
   z-index: 1000;
@@ -180,7 +350,7 @@ export default {
 
 .overlay {
   position: fixed;
-  top: 0;
+  top:  0;
   left: 0;
   right: 0;
   bottom: 0;

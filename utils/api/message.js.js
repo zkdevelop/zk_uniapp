@@ -19,3 +19,18 @@ export const sendMessageToUser = (data) => {
     }
   })
 }
+
+// 新增的接口
+export const getHistoryChatMessages = (data) => {
+  return request({
+    url: '/message/read/single',
+    method: 'post',
+    data: {
+      opponentId: data.opponentId,
+      pageParam: {
+        curPage: data.curPage,
+        pageSize: data.pageSize
+      }
+    }
+  })
+}

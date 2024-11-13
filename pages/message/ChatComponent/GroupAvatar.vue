@@ -17,7 +17,7 @@ export default {
   name: 'GroupAvatar',
   props: {
     avatar: {
-      type: Array,
+      type: [Array, String],
       default: () => []
     }
   },
@@ -28,10 +28,14 @@ export default {
   },
   computed: {
     processedAvatar() {
-      if (this.avatar.length === 0) {
-        return [this.defaultAvatarPath];
+      if (Array.isArray(this.avatar)) {
+        if (this.avatar.length === 0) {
+          return [this.defaultAvatarPath];
+        }
+        return this.avatar.map(avatarPath => avatarPath || this.defaultAvatarPath);
+      } else {
+        return [this.avatar || this.defaultAvatarPath];
       }
-      return this.avatar.map(avatarPath => avatarPath || this.defaultAvatarPath);
     }
   }
 }
