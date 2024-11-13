@@ -7,7 +7,7 @@ export const searchMission = (query) => {
 	return request({
 		url: `/mission/search`,
 		method: 'post',
-		data:query
+		data: query
 	})
 }
 
@@ -47,5 +47,14 @@ export const generateUrl = (query) => {
 		url: `/minio/generateUrl`,
 		method: 'get',
 		data: query
+	})
+}
+
+// 获取任务详情
+export const getMissionDetails = (params) => {
+	return request({
+		url: `/mission/details`,
+		method: 'get',
+		data: params
 	})
 }
