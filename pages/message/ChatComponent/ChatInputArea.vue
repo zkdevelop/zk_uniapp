@@ -1,4 +1,3 @@
-<!-- ChatInputArea.vue -->
 <template>
   <view class="chat-input-area">
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
@@ -34,10 +33,13 @@
       <template v-slot:video-call>
         <!-- 视频通话功能的自定义内容 -->
       </template>
-      <template v-slot:location>
-        <!-- 位置功能的自定义内容 -->
-      </template>
     </attachment-menu>
+
+    <location-sharing 
+      v-if="showLocationSharing"
+      @location-selected="handleLocationSelected"
+      @close="closeLocationSharing"
+    />
 
     <file-transfer ref="fileTransfer" @file-selected="handleFileSelected" />
   </view>
@@ -46,13 +48,15 @@
 <script>
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
 import FileTransfer from './ChatInputAreaComponent/FileTransfer.vue'
+import LocationSharing from './ChatInputAreaComponent/LocationSharing.vue'
 import { sendMessageToUser } from '@/utils/api/message.js'
 
 export default {
   name: 'ChatInputArea',
   components: {
     AttachmentMenu,
-    FileTransfer
+    FileTransfer,
+    LocationSharing
   },
   props: {
     showAttachMenu: {
@@ -67,6 +71,7 @@ export default {
   data() {
     return {
       newMessage: '',
+      showLocationSharing: false,
     }
   },
   methods: {
@@ -97,23 +102,30 @@ export default {
         this.newMessage = '';
       }
     },
-    toggleAttachMenu() {
+    toggleAttachMenu() { 
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
     },
-    closeAttachMenu() {
+    closeAttachMenu() { 
       this.$emit('toggle-attach-menu', false);
     },
-    attachItem(action) {
+    attachItem(action) { 
       if (action === 'file') {
         this.$refs.fileTransfer.chooseFile();
       } else if (action === 'burn-after-reading') {
         this.chooseBurnAfterReadingImage();
       } else if (action === 'camera') {
         this.takePhoto();
+      } else if (action === 'album') {
+        this.chooseAndSendPhoto();
+      } else if (action === 'location') { 
+        this.showLocationSharing = true;
+        this.closeAttachMenu();
       } else {
         this.$emit('attach', action);
       }
-      this.closeAttachMenu();
+      if (action !== 'location') {
+        this.closeAttachMenu();
+      }
     },
     handleFileSelected(fileData) {
       this.$emit('attach', 'file', fileData);
@@ -200,6 +212,79 @@ export default {
           });
         }
       });
+    },
+    chooseAndSendPhoto() {
+      uni.chooseImage({
+        count: 1,
+        sourceType: ['album'],
+        success: async (res) => {
+          const tempFilePath = res.tempFilePaths[0];
+          try {
+            const response = await sendMessageToUser({
+              recipientId: this.recipientId,
+              content: tempFilePath,
+              messageType: 'IMAGE'
+            });
+            if (response.code === 200) {
+              this.$emit('send-message', {
+                type: 'image',
+                content: tempFilePath
+              });
+            } else {
+              // console.error('发送图片消息失败:', response.msg);
+              uni.showToast({
+                title: '发送失败，请重试',
+                icon: 'none'
+              });
+            }
+          } catch (error) {
+            // console.error('发送图片消息出错:', error);
+            uni.showToast({
+              title: '发送失败，请重试',
+              icon: 'none'
+            });
+          }
+        },
+        fail: (err) => {
+          // console.error('选择图片失败:', err);
+          uni.showToast({
+            title: '选择图片失败',
+            icon: 'none'
+          });
+        }
+      });
+    },
+    handleLocationSelected(location) { 
+      this.sendLocationMessage(location);
+      this.closeLocationSharing();
+    },
+    async sendLocationMessage(location) { 
+      try {
+        const response = await sendMessageToUser({
+          recipientId: this.recipientId,
+          content: JSON.stringify(location),
+          messageType: 'LOCATION'
+        });
+        if (response.code === 200) { 
+          this.$emit('send-message', {
+            type: 'location',
+            content: location
+          });
+        } else { 
+          uni.showToast({
+            title: '发送失败，请重试',
+            icon: 'none'
+          });
+        }
+      } catch (error) { 
+        uni.showToast({
+          title: '发送失败，请重试',
+          icon: 'none'
+        });
+      }
+    },
+    closeLocationSharing() { 
+      this.showLocationSharing = false;
     }
   },
 }

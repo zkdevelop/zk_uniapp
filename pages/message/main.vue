@@ -48,6 +48,7 @@
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
 import { searchUsers  } from '@/utils/api/contacts.js'
 import {  getChatList } from '@/utils/api/message.js'
+
 export default {
   name: 'Messages',
   components: {
@@ -55,16 +56,26 @@ export default {
   },
   data() {
     return {
-      messages: [],
-      groupChatDemo: {
-        id: '4', 
-        name: '项目讨论群', 
-        avatar: ['', '', '', ''], 
-        preview: '下周一开会', 
-        date: '7月23日', 
-        type: 'group',
-        unreadCount: 0
-      },
+      messages: [
+        {
+          id: '1',
+          name: '张三',
+          avatar: ['/static/avatar/avatar1.png'],
+          preview: '你好，最近怎么样？',
+          date: '7月25日',
+          type: 'single',
+          unreadCount: 2
+        },
+        {
+          id: '2',
+          name: '项目讨论群',
+          avatar: ['/static/avatar/group1.png', '/static/avatar/group2.png', '/static/avatar/group3.png'],
+          preview: '下周一开会，请大家准时参加',
+          date: '7月24日',
+          type: 'group',
+          unreadCount: 5
+        }
+      ],
       defaultAvatarPath: '../../static/message/默认头像.png',
       scrollViewHeight: 0,
     }
@@ -128,27 +139,7 @@ export default {
       this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
     },
     async fetchChatList() {
-      try {
-        const response = await getChatList();
-        if (response.code === 200) {
-          this.messages = response.data.map(item => ({
-            id: item.userId,
-            name: item.userName,
-            avatar: [''], // 这里需要根据实际情况设置头像
-            preview: item.latestMessage,
-            date: this.formatDate(item.sendTime),
-            type: item.group ? 'group' : 'single',
-            unreadCount: item.unreadCount
-          }));
-          
-          // 添加群聊演示数据
-          this.messages.push(this.groupChatDemo);
-        } else {
-          console.error('获取聊天列表失败:', response.msg);
-        }
-      } catch (error) {
-        console.error('获取聊天列表出错:', error);
-      }
+      console.log('使用写死的聊天数据');
     },
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -166,7 +157,7 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
-  overflow: hidden; /* 防止整个容器出现滚动条 */
+  overflow: hidden;
 }
 
 .messages-view {
@@ -203,7 +194,7 @@ export default {
 .messages-list {
   flex: 1;
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; /* 为iOS提供平滑滚动 */
+  -webkit-overflow-scrolling: touch;
 }
 
 .message-item {

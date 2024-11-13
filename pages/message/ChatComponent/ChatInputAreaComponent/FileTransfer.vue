@@ -1,12 +1,8 @@
 <template>
-  <!-- 文件传输组件 -->
-  <view>
-    <view class="file-message" v-if="fileData">
-      <view class="file-icon">📄</view>
-      <view class="file-info">
-        <text class="file-name">{{ fileData.name }}</text>
-        <text class="file-size">{{ fileData.size }}</text>
-      </view>
+  <view class="file-transfer">
+    <view v-if="selectedFile" class="file-info">
+      <text class="file-name">文件名: {{ selectedFile.name }}</text>
+      <text class="file-size">大小: {{ selectedFile.size }}</text>
     </view>
   </view>
 </template>
@@ -14,67 +10,55 @@
 <script>
 export default {
   name: 'FileTransfer',
-  // 组件属性定义
   props: {
-    fileData: {
+    selectedFile: {
       type: Object,
       default: null
     }
   },
-  // 组件方法
   methods: {
-    chooseFile() {
-      // 调用uni-app的文件选择API
-      uni.chooseFile({
-        count: 1,
-        extension: ['.doc', '.docx', '.pdf', '.txt'],
-        success: (res) => {
-          const file = res.tempFiles[0];
-          this.$emit('file-selected', {
-            name: file.name,
-            size: this.formatFileSize(file.size),
-            path: file.path
-          });
+    uploadFile() {
+      if (!this.selectedFile) {
+        uni.showToast({ title: '请先选择文件', icon: 'none' });
+        return;
+      }
+
+      uni.uploadFile({
+        url: 'https://your-upload-api-url.com', // 替换为实际的上传 API 地址
+        filePath: this.selectedFile.path,
+        name: 'file',
+        formData: {
+          'user': 'test'
+        },
+        success: (uploadRes) => {
+          console.log('上传成功', uploadRes);
+          uni.showToast({ title: '上传成功', icon: 'success' });
+          this.$emit('file-uploaded', uploadRes);
         },
         fail: (err) => {
-          console.error('选择文件失败', err);
+          console.error('上传失败', err);
+          uni.showToast({ title: '上传失败，请重试', icon: 'none' });
         }
       });
-    },
-    formatFileSize(bytes) {
-      // 格式化文件大小，转换为合适的单位
-      if (bytes < 1024) return bytes + ' B';
-      else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
-      else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + ' MB';
-      else return (bytes / 1073741824).toFixed(2) + ' GB';
     }
   }
 }
 </script>
 
 <style scoped>
-.file-message {
-  display: flex;
-  align-items: center;
-}
-
-.file-icon {
-  font-size: 40rpx;
-  margin-right: 20rpx;
+.file-transfer {
+  padding: 10px;
 }
 
 .file-info {
-  display: flex;
-  flex-direction: column;
+  background-color: #F0F0F0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
-.file-name {
-  font-weight: bold;
-  margin-bottom: 5rpx;
-}
-
-.file-size {
-  font-size: 24rpx;
-  color: #888;
+.file-name, .file-size {
+  display: block;
+  margin-bottom: 5px;
 }
 </style>
