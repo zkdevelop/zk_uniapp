@@ -1,16 +1,27 @@
-<!-- chat.vue -->
 <template>
-  <view class="page">
+  <view class="chat-page">
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
-    <MessageList
-      :messages="list"
+    <scroll-view
+      id="scrollview"
+      class="message-list"
+      scroll-y
       :scroll-top="scrollTop"
-      :scroll-into-view="scrollIntoView"
-      @load-more="loadMoreMessages"
+      :scroll-with-animation="true"
+      @scrolltoupper="loadMoreMessages"
       @scroll="onScroll"
-      @view-burn-after-reading="viewBurnAfterReadingImage"
-    />
+      :style="{ height: `${scrollViewHeight}px` }"
+    >
+      <view v-if="isLoading" class="loading-indicator">
+        <text>加载中...</text>
+      </view>
+      <view class="messages-container">
+        <MessageList
+          :messages="list"
+          @view-burn-after-reading="viewBurnAfterReadingImage"
+        />
+      </view>
+    </scroll-view>
 
     <ChatInputArea 
       @send-message="sendMessage" 
@@ -32,14 +43,14 @@
 
     <ScrollToBottomButton
       :show="showScrollToBottom"
-      @click.stop="scrollToBottom"
+      @click="scrollToBottom"
     />
 
-    <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
+    <view v-if="showNewMessageTip" class="new-message-tip" @click="scrollToBottom">
       新消息
     </view>
 
-    <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
+    <view v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></view>
   </view>
 </template>
 
@@ -49,6 +60,7 @@ import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
+import { getHistoryChatMessages } from '@/utils/api/message.js'
 
 export default {
   name: 'Chat',
@@ -69,49 +81,87 @@ export default {
       },
       list: [],
       scrollTop: 0,
-      scrollIntoView: '',
-      _selfAvatar: '',
       showAttachMenu: false,
       burnAfterReadingDuration: 5,
       currentBurnAfterReadingImage: '',
       currentBurnAfterReadingMessage: null,
       isScrolledToBottom: true,
       scrollViewHeight: 0,
-      scrollViewScrollHeight: 0,
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
       messageStatuses: {},
+      currentPage: 1,
+      pageSize: 10,
+      hasMoreMessages: true,
+      isLoading: false,
+      initialLoadComplete: false,
+      style: {
+        pageHeight: 0,
+        contentViewHeight: 0,
+        footViewHeight: 90,
+        mitemHeight: 0
+      }
     };
   },
   onLoad() {
+    console.log('[onLoad] Chat component loaded');
+    this.calculateScrollViewHeight();
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('chatInfo', (data) => {
+      console.log('[onLoad] Received chatInfo:', data);
       this.chatInfo = data.chatInfo;
       this.initializeChat();
     });
   },
   mounted() {
-    this.getScrollViewInfo();
-    console.log('聊天组件已挂载');
+    console.log('[mounted] Chat component mounted');
+    const res = uni.getSystemInfoSync();
+    this.style.pageHeight = res.windowHeight;
+    this.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * 100 - 70;
+    this.scrollToBottom();
   },
   methods: {
-    initializeChat() {
-      // 初始化聊天逻辑
+    calculateScrollViewHeight() {
+      const systemInfo = uni.getSystemInfoSync();
+      const headerHeight = 44; // 根据实际头部高度调整
+      const inputAreaHeight = 50; // 根据实际输入区域高度调整
+      this.scrollViewHeight = systemInfo.windowHeight - headerHeight - inputAreaHeight;
+      console.log('[calculateScrollViewHeight] Calculated scroll view height:', this.scrollViewHeight);
+    },
+    async initializeChat() {
+      console.log('[initializeChat] Initializing chat');
+      await this.loadHistoryMessages();
+      this.initialLoadComplete = true;
+      this.$nextTick(() => {
+        console.log('[initializeChat] Initial load complete, scrolling to bottom');
+        this.scrollToBottom();
+      });
     },
     goBack() {
       uni.navigateBack();
     },
-    loadMoreMessages() {
-      // 加载更多消息的逻辑
+    async loadMoreMessages() {
+      console.log('[loadMoreMessages] Loading more messages');
+      if (this.hasMoreMessages && !this.isLoading) {
+        this.isLoading = true;
+        this.currentPage++;
+        await this.loadHistoryMessages(true);
+        this.isLoading = false;
+      }
     },
     onScroll(e) {
-      // 滚动处理逻辑
+      const { scrollTop, scrollHeight } = e.detail;
+      this.isScrolledToBottom = scrollHeight - scrollTop <= this.scrollViewHeight + 10;
+      this.showScrollToBottom = !this.isScrolledToBottom;
+      console.log('[onScroll] Scroll event:', { scrollTop, scrollHeight, isScrolledToBottom: this.isScrolledToBottom });
     },
     viewBurnAfterReadingImage(message) {
-      // 查看阅后即焚图片的逻辑
+      this.currentBurnAfterReadingImage = message.content;
+      this.currentBurnAfterReadingMessage = message;
     },
     sendMessage(message) {
+      console.log('[sendMessage] Sending message:', message);
       const tempId = Date.now().toString();
       this.list.push({
         id: tempId,
@@ -120,23 +170,28 @@ export default {
         timestamp: new Date()
       });
       this.$set(this.messageStatuses, tempId, 'sending');
-      this.scrollToBottom();
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
     },
     handleMessageSent(sentMessage) {
+      console.log('[handleMessageSent] Message sent:', sentMessage);
       const tempMessage = this.list.find(m => m.content === sentMessage.message);
       if (tempMessage) {
         tempMessage.id = sentMessage.id;
-        this.$delete(this.messageStatuses, tempMessage.id);
+        this.$set(this.messageStatuses, tempMessage.id, null);
+        this.messageStatuses = { ...this.messageStatuses };
       }
     },
     handleMessageFailed(failedMessage) {
+      console.log('[handleMessageFailed] Message failed:', failedMessage);
       const tempMessage = this.list.find(m => m.content === failedMessage);
       if (tempMessage) {
         this.$set(this.messageStatuses, tempMessage.id, 'failed');
       }
     },
     handleAttachment(type, data) {
-      // 处理附件的逻辑
+      console.log('[handleAttachment] Handling attachment:', type, data);
     },
     toggleAttachMenu(show) {
       this.showAttachMenu = show;
@@ -145,24 +200,100 @@ export default {
       this.showAttachMenu = false;
     },
     scrollToBottom() {
-      // 滚动到底部的逻辑
-    },
-    getScrollViewInfo() {
-      // 获取滚动视图信息的逻辑
+      console.log('[scrollToBottom] Scrolling to bottom');
+      let that = this;
+      let query = uni.createSelectorQuery().in(this);
+      query.selectAll('.m-item').boundingClientRect();
+      query.select('#scrollview').boundingClientRect();
+      query.exec((res) => {
+        that.style.mitemHeight = 0;
+        res[0].forEach((rect) => that.style.mitemHeight = that.style.mitemHeight + rect.height + 40);
+        setTimeout(() => {
+          if (that.style.mitemHeight > (that.style.contentViewHeight - 100)) {
+            that.scrollTop = that.style.mitemHeight - that.style.contentViewHeight;
+            console.log('[scrollToBottom] Setting scrollTop to:', that.scrollTop);
+          }
+        }, 100);
+      });
     },
     closeBurnAfterReadingPreview() {
-      // 关闭阅后即焚预览的逻辑
-    }
+      this.currentBurnAfterReadingImage = '';
+      this.currentBurnAfterReadingMessage = null;
+    },
+    async loadHistoryMessages(isLoadingMore = false) {
+      console.log('[loadHistoryMessages] Loading history messages', { isLoadingMore, currentPage: this.currentPage });
+
+      try {
+        const response = await getHistoryChatMessages({
+          opponentId: this.chatInfo.id,
+          curPage: this.currentPage,
+          pageSize: this.pageSize
+        });
+
+        console.log('[loadHistoryMessages] History messages response:', response);
+
+        if (response.code === 200) {
+          const newMessages = response.data.records.map(msg => ({
+            id: msg.id,
+            content: msg.message,
+            userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+            timestamp: new Date(msg.sendTime),
+            messageType: msg.messageType,
+            isRead: msg.isRead
+          }));
+
+          if (isLoadingMore) {
+            this.list = [...newMessages.reverse(), ...this.list];
+          } else {
+            this.list = [...this.list, ...newMessages];
+          }
+          
+          this.hasMoreMessages = response.data.records.length === this.pageSize;
+
+          console.log('[loadHistoryMessages] Updated message list:', this.list);
+          console.log('[loadHistoryMessages] Has more messages:', this.hasMoreMessages);
+
+          this.$nextTick(() => {
+            if (!isLoadingMore) {
+              console.log('[loadHistoryMessages] Scrolling to bottom after loading initial messages');
+              this.scrollToBottom();
+            }
+          });
+        } else {
+          console.error('[loadHistoryMessages] Failed to load history messages:', response.msg);
+          uni.showToast({
+            title: '加载历史消息失败',
+            icon: 'none'
+          });
+        }
+      } catch (error) {
+        console.error('[loadHistoryMessages] Error loading history messages:', error);
+        uni.showToast({
+          title: '网络错误，请稍后重试',
+          icon: 'none'
+        });
+      }
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.page {
+.chat-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  position: relative;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.messages-container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .new-message-tip {
@@ -186,5 +317,12 @@ export default {
   bottom: 0;
   background-color: transparent;
   z-index: 999;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 10px 0;
+  color: #999;
+  font-size: 14px;
 }
 </style>

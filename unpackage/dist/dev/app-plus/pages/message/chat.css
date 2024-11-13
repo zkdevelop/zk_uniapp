@@ -384,11 +384,19 @@
 }
 /* 水平间距 */
 /* 水平间距 */
-.page[data-v-013fa921] {
+.chat-page[data-v-013fa921] {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  position: relative;
+}
+.message-list[data-v-013fa921] {
+  flex: 1;
+  overflow-y: auto;
+}
+.messages-container[data-v-013fa921] {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .new-message-tip[data-v-013fa921] {
   position: fixed;
@@ -410,4 +418,10 @@
   bottom: 0;
   background-color: transparent;
   z-index: 999;
+}
+.loading-indicator[data-v-013fa921] {
+  text-align: center;
+  padding: 10px 0;
+  color: #999;
+  font-size: 14px;
 }

@@ -138,6 +138,12 @@ if (uni.restoreGlobal) {
       method: "post"
     });
   };
+  const searchUser = (id) => {
+    return request({
+      url: `/user/search/${id}`,
+      method: "get"
+    });
+  };
   var isVue2 = false;
   function set(target, key, val) {
     if (Array.isArray(target)) {
@@ -7489,6 +7495,13 @@ ${i3}
       method: "get"
     });
   };
+  const getMissionDetails = (params) => {
+    return request({
+      url: `/mission/details`,
+      method: "get",
+      data: params
+    });
+  };
   const _imports_0$7 = "/static/icon/location_grey.png";
   const _imports_1$3 = "/static/icon/time_grey.png";
   const _sfc_main$E = {
@@ -11602,6 +11615,18 @@ ${i3}
     ]);
   }
   const __easycom_7 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-9a1e3c32"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+  const getOrderList = (params) => {
+    return request({
+      url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
+      method: "get"
+    });
+  };
+  const getWarningList = (params) => {
+    return request({
+      url: `/instruction/search/warning/${params.missionId}/${params.curPage}/${params.pageSize}`,
+      method: "get"
+    });
+  };
   const _imports_0$6 = "/static/icon/alert.png";
   const _imports_1$2 = "/static/icon/flag.png";
   const _imports_2$1 = "/static/icon/document.png";
@@ -11672,7 +11697,7 @@ ${i3}
             key: "google",
             src: "../../../static/icon/google.png",
             htmlSrc: "/static/html/map_gaode.html",
-            name: "Google地图"
+            name: "谷歌地图"
           },
           {
             key: "gaode",
@@ -11695,80 +11720,80 @@ ${i3}
           // 继续添加更多图片
         ],
         task_instructions: [
-          {
-            src: "../../../static/uni.png",
-            sender_name: "admin",
-            detail: "立即前往执行抓捕任务",
-            isConfirmed: false
-          },
-          {
-            src: "../../../static/uni.png",
-            sender_name: "lihua",
-            detail: "立即前往执行抓捕任务",
-            isConfirmed: false
-          },
-          {
-            src: "../../../static/uni.png",
-            sender_name: "wanghao",
-            detail: "立即前往执行抓捕任务",
-            isConfirmed: false
-          }
+          // {
+          // 	src: '../../../static/uni.png',
+          // 	sender_name: 'admin',
+          // 	detail: '111,
+          // 	isConfirmed: false
+          // },
+          // {
+          // 	src: '../../../static/uni.png',
+          // 	sender_name: 'lihua',
+          // 	detail: '222',
+          // 	isConfirmed: false
+          // },
+          // {
+          // 	src: '../../../static/uni.png',
+          // 	sender_name: 'wanghao',
+          // 	detail: '333',
+          // 	isConfirmed: false
+          // },
         ],
         alert_data: [
-          {
-            alert_grade: "重要告警",
-            alert_time: "2024.5.1",
-            sender_name: "张三",
-            alert_content: "靠近目标，开始行动！1",
-            isConfirmed: false
-          },
-          {
-            alert_grade: "一般告警",
-            alert_time: "2024.2.6",
-            sender_name: "李四",
-            alert_content: "靠近目标，开始行动！2",
-            isConfirmed: false
-          },
-          {
-            alert_grade: "重要告警",
-            alert_time: "2024.1.3",
-            sender_name: "张三",
-            alert_content: "靠近目标，开始行动！3",
-            isConfirmed: false
-          },
-          {
-            alert_grade: "严重告警",
-            alert_time: "2024.7.9",
-            sender_name: "张三",
-            alert_content: "靠近目标，开始行动！4",
-            isConfirmed: false
-          }
+          // {
+          // 	alert_grade: '重要告警',
+          // 	alert_time: '2024.5.1',
+          // 	sender_name: '张三',
+          // 	alert_content: '靠近目标，开始行动！1',
+          // 	isConfirmed: false
+          // },
+          // {
+          // 	alert_grade: '一般告警',
+          // 	alert_time: '2024.2.6',
+          // 	sender_name: '李四',
+          // 	alert_content: '靠近目标，开始行动！2',
+          // 	isConfirmed: false
+          // },
+          // {
+          // 	alert_grade: '重要告警',
+          // 	alert_time: '2024.1.3',
+          // 	sender_name: '张三',
+          // 	alert_content: '靠近目标，开始行动！3',
+          // 	isConfirmed: false
+          // },
+          // {
+          // 	alert_grade: '严重告警',
+          // 	alert_time: '2024.7.9',
+          // 	sender_name: '张三',
+          // 	alert_content: '靠近目标，开始行动！4',
+          // 	isConfirmed: false
+          // },
         ],
         alert_data_mine: [
-          {
-            alert_grade: "一般告警",
-            alert_time: "2024.5.1",
-            sender_name: "张三",
-            alert_content: "目标视野丢失"
-          },
-          {
-            alert_grade: "一般告警",
-            alert_time: "2024.2.6",
-            sender_name: "李四",
-            alert_content: "发现嫌疑人"
-          },
-          {
-            alert_grade: "重要告警",
-            alert_time: "2024.1.3",
-            sender_name: "张三",
-            alert_content: "行动暂停"
-          },
-          {
-            alert_grade: "严重告警",
-            alert_time: "2024.7.9",
-            sender_name: "张三",
-            alert_content: "行动继续"
-          }
+          // {
+          // 	alert_grade: '一般告警',
+          // 	alert_time: '2024.5.1',
+          // 	sender_name: '张三',
+          // 	alert_content: '目标视野丢失'
+          // },
+          // {
+          // 	alert_grade: '一般告警',
+          // 	alert_time: '2024.2.6',
+          // 	sender_name: '李四',
+          // 	alert_content: '发现嫌疑人'
+          // },
+          // {
+          // 	alert_grade: '重要告警',
+          // 	alert_time: '2024.1.3',
+          // 	sender_name: '张三',
+          // 	alert_content: '行动暂停'
+          // },
+          // {
+          // 	alert_grade: '严重告警',
+          // 	alert_time: '2024.7.9',
+          // 	sender_name: '张三',
+          // 	alert_content: '行动继续'
+          // },
         ],
         // 行动回溯，false停止，true播放
         replay: false
@@ -11777,19 +11802,23 @@ ${i3}
     onNavigationBarButtonTap() {
       this.$refs.popup.open("bottom");
     },
+    mounted() {
+      this.getOrder();
+      this.getWarning();
+    },
     onLoad(options) {
       if (options.taskItem) {
         this.taskItem = JSON.parse(options.taskItem);
       } else {
-        formatAppLog("error", "at pages/task/task_detail/task_detail.vue:588", "没有传递类型参数");
+        formatAppLog("error", "at pages/task/task_detail/task_detail.vue:654", "没有传递类型参数");
       }
       this.recorderManager = uni.getRecorderManager();
       this.innerAudioContext = uni.createInnerAudioContext();
       this.innerAudioContext.autoplay = true;
-      formatAppLog("log", "at pages/task/task_detail/task_detail.vue:596", "uni.getRecorderManager()", uni.getRecorderManager());
+      formatAppLog("log", "at pages/task/task_detail/task_detail.vue:662", "uni.getRecorderManager()", uni.getRecorderManager());
       let self2 = this;
       this.recorderManager.onStop(function(res) {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:599", "recorder stop" + JSON.stringify(res));
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:665", "recorder stop" + JSON.stringify(res));
         self2.filePaths.voicePath = res.tempFilePath;
       });
     },
@@ -11802,7 +11831,7 @@ ${i3}
           // 只允许从相机拍照
           success: function(res) {
             const tempFilePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:612", "拍照成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:678", "拍照成功，文件路径：", tempFilePath);
             uni.previewImage({
               urls: [tempFilePath]
             });
@@ -11832,12 +11861,12 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:646", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:712", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:651", "拍照失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:717", "拍照失败：", err);
           }
         });
       },
@@ -11853,7 +11882,7 @@ ${i3}
           success: function(res) {
             const tempFilePath = res.tempFilePath;
             self2.filePaths.videoPath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:666", "录像成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:732", "录像成功，文件路径：", tempFilePath);
             uni.uploadFile({
               url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
               filePath: tempFilePath,
@@ -11880,37 +11909,36 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:695", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:761", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:700", "录像失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:766", "录像失败：", err);
           }
         });
       },
       startRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:705", "开始录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:771", "开始录音");
         this.recorderManager.start();
         uni.showLoading({
           title: "正在录音"
         });
       },
       stopRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:714", "录音结束");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:780", "录音结束");
         this.recorderManager.stop();
         uni.hideLoading();
       },
       playVoice() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:719", "播放录音");
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:720", "this.voicePath", this.filePaths.voicePath);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:785", "播放录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:786", "this.voicePath", this.filePaths.voicePath);
         if (this.filePaths.voicePath) {
           this.innerAudioContext.src = this.filePaths.voicePath;
           this.innerAudioContext.play();
         }
       },
       checkIndex(index) {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:727", index);
         this.navIndex = index;
       },
       delete_alert(index) {
@@ -11973,22 +12001,26 @@ ${i3}
         return this.alert_data[index].isConfirmed ? "已确认" : "确认";
       },
       submit(ref) {
-        this.$refs[ref].validate().then((res) => {
-          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:792", "success", res);
-          uni.showToast({
-            title: `发布成功`
-          });
-        }).catch((err) => {
-          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:797", "err", err);
+        uni.showLoading({
+          title: "正在发送",
+          mask: true
         });
-        const now2 = /* @__PURE__ */ new Date();
-        const formattedDateTime = `${now2.getFullYear()}-${String(now2.getMonth() + 1).padStart(2, "0")}-${String(now2.getDate()).padStart(2, "0")} ${String(now2.getHours()).padStart(2, "0")}:${String(now2.getMinutes()).padStart(2, "0")}:${String(now2.getSeconds()).padStart(2, "0")}`;
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:805", formattedDateTime);
-        this.alert_form_data.alert_time = formattedDateTime;
-        this.alert_form_data.sender_name = "lihua";
-        this.alert_data.push(this.alert_form_data);
-        this.alert_data_mine.push(this.alert_form_data);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:861", this.taskItem.memberIds, "memberIds");
+        ({
+          isOrder: false,
+          message: this.alert_form_data.alert_content,
+          receiverMissionMemberIds: [],
+          relatedMissionId: this.taskItem.id
+        });
+        getMissionDetails({
+          missionId: this.taskItem.id
+        }).then((res) => {
+          if (res.code === 200) {
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:873", res, "getMissionDetails");
+          }
+        });
         this.$refs.alert_form_popup.close();
+        this.getWarning();
       },
       // 设置经纬度
       setPoint() {
@@ -12025,6 +12057,71 @@ ${i3}
       },
       setReplay(value) {
         this.replay = value;
+      },
+      getOrder() {
+        getOrderList({
+          missionId: this.taskItem.id,
+          curPage: 1,
+          pageSize: 20
+        }).then((res) => {
+          if (res.code === 200) {
+            this.task_instructions = res.data.records.map((item) => ({
+              src: "../../../static/uni.png",
+              sender_name: item.senderId,
+              detail: item.message,
+              isConfirmed: item.isRead
+            }));
+            for (let order of this.task_instructions) {
+              searchUser(order.sender_name).then((res2) => {
+                if (res2.code === 200) {
+                  order.sender_name = res2.data.name;
+                }
+              });
+            }
+          }
+        });
+      },
+      getWarning() {
+        getWarningList({
+          missionId: this.taskItem.id,
+          curPage: 1,
+          pageSize: 20
+        }).then((res) => {
+          if (res.code === 200) {
+            const userInfo = uni.getStorageSync("userInfo");
+            this.alert_data = res.data.records.filter((item) => item.receiverId === userInfo.id).map(
+              (item) => ({
+                alert_grade: "严重告警",
+                alert_time: item.sendTime,
+                sender_name: item.senderId,
+                alert_content: item.message,
+                isConfirmed: item.isRead
+              })
+            );
+            this.alert_data_mine = res.data.records.filter((item) => item.senderId === userInfo.id).map(
+              (item) => ({
+                alert_grade: "严重告警",
+                alert_time: item.sendTime,
+                sender_name: item.senderId,
+                alert_content: item.message
+              })
+            );
+            for (let order of this.alert_data) {
+              searchUser(order.sender_name).then((res2) => {
+                if (res2.code === 200) {
+                  order.sender_name = res2.data.name;
+                }
+              });
+            }
+            for (let order of this.alert_data_mine) {
+              searchUser(order.sender_name).then((res2) => {
+                if (res2.code === 200) {
+                  order.sender_name = res2.data.name;
+                }
+              });
+            }
+          }
+        });
       }
     }
   };
@@ -14741,7 +14838,7 @@ ${i3}
     name: "GroupAvatar",
     props: {
       avatar: {
-        type: Array,
+        type: [Array, String],
         default: () => []
       }
     },
@@ -14752,10 +14849,14 @@ ${i3}
     },
     computed: {
       processedAvatar() {
-        if (this.avatar.length === 0) {
-          return [this.defaultAvatarPath];
+        if (Array.isArray(this.avatar)) {
+          if (this.avatar.length === 0) {
+            return [this.defaultAvatarPath];
+          }
+          return this.avatar.map((avatarPath) => avatarPath || this.defaultAvatarPath);
+        } else {
+          return [this.avatar || this.defaultAvatarPath];
         }
-        return this.avatar.map((avatarPath) => avatarPath || this.defaultAvatarPath);
       }
     }
   };
@@ -14800,6 +14901,12 @@ ${i3}
       data: params
     });
   };
+  const getChatList = () => {
+    return request({
+      url: "/message/chatList",
+      method: "get"
+    });
+  };
   const sendMessageToUser = (data) => {
     return request({
       url: "/message/send/user",
@@ -14807,6 +14914,19 @@ ${i3}
       data: {
         message: data.message,
         recipientId: data.recipientId
+      }
+    });
+  };
+  const getHistoryChatMessages = (data) => {
+    return request({
+      url: "/message/read/single",
+      method: "post",
+      data: {
+        opponentId: data.opponentId,
+        pageParam: {
+          curPage: data.curPage,
+          pageSize: data.pageSize
+        }
       }
     });
   };
@@ -14818,26 +14938,27 @@ ${i3}
     },
     data() {
       return {
-        messages: [
-          {
-            id: "1",
-            name: "张三",
-            avatar: ["/static/avatar/avatar1.png"],
-            preview: "你好，最近怎么样？",
-            date: "7月25日",
-            type: "single",
-            unreadCount: 2
-          },
+        demoMessages: [
+          // {
+          //   id: '1',
+          //   name: '张三',
+          //   avatar: ['/static/avatar/avatar1.png'],
+          //   preview: '你好，最近怎么样？',
+          //   date: '2024-11-25T10:00:00',
+          //   type: 'single',
+          //   unreadCount: 2
+          // },
           {
             id: "2",
             name: "项目讨论群",
             avatar: ["/static/avatar/group1.png", "/static/avatar/group2.png", "/static/avatar/group3.png"],
             preview: "下周一开会，请大家准时参加",
-            date: "7月24日",
+            date: "2024-11-24T15:30:00",
             type: "group",
             unreadCount: 5
           }
         ],
+        realMessages: [],
         defaultAvatarPath: "../../static/message/默认头像.png",
         scrollViewHeight: 0
       };
@@ -14851,9 +14972,12 @@ ${i3}
           notificationCount: Math.floor(Math.random() * 20) + 1
         };
       },
+      combinedMessages() {
+        return [...this.demoMessages, ...this.realMessages];
+      },
       totalMessageCount() {
-        const totalUnread = this.messages.reduce((sum, message) => sum + (message.unreadCount || 0), 0);
-        return this.messages.length + totalUnread;
+        const totalUnread = this.combinedMessages.reduce((sum, message) => sum + (message.unreadCount || 0), 0);
+        return this.combinedMessages.length + totalUnread;
       }
     },
     mounted() {
@@ -14867,10 +14991,10 @@ ${i3}
     methods: {
       openChat(message) {
         const chatInfo = {
-          id: message.id,
-          name: message.name,
-          avatar: message.avatar,
-          type: message.type
+          id: message.id || message.userId,
+          name: message.name || message.userName,
+          avatar: message.avatar || this.defaultAvatarPath,
+          type: message.group ? "group" : "single"
         };
         uni.navigateTo({
           url: "/pages/message/chat",
@@ -14878,7 +15002,7 @@ ${i3}
             res.eventChannel.emit("chatInfo", { chatInfo });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/main.vue:119", "导航到聊天页面失败:", err);
+            formatAppLog("error", "at pages/message/main.vue:123", "导航到聊天页面失败:", err);
           }
         });
       },
@@ -14892,7 +15016,7 @@ ${i3}
         uni.$emit("updateTabBarActiveTab", 1);
       },
       getAvatarSrc(avatar) {
-        return avatar || this.defaultAvatarPath;
+        return Array.isArray(avatar) ? avatar[0] : avatar || this.defaultAvatarPath;
       },
       calculateScrollViewHeight() {
         const systemInfo = uni.getSystemInfoSync();
@@ -14901,13 +15025,44 @@ ${i3}
         this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
       },
       async fetchChatList() {
-        formatAppLog("log", "at pages/message/main.vue:142", "使用写死的聊天数据");
+        try {
+          const response = await getChatList();
+          formatAppLog("log", "at pages/message/main.vue:148", response, "response");
+          if (response.code === 200) {
+            this.realMessages = response.data.map((item) => ({
+              ...item,
+              avatar: this.defaultAvatarPath,
+              preview: item.latestMessage,
+              date: item.sendTime
+            }));
+          } else {
+            formatAppLog("error", "at pages/message/main.vue:157", "获取聊天列表失败:", response.msg);
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/message/main.vue:160", "获取聊天列表出错:", error);
+        }
       },
       formatDate(dateString) {
         const date = new Date(dateString);
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        return `${month}月${day}日`;
+        const now2 = /* @__PURE__ */ new Date();
+        const diffDays = Math.floor((now2 - date) / (1e3 * 60 * 60 * 24));
+        if (diffDays === 0) {
+          return this.formatTime(date);
+        } else if (diffDays === 1) {
+          return "昨天";
+        } else if (diffDays < 7) {
+          const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+          return weekdays[date.getDay()];
+        } else {
+          const month = date.getMonth() + 1;
+          const day = date.getDate();
+          return `${month}月${day}日`;
+        }
+      },
+      formatTime(date) {
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        return `${hours}:${minutes}`;
       }
     }
   };
@@ -14978,19 +15133,19 @@ ${i3}
             (vue.openBlock(true), vue.createElementBlock(
               vue.Fragment,
               null,
-              vue.renderList($data.messages, (message, index) => {
+              vue.renderList($options.combinedMessages, (message, index) => {
                 return vue.openBlock(), vue.createElementBlock("view", {
                   key: index,
-                  class: vue.normalizeClass(["message-item", { "personal-chat": message.type === "single" }]),
+                  class: vue.normalizeClass(["message-item", { "personal-chat": !message.group }]),
                   onClick: ($event) => $options.openChat(message)
                 }, [
-                  message.type === "group" ? (vue.openBlock(), vue.createBlock(_component_group_avatar, {
+                  message.group ? (vue.openBlock(), vue.createBlock(_component_group_avatar, {
                     key: 0,
                     avatar: message.avatar,
                     class: "avatar"
                   }, null, 8, ["avatar"])) : (vue.openBlock(), vue.createElementBlock("image", {
                     key: 1,
-                    src: $options.getAvatarSrc(message.avatar[0]),
+                    src: $options.getAvatarSrc(message.avatar),
                     class: "avatar",
                     mode: "aspectFill"
                   }, null, 8, ["src"])),
@@ -14999,14 +15154,14 @@ ${i3}
                       vue.createElementVNode(
                         "view",
                         { class: "message-title" },
-                        vue.toDisplayString(message.name),
+                        vue.toDisplayString(message.name || message.userName),
                         1
                         /* TEXT */
                       ),
                       vue.createElementVNode(
                         "view",
                         { class: "message-preview" },
-                        vue.toDisplayString(message.preview),
+                        vue.toDisplayString(message.preview || message.latestMessage),
                         1
                         /* TEXT */
                       )
@@ -15014,7 +15169,7 @@ ${i3}
                     vue.createElementVNode(
                       "view",
                       { class: "message-date" },
-                      vue.toDisplayString(message.date),
+                      vue.toDisplayString($options.formatDate(message.date || message.sendTime)),
                       1
                       /* TEXT */
                     )
@@ -15948,45 +16103,87 @@ ${i3}
         },
         list: [],
         scrollTop: 0,
-        scrollIntoView: "",
-        _selfAvatar: "",
         showAttachMenu: false,
         burnAfterReadingDuration: 5,
         currentBurnAfterReadingImage: "",
         currentBurnAfterReadingMessage: null,
         isScrolledToBottom: true,
         scrollViewHeight: 0,
-        scrollViewScrollHeight: 0,
         showScrollToBottom: false,
         showNewMessageTip: false,
         hasNewMessages: false,
-        messageStatuses: {}
+        messageStatuses: {},
+        currentPage: 1,
+        pageSize: 10,
+        hasMoreMessages: true,
+        isLoading: false,
+        initialLoadComplete: false,
+        style: {
+          pageHeight: 0,
+          contentViewHeight: 0,
+          footViewHeight: 90,
+          mitemHeight: 0
+        }
       };
     },
     onLoad() {
+      formatAppLog("log", "at pages/message/chat.vue:108", "[onLoad] Chat component loaded");
+      this.calculateScrollViewHeight();
       const eventChannel = this.getOpenerEventChannel();
       eventChannel.on("chatInfo", (data) => {
+        formatAppLog("log", "at pages/message/chat.vue:112", "[onLoad] Received chatInfo:", data);
         this.chatInfo = data.chatInfo;
         this.initializeChat();
       });
     },
     mounted() {
-      this.getScrollViewInfo();
-      formatAppLog("log", "at pages/message/chat.vue:96", "聊天组件已挂载");
+      formatAppLog("log", "at pages/message/chat.vue:118", "[mounted] Chat component mounted");
+      const res = uni.getSystemInfoSync();
+      this.style.pageHeight = res.windowHeight;
+      this.style.contentViewHeight = res.windowHeight - uni.getSystemInfoSync().screenWidth / 750 * 100 - 70;
+      this.scrollToBottom();
     },
     methods: {
-      initializeChat() {
+      calculateScrollViewHeight() {
+        const systemInfo = uni.getSystemInfoSync();
+        const headerHeight = 44;
+        const inputAreaHeight = 50;
+        this.scrollViewHeight = systemInfo.windowHeight - headerHeight - inputAreaHeight;
+        formatAppLog("log", "at pages/message/chat.vue:130", "[calculateScrollViewHeight] Calculated scroll view height:", this.scrollViewHeight);
+      },
+      async initializeChat() {
+        formatAppLog("log", "at pages/message/chat.vue:133", "[initializeChat] Initializing chat");
+        await this.loadHistoryMessages();
+        this.initialLoadComplete = true;
+        this.$nextTick(() => {
+          formatAppLog("log", "at pages/message/chat.vue:137", "[initializeChat] Initial load complete, scrolling to bottom");
+          this.scrollToBottom();
+        });
       },
       goBack() {
         uni.navigateBack();
       },
-      loadMoreMessages() {
+      async loadMoreMessages() {
+        formatAppLog("log", "at pages/message/chat.vue:145", "[loadMoreMessages] Loading more messages");
+        if (this.hasMoreMessages && !this.isLoading) {
+          this.isLoading = true;
+          this.currentPage++;
+          await this.loadHistoryMessages(true);
+          this.isLoading = false;
+        }
       },
       onScroll(e2) {
+        const { scrollTop, scrollHeight } = e2.detail;
+        this.isScrolledToBottom = scrollHeight - scrollTop <= this.scrollViewHeight + 10;
+        this.showScrollToBottom = !this.isScrolledToBottom;
+        formatAppLog("log", "at pages/message/chat.vue:157", "[onScroll] Scroll event:", { scrollTop, scrollHeight, isScrolledToBottom: this.isScrolledToBottom });
       },
       viewBurnAfterReadingImage(message) {
+        this.currentBurnAfterReadingImage = message.content;
+        this.currentBurnAfterReadingMessage = message;
       },
       sendMessage(message) {
+        formatAppLog("log", "at pages/message/chat.vue:164", "[sendMessage] Sending message:", message);
         const tempId = Date.now().toString();
         this.list.push({
           id: tempId,
@@ -15995,22 +16192,28 @@ ${i3}
           timestamp: /* @__PURE__ */ new Date()
         });
         this.$set(this.messageStatuses, tempId, "sending");
-        this.scrollToBottom();
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
       },
       handleMessageSent(sentMessage) {
+        formatAppLog("log", "at pages/message/chat.vue:178", "[handleMessageSent] Message sent:", sentMessage);
         const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
         if (tempMessage) {
           tempMessage.id = sentMessage.id;
-          this.$delete(this.messageStatuses, tempMessage.id);
+          this.$set(this.messageStatuses, tempMessage.id, null);
+          this.messageStatuses = { ...this.messageStatuses };
         }
       },
       handleMessageFailed(failedMessage) {
+        formatAppLog("log", "at pages/message/chat.vue:187", "[handleMessageFailed] Message failed:", failedMessage);
         const tempMessage = this.list.find((m2) => m2.content === failedMessage);
         if (tempMessage) {
           this.$set(this.messageStatuses, tempMessage.id, "failed");
         }
       },
       handleAttachment(type, data) {
+        formatAppLog("log", "at pages/message/chat.vue:194", "[handleAttachment] Handling attachment:", type, data);
       },
       toggleAttachMenu(show) {
         this.showAttachMenu = show;
@@ -16019,10 +16222,72 @@ ${i3}
         this.showAttachMenu = false;
       },
       scrollToBottom() {
-      },
-      getScrollViewInfo() {
+        formatAppLog("log", "at pages/message/chat.vue:203", "[scrollToBottom] Scrolling to bottom");
+        let that = this;
+        let query = uni.createSelectorQuery().in(this);
+        query.selectAll(".m-item").boundingClientRect();
+        query.select("#scrollview").boundingClientRect();
+        query.exec((res) => {
+          that.style.mitemHeight = 0;
+          res[0].forEach((rect) => that.style.mitemHeight = that.style.mitemHeight + rect.height + 40);
+          setTimeout(() => {
+            if (that.style.mitemHeight > that.style.contentViewHeight - 100) {
+              that.scrollTop = that.style.mitemHeight - that.style.contentViewHeight;
+              formatAppLog("log", "at pages/message/chat.vue:214", "[scrollToBottom] Setting scrollTop to:", that.scrollTop);
+            }
+          }, 100);
+        });
       },
       closeBurnAfterReadingPreview() {
+        this.currentBurnAfterReadingImage = "";
+        this.currentBurnAfterReadingMessage = null;
+      },
+      async loadHistoryMessages(isLoadingMore = false) {
+        formatAppLog("log", "at pages/message/chat.vue:224", "[loadHistoryMessages] Loading history messages", { isLoadingMore, currentPage: this.currentPage });
+        try {
+          const response = await getHistoryChatMessages({
+            opponentId: this.chatInfo.id,
+            curPage: this.currentPage,
+            pageSize: this.pageSize
+          });
+          formatAppLog("log", "at pages/message/chat.vue:233", "[loadHistoryMessages] History messages response:", response);
+          if (response.code === 200) {
+            const newMessages = response.data.records.map((msg) => ({
+              id: msg.id,
+              content: msg.message,
+              userType: msg.senderId === this.chatInfo.id ? "other" : "self",
+              timestamp: new Date(msg.sendTime),
+              messageType: msg.messageType,
+              isRead: msg.isRead
+            }));
+            if (isLoadingMore) {
+              this.list = [...newMessages.reverse(), ...this.list];
+            } else {
+              this.list = [...this.list, ...newMessages];
+            }
+            this.hasMoreMessages = response.data.records.length === this.pageSize;
+            formatAppLog("log", "at pages/message/chat.vue:253", "[loadHistoryMessages] Updated message list:", this.list);
+            formatAppLog("log", "at pages/message/chat.vue:254", "[loadHistoryMessages] Has more messages:", this.hasMoreMessages);
+            this.$nextTick(() => {
+              if (!isLoadingMore) {
+                formatAppLog("log", "at pages/message/chat.vue:258", "[loadHistoryMessages] Scrolling to bottom after loading initial messages");
+                this.scrollToBottom();
+              }
+            });
+          } else {
+            formatAppLog("error", "at pages/message/chat.vue:263", "[loadHistoryMessages] Failed to load history messages:", response.msg);
+            uni.showToast({
+              title: "加载历史消息失败",
+              icon: "none"
+            });
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/message/chat.vue:270", "[loadHistoryMessages] Error loading history messages:", error);
+          uni.showToast({
+            title: "网络错误，请稍后重试",
+            icon: "none"
+          });
+        }
       }
     }
   };
@@ -16032,19 +16297,34 @@ ${i3}
     const _component_ChatInputArea = vue.resolveComponent("ChatInputArea");
     const _component_BurnAfterReading = vue.resolveComponent("BurnAfterReading");
     const _component_ScrollToBottomButton = vue.resolveComponent("ScrollToBottomButton");
-    return vue.openBlock(), vue.createElementBlock("view", { class: "page" }, [
+    return vue.openBlock(), vue.createElementBlock("view", { class: "chat-page" }, [
       vue.createVNode(_component_ChatHeader, {
         "chat-info": $data.chatInfo,
         onGoBack: $options.goBack
       }, null, 8, ["chat-info", "onGoBack"]),
-      vue.createVNode(_component_MessageList, {
-        messages: $data.list,
+      vue.createElementVNode("scroll-view", {
+        id: "scrollview",
+        class: "message-list",
+        "scroll-y": "",
         "scroll-top": $data.scrollTop,
-        "scroll-into-view": $data.scrollIntoView,
-        onLoadMore: $options.loadMoreMessages,
-        onScroll: $options.onScroll,
-        onViewBurnAfterReading: $options.viewBurnAfterReadingImage
-      }, null, 8, ["messages", "scroll-top", "scroll-into-view", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
+        "scroll-with-animation": true,
+        onScrolltoupper: _cache[0] || (_cache[0] = (...args) => $options.loadMoreMessages && $options.loadMoreMessages(...args)),
+        onScroll: _cache[1] || (_cache[1] = (...args) => $options.onScroll && $options.onScroll(...args)),
+        style: vue.normalizeStyle({ height: `${$data.scrollViewHeight}px` })
+      }, [
+        $data.isLoading ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "loading-indicator"
+        }, [
+          vue.createElementVNode("text", null, "加载中...")
+        ])) : vue.createCommentVNode("v-if", true),
+        vue.createElementVNode("view", { class: "messages-container" }, [
+          vue.createVNode(_component_MessageList, {
+            messages: $data.list,
+            onViewBurnAfterReading: $options.viewBurnAfterReadingImage
+          }, null, 8, ["messages", "onViewBurnAfterReading"])
+        ])
+      ], 44, ["scroll-top"]),
       vue.createVNode(_component_ChatInputArea, {
         onSendMessage: $options.sendMessage,
         onMessageSent: $options.handleMessageSent,
@@ -16063,17 +16343,17 @@ ${i3}
       }, null, 8, ["imageSrc", "duration", "onClose"])) : vue.createCommentVNode("v-if", true),
       vue.createVNode(_component_ScrollToBottomButton, {
         show: $data.showScrollToBottom,
-        onClick: vue.withModifiers($options.scrollToBottom, ["stop"])
+        onClick: $options.scrollToBottom
       }, null, 8, ["show", "onClick"]),
       $data.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
         class: "new-message-tip",
-        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.scrollToBottom && $options.scrollToBottom(...args), ["stop"]))
+        onClick: _cache[2] || (_cache[2] = (...args) => $options.scrollToBottom && $options.scrollToBottom(...args))
       }, " 新消息 ")) : vue.createCommentVNode("v-if", true),
-      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
+      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 2,
         class: "overlay",
-        onClick: _cache[1] || (_cache[1] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
+        onClick: _cache[3] || (_cache[3] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
