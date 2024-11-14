@@ -1631,17 +1631,18 @@ This will fail in production.`);
     const reconnectAttempts = vue.ref(0);
     const maxReconnectAttempts = 5;
     const connect = (userId, token) => {
+      formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:15", token, "tokentokentokentoken");
       if (!userId || !token) {
-        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:16", "WebSocket 连接失败: userId 或 token 未提供", { userId, token });
+        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:17", "WebSocket 连接失败: userId 或 token 未提供", { userId, token });
         return;
       }
       if (isConnected.value) {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:21", "WebSocket 已经连接");
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:22", "WebSocket 已经连接");
         return;
       }
       const wsProtocol = backendHost.startsWith("https") ? "wss" : "ws";
       const wsUrl = `${wsProtocol}://${backendHost.split("://")[1]}/chat/${userId}`;
-      formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:28", "尝试连接 WebSocket:", wsUrl);
+      formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:29", "尝试连接 WebSocket:", wsUrl);
       uni.connectSocket({
         url: wsUrl,
         header: {
@@ -1649,28 +1650,28 @@ This will fail in production.`);
         },
         protocols: [token],
         success: () => {
-          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:37", "WebSocket 连接成功");
+          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:38", "WebSocket 连接成功");
         },
         fail: (error) => {
-          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:40", "WebSocket 连接失败:", error);
+          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:41", "WebSocket 连接失败:", error);
         }
       });
       uni.onSocketOpen((res) => {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:45", "WebSocket 已连接", res);
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:46", "WebSocket 已连接", res);
         isConnected.value = true;
         reconnectAttempts.value = 0;
         startPingInterval();
       });
       uni.onSocketMessage((res) => {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:52", "收到消息:", res.data);
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:53", "收到消息:", res.data);
         try {
           const message = JSON.parse(res.data);
           switch (message.type) {
             case "auth":
               if (message.status === "success") {
-                formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:59", "认证成功");
+                formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:60", "认证成功");
               } else {
-                formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:61", "认证失败:", message.error);
+                formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:62", "认证失败:", message.error);
                 disconnect();
               }
               break;
@@ -1679,32 +1680,32 @@ This will fail in production.`);
             case "notification":
               break;
             case "pong":
-              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:72", "收到服务器的 pong 响应");
+              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:73", "收到服务器的 pong 响应");
               break;
             default:
-              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:75", "未知消息类型:", message.type);
+              formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:76", "未知消息类型:", message.type);
           }
         } catch (error) {
-          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:78", "解析消息失败:", error);
+          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:79", "解析消息失败:", error);
         }
       });
       uni.onSocketError((res) => {
-        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:83", "WebSocket 错误:", res);
+        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:84", "WebSocket 错误:", res);
       });
       uni.onSocketClose((res) => {
-        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:87", "WebSocket 已断开", res);
+        formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:88", "WebSocket 已断开", res);
         isConnected.value = false;
         stopPingInterval();
         if (reconnectAttempts.value < maxReconnectAttempts) {
           const delay = Math.min(1e3 * Math.pow(2, reconnectAttempts.value), 3e4);
-          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:93", `将在 ${delay}ms 后尝试重新连接...`);
+          formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:94", `将在 ${delay}ms 后尝试重新连接...`);
           setTimeout(() => {
-            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:95", `尝试重新连接... (${reconnectAttempts.value + 1}/${maxReconnectAttempts})`);
+            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:96", `尝试重新连接... (${reconnectAttempts.value + 1}/${maxReconnectAttempts})`);
             reconnectAttempts.value++;
             connect(userId, token);
           }, delay);
         } else {
-          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:100", "WebSocket 重连失败，请检查网络连接或联系管理员");
+          formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:101", "WebSocket 重连失败，请检查网络连接或联系管理员");
         }
       });
     };
@@ -1712,7 +1713,7 @@ This will fail in production.`);
       if (isConnected.value) {
         uni.closeSocket({
           success: () => {
-            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:109", "WebSocket 已关闭");
+            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:110", "WebSocket 已关闭");
             isConnected.value = false;
             reconnectAttempts.value = 0;
             stopPingInterval();
@@ -1725,14 +1726,14 @@ This will fail in production.`);
         uni.sendSocketMessage({
           data: JSON.stringify(message),
           success: () => {
-            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:123", "消息发送成功");
+            formatAppLog("log", "at pages/WebSocket/WebSocketService.vue.vue:124", "消息发送成功");
           },
           fail: (error) => {
-            formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:126", "消息发送失败:", error);
+            formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:127", "消息发送失败:", error);
           }
         });
       } else {
-        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:130", "WebSocket 未连接，无法发送消息");
+        formatAppLog("error", "at pages/WebSocket/WebSocketService.vue.vue:131", "WebSocket 未连接，无法发送消息");
       }
     };
     const ping = () => {
@@ -14922,11 +14923,9 @@ ${i3}
       url: "/message/read/single",
       method: "post",
       data: {
-        opponentId: data.opponentId,
-        pageParam: {
-          curPage: data.curPage,
-          pageSize: data.pageSize
-        }
+        from: data.from,
+        to: data.to,
+        opponentId: data.opponentId
       }
     });
   };
@@ -16125,8 +16124,9 @@ ${i3}
         showScrollToBottom: false,
         showNewMessageTip: false,
         hasNewMessages: false,
-        currentPage: 1,
-        pageSize: 10,
+        currentFrom: 0,
+        // Updated: Changed initial value to 0
+        currentTo: 10,
         hasMoreMessages: true,
         isLoading: false
       };
@@ -16293,13 +16293,14 @@ ${i3}
       async loadMoreMessages() {
         if (this.hasMoreMessages && !this.isLoading) {
           this.isLoading = true;
-          this.currentPage++;
+          this.currentFrom = this.currentTo + 1;
+          this.currentTo = this.currentTo + 10;
           await this.loadHistoryMessages(true);
           this.isLoading = false;
         }
       },
       addNewMessage(message) {
-        this.list.push(message);
+        this.list.unshift(message);
         if (!this.isScrolledToBottom) {
           this.hasNewMessages = true;
           this.showScrollToBottom = true;
@@ -16307,32 +16308,33 @@ ${i3}
         } else {
           this.scrollToBottom();
         }
-        formatAppLog("log", "at pages/message/chat.vue:270", "新消息已添加:", message);
+        formatAppLog("log", "at pages/message/chat.vue:269", "新消息已添加:", message);
       },
       async loadHistoryMessages(isLoadingMore = false) {
-        formatAppLog("log", "at pages/message/chat.vue:273", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, currentPage: this.currentPage });
+        formatAppLog("log", "at pages/message/chat.vue:272", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, from: this.currentFrom, to: this.currentTo });
         try {
           const response = await getHistoryChatMessages({
             opponentId: this.chatInfo.id,
-            curPage: this.currentPage,
-            pageSize: this.pageSize
+            from: this.currentFrom,
+            to: this.currentTo
           });
-          formatAppLog("log", "at pages/message/chat.vue:282", "[loadHistoryMessages] 历史消息响应:", response);
+          formatAppLog("log", "at pages/message/chat.vue:281", "[loadHistoryMessages] 历史消息响应:", response);
           if (response.code === 200) {
             const newMessages = response.data.records.map((msg) => ({
               id: msg.id,
               content: msg.message,
               userType: msg.senderId === this.chatInfo.id ? "other" : "self",
+              avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
               timestamp: new Date(msg.sendTime),
               messageType: msg.messageType,
               isRead: msg.isRead
             }));
             if (isLoadingMore) {
-              this.list = [...newMessages.reverse(), ...this.list];
+              this.list = [...newMessages, ...this.list];
             } else {
-              this.list = [...this.list, ...newMessages];
+              this.list = newMessages;
             }
-            this.hasMoreMessages = response.data.records.length === this.pageSize;
+            this.hasMoreMessages = response.data.total > this.currentTo;
             formatAppLog("log", "at pages/message/chat.vue:302", "[loadHistoryMessages] 更新后的消息列表:", this.list);
             formatAppLog("log", "at pages/message/chat.vue:303", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
             this.$nextTick(() => {

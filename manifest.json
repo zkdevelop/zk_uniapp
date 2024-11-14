@@ -92,6 +92,15 @@
     "vueVersion" : "3",
     "locale" : "zh-Hans",
     "h5" : {
-        "template" : "index.html"
+        "template" : "index.html",
+        "sdkConfigs" : {
+            "maps" : {
+                "amap" : {
+                    "key" : "tb2751599983",
+                    "securityJsCode" : "",
+                    "serviceHost" : ""
+                }
+            }
+        }
     }
 }

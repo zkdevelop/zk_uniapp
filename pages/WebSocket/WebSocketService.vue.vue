@@ -12,6 +12,7 @@ export const useWebSocket = () => {
   const reconnectInterval = 5000 // 5 seconds
 
   const connect = (userId, token) => {
+    console.log(token,'tokentokentokentoken')
     if (!userId || !token) {
       console.error('WebSocket 连接失败: userId 或 token 未提供', { userId, token })
       return

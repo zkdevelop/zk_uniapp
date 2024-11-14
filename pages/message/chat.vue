@@ -82,8 +82,8 @@ export default {
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
-      currentPage: 1,
-      pageSize: 10,
+      currentFrom: 0, // Updated: Changed initial value to 0
+      currentTo: 10,
       hasMoreMessages: true,
       isLoading: false,
     };
@@ -247,19 +247,18 @@ export default {
         this.hasNewMessages = false;
         this.showNewMessageTip = false;
       }
-      // console.log('滚动事件:', { scrollTop, scrollHeight, isAtBottom });
     },
-    async loadMoreMessages() {
-      // console.log('加载更多消息');
+    async loadMoreMessages() { // Updated loadMoreMessages method
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
-        this.currentPage++;
+        this.currentFrom = this.currentTo + 1;
+        this.currentTo = this.currentTo + 10;
         await this.loadHistoryMessages(true);
         this.isLoading = false;
       }
     },
     addNewMessage(message) {
-      this.list.push(message);
+      this.list.unshift(message);
       if (!this.isScrolledToBottom) {
         this.hasNewMessages = true;
         this.showScrollToBottom = true;
@@ -270,13 +269,13 @@ export default {
       console.log('新消息已添加:', message);
     },
     async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, currentPage: this.currentPage });
+      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, from: this.currentFrom, to: this.currentTo });
 
       try {
         const response = await getHistoryChatMessages({
           opponentId: this.chatInfo.id,
-          curPage: this.currentPage,
-          pageSize: this.pageSize
+          from: this.currentFrom,
+          to: this.currentTo
         });
 
         console.log('[loadHistoryMessages] 历史消息响应:', response);
@@ -286,18 +285,19 @@ export default {
             id: msg.id,
             content: msg.message,
             userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+            avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
             timestamp: new Date(msg.sendTime),
             messageType: msg.messageType,
             isRead: msg.isRead
           }));
 
           if (isLoadingMore) {
-            this.list = [...newMessages.reverse(), ...this.list];
+            this.list = [...newMessages, ...this.list];
           } else {
-            this.list = [...this.list, ...newMessages];
+            this.list = newMessages;
           }
           
-          this.hasMoreMessages = response.data.records.length === this.pageSize;
+          this.hasMoreMessages = response.data.total > this.currentTo;
 
           console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
           console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
