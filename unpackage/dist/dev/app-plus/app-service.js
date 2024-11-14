@@ -7499,7 +7499,7 @@ ${i3}
   const getMissionDetails = (params) => {
     return request({
       url: `/mission/details`,
-      method: "get",
+      method: "post",
       data: params
     });
   };
