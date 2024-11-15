@@ -1,8 +1,8 @@
 import request from '/utils/request.js'
 
-export const getChatList = () => {
+export const getChatList = (missionId = 'dc029035aec84fb5a88dd401a0942d50') => {
   return request({
-    url: '/message/chatList',
+    url: `/message/chatList/${missionId}`,
     method: 'get'
   })
 }

@@ -14905,9 +14905,9 @@ ${i3}
       data: params
     });
   };
-  const getChatList = () => {
+  const getChatList = (missionId = "dc029035aec84fb5a88dd401a0942d50") => {
     return request({
-      url: "/message/chatList",
+      url: `/message/chatList/${missionId}`,
       method: "get"
     });
   };
@@ -15027,20 +15027,17 @@ ${i3}
         this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
       },
       async fetchChatList() {
-        try {
-          const response = await getChatList();
-          if (response.code === 200) {
-            this.realMessages = response.data.map((item) => ({
-              ...item,
-              avatar: this.defaultAvatarPath,
-              preview: item.latestMessage,
-              date: item.sendTime
-            }));
-          } else {
-            formatAppLog("error", "at pages/message/main.vue:156", "获取聊天列表失败:", response.msg);
-          }
-        } catch (error) {
-          formatAppLog("error", "at pages/message/main.vue:159", "获取聊天列表出错:", error);
+        formatAppLog("log", "at pages/message/main.vue:146", "dsdsdsd");
+        const response = await getChatList();
+        if (response.code === 200) {
+          this.realMessages = response.data.map((item) => ({
+            ...item,
+            avatar: this.defaultAvatarPath,
+            preview: item.latestMessage,
+            date: item.sendTime
+          }));
+        } else {
+          formatAppLog("error", "at pages/message/main.vue:156", "获取聊天列表失败:", response.msg);
         }
       },
       formatDate(dateString) {
@@ -22755,48 +22752,52 @@ ${i3}
       };
     },
     methods: {
-      async sendMessage() {
+      async sendMessage(message) {
         formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:83", "sendMessage 方法被调用");
-        if (!this.newMessage.trim()) {
-          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:85", "消息为空，不发送");
+        if (typeof message === "object" && message.type === "location") {
+          this.$emit("send-message", message);
+          return;
+        }
+        if (typeof this.newMessage !== "string" || !this.newMessage.trim()) {
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:91", "消息为空或不是字符串，不发送");
           return;
         }
         const messageData = {
           message: this.newMessage,
           recipientId: this.recipientId
         };
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:94", "准备发送消息:", messageData);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:100", "准备发送消息:", messageData);
         this.$emit("send-message", {
           content: this.newMessage,
           status: "sending"
         });
         try {
-          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:102", "调用 sendMessageToUser");
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:108", "调用 sendMessageToUser");
           const response = await sendMessageToUser(messageData);
-          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:104", "sendMessageToUser 响应:", response);
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:110", "sendMessageToUser 响应:", response);
           if (response.code === 200) {
-            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:106", "消息发送成功");
-            this.$emit("message-sent", response.data);
+            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:112", "消息发送成功");
+            this.$emit("message-sent", { ...response.data, message: this.newMessage });
           } else {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:109", "消息发送失败:", response.msg);
-            this.$emit("message-failed", this.newMessage);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:115", "消息发送失败:", response.msg);
+            this.$emit("message-failed", { message: this.newMessage });
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:113", "发送消息失败:", error);
-          this.$emit("message-failed", this.newMessage);
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:119", "发送消息失败:", error);
+          this.$emit("message-failed", { message: this.newMessage });
         }
         this.newMessage = "";
       },
       toggleAttachMenu() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:120", "切换附件菜单");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:126", "切换附件菜单");
         this.$emit("toggle-attach-menu", !this.showAttachMenu);
       },
       closeAttachMenu() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:124", "关闭附件菜单");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:130", "关闭附件菜单");
         this.$emit("toggle-attach-menu", false);
       },
       attachItem(action) {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:128", "附件项被选择:", action);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:134", "附件项被选择:", action);
         if (action === "file") {
           this.$refs.fileTransfer.chooseFile();
         } else if (action === "burn-after-reading") {
@@ -22815,11 +22816,11 @@ ${i3}
         }
       },
       handleFileSelected(fileData) {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:147", "文件被选择:", fileData);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:153", "文件被选择:", fileData);
         this.$emit("attach", "file", fileData);
       },
       chooseBurnAfterReadingImage() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:151", "选择阅后即焚图片");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:157", "选择阅后即焚图片");
         uni.chooseImage({
           count: 1,
           success: (res) => {
@@ -22833,7 +22834,7 @@ ${i3}
             });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:165", "选择图片失败", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:171", "选择图片失败", err);
           }
         });
       },
@@ -22853,13 +22854,13 @@ ${i3}
               callback(res.tempFilePath);
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:188", "马赛克处理失败", err);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:194", "马赛克处理失败", err);
             }
           });
         });
       },
       async takePhoto() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:194", "拍摄照片");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:200", "拍摄照片");
         uni.chooseImage({
           count: 1,
           sourceType: ["camera"],
@@ -22872,20 +22873,20 @@ ${i3}
                 messageType: "IMAGE"
               });
               if (response.code === 200) {
-                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:207", "图片消息发送成功");
+                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:213", "图片消息发送成功");
                 this.$emit("send-message", {
                   type: "image",
                   content: tempFilePath
                 });
               } else {
-                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:213", "发送图片消息失败:", response.msg);
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:219", "发送图片消息失败:", response.msg);
                 uni.showToast({
                   title: "发送失败，请重试",
                   icon: "none"
                 });
               }
             } catch (error) {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:220", "发送图片消息出错:", error);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:226", "发送图片消息出错:", error);
               uni.showToast({
                 title: "发送失败，请重试",
                 icon: "none"
@@ -22893,7 +22894,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:228", "拍照失败:", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:234", "拍照失败:", err);
             uni.showToast({
               title: "拍照失败",
               icon: "none"
@@ -22902,7 +22903,7 @@ ${i3}
         });
       },
       chooseAndSendPhoto() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:237", "从相册选择照片");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:243", "从相册选择照片");
         uni.chooseImage({
           count: 1,
           sourceType: ["album"],
@@ -22915,20 +22916,20 @@ ${i3}
                 messageType: "IMAGE"
               });
               if (response.code === 200) {
-                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:250", "图片消息发送成功");
+                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:256", "图片消息发送成功");
                 this.$emit("send-message", {
                   type: "image",
                   content: tempFilePath
                 });
               } else {
-                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:256", "发送图片消息失败:", response.msg);
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:262", "发送图片消息失败:", response.msg);
                 uni.showToast({
                   title: "发送失败，请重试",
                   icon: "none"
                 });
               }
             } catch (error) {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:263", "发送图片消息出错:", error);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:269", "发送图片消息出错:", error);
               uni.showToast({
                 title: "发送失败，请重试",
                 icon: "none"
@@ -22936,7 +22937,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:271", "选择图片失败:", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:277", "选择图片失败:", err);
             uni.showToast({
               title: "选择图片失败",
               icon: "none"
@@ -22945,37 +22946,42 @@ ${i3}
         });
       },
       openLocationSharing() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:280", "打开位置分享");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:286", "打开位置分享");
         this.showLocationSharing = true;
         this.closeAttachMenu();
       },
       closeLocationSharing() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:285", "关闭位置分享");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:291", "关闭位置分享");
         this.showLocationSharing = false;
       },
       async handleLocationSelected(location2) {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:289", "位置被选择:", location2);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:295", "位置被选择:", JSON.stringify(location2));
         try {
-          const response = await sendMessageToUser({
-            recipientId: this.recipientId,
-            content: JSON.stringify(location2),
-            messageType: "LOCATION"
-          });
-          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:296", "发送位置消息响应:", response);
+          const response = {
+            code: 200,
+            msg: "位置消息发送成功",
+            data: {
+              id: Date.now().toString(),
+              sendTime: (/* @__PURE__ */ new Date()).toISOString()
+            }
+          };
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:306", "模拟发送位置消息响应:", response);
           if (response.code === 200) {
-            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:298", "位置消息发送成功");
+            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:308", "位置消息发送成功");
             this.$emit("send-message", {
               type: "location",
               content: location2,
               userType: "self",
               avatar: this._selfAvatar,
-              timestamp: /* @__PURE__ */ new Date()
+              timestamp: new Date(response.data.sendTime),
+              id: response.data.id,
+              status: "sent"
             });
           } else {
             throw new Error(response.msg || "发送失败");
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:310", "发送位置消息失败:", error);
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:322", "发送位置消息失败:", error);
           uni.showToast({
             title: "发送失败，请重试",
             icon: "none"
@@ -22984,7 +22990,7 @@ ${i3}
         this.closeLocationSharing();
       },
       startVideoCall() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:319", "开始视频通话");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:331", "开始视频通话");
       }
     }
   };
@@ -23210,7 +23216,6 @@ ${i3}
         showNewMessageTip: false,
         hasNewMessages: false,
         currentFrom: 0,
-        // Updated: Changed initial value to 0
         currentTo: 10,
         hasMoreMessages: true,
         isLoading: false
@@ -23261,7 +23266,7 @@ ${i3}
       },
       sendMessage(message) {
         formatAppLog("log", "at pages/message/chat.vue:135", "[sendMessage] 发送消息:", message);
-        if (message.content && message.content.trim()) {
+        if (message.content) {
           const newMessage = {
             id: Date.now().toString(),
             content: message.content,
@@ -23385,7 +23390,7 @@ ${i3}
         }
       },
       addNewMessage(message) {
-        this.list.unshift(message);
+        this.list.push(message);
         if (!this.isScrolledToBottom) {
           this.hasNewMessages = true;
           this.showScrollToBottom = true;
@@ -23404,8 +23409,8 @@ ${i3}
             to: this.currentTo
           });
           formatAppLog("log", "at pages/message/chat.vue:281", "[loadHistoryMessages] 历史消息响应:", response);
-          if (response.code === 200) {
-            const newMessages = response.data.records.map((msg) => ({
+          if (response.code === 200 && Array.isArray(response.data)) {
+            const newMessages = response.data.reverse().map((msg) => ({
               id: msg.id,
               content: msg.message,
               userType: msg.senderId === this.chatInfo.id ? "other" : "self",
@@ -23419,7 +23424,7 @@ ${i3}
             } else {
               this.list = newMessages;
             }
-            this.hasMoreMessages = response.data.total > this.currentTo;
+            this.hasMoreMessages = newMessages.length === this.currentTo - this.currentFrom + 1;
             formatAppLog("log", "at pages/message/chat.vue:302", "[loadHistoryMessages] 更新后的消息列表:", this.list);
             formatAppLog("log", "at pages/message/chat.vue:303", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
             this.$nextTick(() => {

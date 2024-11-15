@@ -142,8 +142,8 @@ export default {
       const tabBarHeight = 50; // 根据实际底部 tabBar 高度调整
       this.scrollViewHeight = systemInfo.windowHeight - headerHeight - tabBarHeight;
     },
-    async fetchChatList() {
-      try {
+    async fetchChatList() { 
+		console.log('dsdsdsd')
         const response = await getChatList();
         if (response.code === 200) {
           this.realMessages = response.data.map(item => ({
@@ -154,10 +154,7 @@ export default {
           }));
         } else {
           console.error('获取聊天列表失败:', response.msg);
-        }
-      } catch (error) {
-        console.error('获取聊天列表出错:', error);
-      }
+        } 
     },
     formatDate(dateString) {
       const date = new Date(dateString);

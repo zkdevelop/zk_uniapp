@@ -82,7 +82,7 @@ export default {
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
-      currentFrom: 0, // Updated: Changed initial value to 0
+      currentFrom: 0,
       currentTo: 10,
       hasMoreMessages: true,
       isLoading: false,
@@ -133,7 +133,7 @@ export default {
     },
     sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.content && message.content.trim()) {
+      if (message.content  ) {
         const newMessage = {
           id: Date.now().toString(),
           content: message.content,
@@ -248,7 +248,7 @@ export default {
         this.showNewMessageTip = false;
       }
     },
-    async loadMoreMessages() { // Updated loadMoreMessages method
+    async loadMoreMessages() {
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
         this.currentFrom = this.currentTo + 1;
@@ -258,7 +258,7 @@ export default {
       }
     },
     addNewMessage(message) {
-      this.list.unshift(message);
+      this.list.push(message);
       if (!this.isScrolledToBottom) {
         this.hasNewMessages = true;
         this.showScrollToBottom = true;
@@ -280,8 +280,8 @@ export default {
 
         console.log('[loadHistoryMessages] 历史消息响应:', response);
 
-        if (response.code === 200) {
-          const newMessages = response.data.records.map(msg => ({
+        if (response.code === 200 && Array.isArray(response.data)) {
+          const newMessages = response.data.reverse().map(msg => ({
             id: msg.id,
             content: msg.message,
             userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
@@ -297,7 +297,7 @@ export default {
             this.list = newMessages;
           }
           
-          this.hasMoreMessages = response.data.total > this.currentTo;
+          this.hasMoreMessages = newMessages.length === (this.currentTo - this.currentFrom + 1);
 
           console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
           console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
@@ -342,7 +342,7 @@ export default {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px  10px;
+  padding: 5px 10px;
   border-radius: 15px;
   font-size: 14px;
   z-index: 1000;
@@ -350,7 +350,7 @@ export default {
 
 .overlay {
   position: fixed;
-  top:  0;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;

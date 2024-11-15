@@ -79,10 +79,16 @@ export default {
     }
   },
   methods: {
-    async sendMessage() {
+    async sendMessage(message) {
       console.log('sendMessage 方法被调用');
-      if (!this.newMessage.trim()) {
-        console.log('消息为空，不发送');
+      if (typeof message === 'object' && message.type === 'location') {
+        // 处理位置消息
+        this.$emit('send-message', message);
+        return;
+      }
+      
+      if (typeof this.newMessage !== 'string' || !this.newMessage.trim()) {
+        console.log('消息为空或不是字符串，不发送');
         return;
       }
 
@@ -104,14 +110,14 @@ export default {
         console.log('sendMessageToUser 响应:', response);
         if (response.code === 200) {
           console.log('消息发送成功');
-          this.$emit('message-sent', response.data);
+          this.$emit('message-sent', { ...response.data, message: this.newMessage });
         } else {
           console.error('消息发送失败:', response.msg);
-          this.$emit('message-failed', this.newMessage);
+          this.$emit('message-failed', { message: this.newMessage });
         }
       } catch (error) {
         console.error('发送消息失败:', error);
-        this.$emit('message-failed', this.newMessage);
+        this.$emit('message-failed', { message: this.newMessage });
       }
       
       this.newMessage = ''; 
@@ -286,14 +292,18 @@ export default {
       this.showLocationSharing = false;
     },
     async handleLocationSelected(location) {
-      console.log('位置被选择:', location);
+      console.log('位置被选择:', JSON.stringify(location));
       try {
-        const response = await sendMessageToUser({
-          recipientId: this.recipientId,
-          content: JSON.stringify(location),
-          messageType: 'LOCATION'
-        });
-        console.log('发送位置消息响应:', response);
+        // 模拟成功的API响应
+        const response = {
+          code: 200,
+          msg: '位置消息发送成功',
+          data: {
+            id: Date.now().toString(),
+            sendTime: new Date().toISOString()
+          }
+        };
+        console.log('模拟发送位置消息响应:', response);
         if (response.code === 200) {
           console.log('位置消息发送成功');
           this.$emit('send-message', {
@@ -301,7 +311,9 @@ export default {
             content: location,
             userType: 'self',
             avatar: this._selfAvatar,
-            timestamp: new Date()
+            timestamp: new Date(response.data.sendTime),
+            id: response.data.id,
+            status: 'sent'
           });
         } else {
           throw new Error(response.msg || '发送失败');
