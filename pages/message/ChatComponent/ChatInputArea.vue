@@ -142,7 +142,9 @@ export default {
         this.chooseAndSendPhoto();
       } else if (action === 'location') {
         this.openLocationSharing();
-      } else {
+      } else if (action === 'video-call') {
+		this.$emit('video-call', action);
+	  }	else {
         this.$emit('attach', action);
       }
       if (action !== 'location') {

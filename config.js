@@ -10,6 +10,20 @@ export const baiduApiKey = 'A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD'
 export const backendHost = 'http://139.196.11.210:8500/communicate'
 // export const backendHost = 'http://127.0.0.1:8080'
 
+const webSocketServer = {
+	host: "192.168.191.235",
+	port: 8081,
+	path: "/call"
+}
+const peerServer = {
+	// host: "139.196.11.210",
+	host: "192.168.191.235",
+	port: 9000,
+	path: "/"
+}
+export default {
+	webSocketServer, peerServer
+}
 // 底图地址
 export const tileUrls = {
 	'google': {

@@ -16,6 +16,7 @@
       @message-sent="handleMessageSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
+	  @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
@@ -38,6 +39,16 @@
     <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
       新消息
     </view>
+	<!-- 来电提醒 -->
+	<view v-if="peerStore.activateNotification" class="modal">
+		<view>
+			<text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
+		</view>
+	  <view class="modal-content">
+		<button @click="acceptVideoCall" type="default">接听</button>
+		<button @click="rejectVideoCall" type="warn">拒绝</button>
+	  </view>
+	</view>
 
     <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
   </view>
@@ -50,6 +61,8 @@ import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 import { getHistoryChatMessages } from '@/utils/api/message.js'
+import usePeerStore from '../../store/peer'
+import useFriendStore from '../../store/friend'
 
 export default {
   name: 'Chat',
@@ -86,10 +99,14 @@ export default {
       currentTo: 10,
       hasMoreMessages: true,
       isLoading: false,
+	  peerStore: null,
+	  friendStore: null,
     };
   },
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
+	this.peerStore = usePeerStore();
+	this.friendStore = useFriendStore();
     eventChannel.on('chatInfo', (data) => {
       this.chatInfo = data.chatInfo;
       this.initializeChat();
@@ -268,6 +285,63 @@ export default {
       }
       console.log('新消息已添加:', message);
     },
+	openVideoPage(action) {
+		// 处理音视频通话
+		// if (this.peerStore.localPeer && this.peerStore.localPeer.open) {
+		// 	if (this.peerStore.dataConnection) {
+		// 		uni.showToast({
+		// 			title: 'currently busy',
+		// 			icon: 'none'
+		// 		})
+		// 	} else {
+		// 		uni.navigateTo({
+		// 			url: `/pages/message/video-call?calleePeerId=${friendStore.onlineList[0]}`
+		// 		})
+		// 	}
+		// } else {
+		// 	uni.showToast({
+		// 		title: 'local peer not opened',
+		// 		icon: 'none'
+		// 	})
+		// }
+				uni.navigateTo({
+					url: `/pages/message/video-call?calleePeerId=${this.callerPeerId}`
+				})
+	},
+	rejectVideoCall() {
+		peerStore.dataConnection.send({
+			instruction: peerStore.instruction.reject
+		});
+		peerStore.dataConnection = undefined;
+		peerStore.activateNotification = false;
+	},
+	acceptVideoCall() {
+		peerStore.activateNotification = false;
+		
+		uni.showLoading({
+			title: "waiting for the other party to connect...",
+			mask: true
+		})
+		
+		//监听媒体连接是否存在，有可能速度比较快，所以立即执行以下
+		let cancel = watch(() => peerStore.mediaConnection, newValue => {
+		    if (newValue) {
+				//关闭加载框
+				uni.hideLoading();
+		
+				//取消监听；如果不取消会出现重复执行
+				cancel();
+		
+				uni.navigateTo({
+					url: "/pages/message/video-answer"
+				})
+		    }
+		}, {immediate: true});
+		
+		peerStore.dataConnection.send({
+		    instruction: peerStore.instruction.accept
+		});
+	},
     async loadHistoryMessages(isLoadingMore = false) {
       console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, from: this.currentFrom, to: this.currentTo });
 

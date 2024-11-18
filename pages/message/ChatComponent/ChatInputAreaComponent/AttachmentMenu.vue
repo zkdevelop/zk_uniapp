@@ -51,7 +51,9 @@ export default {
         this.chooseFile();
       } else if (action === 'location') { 
         this.$emit('attach', action);
-      } else {
+      } else if (action === 'video-call') {
+		  this.$emit('attach', action);
+	  } else {
         this.$emit('attach', action);
       }
     },

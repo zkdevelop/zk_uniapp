@@ -149,6 +149,27 @@
 		}
 	},
 	{
+		"path" : "pages/message/video-call",
+		"style" : 
+		{
+			"navigationBarTitleText" : "视频通话"
+		}
+	},
+	{
+		"path" : "pages/message/ChatComponent/CallReminder",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/message/video-answer",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
 		"path" : "pages/login/camouflageLogin/camouflageLogin",
 		"style" : 
 		{

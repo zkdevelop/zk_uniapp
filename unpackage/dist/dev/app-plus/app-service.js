@@ -1761,7 +1761,7 @@ This will fail in production.`);
     };
   };
   const _imports_0$a = "/static/icon/login.png";
-  const _sfc_main$M = {
+  const _sfc_main$P = {
     __name: "login",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -1857,7 +1857,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$O(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", { class: "iconView" }, [
         vue.createElementVNode("image", {
@@ -1942,7 +1942,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__file", "E:/代码/new/zk_uniapp/pages/login/login.vue"]]);
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/login.vue"]]);
   const isObject = (val) => val !== null && typeof val === "object";
   const defaultDelimiters = ["{", "}"];
   class BaseFormatter {
@@ -2256,7 +2256,7 @@ This will fail in production.`);
   const {
     t: t$1
   } = initVueI18n(messages);
-  const _sfc_main$L = {
+  const _sfc_main$O = {
     name: "UniLoadMore",
     emits: ["clickLoadMore"],
     props: {
@@ -2338,7 +2338,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: "uni-load-more",
       onClick: _cache[0] || (_cache[0] = (...args) => $options.onClick && $options.onClick(...args))
@@ -2413,7 +2413,7 @@ This will fail in production.`);
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-9245e42c"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -3064,7 +3064,7 @@ This will fail in production.`);
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$K = {
+  const _sfc_main$N = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -3118,7 +3118,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -3133,7 +3133,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-d31e1c47"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   const pages = [
     {
       path: "pages/login/login",
@@ -3261,6 +3261,24 @@ This will fail in production.`);
       path: "pages/task/task_detail/document/uploadfile/uploadfile",
       style: {
         navigationBarTitleText: "文件上传"
+      }
+    },
+    {
+      path: "pages/message/video-call",
+      style: {
+        navigationBarTitleText: "视频通话"
+      }
+    },
+    {
+      path: "pages/message/ChatComponent/CallReminder",
+      style: {
+        navigationBarTitleText: ""
+      }
+    },
+    {
+      path: "pages/message/video-answer",
+      style: {
+        navigationBarTitleText: ""
       }
     },
     {
@@ -6581,7 +6599,7 @@ ${i3}
       }
     }
   };
-  const _sfc_main$J = {
+  const _sfc_main$M = {
     name: "UniDataPickerView",
     emits: ["nodeclick", "change", "datachange", "update:modelValue"],
     mixins: [dataPicker],
@@ -6685,7 +6703,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-data-pickerview" }, [
       !_ctx.isCloudDataList ? (vue.openBlock(), vue.createElementBlock("scroll-view", {
@@ -6775,8 +6793,8 @@ ${i3}
       ])
     ]);
   }
-  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__scopeId", "data-v-91ec6a82"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
-  const _sfc_main$I = {
+  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-91ec6a82"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
+  const _sfc_main$L = {
     name: "UniDataPicker",
     emits: ["popupopened", "popupclosed", "nodeclick", "input", "change", "update:modelValue", "inputclick"],
     mixins: [dataPicker],
@@ -6980,7 +6998,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$H(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$5);
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     const _component_data_picker_view = vue.resolveComponent("data-picker-view");
@@ -7146,8 +7164,8 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__scopeId", "data-v-2653531e"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
-  const _sfc_main$H = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-2653531e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
+  const _sfc_main$K = {
     data() {
       return {
         account: "test-app",
@@ -7229,7 +7247,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$G(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_picker = resolveEasycom(vue.resolveDynamicComponent("uni-data-picker"), __easycom_0$3);
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", { class: "text" }, [
@@ -7348,19 +7366,19 @@ ${i3}
       ])
     ]);
   }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__file", "E:/代码/new/zk_uniapp/pages/register/register.vue"]]);
-  const _sfc_main$G = {
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/register/register.vue"]]);
+  const _sfc_main$J = {
     data() {
       return {};
     },
     methods: {}
   };
-  function _sfc_render$F(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__file", "E:/代码/new/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
+  const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
   const _imports_0$9 = "/static/icon/finger.png";
-  const _sfc_main$F = {
+  const _sfc_main$I = {
     data() {
       return {
         result: "",
@@ -7442,7 +7460,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$E(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$H(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", {
         class: "fingerView",
@@ -7478,7 +7496,7 @@ ${i3}
       )
     ]);
   }
-  const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__file", "E:/代码/new/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
+  const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
   const searchMission = (query) => {
     formatAppLog("log", "at utils/api/mission.js:6", "query", query);
     return request({
@@ -7508,7 +7526,7 @@ ${i3}
   };
   const _imports_0$8 = "/static/icon/location_grey.png";
   const _imports_1$3 = "/static/icon/time_grey.png";
-  const _sfc_main$E = {
+  const _sfc_main$H = {
     name: "TaskPage",
     data() {
       return {
@@ -7636,7 +7654,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$G(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createCommentVNode(" 顶部Tab菜单 "),
       vue.createElementVNode("view", { class: "topTabBar" }, [
@@ -7765,8 +7783,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesTaskTask = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__file", "E:/代码/new/zk_uniapp/pages/task/task.vue"]]);
-  const _sfc_main$D = {
+  const PagesTaskTask = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task.vue"]]);
+  const _sfc_main$G = {
     name: "uni-data-select",
     mixins: [Ys.mixinDatacom || {}],
     props: {
@@ -8018,7 +8036,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$F(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-stat__select" }, [
       $props.label ? (vue.openBlock(), vue.createElementBlock(
@@ -8158,7 +8176,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -8271,7 +8289,7 @@ ${i3}
     clearTimeout(_this.timer);
     return new MPAnimation(option, _this);
   }
-  const _sfc_main$C = {
+  const _sfc_main$F = {
     name: "uniTransition",
     emits: ["click", "change"],
     props: {
@@ -8522,7 +8540,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$E(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.withDirectives((vue.openBlock(), vue.createElementBlock("view", {
       ref: "ani",
       animation: $data.animationData,
@@ -8535,8 +8553,8 @@ ${i3}
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
-  const _sfc_main$B = {
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$E = {
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -8886,7 +8904,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$1);
     return $data.showPopup ? (vue.openBlock(), vue.createElementBlock(
       "view",
@@ -8946,8 +8964,8 @@ ${i3}
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-4dd3c44b"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
-  const _sfc_main$A = {
+  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__scopeId", "data-v-4dd3c44b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const _sfc_main$D = {
     name: "uniCollapseItem",
     props: {
       // 列表标题
@@ -9117,7 +9135,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-collapse-item" }, [
       vue.createCommentVNode(" onClick(!isOpen) "),
@@ -9194,8 +9212,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-3d2dde9f"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse-item/uni-collapse-item.vue"]]);
-  const _sfc_main$z = {
+  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-3d2dde9f"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse-item/uni-collapse-item.vue"]]);
+  const _sfc_main$C = {
     name: "uniCollapse",
     emits: ["change", "activeItem", "input", "update:modelValue"],
     props: {
@@ -9306,13 +9324,13 @@ ${i3}
       }
     }
   };
-  function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-collapse" }, [
       vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
     ]);
   }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-3f050360"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse/uni-collapse.vue"]]);
-  const _sfc_main$y = {
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-3f050360"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse/uni-collapse.vue"]]);
+  const _sfc_main$B = {
     name: "uniDataChecklist",
     mixins: [Ys.mixinDatacom || {}],
     emits: ["input", "update:modelValue", "change"],
@@ -9655,7 +9673,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -9868,8 +9886,8 @@ ${i3}
       /* STYLE */
     );
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-2f788efd"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
-  const _sfc_main$x = {
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
+  const _sfc_main$A = {
     name: "uniFormsItem",
     options: {
       virtualHost: true
@@ -10201,7 +10219,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -10257,7 +10275,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-462874dd"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -10276,7 +10294,7 @@ ${i3}
     }
     return style;
   }
-  const _sfc_main$w = {
+  const _sfc_main$z = {
     name: "uni-easyinput",
     emits: [
       "click",
@@ -10625,7 +10643,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -10750,7 +10768,7 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
-  const __easycom_6$1 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-09fd5285"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_6$1 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -11314,7 +11332,7 @@ ${i3}
       return false;
     }
   };
-  const _sfc_main$v = {
+  const _sfc_main$y = {
     name: "uniForms",
     emits: ["validate", "submit"],
     options: {
@@ -11611,14 +11629,14 @@ ${i3}
       _isEqual: isEqual
     }
   };
-  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-forms" }, [
       vue.createElementVNode("form", null, [
         vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
       ])
     ]);
   }
-  const __easycom_7 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-9a1e3c32"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+  const __easycom_7 = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const getOrderList = (params) => {
     return request({
       url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
@@ -11644,7 +11662,7 @@ ${i3}
     (Comp.$renderjs || (Comp.$renderjs = [])).push("m");
     (Comp.$renderjsModules || (Comp.$renderjsModules = {}))["m"] = "55b5cda2";
   };
-  const _sfc_main$u = {
+  const _sfc_main$x = {
     data() {
       return {
         recorderManager: {},
@@ -12129,7 +12147,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$2);
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_4$1);
     const _component_uni_collapse_item = resolveEasycom(vue.resolveDynamicComponent("uni-collapse-item"), __easycom_2$1);
@@ -12918,9 +12936,9 @@ ${i3}
     );
   }
   if (typeof block0 === "function")
-    block0(_sfc_main$u);
-  const PagesTaskTaskDetailTaskDetail = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/task_detail.vue"]]);
-  const _sfc_main$t = {
+    block0(_sfc_main$x);
+  const PagesTaskTaskDetailTaskDetail = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/task_detail.vue"]]);
+  const _sfc_main$w = {
     name: "UniGridItem",
     inject: ["grid"],
     props: {
@@ -12970,7 +12988,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     return $data.width ? (vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -12997,8 +13015,8 @@ ${i3}
       /* STYLE */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-7a807eb7"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue"]]);
-  const _sfc_main$s = {
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-7a807eb7"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue"]]);
+  const _sfc_main$v = {
     name: "UniGrid",
     emits: ["change"],
     props: {
@@ -13068,7 +13086,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-grid-wrap" }, [
       vue.createElementVNode("view", {
         id: $data.elId,
@@ -13080,8 +13098,8 @@ ${i3}
       ], 14, ["id"])
     ]);
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-07acefee"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-grid/components/uni-grid/uni-grid.vue"]]);
-  const _sfc_main$r = {
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-07acefee"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-grid/components/uni-grid/uni-grid.vue"]]);
+  const _sfc_main$u = {
     name: "UniSection",
     emits: ["click"],
     props: {
@@ -13140,7 +13158,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-section" }, [
       vue.createElementVNode("view", {
         class: "uni-section-header",
@@ -13197,8 +13215,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-637fd36b"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
-  const _sfc_main$q = {
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
+  const _sfc_main$t = {
     props: {
       urls: {
         type: Array,
@@ -13254,7 +13272,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     return $data.show ? (vue.openBlock(), vue.createElementBlock("view", {
       key: 0,
       class: "previewImage",
@@ -13333,8 +13351,8 @@ ${i3}
       ], 40, ["current"])
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-fdd21252"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/q-previewImage/components/q-previewImage/q-previewImage.vue"]]);
-  const _sfc_main$p = {
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-fdd21252"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/q-previewImage/components/q-previewImage/q-previewImage.vue"]]);
+  const _sfc_main$s = {
     name: "ysh-file-manager",
     props: {},
     data() {
@@ -13506,12 +13524,12 @@ ${i3}
       }
     }
   };
-  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "E:/代码/new/zk_uniapp/components/ysh-file-manager/ysh-file-manager.vue"]]);
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/components/ysh-file-manager/ysh-file-manager.vue"]]);
   let platform = "other";
-  const _sfc_main$o = {
+  const _sfc_main$r = {
     name: "UniFab",
     emits: ["fabClick", "trigger"],
     props: {
@@ -13668,7 +13686,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-cursor-point" }, [
       $props.popMenu && ($options.leftBottom || $options.rightBottom || $options.leftTop || $options.rightTop) && $props.content.length > 0 ? (vue.openBlock(), vue.createElementBlock(
@@ -13772,8 +13790,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-85f34dfc"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-fab/components/uni-fab/uni-fab.vue"]]);
-  const _sfc_main$n = {
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-85f34dfc"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-fab/components/uni-fab/uni-fab.vue"]]);
+  const _sfc_main$q = {
     data() {
       return {
         context: null,
@@ -13866,7 +13884,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       vue.Fragment,
       null,
@@ -13916,10 +13934,10 @@ ${i3}
       /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
     );
   }
-  const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-615c0603"], ["__file", "E:/代码/new/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
+  const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-615c0603"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
   const _imports_0$6 = "/static/icon/take_video.png";
   const _imports_1$1 = "/static/icon/audio.png";
-  const _sfc_main$m = {
+  const _sfc_main$p = {
     components: { freeAudio, yshFileManager: __easycom_5 },
     data() {
       return {
@@ -14165,7 +14183,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_grid_item = resolveEasycom(vue.resolveDynamicComponent("uni-grid-item"), __easycom_0);
     const _component_uni_grid = resolveEasycom(vue.resolveDynamicComponent("uni-grid"), __easycom_1);
     const _component_uni_section = resolveEasycom(vue.resolveDynamicComponent("uni-section"), __easycom_2);
@@ -14380,8 +14398,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesTaskTaskDetailDocumentDocument = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/document/document.vue"]]);
-  const _sfc_main$l = {
+  const PagesTaskTaskDetailDocumentDocument = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/document/document.vue"]]);
+  const _sfc_main$o = {
     data() {
       return {
         id: 0,
@@ -14418,7 +14436,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createElementVNode("view", { class: "page-body" }, [
         vue.createElementVNode("view", {
@@ -14442,8 +14460,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesTaskTaskDetailMapTestMapTest = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/map_test/map_test.vue"]]);
-  const _sfc_main$k = {
+  const PagesTaskTaskDetailMapTestMapTest = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/map_test/map_test.vue"]]);
+  const _sfc_main$n = {
     data() {
       return {};
     },
@@ -14463,13 +14481,13 @@ ${i3}
     },
     methods: {}
   };
-  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "map-container" }, [
       vue.createElementVNode("web-view", { src: "/static/html/map_baidu.html" })
     ]);
   }
-  const PagesTaskTaskDetailBaiduMapBaiduMap = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/baidu_map/baidu_map.vue"]]);
-  const _sfc_main$j = {
+  const PagesTaskTaskDetailBaiduMapBaiduMap = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/baidu_map/baidu_map.vue"]]);
+  const _sfc_main$m = {
     name: "OptionPicker",
     props: {
       title: String,
@@ -14482,7 +14500,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "picker-wrapper" }, [
       vue.createElementVNode("view", {
         class: "picker-overlay",
@@ -14539,10 +14557,10 @@ ${i3}
       ])
     ]);
   }
-  const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-2798e3c8"], ["__file", "E:/代码/new/zk_uniapp/pages/profile/OptionPicker.vue"]]);
+  const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-2798e3c8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/profile/OptionPicker.vue"]]);
   const _imports_0$5 = "/static/my/编辑.svg";
   const _imports_1 = "/static/my/展开.svg";
-  const _sfc_main$i = {
+  const _sfc_main$l = {
     __name: "profile",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -14673,7 +14691,7 @@ ${i3}
       return __returned__;
     }
   };
-  function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 用户头像、姓名、用户名和电话 "),
       vue.createElementVNode("view", { class: "user-info" }, [
@@ -14837,8 +14855,8 @@ ${i3}
       }, null, 8, ["title", "options", "selectedValue"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__file", "E:/代码/new/zk_uniapp/pages/profile/profile.vue"]]);
-  const _sfc_main$h = {
+  const PagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/profile/profile.vue"]]);
+  const _sfc_main$k = {
     name: "GroupAvatar",
     props: {
       avatar: {
@@ -14864,7 +14882,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", { class: "avatar-wrap" }, [
       $options.processedAvatar.length === 1 ? (vue.openBlock(), vue.createElementBlock("image", {
         key: 0,
@@ -14897,7 +14915,7 @@ ${i3}
       ))
     ]);
   }
-  const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-afb5909c"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
+  const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-afb5909c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
   const searchUsers = (params) => {
     return request({
       url: "/user/searchUsers",
@@ -14933,7 +14951,7 @@ ${i3}
     });
   };
   const _imports_0$4 = "/static/message/搜索.png";
-  const _sfc_main$g = {
+  const _sfc_main$j = {
     name: "Messages",
     components: {
       GroupAvatar
@@ -15064,7 +15082,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_group_avatar = vue.resolveComponent("group-avatar");
     return vue.openBlock(), vue.createElementBlock("view", { class: "messages-container" }, [
       vue.createElementVNode("view", { class: "messages-view" }, [
@@ -15194,9 +15212,9 @@ ${i3}
       ])
     ]);
   }
-  const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__file", "E:/代码/new/zk_uniapp/pages/message/main.vue"]]);
+  const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/main.vue"]]);
   const _imports_0$3 = "/static/message/返回.png";
-  const _sfc_main$f = {
+  const _sfc_main$i = {
     name: "ChatHeader",
     components: {},
     props: {
@@ -15206,7 +15224,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-header" }, [
       vue.createElementVNode("div", {
         class: "uni-page-head-hd",
@@ -15232,8 +15250,8 @@ ${i3}
       vue.createElementVNode("text", { class: "menu-button" }, "...")
     ]);
   }
-  const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-120ff10e"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
-  const _sfc_main$e = {
+  const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-120ff10e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
+  const _sfc_main$h = {
     name: "Message",
     props: {
       message: {
@@ -15258,7 +15276,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -15380,8 +15398,8 @@ ${i3}
       /* CLASS */
     );
   }
-  const Message = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-1cea873d"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/Message.vue"]]);
-  const _sfc_main$d = {
+  const Message = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-1cea873d"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/Message.vue"]]);
+  const _sfc_main$g = {
     name: "MessageList",
     components: {
       Message
@@ -15406,7 +15424,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_message = vue.resolveComponent("message");
     return vue.openBlock(), vue.createElementBlock("scroll-view", {
       class: "scroll-view",
@@ -15436,8 +15454,8 @@ ${i3}
       ])
     ], 40, ["scroll-top", "scroll-into-view"]);
   }
-  const MessageList = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-dee4eb4b"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageList.vue"]]);
-  const _sfc_main$c = {
+  const MessageList = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-dee4eb4b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageList.vue"]]);
+  const _sfc_main$f = {
     name: "AttachmentMenu",
     data() {
       return {
@@ -15457,6 +15475,8 @@ ${i3}
         if (action === "file") {
           this.chooseFile();
         } else if (action === "location") {
+          this.$emit("attach", action);
+        } else if (action === "video-call") {
           this.$emit("attach", action);
         } else {
           this.$emit("attach", action);
@@ -15553,7 +15573,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: vue.normalizeClass(["attach-menu", { "active": true }])
     }, [
@@ -15619,8 +15639,8 @@ ${i3}
       ])
     ]);
   }
-  const AttachmentMenu = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-00ea5aaf"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachmentMenu.vue"]]);
-  const _sfc_main$b = {
+  const AttachmentMenu = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-00ea5aaf"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachmentMenu.vue"]]);
+  const _sfc_main$e = {
     name: "FileTransfer",
     props: {
       selectedFile: {
@@ -15655,7 +15675,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "file-transfer" }, [
       $props.selectedFile ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
@@ -15678,7 +15698,7 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const FileTransfer = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-ce413881"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/FileTransfer.vue"]]);
+  const FileTransfer = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-ce413881"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/FileTransfer.vue"]]);
   const gaodeApiKey = "fc598a079d7d9cf5f54ecec04b17e414";
   const gaodeSecurityKey = "93849873dba769e7b6235a79330ae7f7";
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
@@ -22457,7 +22477,7 @@ ${i3}
   }
   const _imports_0$2 = "/static/icons/check.png";
   const AMAP_API = "https://restapi.amap.com/v3";
-  const _sfc_main$a = {
+  const _sfc_main$d = {
     name: "LocationSharing",
     data() {
       return {
@@ -22633,7 +22653,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "location-sharing" }, [
       vue.createElementVNode("view", { class: "map-container" }, [
         vue.createElementVNode("map", {
@@ -22725,9 +22745,9 @@ ${i3}
       ])
     ]);
   }
-  const LocationSharing = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-5719cec1"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue"]]);
+  const LocationSharing = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-5719cec1"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue"]]);
   const _imports_0$1 = "/static/message/语音输入.png";
-  const _sfc_main$9 = {
+  const _sfc_main$c = {
     name: "ChatInputArea",
     components: {
       AttachmentMenu,
@@ -22808,6 +22828,8 @@ ${i3}
           this.chooseAndSendPhoto();
         } else if (action === "location") {
           this.openLocationSharing();
+        } else if (action === "video-call") {
+          this.$emit("video-call", action);
         } else {
           this.$emit("attach", action);
         }
@@ -22816,11 +22838,11 @@ ${i3}
         }
       },
       handleFileSelected(fileData) {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:153", "文件被选择:", fileData);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:155", "文件被选择:", fileData);
         this.$emit("attach", "file", fileData);
       },
       chooseBurnAfterReadingImage() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:157", "选择阅后即焚图片");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:159", "选择阅后即焚图片");
         uni.chooseImage({
           count: 1,
           success: (res) => {
@@ -22834,7 +22856,7 @@ ${i3}
             });
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:171", "选择图片失败", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:173", "选择图片失败", err);
           }
         });
       },
@@ -22854,13 +22876,13 @@ ${i3}
               callback(res.tempFilePath);
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:194", "马赛克处理失败", err);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:196", "马赛克处理失败", err);
             }
           });
         });
       },
       async takePhoto() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:200", "拍摄照片");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:202", "拍摄照片");
         uni.chooseImage({
           count: 1,
           sourceType: ["camera"],
@@ -22873,20 +22895,20 @@ ${i3}
                 messageType: "IMAGE"
               });
               if (response.code === 200) {
-                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:213", "图片消息发送成功");
+                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:215", "图片消息发送成功");
                 this.$emit("send-message", {
                   type: "image",
                   content: tempFilePath
                 });
               } else {
-                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:219", "发送图片消息失败:", response.msg);
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:221", "发送图片消息失败:", response.msg);
                 uni.showToast({
                   title: "发送失败，请重试",
                   icon: "none"
                 });
               }
             } catch (error) {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:226", "发送图片消息出错:", error);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:228", "发送图片消息出错:", error);
               uni.showToast({
                 title: "发送失败，请重试",
                 icon: "none"
@@ -22894,7 +22916,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:234", "拍照失败:", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:236", "拍照失败:", err);
             uni.showToast({
               title: "拍照失败",
               icon: "none"
@@ -22903,7 +22925,7 @@ ${i3}
         });
       },
       chooseAndSendPhoto() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:243", "从相册选择照片");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:245", "从相册选择照片");
         uni.chooseImage({
           count: 1,
           sourceType: ["album"],
@@ -22916,20 +22938,20 @@ ${i3}
                 messageType: "IMAGE"
               });
               if (response.code === 200) {
-                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:256", "图片消息发送成功");
+                formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:258", "图片消息发送成功");
                 this.$emit("send-message", {
                   type: "image",
                   content: tempFilePath
                 });
               } else {
-                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:262", "发送图片消息失败:", response.msg);
+                formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:264", "发送图片消息失败:", response.msg);
                 uni.showToast({
                   title: "发送失败，请重试",
                   icon: "none"
                 });
               }
             } catch (error) {
-              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:269", "发送图片消息出错:", error);
+              formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:271", "发送图片消息出错:", error);
               uni.showToast({
                 title: "发送失败，请重试",
                 icon: "none"
@@ -22937,7 +22959,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:277", "选择图片失败:", err);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:279", "选择图片失败:", err);
             uni.showToast({
               title: "选择图片失败",
               icon: "none"
@@ -22946,16 +22968,16 @@ ${i3}
         });
       },
       openLocationSharing() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:286", "打开位置分享");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:288", "打开位置分享");
         this.showLocationSharing = true;
         this.closeAttachMenu();
       },
       closeLocationSharing() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:291", "关闭位置分享");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:293", "关闭位置分享");
         this.showLocationSharing = false;
       },
       async handleLocationSelected(location2) {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:295", "位置被选择:", JSON.stringify(location2));
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:297", "位置被选择:", JSON.stringify(location2));
         try {
           const response = {
             code: 200,
@@ -22965,9 +22987,9 @@ ${i3}
               sendTime: (/* @__PURE__ */ new Date()).toISOString()
             }
           };
-          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:306", "模拟发送位置消息响应:", response);
+          formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:308", "模拟发送位置消息响应:", response);
           if (response.code === 200) {
-            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:308", "位置消息发送成功");
+            formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:310", "位置消息发送成功");
             this.$emit("send-message", {
               type: "location",
               content: location2,
@@ -22981,7 +23003,7 @@ ${i3}
             throw new Error(response.msg || "发送失败");
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:322", "发送位置消息失败:", error);
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:324", "发送位置消息失败:", error);
           uni.showToast({
             title: "发送失败，请重试",
             icon: "none"
@@ -22990,11 +23012,11 @@ ${i3}
         this.closeLocationSharing();
       },
       startVideoCall() {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:331", "开始视频通话");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:333", "开始视频通话");
       }
     }
   };
-  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_attachment_menu = vue.resolveComponent("attachment-menu");
     const _component_location_sharing = vue.resolveComponent("location-sharing");
     const _component_file_transfer = vue.resolveComponent("file-transfer");
@@ -23080,8 +23102,8 @@ ${i3}
       }, null, 8, ["onFileSelected"])
     ]);
   }
-  const ChatInputArea = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-e8a570ad"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputArea.vue"]]);
-  const _sfc_main$8 = {
+  const ChatInputArea = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-e8a570ad"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputArea.vue"]]);
+  const _sfc_main$b = {
     name: "BurnAfterReading",
     props: {
       // 图片源
@@ -23140,7 +23162,7 @@ ${i3}
       this.stopCountdown();
     }
   };
-  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     return $data.isOpen ? (vue.openBlock(), vue.createElementBlock("view", {
       key: 0,
       class: "burn-after-reading-overlay",
@@ -23164,8 +23186,8 @@ ${i3}
       )
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const BurnAfterReading = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-3b98a725"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/BurnAfterReading.vue.vue"]]);
-  const _sfc_main$7 = {
+  const BurnAfterReading = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-3b98a725"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/BurnAfterReading.vue.vue"]]);
+  const _sfc_main$a = {
     name: "ScrollToBottomButton",
     props: {
       show: {
@@ -23174,7 +23196,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     return $props.show ? (vue.openBlock(), vue.createElementBlock("view", {
       key: 0,
       class: "scroll-to-bottom",
@@ -23183,8 +23205,66 @@ ${i3}
       vue.createElementVNode("text", { class: "scroll-to-bottom-icon" }, "↓")
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-92969997"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
-  const _sfc_main$6 = {
+  const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-92969997"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
+  const usePeerStore = defineStore("peerStore", {
+    state() {
+      return {
+        /**
+         * 本地对等体对象
+         */
+        localPeer: void 0,
+        /**
+         * 正在通话的数据连接对象
+         */
+        dataConnection: void 0,
+        /**
+         * 正在通话的媒体连接对象
+         */
+        mediaConnection: void 0,
+        /**
+         * 是否激活通知
+         */
+        activateNotification: false,
+        /**
+         * 视频通话指令枚举值
+         */
+        instruction: {
+          /**
+           * 请求视频通话
+           */
+          request: 1,
+          /**
+           * 拒绝视频通话
+           */
+          reject: 2,
+          /**
+           * 接受视频通话
+           */
+          accept: 3,
+          /**
+           * 取消视频通话
+           */
+          cancel: 4,
+          /**
+           * 正常挂断
+           */
+          ringOff: 5,
+          /**
+           * 忙碌挂断
+           */
+          busy: 6
+        }
+      };
+    }
+  });
+  const useFriendStore = defineStore("friendStore", {
+    state() {
+      return {
+        onlineList: []
+      };
+    }
+  });
+  const _sfc_main$9 = {
     name: "Chat",
     components: {
       ChatHeader,
@@ -23218,11 +23298,15 @@ ${i3}
         currentFrom: 0,
         currentTo: 10,
         hasMoreMessages: true,
-        isLoading: false
+        isLoading: false,
+        peerStore: null,
+        friendStore: null
       };
     },
     onLoad() {
       const eventChannel = this.getOpenerEventChannel();
+      this.peerStore = usePeerStore();
+      this.friendStore = useFriendStore();
       eventChannel.on("chatInfo", (data) => {
         this.chatInfo = data.chatInfo;
         this.initializeChat();
@@ -23230,7 +23314,7 @@ ${i3}
     },
     mounted() {
       this.getScrollViewInfo();
-      formatAppLog("log", "at pages/message/chat.vue:100", "聊天组件已挂载");
+      formatAppLog("log", "at pages/message/chat.vue:117", "聊天组件已挂载");
     },
     methods: {
       async initializeChat() {
@@ -23242,9 +23326,9 @@ ${i3}
         query.select(".scroll-view").boundingClientRect((data) => {
           if (data) {
             this.scrollViewHeight = data.height;
-            formatAppLog("log", "at pages/message/chat.vue:112", "滚动视图高度:", this.scrollViewHeight);
+            formatAppLog("log", "at pages/message/chat.vue:129", "滚动视图高度:", this.scrollViewHeight);
           } else {
-            formatAppLog("log", "at pages/message/chat.vue:114", "获取滚动视图高度失败");
+            formatAppLog("log", "at pages/message/chat.vue:131", "获取滚动视图高度失败");
           }
         }).exec();
       },
@@ -23254,7 +23338,7 @@ ${i3}
             uni.$emit("updateTabBarActiveTab", 1);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/chat.vue:124", "返回失败:", err);
+            formatAppLog("error", "at pages/message/chat.vue:141", "返回失败:", err);
             uni.reLaunch({
               url: "/pages/tabBar/tabBar",
               success: () => {
@@ -23265,7 +23349,7 @@ ${i3}
         });
       },
       sendMessage(message) {
-        formatAppLog("log", "at pages/message/chat.vue:135", "[sendMessage] 发送消息:", message);
+        formatAppLog("log", "at pages/message/chat.vue:152", "[sendMessage] 发送消息:", message);
         if (message.content) {
           const newMessage = {
             id: Date.now().toString(),
@@ -23279,7 +23363,7 @@ ${i3}
         }
       },
       handleMessageSent(sentMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:149", "[handleMessageSent] 消息已发送:", sentMessage);
+        formatAppLog("log", "at pages/message/chat.vue:166", "[handleMessageSent] 消息已发送:", sentMessage);
         const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
         if (tempMessage) {
           tempMessage.id = sentMessage.id;
@@ -23287,7 +23371,7 @@ ${i3}
         }
       },
       handleMessageFailed(failedMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:157", "[handleMessageFailed] 消息发送失败:", failedMessage);
+        formatAppLog("log", "at pages/message/chat.vue:174", "[handleMessageFailed] 消息发送失败:", failedMessage);
         const tempMessage = this.list.find((m2) => m2.content === failedMessage);
         if (tempMessage) {
           tempMessage.status = "failed";
@@ -23351,11 +23435,11 @@ ${i3}
       },
       toggleAttachMenu(show) {
         this.showAttachMenu = show;
-        formatAppLog("log", "at pages/message/chat.vue:221", "附件菜单切换:", show);
+        formatAppLog("log", "at pages/message/chat.vue:238", "附件菜单切换:", show);
       },
       handleOverlayClick() {
         this.showAttachMenu = false;
-        formatAppLog("log", "at pages/message/chat.vue:225", "附件菜单已关闭");
+        formatAppLog("log", "at pages/message/chat.vue:242", "附件菜单已关闭");
       },
       scrollToBottom() {
         this.$nextTick(() => {
@@ -23365,7 +23449,7 @@ ${i3}
           this.showNewMessageTip = false;
           this.hasNewMessages = false;
           this.isScrolledToBottom = true;
-          formatAppLog("log", "at pages/message/chat.vue:235", "滚动到底部");
+          formatAppLog("log", "at pages/message/chat.vue:252", "滚动到底部");
         });
       },
       onScroll(event2) {
@@ -23398,17 +23482,48 @@ ${i3}
         } else {
           this.scrollToBottom();
         }
-        formatAppLog("log", "at pages/message/chat.vue:269", "新消息已添加:", message);
+        formatAppLog("log", "at pages/message/chat.vue:286", "新消息已添加:", message);
+      },
+      openVideoPage(action) {
+        uni.navigateTo({
+          url: `/pages/message/video-call?calleePeerId=${this.callerPeerId}`
+        });
+      },
+      rejectVideoCall() {
+        peerStore.dataConnection.send({
+          instruction: peerStore.instruction.reject
+        });
+        peerStore.dataConnection = void 0;
+        peerStore.activateNotification = false;
+      },
+      acceptVideoCall() {
+        peerStore.activateNotification = false;
+        uni.showLoading({
+          title: "waiting for the other party to connect...",
+          mask: true
+        });
+        let cancel = watch(() => peerStore.mediaConnection, (newValue) => {
+          if (newValue) {
+            uni.hideLoading();
+            cancel();
+            uni.navigateTo({
+              url: "/pages/message/video-answer"
+            });
+          }
+        }, { immediate: true });
+        peerStore.dataConnection.send({
+          instruction: peerStore.instruction.accept
+        });
       },
       async loadHistoryMessages(isLoadingMore = false) {
-        formatAppLog("log", "at pages/message/chat.vue:272", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, from: this.currentFrom, to: this.currentTo });
+        formatAppLog("log", "at pages/message/chat.vue:346", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, from: this.currentFrom, to: this.currentTo });
         try {
           const response = await getHistoryChatMessages({
             opponentId: this.chatInfo.id,
             from: this.currentFrom,
             to: this.currentTo
           });
-          formatAppLog("log", "at pages/message/chat.vue:281", "[loadHistoryMessages] 历史消息响应:", response);
+          formatAppLog("log", "at pages/message/chat.vue:355", "[loadHistoryMessages] 历史消息响应:", response);
           if (response.code === 200 && Array.isArray(response.data)) {
             const newMessages = response.data.reverse().map((msg) => ({
               id: msg.id,
@@ -23425,23 +23540,23 @@ ${i3}
               this.list = newMessages;
             }
             this.hasMoreMessages = newMessages.length === this.currentTo - this.currentFrom + 1;
-            formatAppLog("log", "at pages/message/chat.vue:302", "[loadHistoryMessages] 更新后的消息列表:", this.list);
-            formatAppLog("log", "at pages/message/chat.vue:303", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
+            formatAppLog("log", "at pages/message/chat.vue:376", "[loadHistoryMessages] 更新后的消息列表:", this.list);
+            formatAppLog("log", "at pages/message/chat.vue:377", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
             this.$nextTick(() => {
               if (!isLoadingMore) {
-                formatAppLog("log", "at pages/message/chat.vue:307", "[loadHistoryMessages] 加载初始消息后滚动到底部");
+                formatAppLog("log", "at pages/message/chat.vue:381", "[loadHistoryMessages] 加载初始消息后滚动到底部");
                 this.scrollToBottom();
               }
             });
           } else {
-            formatAppLog("error", "at pages/message/chat.vue:312", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+            formatAppLog("error", "at pages/message/chat.vue:386", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
             uni.showToast({
               title: "加载历史消息失败",
               icon: "none"
             });
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:319", "[loadHistoryMessages] 加载历史消息出错:", error);
+          formatAppLog("error", "at pages/message/chat.vue:393", "[loadHistoryMessages] 加载历史消息出错:", error);
           uni.showToast({
             title: "网络错误，请稍后重试",
             icon: "none"
@@ -23450,7 +23565,8 @@ ${i3}
       }
     }
   };
-  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+    var _a;
     const _component_ChatHeader = vue.resolveComponent("ChatHeader");
     const _component_MessageList = vue.resolveComponent("MessageList");
     const _component_ChatInputArea = vue.resolveComponent("ChatInputArea");
@@ -23474,11 +23590,12 @@ ${i3}
         onMessageSent: $options.handleMessageSent,
         onMessageFailed: $options.handleMessageFailed,
         onAttach: $options.handleAttachment,
+        onVideoCall: $options.openVideoPage,
         onToggleAttachMenu: $options.toggleAttachMenu,
         "show-attach-menu": $data.showAttachMenu,
         recipientId: $data.chatInfo.id,
         ref: "chatInputAreaRef"
-      }, null, 8, ["onSendMessage", "onMessageSent", "onMessageFailed", "onAttach", "onToggleAttachMenu", "show-attach-menu", "recipientId"]),
+      }, null, 8, ["onSendMessage", "onMessageSent", "onMessageFailed", "onAttach", "onVideoCall", "onToggleAttachMenu", "show-attach-menu", "recipientId"]),
       $data.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
         key: 0,
         imageSrc: $data.currentBurnAfterReadingImage,
@@ -23495,15 +23612,40 @@ ${i3}
         class: "new-message-tip",
         onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.scrollToBottom && $options.scrollToBottom(...args), ["stop"]))
       }, " 新消息 ")) : vue.createCommentVNode("v-if", true),
-      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
+      vue.createCommentVNode(" 来电提醒 "),
+      $data.peerStore.activateNotification ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 2,
+        class: "modal"
+      }, [
+        vue.createElementVNode("view", null, [
+          vue.createElementVNode(
+            "text",
+            null,
+            vue.toDisplayString((_a = $data.peerStore.dataConnection) == null ? void 0 : _a.peer) + " 邀请你视频通话",
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createElementVNode("view", { class: "modal-content" }, [
+          vue.createElementVNode("button", {
+            onClick: _cache[1] || (_cache[1] = (...args) => $options.acceptVideoCall && $options.acceptVideoCall(...args)),
+            type: "default"
+          }, "接听"),
+          vue.createElementVNode("button", {
+            onClick: _cache[2] || (_cache[2] = (...args) => $options.rejectVideoCall && $options.rejectVideoCall(...args)),
+            type: "warn"
+          }, "拒绝")
+        ])
+      ])) : vue.createCommentVNode("v-if", true),
+      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
+        key: 3,
         class: "overlay",
-        onClick: _cache[1] || (_cache[1] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
+        onClick: _cache[3] || (_cache[3] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesMessageChat = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-013fa921"], ["__file", "E:/代码/new/zk_uniapp/pages/message/chat.vue"]]);
-  const _sfc_main$5 = {
+  const PagesMessageChat = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-013fa921"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/chat.vue"]]);
+  const _sfc_main$8 = {
     name: "ContactDetail",
     props: {
       contact: {
@@ -23572,7 +23714,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "contact-detail" }, [
       vue.createElementVNode("view", { class: "header" }, [
         vue.createElementVNode("view", {
@@ -23696,8 +23838,8 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-8c0c75e8"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
-  const _sfc_main$4 = {
+  const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-8c0c75e8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
+  const _sfc_main$7 = {
     name: "Contacts",
     components: {
       ContactDetail
@@ -23795,7 +23937,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_contact_detail = vue.resolveComponent("contact-detail");
     return vue.openBlock(), vue.createElementBlock("view", { class: "contacts-container" }, [
       vue.createElementVNode("view", { class: "header" }, [
@@ -23930,8 +24072,8 @@ ${i3}
       }, null, 8, ["contact", "onClose"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const Contacts = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-3d3ef74b"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/contacts.vue"]]);
-  const _sfc_main$3 = {
+  const Contacts = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-3d3ef74b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/contacts/contacts.vue"]]);
+  const _sfc_main$6 = {
     name: "TabBar",
     components: {
       MainPage: PagesProfileProfile,
@@ -23986,7 +24128,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_TaskPage = vue.resolveComponent("TaskPage");
     const _component_messages = vue.resolveComponent("messages");
     const _component_main_page = vue.resolveComponent("main-page");
@@ -24049,8 +24191,8 @@ ${i3}
       )
     ]);
   }
-  const PagesTabBarTabBar = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/tabBar.vue"]]);
-  const _sfc_main$2 = {
+  const PagesTabBarTabBar = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/tabBar.vue"]]);
+  const _sfc_main$5 = {
     data() {
       return {
         show: false,
@@ -24064,7 +24206,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_nk_select_file = vue.resolveComponent("nk-select-file");
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createElementVNode("button", {
@@ -24115,7 +24257,338 @@ ${i3}
       }, null, 8, ["modelValue", "onConfirm"])
     ]);
   }
-  const PagesTaskTaskDetailDocumentUploadfileUploadfile = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/document/uploadfile/uploadfile.vue"]]);
+  const PagesTaskTaskDetailDocumentUploadfileUploadfile = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/document/uploadfile/uploadfile.vue"]]);
+  const poster = "/static/icon/poster.gif";
+  const _sfc_main$4 = {
+    __name: "video-call",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      let mainVideo = vue.ref();
+      let secondaryVideo = vue.ref();
+      let localUserMedia = vue.ref();
+      let peerStore2 = usePeerStore();
+      let isConnected = vue.ref(false);
+      let videoFacingMode = vue.ref("user");
+      vue.onMounted((options) => {
+        getLocalUserMedia({ audio: true, video: true }).then(
+          (userMedia) => {
+            mainVideo.value.srcObject = userMedia;
+            mainVideo.value.muted = true;
+            localUserMedia.value = userMedia;
+            peerStore2.dataConnection = peerStore2.localPeer.connect(options.calleePeerId);
+            peerStore2.dataConnection.on("data", (data) => {
+              var _a, _b, _c;
+              if (data.instruction === peerStore2.instruction.accept) {
+                peerStore2.mediaConnection = peerStore2.localPeer.call(options.calleePeerId, localUserMedia.value);
+                peerStore2.mediaConnection.on("stream", (userMedia2) => {
+                  mainVideo.value.srcObject = userMedia2;
+                  mainVideo.value.muted = false;
+                  secondaryVideo.value.srcObject = localUserMedia.value;
+                  secondaryVideo.value.muted = true;
+                  isConnected.value = true;
+                  uni.showToast({
+                    title: "connected"
+                  });
+                });
+              } else if (data.instruction === peerStore2.instruction.busy) {
+                peerStore2.dataConnection.close();
+                peerStore2.dataConnection = void 0;
+                for (let track of (_a = localUserMedia.value) == null ? void 0 : _a.getTracks()) {
+                  track.stop();
+                }
+                uni.showToast({
+                  title: "the other party is busy on the line",
+                  icon: "none"
+                });
+                uni.navigateBack();
+              } else if (data.instruction === peerStore2.instruction.reject) {
+                peerStore2.dataConnection.close();
+                peerStore2.dataConnection = void 0;
+                for (let track of (_b = localUserMedia.value) == null ? void 0 : _b.getTracks()) {
+                  track.stop();
+                }
+                uni.showToast({
+                  title: "the other party refused",
+                  icon: "none"
+                });
+                uni.navigateBack();
+              } else if (data.instruction === peerStore2.instruction.ringOff) {
+                peerStore2.dataConnection.close();
+                peerStore2.dataConnection = void 0;
+                peerStore2.mediaConnection.close();
+                peerStore2.mediaConnection = void 0;
+                for (let track of (_c = localUserMedia.value) == null ? void 0 : _c.getTracks()) {
+                  track.stop();
+                }
+                uni.showToast({
+                  title: "the other party has hung up",
+                  icon: "none"
+                });
+                uni.navigateBack();
+              }
+            });
+            peerStore2.dataConnection.on("open", () => {
+              peerStore2.dataConnection.send({
+                instruction: peerStore2.instruction.request
+              });
+            });
+          }
+        ).catch(() => {
+          uni.showToast({
+            title: "获取摄像头失败！",
+            icon: "none"
+          });
+          uni.navigateBack();
+        });
+      });
+      function getLocalUserMedia(constrains) {
+        if (navigator.mediaDevices.getUserMedia) {
+          return navigator.mediaDevices.getUserMedia(constrains);
+        } else if (navigator.webkitGetUserMedia) {
+          return navigator.webkitGetUserMedia(constrains);
+        } else if (navigator.mozGetUserMedia) {
+          return navigator.mozGetUserMedia(constrains);
+        } else if (navigator.getUserMedia) {
+          return navigator.getUserMedia(constrains);
+        }
+        throw new Error("unable to get user media");
+      }
+      function cancelVideoCall() {
+        var _a, _b;
+        for (let track of (_a = localUserMedia.value) == null ? void 0 : _a.getTracks()) {
+          track.stop();
+        }
+        (_b = peerStore2.dataConnection) == null ? void 0 : _b.send({
+          instruction: peerStore2.instruction.cancel
+        });
+        peerStore2.dataConnection = void 0;
+        uni.navigateBack();
+      }
+      function ringOffVideoCall() {
+        var _a;
+        for (let track of (_a = localUserMedia.value) == null ? void 0 : _a.getTracks()) {
+          track.stop();
+        }
+        peerStore2.dataConnection.send({
+          instruction: peerStore2.instruction.ringOff
+        });
+        peerStore2.dataConnection = void 0;
+        peerStore2.mediaConnection = void 0;
+        uni.navigateBack();
+      }
+      const __returned__ = { get mainVideo() {
+        return mainVideo;
+      }, set mainVideo(v2) {
+        mainVideo = v2;
+      }, get secondaryVideo() {
+        return secondaryVideo;
+      }, set secondaryVideo(v2) {
+        secondaryVideo = v2;
+      }, get localUserMedia() {
+        return localUserMedia;
+      }, set localUserMedia(v2) {
+        localUserMedia = v2;
+      }, get peerStore() {
+        return peerStore2;
+      }, set peerStore(v2) {
+        peerStore2 = v2;
+      }, get isConnected() {
+        return isConnected;
+      }, set isConnected(v2) {
+        isConnected = v2;
+      }, get videoFacingMode() {
+        return videoFacingMode;
+      }, set videoFacingMode(v2) {
+        videoFacingMode = v2;
+      }, getLocalUserMedia, cancelVideoCall, ringOffVideoCall, get poster() {
+        return poster;
+      }, get usePeerStore() {
+        return usePeerStore;
+      }, onMounted: vue.onMounted, ref: vue.ref };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", null, [
+      vue.createCommentVNode(" 视频画面 "),
+      vue.createElementVNode("video", {
+        class: "main-video",
+        ref: "mainVideo",
+        poster: $setup.poster,
+        autoplay: ""
+      }, null, 8, ["poster"]),
+      vue.createElementVNode("video", {
+        class: "secondary-video",
+        ref: "secondaryVideo",
+        poster: $setup.poster,
+        autoplay: ""
+      }, null, 8, ["poster"]),
+      vue.createElementVNode("section", { class: "buttom-bar" }, [
+        _ctx.isConnectioned ? (vue.openBlock(), vue.createElementBlock("button", {
+          key: 0,
+          type: "warn",
+          onClick: $setup.ringOffVideoCall
+        })) : (vue.openBlock(), vue.createElementBlock("button", {
+          key: 1,
+          type: "warn",
+          onClick: $setup.cancelVideoCall
+        }))
+      ])
+    ]);
+  }
+  const PagesMessageVideoCall = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-call.vue"]]);
+  const _sfc_main$3 = {
+    data() {
+      return {};
+    },
+    methods: {}
+  };
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view");
+  }
+  const PagesMessageChatComponentCallReminder = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/CallReminder.vue"]]);
+  const _sfc_main$2 = {
+    __name: "video-answer",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      let mainVideo = vue.ref();
+      let secondaryVideo = vue.ref();
+      let localUserMedia = vue.ref();
+      let peerStore2 = usePeerStore();
+      let router = useRouter();
+      let isConnected = vue.ref(false);
+      vue.onMounted(() => {
+        getLocalUserMedia({ audio: true, video: true }).then((userMedia) => {
+          mainVideo.value.srcObject = userMedia;
+          localUserMedia.value = userMedia;
+          peerStore2.mediaConnection.answer(localUserMedia.value);
+          peerStore2.mediaConnection.on("stream", (remoteUserMedia) => {
+            mainVideo.value.srcObject = remoteUserMedia;
+            secondaryVideo.value.srcObject = localUserMedia.value;
+            isConnected.value = true;
+            uni.showToast({
+              title: "connected"
+            });
+          });
+        }).catch(() => {
+          uni.showToast({
+            title: "failed to obtain local video media",
+            icon: "none"
+          });
+          uni.navigateBack();
+        });
+      });
+      let cancel = vue.watch(() => [peerStore2.dataConnection, peerStore2.mediaConnection], ([dataConnection, mediaConnection]) => {
+        if (dataConnection === void 0 && mediaConnection === void 0) {
+          cancel();
+          if (localUserMedia.value) {
+            for (let track of localUserMedia.value.getTracks()) {
+              track.stop();
+            }
+          }
+          uni.showToast({
+            title: "the other party has hung up"
+          });
+          uni.navigateBack();
+        }
+      }, { immediate: true });
+      function getLocalUserMedia(constrains) {
+        if (navigator.mediaDevices.getUserMedia) {
+          return navigator.mediaDevices.getUserMedia(constrains);
+        } else if (navigator.webkitGetUserMedia) {
+          return navigator.webkitGetUserMedia(constrains);
+        } else if (navigator.mozGetUserMedia) {
+          return navigator.mozGetUserMedia(constrains);
+        } else if (navigator.getUserMedia) {
+          return navigator.getUserMedia(constrains);
+        }
+        throw new Error("unable to get user media");
+      }
+      function ringOffVideoCall() {
+        var _a;
+        cancel();
+        for (let track of (_a = localUserMedia.value) == null ? void 0 : _a.getTracks()) {
+          track.stop();
+        }
+        peerStore2.dataConnection.send({
+          instruction: peerStore2.instruction.ringOff
+        });
+        peerStore2.dataConnection = void 0;
+        peerStore2.mediaConnection = void 0;
+        uni.navigateBack();
+      }
+      const __returned__ = { get mainVideo() {
+        return mainVideo;
+      }, set mainVideo(v2) {
+        mainVideo = v2;
+      }, get secondaryVideo() {
+        return secondaryVideo;
+      }, set secondaryVideo(v2) {
+        secondaryVideo = v2;
+      }, get localUserMedia() {
+        return localUserMedia;
+      }, set localUserMedia(v2) {
+        localUserMedia = v2;
+      }, get peerStore() {
+        return peerStore2;
+      }, set peerStore(v2) {
+        peerStore2 = v2;
+      }, get router() {
+        return router;
+      }, set router(v2) {
+        router = v2;
+      }, get isConnected() {
+        return isConnected;
+      }, set isConnected(v2) {
+        isConnected = v2;
+      }, get cancel() {
+        return cancel;
+      }, set cancel(v2) {
+        cancel = v2;
+      }, getLocalUserMedia, ringOffVideoCall, get poster() {
+        return poster;
+      }, get usePeerStore() {
+        return usePeerStore;
+      }, onMounted: vue.onMounted, ref: vue.ref, watch: vue.watch };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_van_button = vue.resolveComponent("van-button");
+    return vue.openBlock(), vue.createElementBlock("view", null, [
+      vue.createElementVNode("section", { class: "container" }, [
+        vue.createElementVNode("video", {
+          class: "main-video",
+          ref: "mainVideo",
+          poster: $setup.poster,
+          autoplay: ""
+        }, null, 8, ["poster"]),
+        vue.createElementVNode("video", {
+          class: "secondary-video",
+          ref: "secondaryVideo",
+          poster: $setup.poster,
+          autoplay: ""
+        }, null, 8, ["poster"]),
+        vue.createElementVNode("section", { class: "bottom-bar" }, [
+          $setup.isConnected ? (vue.openBlock(), vue.createBlock(_component_van_button, {
+            key: 0,
+            type: "danger",
+            block: "",
+            onClick: $setup.ringOffVideoCall
+          }, {
+            default: vue.withCtx(() => [
+              vue.createTextVNode(" 挂断视频通话 ")
+            ]),
+            _: 1
+            /* STABLE */
+          })) : vue.createCommentVNode("v-if", true)
+        ])
+      ])
+    ]);
+  }
+  const PagesMessageVideoAnswer = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-answer.vue"]]);
   const _imports_0 = "/static/icon/X.png";
   const _sfc_main$1 = {
     data() {
@@ -24137,7 +24610,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "E:/代码/new/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
+  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
   __definePage("pages/login/login", PagesLoginLogin);
   __definePage("pages/register/register", PagesRegisterRegister);
   __definePage("pages/forgetPassword/forgetPassword", PagesForgetPasswordForgetPassword);
@@ -24152,6 +24625,9 @@ ${i3}
   __definePage("pages/message/chat", PagesMessageChat);
   __definePage("pages/tabBar/tabBar", PagesTabBarTabBar);
   __definePage("pages/task/task_detail/document/uploadfile/uploadfile", PagesTaskTaskDetailDocumentUploadfileUploadfile);
+  __definePage("pages/message/video-call", PagesMessageVideoCall);
+  __definePage("pages/message/ChatComponent/CallReminder", PagesMessageChatComponentCallReminder);
+  __definePage("pages/message/video-answer", PagesMessageVideoAnswer);
   __definePage("pages/login/camouflageLogin/camouflageLogin", PagesLoginCamouflageLoginCamouflageLogin);
   const _sfc_main = {
     onLaunch: function() {
@@ -24165,7 +24641,7 @@ ${i3}
       formatAppLog("log", "at App.vue:12", "App Hide");
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "E:/代码/new/zk_uniapp/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     const pinia = createPinia();
