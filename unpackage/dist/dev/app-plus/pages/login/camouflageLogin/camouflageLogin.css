@@ -1,0 +1,28 @@
+/* 水平间距 */
+/* 水平间距 */
+.createAccount {
+  margin-top: 40px;
+  margin-bottom: 60px;
+  border-radius: 30px;
+}
+.camouflagePage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.camouflagePage .statusBar {
+  height: var(--status-bar-height);
+  width: 100%;
+}
+.camouflageLayout {
+  text-align: center;
+  padding-left: 11%;
+  padding-right: 11%;
+  flex: 1;
+}
+.camouflageFooter {
+  /* 固定在底部 */
+  padding: 0 12% 25px 12%;
+  display: flex;
+  justify-content: space-between;
+}

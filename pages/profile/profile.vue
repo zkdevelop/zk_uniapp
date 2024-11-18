@@ -232,7 +232,7 @@ const performLogout = async () => {
     uni.removeStorageSync('userInfo')
     userStore.clearUserData()
     uni.redirectTo({
-      url: '/pages/login/login'
+      url: '/pages/login/camouflageLogin/camouflageLogin'
     })
     uni.hideLoading()
   }
