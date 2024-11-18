@@ -1,7 +1,8 @@
 <template>
 	<!-- 地图容器 -->
 	<div id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
-		:change:replay='m.getReplay' :position="position" :change:position='m.getPosition' />
+		:change:replay='m.getReplay' :position="position" :change:position='m.getPosition' :geoJson="geoJson"
+		:change:geoJson='m.setGeoJson' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
 		<!-- 按钮组 -->
@@ -274,6 +275,7 @@
 	let map = null;
 	let baseTileLayer = null;
 	let markers = [];
+	let featureGroup = L.featureGroup();
 	L.CRS.Baidu = new L.Proj.CRS('EPSG:900913',
 		'+proj=merc +a=6378206 +b=6356584.314245179 +lat_ts=0.0 +lon_0=0.0 +x_0=0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs', {
 			resolutions: function() {
@@ -296,6 +298,7 @@
 					latitude: 24.182220,
 				},
 				mapType: 'gaode',
+				geoJson: null
 			}
 		},
 		created() {
@@ -304,8 +307,14 @@
 		mounted() {
 			// 设置当前地图中心点
 			this.$ownerInstance.callMethod('setPoint');
-			this.initMap();
-			this.getLine();
+			// 设置geoJson数据
+			this.$ownerInstance.callMethod('setGeoJson');
+			this.$nextTick(() => {
+				this.initMap();
+				this.getLine();
+				// 加载geoJson数据
+				this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
+			});
 		},
 		methods: {
 			/** position变更时调用方法
@@ -317,7 +326,8 @@
 					map.setView(L.latLng(this.position.latitude, this.position.longitude), 12);
 				}
 			},
-			/** mathType变更时调用方法
+			/** 
+			 * mathType变更时调用方法
 			 * @param {Object} position
 			 */
 			setMapType(value) {
@@ -326,10 +336,25 @@
 					this.initMap();
 					// 加载行动轨迹
 					this.getLine();
+					// 加载geoJson数据
+					// 加载geoJson数据
+					this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
 				} else {
 					this.mapType = value;
 					this.changeMap(this.mapType);
+					// 加载geoJson数据
+					// this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
 				}
+			},
+			/**
+			 * GeoJson变更时调用方法
+			 * @param {Object} geoJson
+			 */
+			setGeoJson(value) {
+				this.geoJson = value;
+				// console.log(value, 'geoJson');
+				// 加载geoJson数据
+				this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
 			},
 			/** 初始化地图
 			 */
@@ -377,6 +402,10 @@
 				L.control.attribution({
 					prefix: ''
 				}).addTo(map);
+				// 重新计算地图尺寸
+				setTimeout(() => {
+					map.invalidateSize();
+				}, 500);
 			},
 			/**  切换地图
 			 * @param {String} mapType 地图类型
@@ -401,6 +430,10 @@
 					}
 				)
 				baseTileLayer.addTo(map);
+				// 重新计算地图尺寸
+				setTimeout(() => {
+					map.invalidateSize();
+				}, 500);
 			},
 			/** 任务回溯状态变更时调用方法
 			 * @param {Boolean} replay
@@ -451,6 +484,27 @@
 							<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`);
 				markers.push(marker);
 			},
+			addGeoJsonLayer(geoJson, color, featureGroup) {
+				if (!geoJson) {
+					return;
+				}
+				// 清除featureGroup中所有图层
+				if (featureGroup) {
+					featureGroup.eachLayer((layer) => {
+						map.removeLayer(layer);
+					});
+					featureGroup = L.featureGroup();
+				}
+				// 加载geojson数据
+				L.geoJSON(geoJson, {
+					style: {
+						color: color
+					},
+					onEachFeature: (_feature, layer) => {
+						featureGroup.addLayer(layer);
+					}
+				}).addTo(map);
+			},
 			getLine() {
 				// 加载行动轨迹
 				let prev = null;
@@ -484,6 +538,9 @@
 	import {
 		searchUser
 	} from '@/utils/api/user.js'
+	import {
+		toRaw
+	} from 'vue'
 	export default {
 		data() {
 			return {
@@ -636,7 +693,9 @@
 					// },
 				],
 				// 行动回溯，false停止，true播放
-				replay: false
+				replay: false,
+				// geoJson数据
+				geoJson: '0'
 			}
 		},
 		onNavigationBarButtonTap() {
@@ -659,10 +718,10 @@
 
 			this.innerAudioContext.autoplay = true;
 
-			console.log("uni.getRecorderManager()", uni.getRecorderManager())
+			// console.log("uni.getRecorderManager()", uni.getRecorderManager())
 			let self = this;
 			this.recorderManager.onStop(function(res) {
-				console.log('recorder stop' + JSON.stringify(res));
+				// console.log('recorder stop' + JSON.stringify(res));
 				self.filePaths.voicePath = res.tempFilePath;
 			});
 		},
@@ -709,7 +768,7 @@
 									});
 								}
 
-								console.log(uploadFileRes.data);
+								// console.log(uploadFileRes.data);
 							}
 						});
 					},
@@ -757,8 +816,7 @@
 										duration: 2000
 									});
 								}
-
-								console.log(uploadFileRes.data);
+								// console.log(uploadFileRes.data);
 							}
 						});
 					},
@@ -858,7 +916,7 @@
 					title: '正在发送',
 					mask: true
 				})
-				console.log(this.taskItem.memberIds, 'memberIds')
+				// console.log(this.taskItem.memberIds, 'memberIds')
 				let data = {
 					isOrder: false,
 					message: this.alert_form_data.alert_content,
@@ -870,22 +928,22 @@
 					missionId: this.taskItem.id
 				}).then(res => {
 					if (res.code === 200) {
-						console.log(res, 'getMissionDetails');
-						// sendWarning(data).then(res => {
-						// 	if (res.code === 200) {
-						// 		uni.showToast({
-						// 			title: '发送成功',
-						// 			duration: 2000
-						// 		})
-						// 	} else {
-						// 		uni.showToast({
-						// 			title: '发送失败',
-						// 			icon: 'none',
-						// 			duration: 2000
-						// 		})
-						// 	}
-						// 	uni.hideLoading();
-						// })
+						// console.log(res, 'getMissionDetails');
+						sendWarning(data).then(res => {
+							if (res.code === 200) {
+								uni.showToast({
+									title: '发送成功',
+									duration: 2000
+								})
+							} else {
+								uni.showToast({
+									title: '发送失败',
+									icon: 'none',
+									duration: 2000
+								})
+							}
+							uni.hideLoading();
+						})
 					}
 				})
 				this.$refs.alert_form_popup.close()
@@ -896,6 +954,10 @@
 			setPoint() {
 				this.position.latitude = this.taskItem.latitude;
 				this.position.longitude = this.taskItem.longitude;
+			},
+			setGeoJson() {
+				this.geoJson = this.taskItem.geoJson;
+				console.log(this.geoJson, 'owner-setGeoJson')
 			},
 			// 删除任务
 			deleteMisson() {

@@ -110,9 +110,10 @@
 						description: e.missionDescription,
 						key: e.missionPassword,
 						latitude: e.latitude,
-						longitude: e.longitude
+						longitude: e.longitude,
+						geoJson: e.geoJson
 					}));
-					// console.log(res);
+					// console.log(this.taskItem,'taskItem');
 					uni.hideLoading()
 				});
 				// 		this.taskItem = [
