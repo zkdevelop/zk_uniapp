@@ -25,13 +25,16 @@
       @close="closeAttachMenu"
     >
       <template v-slot:album>
-        <!-- 相册功能的自定义内容 -->
+        <view @click="chooseAndSendPhoto">从相册选择</view>
       </template>
       <template v-slot:camera>
-        <!-- 拍摄功能的自定义内容 -->
+        <view @click="takePhoto">拍摄</view>
       </template>
       <template v-slot:video-call>
-        <!-- 视频通话功能的自定义内容 -->
+        <view @click="startVideoCall">视频通话</view>
+      </template>
+      <template v-slot:location>
+        <view @click="openLocationSharing">发送位置</view>
       </template>
     </attachment-menu>
 
@@ -72,13 +75,20 @@ export default {
     return {
       newMessage: '',
       showLocationSharing: false,
+      _selfAvatar: '/static/avatar/avatar5.jpeg',
     }
   },
   methods: {
-    async sendMessage() { 
+    async sendMessage(message) {
       console.log('sendMessage 方法被调用');
-      if (!this.newMessage.trim()) {
-        console.log('消息为空，不发送');
+      if (typeof message === 'object' && message.type === 'location') {
+        // 处理位置消息
+        this.$emit('send-message', message);
+        return;
+      }
+      
+      if (typeof this.newMessage !== 'string' || !this.newMessage.trim()) {
+        console.log('消息为空或不是字符串，不发送');
         return;
       }
 
@@ -100,25 +110,28 @@ export default {
         console.log('sendMessageToUser 响应:', response);
         if (response.code === 200) {
           console.log('消息发送成功');
-          this.$emit('message-sent', response.data);
+          this.$emit('message-sent', { ...response.data, message: this.newMessage });
         } else {
           console.error('消息发送失败:', response.msg);
-          this.$emit('message-failed', this.newMessage);
+          this.$emit('message-failed', { message: this.newMessage });
         }
       } catch (error) {
         console.error('发送消息失败:', error);
-        this.$emit('message-failed', this.newMessage);
+        this.$emit('message-failed', { message: this.newMessage });
       }
       
       this.newMessage = ''; 
     },
-    toggleAttachMenu() { 
+    toggleAttachMenu() {
+      console.log('切换附件菜单');
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
     },
-    closeAttachMenu() { 
+    closeAttachMenu() {
+      console.log('关闭附件菜单');
       this.$emit('toggle-attach-menu', false);
     },
-    attachItem(action) { 
+    attachItem(action) {
+      console.log('附件项被选择:', action);
       if (action === 'file') {
         this.$refs.fileTransfer.chooseFile();
       } else if (action === 'burn-after-reading') {
@@ -127,10 +140,11 @@ export default {
         this.takePhoto();
       } else if (action === 'album') {
         this.chooseAndSendPhoto();
-      } else if (action === 'location') { 
-        this.showLocationSharing = true;
-        this.closeAttachMenu();
-      } else {
+      } else if (action === 'location') {
+        this.openLocationSharing();
+      } else if (action === 'video-call') {
+		this.$emit('video-call', action);
+	  }	else {
         this.$emit('attach', action);
       }
       if (action !== 'location') {
@@ -138,9 +152,11 @@ export default {
       }
     },
     handleFileSelected(fileData) {
+      console.log('文件被选择:', fileData);
       this.$emit('attach', 'file', fileData);
     },
     chooseBurnAfterReadingImage() {
+      console.log('选择阅后即焚图片');
       uni.chooseImage({
         count: 1,
         success: (res) => {
@@ -183,6 +199,7 @@ export default {
       });
     },
     async takePhoto() {
+      console.log('拍摄照片');
       uni.chooseImage({
         count: 1,
         sourceType: ['camera'],
@@ -195,6 +212,7 @@ export default {
               messageType: 'IMAGE'
             });
             if (response.code === 200) {
+              console.log('图片消息发送成功');
               this.$emit('send-message', {
                 type: 'image',
                 content: tempFilePath
@@ -224,6 +242,7 @@ export default {
       });
     },
     chooseAndSendPhoto() {
+      console.log('从相册选择照片');
       uni.chooseImage({
         count: 1,
         sourceType: ['album'],
@@ -236,6 +255,7 @@ export default {
               messageType: 'IMAGE'
             });
             if (response.code === 200) {
+              console.log('图片消息发送成功');
               this.$emit('send-message', {
                 type: 'image',
                 content: tempFilePath
@@ -264,37 +284,54 @@ export default {
         }
       });
     },
-    handleLocationSelected(location) { 
-      this.sendLocationMessage(location);
-      this.closeLocationSharing();
+    openLocationSharing() {
+      console.log('打开位置分享');
+      this.showLocationSharing = true;
+      this.closeAttachMenu();
     },
-    async sendLocationMessage(location) { 
+    closeLocationSharing() {
+      console.log('关闭位置分享');
+      this.showLocationSharing = false;
+    },
+    async handleLocationSelected(location) {
+      console.log('位置被选择:', JSON.stringify(location));
       try {
-        const response = await sendMessageToUser({
-          recipientId: this.recipientId,
-          content: JSON.stringify(location),
-          messageType: 'LOCATION'
-        });
-        if (response.code === 200) { 
+        // 模拟成功的API响应
+        const response = {
+          code: 200,
+          msg: '位置消息发送成功',
+          data: {
+            id: Date.now().toString(),
+            sendTime: new Date().toISOString()
+          }
+        };
+        console.log('模拟发送位置消息响应:', response);
+        if (response.code === 200) {
+          console.log('位置消息发送成功');
           this.$emit('send-message', {
             type: 'location',
-            content: location
+            content: location,
+            userType: 'self',
+            avatar: this._selfAvatar,
+            timestamp: new Date(response.data.sendTime),
+            id: response.data.id,
+            status: 'sent'
           });
-        } else { 
-          uni.showToast({
-            title: '发送失败，请重试',
-            icon: 'none'
-          });
+        } else {
+          throw new Error(response.msg || '发送失败');
         }
-      } catch (error) { 
+      } catch (error) {
+        console.error('发送位置消息失败:', error);
         uni.showToast({
           title: '发送失败，请重试',
           icon: 'none'
         });
       }
+      this.closeLocationSharing();
     },
-    closeLocationSharing() { 
-      this.showLocationSharing = false;
+    startVideoCall() {
+      console.log('开始视频通话');
+      // 实现视频通话功能
     }
   },
 }

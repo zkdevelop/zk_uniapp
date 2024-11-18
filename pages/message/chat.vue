@@ -16,6 +16,7 @@
       @message-sent="handleMessageSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
+	  @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
@@ -38,6 +39,16 @@
     <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
       新消息
     </view>
+	<!-- 来电提醒 -->
+	<view v-if="peerStore.activateNotification" class="modal">
+		<view>
+			<text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
+		</view>
+	  <view class="modal-content">
+		<button @click="acceptVideoCall" type="default">接听</button>
+		<button @click="rejectVideoCall" type="warn">拒绝</button>
+	  </view>
+	</view>
 
     <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
   </view>
@@ -50,6 +61,8 @@ import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 import { getHistoryChatMessages } from '@/utils/api/message.js'
+import usePeerStore from '../../store/peer'
+import useFriendStore from '../../store/friend'
 
 export default {
   name: 'Chat',
@@ -82,14 +95,18 @@ export default {
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
-      currentPage: 1,
-      pageSize: 10,
+      currentFrom: 0,
+      currentTo: 10,
       hasMoreMessages: true,
       isLoading: false,
+	  peerStore: null,
+	  friendStore: null,
     };
   },
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
+	this.peerStore = usePeerStore();
+	this.friendStore = useFriendStore();
     eventChannel.on('chatInfo', (data) => {
       this.chatInfo = data.chatInfo;
       this.initializeChat();
@@ -133,14 +150,15 @@ export default {
     },
     sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.content && message.content.trim()) {
+      if (message.content) {
         const newMessage = {
           id: Date.now().toString(),
           content: message.content,
           userType: 'self',
           avatar: this._selfAvatar,
           timestamp: new Date(),
-          status: 'sending'
+          status: 'sending',
+          type: message.type || 'text'
         };
         this.addNewMessage(newMessage);
       }
@@ -161,12 +179,19 @@ export default {
       }
     },
     handleAttachment(type, data) {
-      const handlers = {
-        album: this.chooseImage,
-        file: () => this.handleFileTransfer(data),
-        'burn-after-reading': () => this.handleBurnAfterReading(data)
-      };
-      handlers[type] && handlers[type]();
+      console.log('[handleAttachment] 处理附件:', type, data);
+      if (type === 'location') {
+        this.handleLocationMessage(data);
+      } else {
+        const handlers = {
+          album: this.chooseImage,
+          file: () => this.handleFileTransfer(data),
+          'burn-after-reading': () => this.handleBurnAfterReading(data)
+        };
+        if (handlers[type]) {
+          handlers[type]();
+        }
+      }
     },
     chooseImage() {
       uni.chooseImage({
@@ -174,7 +199,7 @@ export default {
           this.addNewMessage({
             content: res.tempFilePaths[0],
             userType: 'self',
-            messageType: 'image',
+            type: 'image',
             avatar: this._selfAvatar,
             timestamp: new Date()
           });
@@ -185,7 +210,7 @@ export default {
       this.addNewMessage({
         content: fileData,
         userType: 'self',
-        messageType: 'file',
+        type: 'file',
         avatar: this._selfAvatar,
         timestamp: new Date()
       });
@@ -194,10 +219,23 @@ export default {
       this.addNewMessage({
         content: imageData,
         userType: 'self',
-        messageType: 'burn-after-reading',
+        type: 'burn-after-reading',
         avatar: this._selfAvatar,
         timestamp: new Date()
       });
+    },
+    handleLocationMessage(locationData) {
+      console.log('[handleLocationMessage] 处理位置消息:', locationData);
+      const newMessage = {
+        id: Date.now().toString(),
+        type: 'location',
+        content: locationData,
+        userType: 'self',
+        avatar: this._selfAvatar,
+        timestamp: new Date(),
+        status: 'sending'
+      };
+      this.addNewMessage(newMessage);
     },
     viewBurnAfterReadingImage(message) {
       this.currentBurnAfterReadingImage = message.content.originalPath;
@@ -247,18 +285,18 @@ export default {
         this.hasNewMessages = false;
         this.showNewMessageTip = false;
       }
-      // console.log('滚动事件:', { scrollTop, scrollHeight, isAtBottom });
     },
     async loadMoreMessages() {
-      // console.log('加载更多消息');
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
-        this.currentPage++;
+        this.currentFrom = this.currentTo + 1;
+        this.currentTo = this.currentTo + 10;
         await this.loadHistoryMessages(true);
         this.isLoading = false;
       }
     },
     addNewMessage(message) {
+      console.log('添加新消息:', message);
       this.list.push(message);
       if (!this.isScrolledToBottom) {
         this.hasNewMessages = true;
@@ -267,37 +305,94 @@ export default {
       } else {
         this.scrollToBottom();
       }
-      console.log('新消息已添加:', message);
     },
+	openVideoPage(action) {
+		// 处理音视频通话
+		// if (this.peerStore.localPeer && this.peerStore.localPeer.open) {
+		// 	if (this.peerStore.dataConnection) {
+		// 		uni.showToast({
+		// 			title: 'currently busy',
+		// 			icon: 'none'
+		// 		})
+		// 	} else {
+		// 		uni.navigateTo({
+		// 			url: `/pages/message/video-call?calleePeerId=${friendStore.onlineList[0]}`
+		// 		})
+		// 	}
+		// } else {
+		// 	uni.showToast({
+		// 		title: 'local peer not opened',
+		// 		icon: 'none'
+		// 	})
+		// }
+				uni.navigateTo({
+					url: `/pages/message/video-call?calleePeerId=${this.callerPeerId}`
+				})
+	},
+	rejectVideoCall() {
+		peerStore.dataConnection.send({
+			instruction: peerStore.instruction.reject
+		});
+		peerStore.dataConnection = undefined;
+		peerStore.activateNotification = false;
+	},
+	acceptVideoCall() {
+		peerStore.activateNotification = false;
+		
+		uni.showLoading({
+			title: "waiting for the other party to connect...",
+			mask: true
+		})
+		
+		//监听媒体连接是否存在，有可能速度比较快，所以立即执行以下
+		let cancel = watch(() => peerStore.mediaConnection, newValue => {
+		    if (newValue) {
+				//关闭加载框
+				uni.hideLoading();
+		
+				//取消监听；如果不取消会出现重复执行
+				cancel();
+		
+				uni.navigateTo({
+					url: "/pages/message/video-answer"
+				})
+		    }
+		}, {immediate: true});
+		
+		peerStore.dataConnection.send({
+		    instruction: peerStore.instruction.accept
+		});
+	},
     async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, currentPage: this.currentPage });
+      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, from: this.currentFrom, to: this.currentTo });
 
       try {
         const response = await getHistoryChatMessages({
           opponentId: this.chatInfo.id,
-          curPage: this.currentPage,
-          pageSize: this.pageSize
+          from: this.currentFrom,
+          to: this.currentTo
         });
 
         console.log('[loadHistoryMessages] 历史消息响应:', response);
 
-        if (response.code === 200) {
-          const newMessages = response.data.records.map(msg => ({
+        if (response.code === 200 && Array.isArray(response.data)) {
+          const newMessages = response.data.reverse().map(msg => ({
             id: msg.id,
             content: msg.message,
             userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+            avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
             timestamp: new Date(msg.sendTime),
-            messageType: msg.messageType,
+            type: msg.messageType,
             isRead: msg.isRead
           }));
 
           if (isLoadingMore) {
-            this.list = [...newMessages.reverse(), ...this.list];
+            this.list = [...newMessages, ...this.list];
           } else {
-            this.list = [...this.list, ...newMessages];
+            this.list = newMessages;
           }
           
-          this.hasMoreMessages = response.data.records.length === this.pageSize;
+          this.hasMoreMessages = newMessages.length === (this.currentTo - this.currentFrom + 1);
 
           console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
           console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
@@ -342,7 +437,7 @@ export default {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px  10px;
+  padding: 5px 10px;
   border-radius: 15px;
   font-size: 14px;
   z-index: 1000;
@@ -350,7 +445,7 @@ export default {
 
 .overlay {
   position: fixed;
-  top:  0;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;

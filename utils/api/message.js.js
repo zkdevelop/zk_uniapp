@@ -1,10 +1,8 @@
-// utils/api/message.js
-
 import request from '/utils/request.js'
 
-export const getChatList = () => {
+export const getChatList = (missionId = 'dc029035aec84fb5a88dd401a0942d50') => {
   return request({
-    url: '/message/chatList',
+    url: `/message/chatList/${missionId}`,
     method: 'get'
   })
 }
@@ -20,17 +18,14 @@ export const sendMessageToUser = (data) => {
   })
 }
 
-// 新增的接口
 export const getHistoryChatMessages = (data) => {
   return request({
     url: '/message/read/single',
     method: 'post',
     data: {
-      opponentId: data.opponentId,
-      pageParam: {
-        curPage: data.curPage,
-        pageSize: data.pageSize
-      }
+      from: data.from,
+      to: data.to,
+      opponentId: data.opponentId
     }
   })
 }
