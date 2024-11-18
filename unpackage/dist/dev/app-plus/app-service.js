@@ -15233,6 +15233,10 @@ ${i3}
     ]);
   }
   const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-120ff10e"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
+  const gaodeApiKey = "fc598a079d7d9cf5f54ecec04b17e414";
+  const gaodeSecurityKey = "93849873dba769e7b6235a79330ae7f7";
+  const AMAP_KEY = gaodeApiKey;
+  const AMAP_API_URL = "https://restapi.amap.com/v3/staticmap?";
   const _sfc_main$e = {
     name: "Message",
     props: {
@@ -15255,7 +15259,47 @@ ${i3}
           urls: [url],
           current: url
         });
+      },
+      openMap(location2) {
+        if (!location2 || !location2.latitude || !location2.longitude) {
+          formatAppLog("error", "at pages/message/ChatComponent/Message.vue:79", "Invalid location data:", location2);
+          return;
+        }
+        uni.openLocation({
+          latitude: parseFloat(location2.latitude),
+          longitude: parseFloat(location2.longitude),
+          name: location2.name,
+          address: location2.address,
+          success: function() {
+            formatAppLog("log", "at pages/message/ChatComponent/Message.vue:88", "Successfully opened map");
+          },
+          fail: function(error) {
+            formatAppLog("error", "at pages/message/ChatComponent/Message.vue:91", "Failed to open map:", error);
+          }
+        });
+      },
+      getStaticMapUrl(location2) {
+        return `${AMAP_API_URL}location=${location2.longitude},${location2.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${location2.longitude},${location2.latitude}&key=${AMAP_KEY}`;
+      },
+      logMessageDetails() {
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:99", "Message details:", {
+          type: this.message.type || "undefined",
+          content: typeof this.message.content === "object" ? JSON.stringify(this.message.content) : this.message.content,
+          userType: this.message.userType
+        });
+        if (this.message.type === "location" && this.message.content) {
+          formatAppLog("log", "at pages/message/ChatComponent/Message.vue:105", "Location details:", {
+            name: this.message.content.name,
+            address: this.message.content.address,
+            latitude: this.message.content.latitude,
+            longitude: this.message.content.longitude
+          });
+          formatAppLog("log", "at pages/message/ChatComponent/Message.vue:111", "Static map URL:", `${AMAP_API_URL}location=${this.message.content.longitude},${this.message.content.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${this.message.content.longitude},${this.message.content.latitude}&key=${AMAP_KEY}`);
+        }
       }
+    },
+    mounted() {
+      this.logMessageDetails();
     }
   };
   function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
@@ -15268,7 +15312,7 @@ ${i3}
         vue.createElementVNode(
           "view",
           { class: "message-time" },
-          vue.toDisplayString($options.formatTime($props.message.timestamp)),
+          vue.toDisplayString($options.formatTime($props.message.timestamp), $props.message),
           1
           /* TEXT */
         ),
@@ -15296,9 +15340,10 @@ ${i3}
               },
               [
                 vue.createCommentVNode(" Location Message Type "),
-                $props.message.type === "location" ? (vue.openBlock(), vue.createElementBlock("view", {
+                $props.message.type === "location" && $props.message.content ? (vue.openBlock(), vue.createElementBlock("view", {
                   key: 0,
-                  class: "location-bubble"
+                  class: "location-bubble",
+                  onClick: _cache[0] || (_cache[0] = ($event) => $options.openMap($props.message.content))
                 }, [
                   vue.createElementVNode(
                     "view",
@@ -15315,19 +15360,11 @@ ${i3}
                     /* TEXT */
                   ),
                   vue.createElementVNode("view", { class: "location-map" }, [
-                    vue.createElementVNode("map", {
-                      class: "map",
-                      latitude: $props.message.content.latitude,
-                      longitude: $props.message.content.longitude,
-                      markers: [{
-                        latitude: $props.message.content.latitude,
-                        longitude: $props.message.content.longitude,
-                        iconPath: "/static/icons/location-marker.png",
-                        width: 32,
-                        height: 32
-                      }],
-                      scale: 16
-                    }, null, 8, ["latitude", "longitude", "markers"])
+                    vue.createElementVNode("image", {
+                      class: "map-image",
+                      src: $options.getStaticMapUrl($props.message.content),
+                      mode: "aspectFill"
+                    }, null, 8, ["src"])
                   ])
                 ])) : $props.message.type === "image" ? (vue.openBlock(), vue.createElementBlock(
                   vue.Fragment,
@@ -15338,7 +15375,7 @@ ${i3}
                       src: $props.message.content,
                       mode: "widthFix",
                       class: "message-image",
-                      onClick: _cache[0] || (_cache[0] = ($event) => $options.previewImage($props.message.content))
+                      onClick: _cache[1] || (_cache[1] = ($event) => $options.previewImage($props.message.content))
                     }, null, 8, ["src"])
                   ],
                   64
@@ -15679,8 +15716,6 @@ ${i3}
     ]);
   }
   const FileTransfer = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-ce413881"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/FileTransfer.vue"]]);
-  const gaodeApiKey = "fc598a079d7d9cf5f54ecec04b17e414";
-  const gaodeSecurityKey = "93849873dba769e7b6235a79330ae7f7";
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -22613,8 +22648,10 @@ ${i3}
           latitude: parseFloat(this.selectedPOI.location.split(",")[1]),
           longitude: parseFloat(this.selectedPOI.location.split(",")[0]),
           name: this.selectedPOI.name,
-          address: this.selectedPOI.address
+          address: this.selectedPOI.address,
+          messageType: "location"
         };
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue:220", "LocationSharing: 发送位置数据", locationData);
         this.$emit("location-selected", locationData);
         this.$emit("close");
       },
@@ -23273,13 +23310,14 @@ ${i3}
             userType: "self",
             avatar: this._selfAvatar,
             timestamp: /* @__PURE__ */ new Date(),
-            status: "sending"
+            status: "sending",
+            type: message.type || "text"
           };
           this.addNewMessage(newMessage);
         }
       },
       handleMessageSent(sentMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:149", "[handleMessageSent] 消息已发送:", sentMessage);
+        formatAppLog("log", "at pages/message/chat.vue:150", "[handleMessageSent] 消息已发送:", sentMessage);
         const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
         if (tempMessage) {
           tempMessage.id = sentMessage.id;
@@ -23287,19 +23325,26 @@ ${i3}
         }
       },
       handleMessageFailed(failedMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:157", "[handleMessageFailed] 消息发送失败:", failedMessage);
+        formatAppLog("log", "at pages/message/chat.vue:158", "[handleMessageFailed] 消息发送失败:", failedMessage);
         const tempMessage = this.list.find((m2) => m2.content === failedMessage);
         if (tempMessage) {
           tempMessage.status = "failed";
         }
       },
       handleAttachment(type, data) {
-        const handlers = {
-          album: this.chooseImage,
-          file: () => this.handleFileTransfer(data),
-          "burn-after-reading": () => this.handleBurnAfterReading(data)
-        };
-        handlers[type] && handlers[type]();
+        formatAppLog("log", "at pages/message/chat.vue:165", "[handleAttachment] 处理附件:", type, data);
+        if (type === "location") {
+          this.handleLocationMessage(data);
+        } else {
+          const handlers = {
+            album: this.chooseImage,
+            file: () => this.handleFileTransfer(data),
+            "burn-after-reading": () => this.handleBurnAfterReading(data)
+          };
+          if (handlers[type]) {
+            handlers[type]();
+          }
+        }
       },
       chooseImage() {
         uni.chooseImage({
@@ -23307,7 +23352,7 @@ ${i3}
             this.addNewMessage({
               content: res.tempFilePaths[0],
               userType: "self",
-              messageType: "image",
+              type: "image",
               avatar: this._selfAvatar,
               timestamp: /* @__PURE__ */ new Date()
             });
@@ -23318,7 +23363,7 @@ ${i3}
         this.addNewMessage({
           content: fileData,
           userType: "self",
-          messageType: "file",
+          type: "file",
           avatar: this._selfAvatar,
           timestamp: /* @__PURE__ */ new Date()
         });
@@ -23327,10 +23372,23 @@ ${i3}
         this.addNewMessage({
           content: imageData,
           userType: "self",
-          messageType: "burn-after-reading",
+          type: "burn-after-reading",
           avatar: this._selfAvatar,
           timestamp: /* @__PURE__ */ new Date()
         });
+      },
+      handleLocationMessage(locationData) {
+        formatAppLog("log", "at pages/message/chat.vue:211", "[handleLocationMessage] 处理位置消息:", locationData);
+        const newMessage = {
+          id: Date.now().toString(),
+          type: "location",
+          content: locationData,
+          userType: "self",
+          avatar: this._selfAvatar,
+          timestamp: /* @__PURE__ */ new Date(),
+          status: "sending"
+        };
+        this.addNewMessage(newMessage);
       },
       viewBurnAfterReadingImage(message) {
         this.currentBurnAfterReadingImage = message.content.originalPath;
@@ -23351,11 +23409,11 @@ ${i3}
       },
       toggleAttachMenu(show) {
         this.showAttachMenu = show;
-        formatAppLog("log", "at pages/message/chat.vue:221", "附件菜单切换:", show);
+        formatAppLog("log", "at pages/message/chat.vue:242", "附件菜单切换:", show);
       },
       handleOverlayClick() {
         this.showAttachMenu = false;
-        formatAppLog("log", "at pages/message/chat.vue:225", "附件菜单已关闭");
+        formatAppLog("log", "at pages/message/chat.vue:246", "附件菜单已关闭");
       },
       scrollToBottom() {
         this.$nextTick(() => {
@@ -23365,7 +23423,7 @@ ${i3}
           this.showNewMessageTip = false;
           this.hasNewMessages = false;
           this.isScrolledToBottom = true;
-          formatAppLog("log", "at pages/message/chat.vue:235", "滚动到底部");
+          formatAppLog("log", "at pages/message/chat.vue:256", "滚动到底部");
         });
       },
       onScroll(event2) {
@@ -23390,6 +23448,7 @@ ${i3}
         }
       },
       addNewMessage(message) {
+        formatAppLog("log", "at pages/message/chat.vue:282", "添加新消息:", message);
         this.list.push(message);
         if (!this.isScrolledToBottom) {
           this.hasNewMessages = true;
@@ -23398,17 +23457,16 @@ ${i3}
         } else {
           this.scrollToBottom();
         }
-        formatAppLog("log", "at pages/message/chat.vue:269", "新消息已添加:", message);
       },
       async loadHistoryMessages(isLoadingMore = false) {
-        formatAppLog("log", "at pages/message/chat.vue:272", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, from: this.currentFrom, to: this.currentTo });
+        formatAppLog("log", "at pages/message/chat.vue:293", "[loadHistoryMessages] 加载历史消息", { isLoadingMore, from: this.currentFrom, to: this.currentTo });
         try {
           const response = await getHistoryChatMessages({
             opponentId: this.chatInfo.id,
             from: this.currentFrom,
             to: this.currentTo
           });
-          formatAppLog("log", "at pages/message/chat.vue:281", "[loadHistoryMessages] 历史消息响应:", response);
+          formatAppLog("log", "at pages/message/chat.vue:302", "[loadHistoryMessages] 历史消息响应:", response);
           if (response.code === 200 && Array.isArray(response.data)) {
             const newMessages = response.data.reverse().map((msg) => ({
               id: msg.id,
@@ -23416,7 +23474,7 @@ ${i3}
               userType: msg.senderId === this.chatInfo.id ? "other" : "self",
               avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
               timestamp: new Date(msg.sendTime),
-              messageType: msg.messageType,
+              type: msg.messageType,
               isRead: msg.isRead
             }));
             if (isLoadingMore) {
@@ -23425,23 +23483,23 @@ ${i3}
               this.list = newMessages;
             }
             this.hasMoreMessages = newMessages.length === this.currentTo - this.currentFrom + 1;
-            formatAppLog("log", "at pages/message/chat.vue:302", "[loadHistoryMessages] 更新后的消息列表:", this.list);
-            formatAppLog("log", "at pages/message/chat.vue:303", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
+            formatAppLog("log", "at pages/message/chat.vue:323", "[loadHistoryMessages] 更新后的消息列表:", this.list);
+            formatAppLog("log", "at pages/message/chat.vue:324", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
             this.$nextTick(() => {
               if (!isLoadingMore) {
-                formatAppLog("log", "at pages/message/chat.vue:307", "[loadHistoryMessages] 加载初始消息后滚动到底部");
+                formatAppLog("log", "at pages/message/chat.vue:328", "[loadHistoryMessages] 加载初始消息后滚动到底部");
                 this.scrollToBottom();
               }
             });
           } else {
-            formatAppLog("error", "at pages/message/chat.vue:312", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+            formatAppLog("error", "at pages/message/chat.vue:333", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
             uni.showToast({
               title: "加载历史消息失败",
               icon: "none"
             });
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:319", "[loadHistoryMessages] 加载历史消息出错:", error);
+          formatAppLog("error", "at pages/message/chat.vue:340", "[loadHistoryMessages] 加载历史消息出错:", error);
           uni.showToast({
             title: "网络错误，请稍后重试",
             icon: "none"

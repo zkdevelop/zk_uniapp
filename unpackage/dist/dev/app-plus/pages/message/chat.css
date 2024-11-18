@@ -137,6 +137,7 @@
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 0.3125rem 0;
 }
 .location-title[data-v-1cea873d] {
   font-size: 0.875rem;
@@ -152,10 +153,12 @@
 .location-map[data-v-1cea873d] {
   width: 100%;
   height: 7.5rem;
+  overflow: hidden;
 }
-.location-map .map[data-v-1cea873d] {
+.location-map .map-image[data-v-1cea873d] {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 .message-status[data-v-1cea873d] {
   margin-left: 5px;

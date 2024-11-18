@@ -133,14 +133,15 @@ export default {
     },
     sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.content  ) {
+      if (message.content) {
         const newMessage = {
           id: Date.now().toString(),
           content: message.content,
           userType: 'self',
           avatar: this._selfAvatar,
           timestamp: new Date(),
-          status: 'sending'
+          status: 'sending',
+          type: message.type || 'text'
         };
         this.addNewMessage(newMessage);
       }
@@ -161,12 +162,19 @@ export default {
       }
     },
     handleAttachment(type, data) {
-      const handlers = {
-        album: this.chooseImage,
-        file: () => this.handleFileTransfer(data),
-        'burn-after-reading': () => this.handleBurnAfterReading(data)
-      };
-      handlers[type] && handlers[type]();
+      console.log('[handleAttachment] 处理附件:', type, data);
+      if (type === 'location') {
+        this.handleLocationMessage(data);
+      } else {
+        const handlers = {
+          album: this.chooseImage,
+          file: () => this.handleFileTransfer(data),
+          'burn-after-reading': () => this.handleBurnAfterReading(data)
+        };
+        if (handlers[type]) {
+          handlers[type]();
+        }
+      }
     },
     chooseImage() {
       uni.chooseImage({
@@ -174,7 +182,7 @@ export default {
           this.addNewMessage({
             content: res.tempFilePaths[0],
             userType: 'self',
-            messageType: 'image',
+            type: 'image',
             avatar: this._selfAvatar,
             timestamp: new Date()
           });
@@ -185,7 +193,7 @@ export default {
       this.addNewMessage({
         content: fileData,
         userType: 'self',
-        messageType: 'file',
+        type: 'file',
         avatar: this._selfAvatar,
         timestamp: new Date()
       });
@@ -194,10 +202,23 @@ export default {
       this.addNewMessage({
         content: imageData,
         userType: 'self',
-        messageType: 'burn-after-reading',
+        type: 'burn-after-reading',
         avatar: this._selfAvatar,
         timestamp: new Date()
       });
+    },
+    handleLocationMessage(locationData) {
+      console.log('[handleLocationMessage] 处理位置消息:', locationData);
+      const newMessage = {
+        id: Date.now().toString(),
+        type: 'location',
+        content: locationData,
+        userType: 'self',
+        avatar: this._selfAvatar,
+        timestamp: new Date(),
+        status: 'sending'
+      };
+      this.addNewMessage(newMessage);
     },
     viewBurnAfterReadingImage(message) {
       this.currentBurnAfterReadingImage = message.content.originalPath;
@@ -258,6 +279,7 @@ export default {
       }
     },
     addNewMessage(message) {
+      console.log('添加新消息:', message);
       this.list.push(message);
       if (!this.isScrolledToBottom) {
         this.hasNewMessages = true;
@@ -266,7 +288,6 @@ export default {
       } else {
         this.scrollToBottom();
       }
-      console.log('新消息已添加:', message);
     },
     async loadHistoryMessages(isLoadingMore = false) {
       console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, from: this.currentFrom, to: this.currentTo });
@@ -287,7 +308,7 @@ export default {
             userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
             avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
             timestamp: new Date(msg.sendTime),
-            messageType: msg.messageType,
+            type: msg.messageType,
             isRead: msg.isRead
           }));
 

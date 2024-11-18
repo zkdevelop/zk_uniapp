@@ -213,9 +213,11 @@ export default {
         latitude: parseFloat(this.selectedPOI.location.split(',')[1]),
         longitude: parseFloat(this.selectedPOI.location.split(',')[0]),
         name: this.selectedPOI.name,
-        address: this.selectedPOI.address
+        address: this.selectedPOI.address,
+        messageType: 'location'
       };
 
+      console.log('LocationSharing: 发送位置数据', locationData);
       this.$emit('location-selected', locationData);
       this.$emit('close');
     },

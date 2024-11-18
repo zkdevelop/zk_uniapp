@@ -1,34 +1,28 @@
 <template>
+   
   <view class="message" :class="[message.userType]">
-    <view class="message-time">{{ formatTime(message.timestamp) }}</view>
+ 
+    <view class="message-time">{{ formatTime(message.timestamp),   message   }}</view>
     <view class="message-content">
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
         <view class="content" :class="{ 'location-content': message.type === 'location' }">
           <!-- Location Message Type -->
-          <template v-if="message.type === 'location'">
-            <view class="location-bubble">
+          <template v-if="message.type === 'location' && message.content">
+            <view class="location-bubble" @click="openMap(message.content)">
               <view class="location-title">{{ message.content.name }}</view>
               <view class="location-address">{{ message.content.address }}</view>
               <view class="location-map">
-                <map
-                  class="map"
-                  :latitude="message.content.latitude"
-                  :longitude="message.content.longitude"
-                  :markers="[{
-                    latitude: message.content.latitude,
-                    longitude: message.content.longitude,
-                    iconPath: '/static/icons/location-marker.png',
-                    width: 32,
-                    height: 32
-                  }]"
-                  :scale="16"
-                ></map>
+                <image
+                  class="map-image"
+                  :src="getStaticMapUrl(message.content)"
+                  mode="aspectFill"
+                />
               </view>
             </view>
           </template>
-          
+
           <!-- Image Message Type -->
           <template v-else-if="message.type === 'image'">
             <image 
@@ -54,6 +48,9 @@
 </template>
 
 <script>
+import { gaodeApiKey } from '@/config/keys';
+const AMAP_KEY = gaodeApiKey; // 从config中导入的key
+const AMAP_API_URL = 'https://restapi.amap.com/v3/staticmap?';
 export default {
   name: 'Message',
   props: {
@@ -76,7 +73,47 @@ export default {
         urls: [url],
         current: url
       });
+    },
+    openMap(location) {
+      if (!location || !location.latitude || !location.longitude) {
+        console.error('Invalid location data:', location);
+        return;
+      }
+      uni.openLocation({
+        latitude: parseFloat(location.latitude),
+        longitude: parseFloat(location.longitude),
+        name: location.name,
+        address: location.address,
+        success: function () {
+          console.log('Successfully opened map');
+        },
+        fail: function (error) {
+          console.error('Failed to open map:', error);
+        }
+      });
+    },
+    getStaticMapUrl(location) {
+      return `${AMAP_API_URL}location=${location.longitude},${location.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${location.longitude},${location.latitude}&key=${AMAP_KEY}`;
+    },
+    logMessageDetails() {
+      console.log('Message details:', {
+        type: this.message.type || 'undefined',
+        content: typeof this.message.content === 'object' ? JSON.stringify(this.message.content) : this.message.content,
+        userType: this.message.userType
+      });
+      if (this.message.type === 'location' && this.message.content) {
+        console.log('Location details:', {
+          name: this.message.content.name,
+          address: this.message.content.address,
+          latitude: this.message.content.latitude,
+          longitude: this.message.content.longitude
+        });
+        console.log('Static map URL:', `${AMAP_API_URL}location=${this.message.content.longitude},${this.message.content.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${this.message.content.longitude},${this.message.content.latitude}&key=${AMAP_KEY}`);
+      }
     }
+  },
+  mounted() {
+    this.logMessageDetails();
   }
 }
 </script>
@@ -158,6 +195,7 @@ export default {
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 10rpx 0;
 }
 
 .location-title {
@@ -176,10 +214,12 @@ export default {
 .location-map {
   width: 100%;
   height: 240rpx;
+  overflow: hidden;
   
-  .map {
+  .map-image {
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 }
 
