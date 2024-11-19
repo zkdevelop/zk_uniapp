@@ -14,7 +14,8 @@ export const useUserStore = defineStore('user', () => {
     avatar: null,
     avatarUrl: '',
     token: '',
-    status: ''
+    status: '',
+    missionId: ''  
   })
 
   function setUserData(data) {

@@ -131,14 +131,18 @@ export default {
       const chatInfo = {
         id: this.contact.id,
         name: this.contact.name,
-        avatar: [this.contact.avatar],
-        type: 'single'
+        avatar: this.contact.avatar ? [this.contact.avatar] : [],
+        type: 'single',
+        recipientId: this.contact.id  // 确保使用正确的 id
       };
+      
+      console.log('准备导航到聊天页面，chatInfo:', chatInfo);
       
       uni.navigateTo({
         url: '/pages/message/chat',
         success: (res) => {
           res.eventChannel.emit('chatInfo', { chatInfo: chatInfo });
+          console.log('成功导航到聊天页面并发送 chatInfo');
         },
         fail: (err) => {
           console.error('导航到聊天页面失败:', err);
@@ -197,7 +201,6 @@ export default {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  
 }
 
 .main-info {
@@ -375,7 +378,7 @@ export default {
     height: 60px;
     margin-right: 6px;
     margin-top: 16px;
-	margin-left: 10px;
+    margin-left: 10px;
   }
 
   .name {

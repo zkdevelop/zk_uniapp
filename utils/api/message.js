@@ -1,6 +1,10 @@
 import request from '/utils/request.js'
 
-export const getChatList = (missionId = 'dc029035aec84fb5a88dd401a0942d50') => {
+export const getChatList = (missionId) => {
+  if (!missionId) {
+    console.error('getChatList 需要 missionId 参数');
+    return Promise.reject(new Error('getChatList 需要 missionId 参数'));
+  }
   return request({
     url: `/message/chatList/${missionId}`,
     method: 'get'
