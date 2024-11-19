@@ -58,7 +58,7 @@
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
-import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
+import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 import { getHistoryChatMessages } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
