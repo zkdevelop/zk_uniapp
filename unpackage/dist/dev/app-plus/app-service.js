@@ -7660,7 +7660,8 @@ ${i3}
             description: e2.missionDescription,
             key: e2.missionPassword,
             latitude: e2.latitude,
-            longitude: e2.longitude
+            longitude: e2.longitude,
+            geoJson: e2.geoJson
           }));
           uni.hideLoading();
         });
@@ -7712,7 +7713,7 @@ ${i3}
       },
       showType(tbIndex) {
         this.tabbarIndex = tbIndex;
-        formatAppLog("info", "at pages/task/task.vue:178", this.tabbarIndex);
+        formatAppLog("info", "at pages/task/task.vue:179", this.tabbarIndex);
       },
       filterUpcomingTasks() {
         return this.taskItem.filter((item) => item.type === "1");
@@ -11727,6 +11728,13 @@ ${i3}
       method: "get"
     });
   };
+  const sendWarning = (data) => {
+    return request({
+      url: `/instruction/send/warning`,
+      method: "post",
+      data
+    });
+  };
   const _imports_0$7 = "/static/icon/alert.png";
   const _imports_1$2 = "/static/icon/flag.png";
   const _imports_2$1 = "/static/icon/document.png";
@@ -11896,7 +11904,9 @@ ${i3}
           // },
         ],
         // 行动回溯，false停止，true播放
-        replay: false
+        replay: false,
+        // geoJson数据
+        geoJson: "0"
       };
     },
     onNavigationBarButtonTap() {
@@ -11910,15 +11920,13 @@ ${i3}
       if (options.taskItem) {
         this.taskItem = JSON.parse(options.taskItem);
       } else {
-        formatAppLog("error", "at pages/task/task_detail/task_detail.vue:654", "没有传递类型参数");
+        formatAppLog("error", "at pages/task/task_detail/task_detail.vue:713", "没有传递类型参数");
       }
       this.recorderManager = uni.getRecorderManager();
       this.innerAudioContext = uni.createInnerAudioContext();
       this.innerAudioContext.autoplay = true;
-      formatAppLog("log", "at pages/task/task_detail/task_detail.vue:662", "uni.getRecorderManager()", uni.getRecorderManager());
       let self2 = this;
       this.recorderManager.onStop(function(res) {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:665", "recorder stop" + JSON.stringify(res));
         self2.filePaths.voicePath = res.tempFilePath;
       });
     },
@@ -11931,7 +11939,7 @@ ${i3}
           // 只允许从相机拍照
           success: function(res) {
             const tempFilePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:678", "拍照成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:737", "拍照成功，文件路径：", tempFilePath);
             uni.previewImage({
               urls: [tempFilePath]
             });
@@ -11961,12 +11969,11 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:712", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:717", "拍照失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:776", "拍照失败：", err);
           }
         });
       },
@@ -11982,7 +11989,7 @@ ${i3}
           success: function(res) {
             const tempFilePath = res.tempFilePath;
             self2.filePaths.videoPath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:732", "录像成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:791", "录像成功，文件路径：", tempFilePath);
             uni.uploadFile({
               url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
               filePath: tempFilePath,
@@ -12009,30 +12016,29 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:761", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:766", "录像失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:824", "录像失败：", err);
           }
         });
       },
       startRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:771", "开始录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:829", "开始录音");
         this.recorderManager.start();
         uni.showLoading({
           title: "正在录音"
         });
       },
       stopRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:780", "录音结束");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:838", "录音结束");
         this.recorderManager.stop();
         uni.hideLoading();
       },
       playVoice() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:785", "播放录音");
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:786", "this.voicePath", this.filePaths.voicePath);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:843", "播放录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:844", "this.voicePath", this.filePaths.voicePath);
         if (this.filePaths.voicePath) {
           this.innerAudioContext.src = this.filePaths.voicePath;
           this.innerAudioContext.play();
@@ -12105,18 +12111,31 @@ ${i3}
           title: "正在发送",
           mask: true
         });
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:861", this.taskItem.memberIds, "memberIds");
-        ({
+        let data = {
           isOrder: false,
           message: this.alert_form_data.alert_content,
           receiverMissionMemberIds: [],
           relatedMissionId: this.taskItem.id
-        });
+        };
         getMissionDetails({
           missionId: this.taskItem.id
         }).then((res) => {
           if (res.code === 200) {
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:873", res, "getMissionDetails");
+            sendWarning(data).then((res2) => {
+              if (res2.code === 200) {
+                uni.showToast({
+                  title: "发送成功",
+                  duration: 2e3
+                });
+              } else {
+                uni.showToast({
+                  title: "发送失败",
+                  icon: "none",
+                  duration: 2e3
+                });
+              }
+              uni.hideLoading();
+            });
           }
         });
         this.$refs.alert_form_popup.close();
@@ -12126,6 +12145,10 @@ ${i3}
       setPoint() {
         this.position.latitude = this.taskItem.latitude;
         this.position.longitude = this.taskItem.longitude;
+      },
+      setGeoJson() {
+        this.geoJson = this.taskItem.geoJson;
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:960", this.geoJson, "owner-setGeoJson");
       },
       // 删除任务
       deleteMisson() {
@@ -12246,8 +12269,10 @@ ${i3}
           replay: $data.replay,
           "change:replay": _ctx.m.getReplay,
           position: vue.wp($data.position),
-          "change:position": _ctx.m.getPosition
-        }, null, 8, ["selectedMap", "change:selectedMap", "replay", "change:replay", "position", "change:position"]),
+          "change:position": _ctx.m.getPosition,
+          geoJson: vue.wp($data.geoJson),
+          "change:geoJson": _ctx.m.setGeoJson
+        }, null, 8, ["selectedMap", "change:selectedMap", "replay", "change:replay", "position", "change:position", "geoJson", "change:geoJson"]),
         vue.createCommentVNode(" task_detail "),
         vue.createElementVNode("view", { class: "layout_task_detail" }, [
           vue.createCommentVNode(" 按钮组 "),
@@ -24399,82 +24424,23 @@ ${i3}
     __name: "video-call",
     setup(__props, { expose: __expose }) {
       __expose();
-      let mainVideo = vue.ref();
       let secondaryVideo = vue.ref();
       let localUserMedia = vue.ref();
       let peerStore2 = usePeerStore();
       let isConnected = vue.ref(false);
-      let videoFacingMode = vue.ref("user");
       vue.onMounted((options) => {
         getLocalUserMedia({ audio: true, video: true }).then(
           (userMedia) => {
-            mainVideo.value.srcObject = userMedia;
-            mainVideo.value.muted = true;
+            this.$refs.mainVideo.value.srcObject = userMedia;
+            this.$refs.mainVideo.play();
             localUserMedia.value = userMedia;
-            peerStore2.dataConnection = peerStore2.localPeer.connect(options.calleePeerId);
-            peerStore2.dataConnection.on("data", (data) => {
-              var _a, _b, _c;
-              if (data.instruction === peerStore2.instruction.accept) {
-                peerStore2.mediaConnection = peerStore2.localPeer.call(options.calleePeerId, localUserMedia.value);
-                peerStore2.mediaConnection.on("stream", (userMedia2) => {
-                  mainVideo.value.srcObject = userMedia2;
-                  mainVideo.value.muted = false;
-                  secondaryVideo.value.srcObject = localUserMedia.value;
-                  secondaryVideo.value.muted = true;
-                  isConnected.value = true;
-                  uni.showToast({
-                    title: "connected"
-                  });
-                });
-              } else if (data.instruction === peerStore2.instruction.busy) {
-                peerStore2.dataConnection.close();
-                peerStore2.dataConnection = void 0;
-                for (let track of (_a = localUserMedia.value) == null ? void 0 : _a.getTracks()) {
-                  track.stop();
-                }
-                uni.showToast({
-                  title: "the other party is busy on the line",
-                  icon: "none"
-                });
-                uni.navigateBack();
-              } else if (data.instruction === peerStore2.instruction.reject) {
-                peerStore2.dataConnection.close();
-                peerStore2.dataConnection = void 0;
-                for (let track of (_b = localUserMedia.value) == null ? void 0 : _b.getTracks()) {
-                  track.stop();
-                }
-                uni.showToast({
-                  title: "the other party refused",
-                  icon: "none"
-                });
-                uni.navigateBack();
-              } else if (data.instruction === peerStore2.instruction.ringOff) {
-                peerStore2.dataConnection.close();
-                peerStore2.dataConnection = void 0;
-                peerStore2.mediaConnection.close();
-                peerStore2.mediaConnection = void 0;
-                for (let track of (_c = localUserMedia.value) == null ? void 0 : _c.getTracks()) {
-                  track.stop();
-                }
-                uni.showToast({
-                  title: "the other party has hung up",
-                  icon: "none"
-                });
-                uni.navigateBack();
-              }
-            });
-            peerStore2.dataConnection.on("open", () => {
-              peerStore2.dataConnection.send({
-                instruction: peerStore2.instruction.request
-              });
-            });
           }
-        ).catch(() => {
+        ).catch((e2) => {
           uni.showToast({
             title: "获取摄像头失败！",
             icon: "none"
           });
-          uni.navigateBack();
+          formatAppLog("log", "at pages/message/video-call.vue:119", e2);
         });
       });
       function getLocalUserMedia(constrains) {
@@ -24512,11 +24478,7 @@ ${i3}
         peerStore2.mediaConnection = void 0;
         uni.navigateBack();
       }
-      const __returned__ = { get mainVideo() {
-        return mainVideo;
-      }, set mainVideo(v2) {
-        mainVideo = v2;
-      }, get secondaryVideo() {
+      const __returned__ = { get secondaryVideo() {
         return secondaryVideo;
       }, set secondaryVideo(v2) {
         secondaryVideo = v2;
@@ -24532,10 +24494,6 @@ ${i3}
         return isConnected;
       }, set isConnected(v2) {
         isConnected = v2;
-      }, get videoFacingMode() {
-        return videoFacingMode;
-      }, set videoFacingMode(v2) {
-        videoFacingMode = v2;
       }, getLocalUserMedia, cancelVideoCall, ringOffVideoCall, get poster() {
         return poster;
       }, get usePeerStore() {
@@ -24561,7 +24519,7 @@ ${i3}
         autoplay: ""
       }, null, 8, ["poster"]),
       vue.createElementVNode("section", { class: "buttom-bar" }, [
-        _ctx.isConnectioned ? (vue.openBlock(), vue.createElementBlock("button", {
+        $setup.isConnected ? (vue.openBlock(), vue.createElementBlock("button", {
           key: 0,
           type: "warn",
           onClick: $setup.ringOffVideoCall

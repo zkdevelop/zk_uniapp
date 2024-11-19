@@ -1,8 +1,31 @@
 {
-  "hash": "8d8eb159",
+  "hash": "165cc996",
   "configHash": "545752da",
-  "lockfileHash": "6e5264c5",
-  "browserHash": "c9489a34",
-  "optimized": {},
-  "chunks": {}
+  "lockfileHash": "a04af5d2",
+  "browserHash": "172cae4d",
+  "optimized": {
+    "peerjs": {
+      "src": "../../../../../node_modules/peerjs/dist/bundler.mjs",
+      "file": "peerjs.js",
+      "fileHash": "bf2b4d1e",
+      "needsInterop": false
+    },
+    "pinia-plugin-persistedstate": {
+      "src": "../../../../../node_modules/pinia-plugin-persistedstate/dist/index.js",
+      "file": "pinia-plugin-persistedstate.js",
+      "fileHash": "9158ff72",
+      "needsInterop": false
+    },
+    "reconnecting-websocket": {
+      "src": "../../../../../node_modules/reconnecting-websocket/dist/reconnecting-websocket-mjs.js",
+      "file": "reconnecting-websocket.js",
+      "fileHash": "a355e556",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-7PP4VGQN": {
+      "file": "chunk-7PP4VGQN.js"
+    }
+  }
 }
