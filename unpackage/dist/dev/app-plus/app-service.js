@@ -31,6 +31,82 @@ if (uni.restoreGlobal) {
 }
 (function(vue) {
   "use strict";
+  const _imports_1$4 = "/static/icon/X.png";
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
+  const _sfc_main$Q = {
+    data() {
+      return {
+        statusBarHeight: 0
+      };
+    },
+    onLoad: function() {
+      const systemInfo = uni.getSystemInfoSync();
+      this.statusBarHeight = systemInfo.statusBarHeight;
+    },
+    methods: {
+      goToLogin() {
+        uni.navigateTo({
+          url: "/pages/login/camouflageLogin/inputAccount/inputAccount"
+        });
+      },
+      goToFingerLogin() {
+        uni.navigateTo({
+          url: "/pages/fingerLogin/fingerLogin"
+        });
+      },
+      goToRegister() {
+        uni.navigateTo({
+          url: "/pages/register/register"
+        });
+      }
+    }
+  };
+  function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "camouflagePage" }, [
+      vue.createElementVNode("view", { class: "statusBar" }),
+      vue.createElementVNode("view", { class: "camouflageLayout" }, [
+        vue.createCommentVNode(" 推特logo "),
+        vue.createElementVNode("view", { style: { "text-align": "center", "margin-top": "10px" } }, [
+          vue.createElementVNode("image", {
+            src: _imports_1$4,
+            style: { "width": "25px", "height": "25px" }
+          })
+        ]),
+        vue.createElementVNode("view", { style: { "margin-top": "250px", "text-align": "left" } }, [
+          vue.createElementVNode("text", { style: { "letter-spacing": "3px", "font-size": "5ch", "font-family": "fantasy", "font-weight": "550", "width": "75%" } }, "查看世界各地的新鲜事。")
+        ]),
+        vue.createElementVNode("view", { class: "createAccount" }, [
+          vue.createElementVNode("button", {
+            onClick: _cache[0] || (_cache[0] = (...args) => $options.goToRegister && $options.goToRegister(...args)),
+            type: "primary",
+            style: { "border-radius": "20px", "background": "#1d9bf0" }
+          }, "创建账号")
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "camouflageFooter" }, [
+        vue.createElementVNode("view", null, [
+          vue.createElementVNode("text", null, "已经有账号了？"),
+          vue.createElementVNode("text", {
+            onClick: _cache[1] || (_cache[1] = (...args) => $options.goToLogin && $options.goToLogin(...args)),
+            style: { "color": "#1d9bf0" }
+          }, "登录")
+        ]),
+        vue.createElementVNode("view", null, [
+          vue.createElementVNode("text", {
+            onClick: _cache[2] || (_cache[2] = (...args) => $options.goToFingerLogin && $options.goToFingerLogin(...args)),
+            style: { "color": "#1d9bf0" }
+          }, "指纹登录")
+        ])
+      ])
+    ]);
+  }
+  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$Q, [["render", _sfc_render$P], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
   const ON_SHOW = "onShow";
   function requireNativePlugin(name) {
     return weex.requireModule(name);
@@ -1622,13 +1698,6 @@ This will fail in production.`);
     }
     return { state, setUserData, clearUserData, getUserData };
   });
-  const _export_sfc = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-      target[key] = val;
-    }
-    return target;
-  };
   const useWebSocket = () => {
     const isConnected = vue.ref(false);
     const reconnectAttempts = vue.ref(0);
@@ -2413,7 +2482,7 @@ This will fail in production.`);
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const __easycom_0$6 = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -3133,16 +3202,25 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   const pages = [
+    {
+      path: "pages/login/camouflageLogin/camouflageLogin",
+      style: {
+        navigationBarTitleText: "",
+        navigationStyle: "custom",
+        "app-plus": {
+          scrollIndicator: "none"
+        }
+      }
+    },
     {
       path: "pages/login/login",
       style: {
         navigationBarTitleText: "",
         "app-plus": {
           scrollIndicator: "none"
-        },
-        navigationStyle: "custom"
+        }
       }
     },
     {
@@ -3282,7 +3360,7 @@ This will fail in production.`);
       }
     },
     {
-      path: "pages/login/camouflageLogin/camouflageLogin",
+      path: "pages/login/camouflageLogin/inputAccount/inputAccount",
       style: {
         navigationBarTitleText: "",
         navigationStyle: "custom"
@@ -6704,7 +6782,7 @@ ${i3}
     }
   };
   function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$5);
+    const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$6);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-data-pickerview" }, [
       !_ctx.isCloudDataList ? (vue.openBlock(), vue.createElementBlock("scroll-view", {
         key: 0,
@@ -6999,8 +7077,8 @@ ${i3}
     }
   };
   function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$5);
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$6);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     const _component_data_picker_view = vue.resolveComponent("data-picker-view");
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-data-tree" }, [
       vue.createElementVNode("view", {
@@ -7164,7 +7242,7 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-2653531e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-2653531e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
   const _sfc_main$K = {
     data() {
       return {
@@ -7248,7 +7326,7 @@ ${i3}
     }
   };
   function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_data_picker = resolveEasycom(vue.resolveDynamicComponent("uni-data-picker"), __easycom_0$3);
+    const _component_uni_data_picker = resolveEasycom(vue.resolveDynamicComponent("uni-data-picker"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", { class: "text" }, [
         vue.createElementVNode("text", null, "欢迎注册！")
@@ -8037,7 +8115,7 @@ ${i3}
     }
   };
   function _sfc_render$F(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-stat__select" }, [
       $props.label ? (vue.openBlock(), vue.createElementBlock(
         "span",
@@ -8176,7 +8254,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -8553,7 +8631,7 @@ ${i3}
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
   const _sfc_main$E = {
     name: "uniPopup",
     components: {},
@@ -8905,7 +8983,7 @@ ${i3}
     }
   };
   function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$1);
+    const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$2);
     return $data.showPopup ? (vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -9136,7 +9214,7 @@ ${i3}
     }
   };
   function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-collapse-item" }, [
       vue.createCommentVNode(" onClick(!isOpen) "),
       vue.createElementVNode(
@@ -9674,7 +9752,7 @@ ${i3}
     }
   };
   function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$5);
+    const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$6);
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -10644,7 +10722,7 @@ ${i3}
     }
   };
   function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -10768,7 +10846,7 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
-  const __easycom_6$1 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -12148,13 +12226,13 @@ ${i3}
     }
   };
   function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$2);
+    const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$3);
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_4$1);
     const _component_uni_collapse_item = resolveEasycom(vue.resolveDynamicComponent("uni-collapse-item"), __easycom_2$1);
     const _component_uni_collapse = resolveEasycom(vue.resolveDynamicComponent("uni-collapse"), __easycom_3$1);
     const _component_uni_data_checkbox = resolveEasycom(vue.resolveDynamicComponent("uni-data-checkbox"), __easycom_4);
     const _component_uni_forms_item = resolveEasycom(vue.resolveDynamicComponent("uni-forms-item"), __easycom_5$1);
-    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_6$1);
+    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_0$1);
     const _component_uni_forms = resolveEasycom(vue.resolveDynamicComponent("uni-forms"), __easycom_7);
     return vue.openBlock(), vue.createElementBlock(
       vue.Fragment,
@@ -13687,7 +13765,7 @@ ${i3}
     }
   };
   function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-cursor-point" }, [
       $props.popMenu && ($options.leftBottom || $options.rightBottom || $options.leftTop || $options.rightTop) && $props.content.length > 0 ? (vue.openBlock(), vue.createElementBlock(
         "view",
@@ -14672,7 +14750,7 @@ ${i3}
           uni.removeStorageSync("userInfo");
           userStore.clearUserData();
           uni.redirectTo({
-            url: "/pages/login/login"
+            url: "/pages/login/camouflageLogin/camouflageLogin"
           });
           uni.hideLoading();
         }
@@ -18178,15 +18256,15 @@ ${i3}
         }
       })(commonjsGlobal, function(CryptoJS2) {
         /** @preserve
-            			(c) 2012 by Cédric Mesnil. All rights reserved.
+        				(c) 2012 by Cédric Mesnil. All rights reserved.
         
-            			Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        				Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
         
-            			    - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-            			    - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+        				    - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+        				    - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
         
-            			THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            			*/
+        				THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        				*/
         (function(Math2) {
           var C2 = CryptoJS2;
           var C_lib = C2.lib;
@@ -24647,28 +24725,143 @@ ${i3}
     ]);
   }
   const PagesMessageVideoAnswer = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-answer.vue"]]);
-  const _imports_0 = "/static/icon/X.png";
+  const _imports_0 = "/static/icon/关闭.png";
   const _sfc_main$1 = {
-    data() {
-      return {};
-    },
-    methods: {}
+    __name: "inputAccount",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const { connect } = useWebSocket();
+      const userStore = useUserStore();
+      const autoLogin = vue.ref(false);
+      const statusBarHeight = uni.getSystemInfoSync().statusBarHeight;
+      const username = vue.ref("user1");
+      const password = vue.ref("iecas.123");
+      const backToFirstPage = () => {
+        uni.navigateBack();
+      };
+      const goToTask = () => {
+        uni.redirectTo({
+          url: "/pages/tabBar/tabBar"
+        });
+      };
+      const checkLogin = () => {
+        uni.showLoading({
+          title: "正在登录",
+          mask: true
+        });
+        login({
+          account: username.value,
+          password: password.value
+        }).then((res) => {
+          if (res.code === 200) {
+            uni.setStorageSync("username", username.value);
+            uni.setStorageSync("password", password.value);
+            uni.setStorageSync("token", res.data.token);
+            const userData = {
+              id: res.data.id,
+              account: res.data.account,
+              name: res.data.name,
+              department: res.data.department,
+              role: res.data.role,
+              phone: res.data.phone,
+              created: res.data.created,
+              avatar: res.data.avatar,
+              avatarUrl: res.data.avatarUrl,
+              token: res.data.token,
+              status: res.data.status
+            };
+            userStore.setUserData(userData);
+            connect(res.data.id, res.data.token);
+            uni.setStorageSync("userInfo", userData);
+            formatAppLog("log", "at pages/login/camouflageLogin/inputAccount/inputAccount.vue:81", "登录成功。用户数据:", userData);
+            uni.hideLoading();
+            uni.showToast({
+              title: "登录成功",
+              duration: 2e3
+            }).then(() => {
+              goToTask();
+            });
+          } else {
+            throw new Error(res.message || "登录失败");
+          }
+        }).catch((error) => {
+          formatAppLog("error", "at pages/login/camouflageLogin/inputAccount/inputAccount.vue:94", "登录失败:", error);
+          uni.hideLoading();
+          uni.showToast({
+            title: error.message || "登录失败",
+            icon: "none",
+            duration: 2e3
+          });
+        });
+      };
+      const __returned__ = { connect, userStore, autoLogin, statusBarHeight, username, password, backToFirstPage, goToTask, checkLogin, ref: vue.ref, onMounted: vue.onMounted, get login() {
+        return login;
+      }, get useUserStore() {
+        return useUserStore;
+      }, useWebSocket };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", null, [
-      vue.createCommentVNode(" 推特logo "),
-      vue.createElementVNode("view", { style: { "text-align": "center", "margin-top": "10px" } }, [
-        vue.createElementVNode("image", {
-          src: _imports_0,
-          style: { "width": "30px", "height": "30px" }
-        })
+    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_0$1);
+    return vue.openBlock(), vue.createElementBlock("view", {
+      class: "inputAccountPage",
+      style: { "padding": "0 15px 0 15px" }
+    }, [
+      vue.createElementVNode("view", { class: "inputAccountContent" }, [
+        vue.createElementVNode("view", { class: "statusBarInput" }),
+        vue.createElementVNode("view", { class: "inputAccountHeader" }, [
+          vue.createCommentVNode(" 推特logo "),
+          vue.createElementVNode("view", { class: "inputAccountHeaderLeft" }, [
+            vue.createElementVNode("image", {
+              onClick: $setup.backToFirstPage,
+              src: _imports_0,
+              style: { "width": "20px", "height": "20px" }
+            })
+          ]),
+          vue.createElementVNode("view", { class: "inputAccountHeaderMiddle" }, [
+            vue.createElementVNode("image", {
+              src: _imports_1$4,
+              style: { "width": "25px", "height": "25px" }
+            })
+          ])
+        ]),
+        vue.createElementVNode("view", null, [
+          vue.createElementVNode("view", { style: { "text-align": "left", "margin-top": "30px" } }, [
+            vue.createElementVNode("text", { style: { "letter-spacing": "3px", "font-size": "3.8ch", "font-family": "fantasy", "font-weight": "550", "width": "75%" } }, "要开始使用，请先输入你的手机号码、邮箱地址或@用户名。")
+          ]),
+          vue.createElementVNode("view", { style: { "margin-top": "20px" } }, [
+            vue.createVNode(_component_uni_easyinput, {
+              class: "inputValue",
+              trim: "all",
+              modelValue: $setup.username,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.username = $event),
+              placeholder: "手机号码/邮件地址或用户名"
+            }, null, 8, ["modelValue"])
+          ]),
+          vue.createElementVNode("view", { style: { "margin-top": "20px" } }, [
+            vue.createVNode(_component_uni_easyinput, {
+              class: "inputValue",
+              type: "password",
+              trim: "all",
+              modelValue: $setup.password,
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.password = $event),
+              placeholder: "密码"
+            }, null, 8, ["modelValue"])
+          ])
+        ])
       ]),
-      vue.createElementVNode("view", { style: { "display": "flex", "justify-content": "center", "align-items": "center", "margin-top": "150px" } }, [
-        vue.createElementVNode("text", { style: { "letter-spacing": "3px", "font-size": "3ch", "font-family": "fantasy", "font-weight": "550", "width": "75%" } }, "查看世界正在发生的新鲜事。")
+      vue.createElementVNode("view", { class: "inputAccountFooter" }, [
+        vue.createElementVNode("button", {
+          onClick: $setup.checkLogin,
+          style: { "background": "black", "border-radius": "30px", "color": "white" }
+        }, "下一步")
       ])
     ]);
   }
-  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
+  const PagesLoginCamouflageLoginInputAccountInputAccount = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/inputAccount/inputAccount.vue"]]);
+  __definePage("pages/login/camouflageLogin/camouflageLogin", PagesLoginCamouflageLoginCamouflageLogin);
   __definePage("pages/login/login", PagesLoginLogin);
   __definePage("pages/register/register", PagesRegisterRegister);
   __definePage("pages/forgetPassword/forgetPassword", PagesForgetPasswordForgetPassword);
@@ -24686,7 +24879,7 @@ ${i3}
   __definePage("pages/message/video-call", PagesMessageVideoCall);
   __definePage("pages/message/ChatComponent/CallReminder", PagesMessageChatComponentCallReminder);
   __definePage("pages/message/video-answer", PagesMessageVideoAnswer);
-  __definePage("pages/login/camouflageLogin/camouflageLogin", PagesLoginCamouflageLoginCamouflageLogin);
+  __definePage("pages/login/camouflageLogin/inputAccount/inputAccount", PagesLoginCamouflageLoginInputAccountInputAccount);
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("warn", "at App.vue:4", "当前组件仅支持 uni_modules 目录结构 ，请升级 HBuilderX 到 3.1.0 版本以上！");
