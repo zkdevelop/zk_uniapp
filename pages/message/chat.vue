@@ -5,6 +5,7 @@
 
     <!-- 消息列表 -->
     <MessageList
+      ref="messageList"
       :messages="list"
       :scroll-top="scrollTop"
       :scroll-into-view="scrollIntoView"
@@ -68,7 +69,7 @@ import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
-import { getHistoryChatMessages } from '@/utils/api/message.js'
+import { getHistoryChatMessages, sendMessageToUser } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
 import { useUserStore } from '@/store/userStore'
@@ -84,6 +85,7 @@ export default {
   },
   data() {
     return {
+      // 聊天信息
       chatInfo: {
         id: '',
         name: '',
@@ -92,31 +94,33 @@ export default {
         missionId: '' // 任务ID
       },
       list: [], // 消息列表
-      scrollTop: 0,
-      scrollIntoView: '',
-      _selfAvatar: '/static/avatar/avatar5.jpeg',
-      showAttachMenu: false,
-      burnAfterReadingDuration: 5,
-      currentBurnAfterReadingImage: '',
-      currentBurnAfterReadingMessage: null,
-      isScrolledToBottom: true,
-      scrollViewHeight: 0,
-      scrollViewScrollHeight: 0,
-      showScrollToBottom: false,
-      showNewMessageTip: false,
-      hasNewMessages: false,
-      currentFrom: 0,
-      currentTo: 10,
-      hasMoreMessages: true,
-      isLoading: false,
-      peerStore: null,
-      friendStore: null,
+      scrollTop: 0, // 滚动位置
+      scrollIntoView: '', // 滚动到指定元素
+      _selfAvatar: '/static/avatar/avatar5.jpeg', // 自己的头像
+      showAttachMenu: false, // 是否显示附件菜单
+      burnAfterReadingDuration: 5, // 阅后即焚持续时间
+      currentBurnAfterReadingImage: '', // 当前阅后即焚图片
+      currentBurnAfterReadingMessage: null, // 当前阅后即焚消息
+      isScrolledToBottom: true, // 是否滚动到底部
+      scrollViewHeight: 0, // 滚动视图高度
+      scrollViewScrollHeight: 0, // 滚动视图内容高度
+      showScrollToBottom: false, // 是否显示滚动到底部按钮
+      showNewMessageTip: false, // 是否显示新消息提示
+      hasNewMessages: false, // 是否有新消息
+      currentFrom: 0, // 当前加载消息的起始位置
+      currentTo: 10, // 当前加载消息的结束位置
+      hasMoreMessages: true, // 是否还有更多消息
+      isLoading: false, // 是否正在加载消息
+      peerStore: null, // 对等连接存储
+      friendStore: null, // 好友存储
     };
   },
   onLoad() {
+    // 获取事件通道
     const eventChannel = this.getOpenerEventChannel();
     this.peerStore = usePeerStore();
     this.friendStore = useFriendStore();
+    // 监听chatInfo事件，接收聊天信息
     eventChannel.on('chatInfo', (data) => {
       this.chatInfo = data.chatInfo;
       console.log('接收到的聊天信息:', this.chatInfo);
@@ -169,9 +173,9 @@ export default {
       });
     },
     // 发送消息
-    sendMessage(message) {
+    async sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.content) {
+      if (message.content && this.chatInfo.id) {
         const newMessage = {
           id: Date.now().toString(),
           content: message.content,
@@ -182,6 +186,28 @@ export default {
           type: message.type || 'text'
         };
         this.addNewMessage(newMessage);
+
+        try {
+          const response = await sendMessageToUser({
+            message: message.content,
+            recipientId: this.chatInfo.id,
+            messageType: message.type || 'text'
+          });
+          console.log('[sendMessage] 发送消息响应:', response);
+          if (response.code === 200) {
+            this.handleMessageSent(response.data);
+          } else {
+            throw new Error(response.msg || '发送消息失败');
+          }
+        } catch (error) {
+          console.error('[sendMessage] 发送消息失败:', error);
+          this.handleMessageFailed(message.content);
+        }
+      } else {
+        console.error('[sendMessage] 消息内容为空或 recipientId 未设置', {
+          content: message.content,
+          recipientId: this.chatInfo.id
+        });
       }
     },
     // 处理消息发送成功
@@ -324,9 +350,12 @@ export default {
     async loadMoreMessages() {
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
+        
         this.currentFrom = this.currentTo + 1;
         this.currentTo = this.currentTo + 10;
         await this.loadHistoryMessages(true);
+        
+        // 不再自动滚动，让用户保持在当前位置
         this.isLoading = false;
       }
     },

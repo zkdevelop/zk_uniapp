@@ -32,9 +32,9 @@ __renderjsModules["55b5cda2"] = (() => {
   ));
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/leaflet/leaflet.js
+  // E:/代码/new/zk_uniapp/static/leaflet/leaflet.js
   var require_leaflet = __commonJS({
-    "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/leaflet/leaflet.js"(exports, module) {
+    "E:/\u4EE3\u7801/new/zk_uniapp/static/leaflet/leaflet.js"(exports, module) {
       !function(t, e) {
         "object" == typeof exports && "undefined" != typeof module ? e(exports) : "function" == typeof define && define.amd ? define(["exports"], e) : e((t = "undefined" != typeof globalThis ? globalThis : t || self).leaflet = {});
       }(exports, function(t) {
@@ -4820,9 +4820,9 @@ __renderjsModules["55b5cda2"] = (() => {
     }
   });
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/leaflet/proj4.js
+  // E:/代码/new/zk_uniapp/static/leaflet/proj4.js
   var require_proj4 = __commonJS({
-    "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/leaflet/proj4.js"(exports, module) {
+    "E:/\u4EE3\u7801/new/zk_uniapp/static/leaflet/proj4.js"(exports, module) {
       (function(global, factory) {
         if (typeof exports === "object" && typeof module !== "undefined") {
           module.exports = factory();
@@ -7656,9 +7656,9 @@ __renderjsModules["55b5cda2"] = (() => {
     }
   });
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/leaflet/dist/leaflet-src.js
+  // E:/代码/new/zk_uniapp/node_modules/leaflet/dist/leaflet-src.js
   var require_leaflet_src = __commonJS({
-    "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/leaflet/dist/leaflet-src.js"(exports, module) {
+    "E:/\u4EE3\u7801/new/zk_uniapp/node_modules/leaflet/dist/leaflet-src.js"(exports, module) {
       (function(global, factory) {
         typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.leaflet = {}));
       })(exports, function(exports2) {
@@ -12358,7 +12358,7 @@ __renderjsModules["55b5cda2"] = (() => {
             return bounds;
           }
         });
-        var featureGroup = function(layers2, options) {
+        var featureGroup2 = function(layers2, options) {
           return new FeatureGroup(layers2, options);
         };
         var Icon = Class.extend({
@@ -17171,7 +17171,7 @@ __renderjsModules["55b5cda2"] = (() => {
         exports2.control = control;
         exports2.divIcon = divIcon;
         exports2.extend = extend;
-        exports2.featureGroup = featureGroup;
+        exports2.featureGroup = featureGroup2;
         exports2.geoJSON = geoJSON;
         exports2.geoJson = geoJson;
         exports2.gridLayer = gridLayer;
@@ -17206,9 +17206,9 @@ __renderjsModules["55b5cda2"] = (() => {
     }
   });
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/proj4/dist/proj4-src.js
+  // E:/代码/new/zk_uniapp/node_modules/proj4/dist/proj4-src.js
   var require_proj4_src = __commonJS({
-    "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/proj4/dist/proj4-src.js"(exports, module) {
+    "E:/\u4EE3\u7801/new/zk_uniapp/node_modules/proj4/dist/proj4-src.js"(exports, module) {
       (function(global, factory) {
         typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : global.proj4 = factory();
       })(exports, function() {
@@ -23201,9 +23201,9 @@ __renderjsModules["55b5cda2"] = (() => {
     }
   });
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/leaflet/proj4leaflet.js
+  // E:/代码/new/zk_uniapp/static/leaflet/proj4leaflet.js
   var require_proj4leaflet = __commonJS({
-    "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/leaflet/proj4leaflet.js"(exports, module) {
+    "E:/\u4EE3\u7801/new/zk_uniapp/static/leaflet/proj4leaflet.js"(exports, module) {
       (function(factory) {
         var L2, proj4;
         if (typeof define === "function" && define.amd) {
@@ -23424,7 +23424,7 @@ __renderjsModules["55b5cda2"] = (() => {
     default: () => stdin_default
   });
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/static/route/points.js
+  // E:/代码/new/zk_uniapp/static/route/points.js
   var points = [
     {
       id: "point-1",
@@ -23468,7 +23468,7 @@ __renderjsModules["55b5cda2"] = (() => {
     }
   ];
 
-  // C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/config.js
+  // E:/代码/new/zk_uniapp/config.js
   var tileUrls = {
     "google": {
       url: "https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}",
@@ -23504,6 +23504,7 @@ __renderjsModules["55b5cda2"] = (() => {
   var map = null;
   var baseTileLayer = null;
   var markers = [];
+  var featureGroup = L.featureGroup();
   L.CRS.Baidu = new L.Proj.CRS(
     "EPSG:900913",
     "+proj=merc +a=6378206 +b=6356584.314245179 +lat_ts=0.0 +lon_0=0.0 +x_0=0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs",
@@ -23528,15 +23529,20 @@ __renderjsModules["55b5cda2"] = (() => {
           longitude: 120.68625,
           latitude: 24.18222
         },
-        mapType: "gaode"
+        mapType: "gaode",
+        geoJson: null
       };
     },
     created() {
     },
     mounted() {
       this.$ownerInstance.callMethod("setPoint");
-      this.initMap();
-      this.getLine();
+      this.$ownerInstance.callMethod("setGeoJson");
+      this.$nextTick(() => {
+        this.initMap();
+        this.getLine();
+        this.addGeoJsonLayer(this.geoJson, "red", featureGroup);
+      });
     },
     methods: {
       /** position变更时调用方法
@@ -23548,7 +23554,8 @@ __renderjsModules["55b5cda2"] = (() => {
           map.setView(L.latLng(this.position.latitude, this.position.longitude), 12);
         }
       },
-      /** mathType变更时调用方法
+      /** 
+       * mathType变更时调用方法
        * @param {Object} position
        */
       setMapType(value) {
@@ -23556,10 +23563,19 @@ __renderjsModules["55b5cda2"] = (() => {
           this.mapType = value;
           this.initMap();
           this.getLine();
+          this.addGeoJsonLayer(this.geoJson, "red", featureGroup);
         } else {
           this.mapType = value;
           this.changeMap(this.mapType);
         }
+      },
+      /**
+       * GeoJson变更时调用方法
+       * @param {Object} geoJson
+       */
+      setGeoJson(value) {
+        this.geoJson = value;
+        this.addGeoJsonLayer(this.geoJson, "red", featureGroup);
       },
       /** 初始化地图
        */
@@ -23603,6 +23619,9 @@ __renderjsModules["55b5cda2"] = (() => {
         L.control.attribution({
           prefix: ""
         }).addTo(map);
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 500);
       },
       /**  切换地图
        * @param {String} mapType 地图类型
@@ -23625,6 +23644,9 @@ __renderjsModules["55b5cda2"] = (() => {
           }
         );
         baseTileLayer.addTo(map);
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 500);
       },
       /** 任务回溯状态变更时调用方法
        * @param {Boolean} replay
@@ -23668,6 +23690,25 @@ __renderjsModules["55b5cda2"] = (() => {
         marker.bindPopup(`<view style="display:flex;flex-direction:column"><text>${point.description}</text>
 							<image src='${point.image}' style="max-width: 300px; max-height: 300px;"/></view>`);
         markers.push(marker);
+      },
+      addGeoJsonLayer(geoJson, color, featureGroup2) {
+        if (!geoJson) {
+          return;
+        }
+        if (featureGroup2) {
+          featureGroup2.eachLayer((layer) => {
+            map.removeLayer(layer);
+          });
+          featureGroup2 = L.featureGroup();
+        }
+        L.geoJSON(geoJson, {
+          style: {
+            color
+          },
+          onEachFeature: (_feature, layer) => {
+            featureGroup2.addLayer(layer);
+          }
+        }).addTo(map);
       },
       getLine() {
         let prev = null;
