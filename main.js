@@ -20,12 +20,18 @@ app.$mount()
 // #ifdef VUE3
 import { createSSRApp } from 'vue'
 import { createPinia } from 'pinia'
+import initializePeer from '@/plugins/initialize-peer'
+import initializeWebsocket from '@/plugins/initialize-websocket'
+import store from '@/store'
 import App from './App.vue'
 
 export function createApp() {
   const app = createSSRApp(App)
   const pinia = createPinia()
   app.use(pinia)
+  app.use(initializePeer)
+  app.use(initializeWebsocket)
+  app.use(store)
   return {
     app,
     pinia

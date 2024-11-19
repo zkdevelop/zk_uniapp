@@ -11,7 +11,7 @@ export const backendHost = 'http://139.196.11.210:8500/communicate'
 // export const backendHost = 'http://127.0.0.1:8080'
 
 const webSocketServer = {
-	host: "192.168.191.235",
+	host: "192.168.224.235",
 	port: 8081,
 	path: "/call"
 }

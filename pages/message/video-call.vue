@@ -12,7 +12,7 @@
 			   autoplay>
 		</video>
 		<section class="buttom-bar">
-			<button v-if="isConnectioned" type="warn" @click="ringOffVideoCall"></button>
+			<button v-if="isConnected" type="warn" @click="ringOffVideoCall"></button>
 			<button v-else type="warn" @click="cancelVideoCall"></button>
 		</section>
 	</view>
@@ -31,13 +31,12 @@
 	
 	//用于标记是否已经连接
 	let isConnected = ref(false);
- 	let videoFacingMode = ref('user');
 	
 	onMounted((options)=>{
 		getLocalUserMedia({audio: true, video: true}).then( userMedia => {
-			mainVideo.value.srcObject = userMedia;
-			mainVideo.value.muted = true;
-			localUserMedia.value = userMedia;
+			let videoElement = document.getElementsByTagName('video')[0];
+			videoElement.srcObject = userMedia;
+			localUserMedia.value = userMedia; 
 		
 			// 发起连接请求
 			peerStore.dataConnection = peerStore.localPeer.connect(options.calleePeerId);
@@ -113,12 +112,13 @@
 			  });
 			});
 		}
-		).catch(()=>{
+		).catch((e)=>{
 			uni.showToast({
 				title: '获取摄像头失败！',
 				icon: 'none'
 			})
-			uni.navigateBack()
+			console.log(e)
+			// uni.navigateBack()
 		})
 	});
 	
