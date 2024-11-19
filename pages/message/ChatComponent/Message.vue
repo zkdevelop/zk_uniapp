@@ -1,14 +1,12 @@
 <template>
-   
   <view class="message" :class="[message.userType]">
- 
-    <view class="message-time">{{ formatTime(message.timestamp),   message   }}</view>
+    <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content">
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
         <view class="content" :class="{ 'location-content': message.type === 'location' }">
-          <!-- Location Message Type -->
+          <!-- 位置消息类型 -->
           <template v-if="message.type === 'location' && message.content">
             <view class="location-bubble" @click="openMap(message.content)">
               <view class="location-title">{{ message.content.name }}</view>
@@ -23,7 +21,7 @@
             </view>
           </template>
 
-          <!-- Image Message Type -->
+          <!-- 图片消息类型 -->
           <template v-else-if="message.type === 'image'">
             <image 
               :src="message.content" 
@@ -32,8 +30,20 @@
               @click="previewImage(message.content)"
             ></image>
           </template>
+
+          <!-- 阅后即焚消息类型 -->
+          <template v-else-if="message.type === 'burn-after-reading'">
+            <view class="burn-after-reading" @click="viewBurnAfterReading(message)">
+              <image 
+                :src="message.content.mosaicPath" 
+                mode="widthFix" 
+                class="message-image"
+              ></image>
+              <text class="burn-after-reading-text">阅后即焚</text>
+            </view>
+          </template>
           
-          <!-- Default Text Message Type -->
+          <!-- 默认文本消息类型 -->
           <template v-else>
             {{ message.content }}
           </template>
@@ -49,8 +59,9 @@
 
 <script>
 import { gaodeApiKey } from '@/config/keys';
-const AMAP_KEY = gaodeApiKey; // 从config中导入的key
+const AMAP_KEY = gaodeApiKey;
 const AMAP_API_URL = 'https://restapi.amap.com/v3/staticmap?';
+
 export default {
   name: 'Message',
   props: {
@@ -76,7 +87,7 @@ export default {
     },
     openMap(location) {
       if (!location || !location.latitude || !location.longitude) {
-        console.error('Invalid location data:', location);
+        console.error('无效的位置数据:', location);
         return;
       }
       uni.openLocation({
@@ -85,35 +96,19 @@ export default {
         name: location.name,
         address: location.address,
         success: function () {
-          console.log('Successfully opened map');
+          console.log('成功打开地图');
         },
         fail: function (error) {
-          console.error('Failed to open map:', error);
+          console.error('打开地图失败:', error);
         }
       });
     },
     getStaticMapUrl(location) {
       return `${AMAP_API_URL}location=${location.longitude},${location.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${location.longitude},${location.latitude}&key=${AMAP_KEY}`;
     },
-    logMessageDetails() {
-      console.log('Message details:', {
-        type: this.message.type || 'undefined',
-        content: typeof this.message.content === 'object' ? JSON.stringify(this.message.content) : this.message.content,
-        userType: this.message.userType
-      });
-      if (this.message.type === 'location' && this.message.content) {
-        console.log('Location details:', {
-          name: this.message.content.name,
-          address: this.message.content.address,
-          latitude: this.message.content.latitude,
-          longitude: this.message.content.longitude
-        });
-        console.log('Static map URL:', `${AMAP_API_URL}location=${this.message.content.longitude},${this.message.content.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${this.message.content.longitude},${this.message.content.latitude}&key=${AMAP_KEY}`);
-      }
+    viewBurnAfterReading(message) {
+      this.$emit('view-burn-after-reading', message);
     }
-  },
-  mounted() {
-    this.logMessageDetails();
   }
 }
 </script>
@@ -165,6 +160,7 @@ export default {
   &.self {
     .message-content {
       flex-direction: row-reverse;
+      align-items: center;
     }
     .avatar {
       margin-right: 0;
@@ -224,18 +220,21 @@ export default {
 }
 
 .message-status {
-  margin-left: 5px;
   display: flex;
   align-items: center;
+  margin-left: 20rpx;
+  height: 100%;
+  padding: 0 5rpx;
 }
 
 .loading-icon {
-  width: 15px;
-  height: 15px;
-  border: 2px solid #ccc;
-  border-top: 2px solid #3498db;
+  width: 30rpx;
+  height: 30rpx;
+  border: 3rpx solid #ccc;
+  border-top: 3rpx solid #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin: auto;
 }
 
 @keyframes spin {
@@ -244,8 +243,8 @@ export default {
 }
 
 .failed-icon {
-  width: 15px;
-  height: 15px;
+  width: 30rpx;
+  height: 30rpx;
   background-color: #e74c3c;
   color: white;
   border-radius: 50%;
@@ -271,5 +270,21 @@ export default {
 .message-image {
   max-width: 100%;
   border-radius: 5px;
+}
+
+.burn-after-reading {
+  position: relative;
+  overflow: hidden;
+}
+
+.burn-after-reading-text {
+  position: absolute;
+  bottom: 10rpx;
+  right: 10rpx;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 5rpx 10rpx;
+  border-radius: 5rpx;
+  font-size: 24rpx;
 }
 </style>

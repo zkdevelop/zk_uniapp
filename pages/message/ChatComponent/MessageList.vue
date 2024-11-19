@@ -52,13 +52,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scroll-view {
-  /* #ifdef H5 */
-  height: calc(100vh - 44px - 120rpx);
-  /* #endif */
-  /* #ifndef H5 */
-  height: calc(100vh - 120rpx);
-  /* #endif */
+.scroll-view { 
+  height: calc(100vh - 44px - 120rpx);  
+  height: calc(100vh - 120rpx); 
   background: #eee;
   box-sizing: border-box;
 }

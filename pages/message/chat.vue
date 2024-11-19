@@ -1,7 +1,9 @@
 <template>
-  <view class="page">
+  <view class="chat-page">
+    <!-- 聊天头部 -->
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
+    <!-- 消息列表 -->
     <MessageList
       :messages="list"
       :scroll-top="scrollTop"
@@ -11,18 +13,20 @@
       @view-burn-after-reading="viewBurnAfterReadingImage"
     />
 
+    <!-- 聊天输入区域 -->
     <ChatInputArea 
       @send-message="sendMessage" 
       @message-sent="handleMessageSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
-	  @video-call="openVideoPage"
+      @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
       ref="chatInputAreaRef"
     />
 
+    <!-- 阅后即焚组件 -->
     <BurnAfterReading
       v-if="currentBurnAfterReadingImage"
       :imageSrc="currentBurnAfterReadingImage"
@@ -31,25 +35,29 @@
       ref="burnAfterReadingRef"
     />
 
+    <!-- 滚动到底部按钮 -->
     <ScrollToBottomButton
       :show="showScrollToBottom"
       @click.stop="scrollToBottom"
     />
 
+    <!-- 新消息提示 -->
     <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
       新消息
     </view>
-	<!-- 来电提醒 -->
-	<view v-if="peerStore.activateNotification" class="modal">
-		<view>
-			<text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
-		</view>
-	  <view class="modal-content">
-		<button @click="acceptVideoCall" type="default">接听</button>
-		<button @click="rejectVideoCall" type="warn">拒绝</button>
-	  </view>
-	</view>
 
+    <!-- 来电提醒 -->
+    <view v-if="peerStore.activateNotification" class="modal">
+      <view>
+        <text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
+      </view>
+      <view class="modal-content">
+        <button @click="acceptVideoCall" type="default">接听</button>
+        <button @click="rejectVideoCall" type="warn">拒绝</button>
+      </view>
+    </view>
+
+    <!-- 附件菜单遮罩层 -->
     <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
   </view>
 </template>
@@ -58,11 +66,12 @@
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
-import BurnAfterReading from './ChatComponent/BurnAfterReading.vue'
+import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 import { getHistoryChatMessages } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
+import { useUserStore } from '@/store/userStore'
 
 export default {
   name: 'Chat',
@@ -79,9 +88,10 @@ export default {
         id: '',
         name: '',
         avatar: [],
-        type: 'single'
+        type: 'single',
+        missionId: '' // 任务ID
       },
-      list: [],
+      list: [], // 消息列表
       scrollTop: 0,
       scrollIntoView: '',
       _selfAvatar: '/static/avatar/avatar5.jpeg',
@@ -99,16 +109,23 @@ export default {
       currentTo: 10,
       hasMoreMessages: true,
       isLoading: false,
-	  peerStore: null,
-	  friendStore: null,
+      peerStore: null,
+      friendStore: null,
     };
   },
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
-	this.peerStore = usePeerStore();
-	this.friendStore = useFriendStore();
+    this.peerStore = usePeerStore();
+    this.friendStore = useFriendStore();
     eventChannel.on('chatInfo', (data) => {
       this.chatInfo = data.chatInfo;
+      console.log('接收到的聊天信息:', this.chatInfo);
+      // 确保 missionId 被正确设置
+      if (!this.chatInfo.missionId) {
+        const userStore = useUserStore();
+        this.chatInfo.missionId = userStore.missionId;
+      }
+      console.log('使用的 missionId:', this.chatInfo.missionId);
       this.initializeChat();
     });
   },
@@ -117,10 +134,12 @@ export default {
     console.log('聊天组件已挂载');
   },
   methods: {
+    // 初始化聊天
     async initializeChat() {
       await this.loadHistoryMessages();
       this.$nextTick(this.scrollToBottom);
     },
+    // 获取滚动视图信息
     getScrollViewInfo() {
       const query = uni.createSelectorQuery().in(this);
       query.select('.scroll-view').boundingClientRect(data => {
@@ -132,6 +151,7 @@ export default {
         }
       }).exec();
     },
+    // 返回上一页
     goBack() {
       uni.navigateBack({
         success: () => {
@@ -148,6 +168,7 @@ export default {
         }
       });
     },
+    // 发送消息
     sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
       if (message.content) {
@@ -163,6 +184,7 @@ export default {
         this.addNewMessage(newMessage);
       }
     },
+    // 处理消息发送成功
     handleMessageSent(sentMessage) {
       console.log('[handleMessageSent] 消息已发送:', sentMessage);
       const tempMessage = this.list.find(m => m.content === sentMessage.message);
@@ -171,6 +193,7 @@ export default {
         tempMessage.status = 'sent';
       }
     },
+    // 处理消息发送失败
     handleMessageFailed(failedMessage) {
       console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
       const tempMessage = this.list.find(m => m.content === failedMessage);
@@ -178,6 +201,7 @@ export default {
         tempMessage.status = 'failed';
       }
     },
+    // 处理附件
     handleAttachment(type, data) {
       console.log('[handleAttachment] 处理附件:', type, data);
       if (type === 'location') {
@@ -193,6 +217,7 @@ export default {
         }
       }
     },
+    // 选择图片
     chooseImage() {
       uni.chooseImage({
         success: (res) => {
@@ -206,6 +231,7 @@ export default {
         }
       });
     },
+    // 处理文件传输
     handleFileTransfer(fileData) {
       this.addNewMessage({
         content: fileData,
@@ -215,6 +241,7 @@ export default {
         timestamp: new Date()
       });
     },
+    // 处理阅后即焚
     handleBurnAfterReading(imageData) {
       this.addNewMessage({
         content: imageData,
@@ -224,6 +251,7 @@ export default {
         timestamp: new Date()
       });
     },
+    // 处理位置消息
     handleLocationMessage(locationData) {
       console.log('[handleLocationMessage] 处理位置消息:', locationData);
       const newMessage = {
@@ -237,6 +265,7 @@ export default {
       };
       this.addNewMessage(newMessage);
     },
+    // 查看阅后即焚图片
     viewBurnAfterReadingImage(message) {
       this.currentBurnAfterReadingImage = message.content.originalPath;
       this.currentBurnAfterReadingMessage = message;
@@ -244,6 +273,7 @@ export default {
         this.$refs.burnAfterReadingRef.open();
       });
     },
+    // 关闭阅后即焚预览
     closeBurnAfterReadingPreview() {
       this.currentBurnAfterReadingImage = '';
       if (this.currentBurnAfterReadingMessage) {
@@ -254,14 +284,17 @@ export default {
         this.currentBurnAfterReadingMessage = null;
       }
     },
+    // 切换附件菜单
     toggleAttachMenu(show) {
       this.showAttachMenu = show;
       console.log('附件菜单切换:', show);
     },
+    // 处理遮罩层点击
     handleOverlayClick() {
       this.showAttachMenu = false;
       console.log('附件菜单已关闭');
     },
+    // 滚动到底部
     scrollToBottom() {
       this.$nextTick(() => {
         const lastMessageIndex = this.list.length - 1;
@@ -273,6 +306,7 @@ export default {
         console.log('滚动到底部');
       });
     },
+    // 处理滚动事件
     onScroll(event) {
       const { scrollTop, scrollHeight } = event.detail;
       this.scrollViewScrollHeight = scrollHeight;
@@ -286,6 +320,7 @@ export default {
         this.showNewMessageTip = false;
       }
     },
+    // 加载更多消息
     async loadMoreMessages() {
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
@@ -295,6 +330,7 @@ export default {
         this.isLoading = false;
       }
     },
+    // 添加新消息
     addNewMessage(message) {
       console.log('添加新消息:', message);
       this.list.push(message);
@@ -306,71 +342,63 @@ export default {
         this.scrollToBottom();
       }
     },
-	openVideoPage(action) {
-		// 处理音视频通话
-		// if (this.peerStore.localPeer && this.peerStore.localPeer.open) {
-		// 	if (this.peerStore.dataConnection) {
-		// 		uni.showToast({
-		// 			title: 'currently busy',
-		// 			icon: 'none'
-		// 		})
-		// 	} else {
-		// 		uni.navigateTo({
-		// 			url: `/pages/message/video-call?calleePeerId=${friendStore.onlineList[0]}`
-		// 		})
-		// 	}
-		// } else {
-		// 	uni.showToast({
-		// 		title: 'local peer not opened',
-		// 		icon: 'none'
-		// 	})
-		// }
-				uni.navigateTo({
-					url: `/pages/message/video-call?calleePeerId=${this.callerPeerId}`
-				})
-	},
-	rejectVideoCall() {
-		peerStore.dataConnection.send({
-			instruction: peerStore.instruction.reject
-		});
-		peerStore.dataConnection = undefined;
-		peerStore.activateNotification = false;
-	},
-	acceptVideoCall() {
-		peerStore.activateNotification = false;
-		
-		uni.showLoading({
-			title: "waiting for the other party to connect...",
-			mask: true
-		})
-		
-		//监听媒体连接是否存在，有可能速度比较快，所以立即执行以下
-		let cancel = watch(() => peerStore.mediaConnection, newValue => {
-		    if (newValue) {
-				//关闭加载框
-				uni.hideLoading();
-		
-				//取消监听；如果不取消会出现重复执行
-				cancel();
-		
-				uni.navigateTo({
-					url: "/pages/message/video-answer"
-				})
-		    }
-		}, {immediate: true});
-		
-		peerStore.dataConnection.send({
-		    instruction: peerStore.instruction.accept
-		});
-	},
+    // 打开视频通话页面
+    openVideoPage(action) {
+      uni.navigateTo({
+        url: `/pages/message/video-call?calleePeerId=${this.chatInfo.id}`
+      });
+    },
+    // 拒绝视频通话
+    rejectVideoCall() {
+      this.peerStore.dataConnection.send({
+        instruction: this.peerStore.instruction.reject
+      });
+      this.peerStore.dataConnection = undefined;
+      this.peerStore.activateNotification = false;
+    },
+    // 接受视频通话
+    acceptVideoCall() {
+      this.peerStore.activateNotification = false;
+      
+      uni.showLoading({
+        title: "等待对方连接...",
+        mask: true
+      });
+      
+      // 监听媒体连接是否存在
+      let cancel = watch(() => this.peerStore.mediaConnection, newValue => {
+        if (newValue) {
+          // 关闭加载框
+          uni.hideLoading();
+          
+          // 取消监听
+          cancel();
+          
+          uni.navigateTo({
+            url: "/pages/message/video-answer"
+          });
+        }
+      }, {immediate: true});
+      
+      this.peerStore.dataConnection.send({
+        instruction: this.peerStore.instruction.accept
+      });
+    },
+    // 加载历史消息
     async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] 加载历史消息', { isLoadingMore, from: this.currentFrom, to: this.currentTo });
+      console.log('[loadHistoryMessages] 加载历史消息', { 
+        isLoadingMore, 
+        from: this.currentFrom, 
+        to: this.currentTo,
+        missionId: this.chatInfo.missionId 
+      });
 
       try {
         const response = await getHistoryChatMessages({
           opponentId: this.chatInfo.id,
           from: this.currentFrom,
-          to: this.currentTo
+          to: this.currentTo,
+          missionId: this.chatInfo.missionId
         });
 
         console.log('[loadHistoryMessages] 历史消息响应:', response);
@@ -423,7 +451,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page {
+.chat-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -451,5 +479,39 @@ export default {
   bottom: 0;
   background-color: transparent;
   z-index: 999;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+}
+
+.modal-content {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.modal button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
+.modal button[type="default"] {
+  background-color: #4CAF50;
+}
+
+.modal button[type="warn"] {
+  background-color: #f44336;
 }
 </style>

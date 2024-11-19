@@ -25,22 +25,25 @@ import { ref, onMounted } from 'vue'
 import { login } from '@/utils/api/user.js'
 import { useUserStore } from '@/store/userStore'
 import { useWebSocket } from '@/pages/WebSocket/WebSocketService.vue'
+
 const { connect } = useWebSocket()
 const userStore = useUserStore()
 
 const autoLogin = ref(false)
 const statusBarHeight = uni.getSystemInfoSync().statusBarHeight;
-const username = ref('user1')
+const username = ref('liuyuqi')
 const password = ref('iecas.123')
 
 const backToFirstPage = () => {
 	uni.navigateBack();
 }
+
 const goToTask = () => {
   uni.redirectTo({
     url: '/pages/tabBar/tabBar'
   })
 }
+
 const checkLogin = () => {
   uni.showLoading({
     title: '正在登录',
@@ -68,7 +71,8 @@ const checkLogin = () => {
         avatar: res.data.avatar,
         avatarUrl: res.data.avatarUrl,
         token: res.data.token,
-        status: res.data.status
+        status: res.data.status,
+        missionId: res.data.missionId || '' // 添加 missionId，如果不存在则设为空字符串
       }
       userStore.setUserData(userData)
 
@@ -79,6 +83,7 @@ const checkLogin = () => {
       uni.setStorageSync('userInfo', userData)
 
       console.log('登录成功。用户数据:', userData)
+      console.log('保存的 missionId:', userData.missionId) // 添加日志
 
       uni.hideLoading()
       uni.showToast({
