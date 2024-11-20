@@ -1,5 +1,6 @@
 <template>
   <view class="location-sharing">
+    <!-- 地图容器 -->
     <view class="map-container">
       <map
         id="locationMap"
@@ -13,6 +14,7 @@
       ></map>
     </view>
 
+    <!-- 头部搜索栏和完成按钮 -->
     <view class="header">
       <view class="search-bar">
         <input 
@@ -25,12 +27,14 @@
       <button class="complete-btn" @click="handleComplete">完成</button>
     </view>
 
+    <!-- 位置列表 -->
     <view class="location-list">
       <scroll-view scroll-y class="scroll-view">
         <view 
           v-for="(poi, index) in nearbyPOIs" 
           :key="index"
           class="location-item"
+          :class="{ 'location-item-selected': selectedPOI && selectedPOI.id === poi.id }"
           @tap="selectLocation(poi)"
         >
           <view class="location-name">{{ poi.name }}</view>
@@ -55,25 +59,29 @@ export default {
   name: 'LocationSharing',
   data() {
     return {
+      // 当前位置
       currentLocation: {
         latitude: 39.909604,
         longitude: 116.397228
       },
-      searchKeyword: '',
-      markers: [],
-      nearbyPOIs: [],
-      selectedPOI: null,
-      searchDebounceTimer: null
+      searchKeyword: '', // 搜索关键词
+      markers: [], // 地图标记点
+      nearbyPOIs: [], // 附近兴趣点列表
+      selectedPOI: null, // 选中的兴趣点
+      searchDebounceTimer: null // 搜索防抖定时器
     }
   },
   mounted() {
+    // 组件挂载时获取当前位置并隐藏消息输入框
     this.getCurrentLocation();
     this.hideMessageInput();
   },
   beforeDestroy() {
+    // 组件销毁前显示消息输入框
     this.showMessageInput();
   },
   methods: {
+    // 获取当前位置
     getCurrentLocation() {
       uni.getLocation({
         type: 'gcj02',
@@ -94,6 +102,7 @@ export default {
         }
       });
     },
+    // 更新地图标记点
     updateMarkers() {
       this.markers = [{
         id: 1,
@@ -115,6 +124,7 @@ export default {
         });
       }
     },
+    // 搜索附近兴趣点
     async searchNearbyPOIs(keyword = '') {
       try {
         const location = `${this.currentLocation.longitude},${this.currentLocation.latitude}`;
@@ -156,6 +166,7 @@ export default {
         });
       }
     },
+    // 处理搜索输入
     handleSearch(event) {
       if (this.searchDebounceTimer) {
         clearTimeout(this.searchDebounceTimer);
@@ -165,10 +176,12 @@ export default {
         this.searchNearbyPOIs(event.detail.value);
       }, 500);
     },
+    // 选择位置
     selectLocation(poi) {
       this.selectedPOI = poi;
       this.updateMarkers();
     },
+    // 处理地图点击
     async handleMapTap(e) {
       const { latitude, longitude } = e.detail;
       try {
@@ -200,6 +213,7 @@ export default {
         });
       }
     },
+    // 处理完成按钮点击
     handleComplete() {
       if (!this.selectedPOI) {
         uni.showToast({
@@ -221,16 +235,19 @@ export default {
       this.$emit('location-selected', locationData);
       this.$emit('close');
     },
+    // 格式化距离显示
     formatDistance(distance) {
       if (distance < 1000) {
         return `${distance}米`;
       }
       return `${(distance / 1000).toFixed(1)}千米`;
     },
+    // 隐藏消息输入框
     hideMessageInput() {
       this.$emit('hide-message-input', true);
       uni.$emit('hide-chat-input', true);
     },
+    // 显示消息输入框
     showMessageInput() {
       this.$emit('show-message-input');
     }
@@ -345,7 +362,16 @@ export default {
 }
 
 .check-icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+}
+
+.location-item-selected {
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+}
+
+.location-check {
+  color: #4CAF50;
 }
 </style>

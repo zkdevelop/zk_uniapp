@@ -1,31 +1,37 @@
 {
-  "hash": "165cc996",
-  "configHash": "545752da",
+  "hash": "b04e5f45",
+  "configHash": "46d06baf",
   "lockfileHash": "a04af5d2",
-  "browserHash": "172cae4d",
+  "browserHash": "4170da48",
   "optimized": {
-    "peerjs": {
-      "src": "../../../../../node_modules/peerjs/dist/bundler.mjs",
-      "file": "peerjs.js",
-      "fileHash": "bf2b4d1e",
-      "needsInterop": false
+    "crypto-js": {
+      "src": "../../../../../node_modules/crypto-js/index.js",
+      "file": "crypto-js.js",
+      "fileHash": "086e5c57",
+      "needsInterop": true
     },
     "pinia-plugin-persistedstate": {
       "src": "../../../../../node_modules/pinia-plugin-persistedstate/dist/index.js",
       "file": "pinia-plugin-persistedstate.js",
-      "fileHash": "9158ff72",
+      "fileHash": "a4e3bffb",
+      "needsInterop": false
+    },
+    "peerjs": {
+      "src": "../../../../../node_modules/peerjs/dist/bundler.mjs",
+      "file": "peerjs.js",
+      "fileHash": "d3611f37",
       "needsInterop": false
     },
     "reconnecting-websocket": {
       "src": "../../../../../node_modules/reconnecting-websocket/dist/reconnecting-websocket-mjs.js",
       "file": "reconnecting-websocket.js",
-      "fileHash": "a355e556",
+      "fileHash": "9134cfe7",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-7PP4VGQN": {
-      "file": "chunk-7PP4VGQN.js"
+    "chunk-WMW6TFF4": {
+      "file": "chunk-WMW6TFF4.js"
     }
   }
 }

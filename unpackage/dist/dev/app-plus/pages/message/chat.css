@@ -227,11 +227,15 @@
 }
 /* 水平间距 */
 /* 水平间距 */
+.message-list-container[data-v-dee4eb4b] {
+  flex: 1;
+  overflow: hidden;
+}
 .scroll-view[data-v-dee4eb4b] {
-  height: calc(100vh - 44px - 3.75rem);
-  height: calc(100vh - 3.75rem);
   background: #eee;
-  box-sizing: border-box;
+}
+.message-list-content[data-v-dee4eb4b] {
+  padding: 0.9375rem 0.9375rem 7.5rem;
 }
 .load-more-button[data-v-dee4eb4b] {
   display: flex;
@@ -244,7 +248,6 @@
   color: #007AFF;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  /* 移除 writing-mode 属性，使文本横向显示 */
 }
 
 .attach-menu[data-v-00ea5aaf] {

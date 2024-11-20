@@ -7,8 +7,6 @@
     <MessageList
       ref="messageList"
       :messages="list"
-      :scroll-top="scrollTop"
-      :scroll-into-view="scrollIntoView"
       @load-more="loadMoreMessages"
       @scroll="onScroll"
       @view-burn-after-reading="viewBurnAfterReadingImage"
@@ -64,6 +62,7 @@
 </template>
 
 <script>
+// 导入所需的组件和工具
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
@@ -94,16 +93,11 @@ export default {
         missionId: '' // 任务ID
       },
       list: [], // 消息列表
-      scrollTop: 0, // 滚动位置
-      scrollIntoView: '', // 滚动到指定元素
-      _selfAvatar: '/static/avatar/avatar5.jpeg', // 自己的头像
       showAttachMenu: false, // 是否显示附件菜单
       burnAfterReadingDuration: 5, // 阅后即焚持续时间
       currentBurnAfterReadingImage: '', // 当前阅后即焚图片
       currentBurnAfterReadingMessage: null, // 当前阅后即焚消息
       isScrolledToBottom: true, // 是否滚动到底部
-      scrollViewHeight: 0, // 滚动视图高度
-      scrollViewScrollHeight: 0, // 滚动视图内容高度
       showScrollToBottom: false, // 是否显示滚动到底部按钮
       showNewMessageTip: false, // 是否显示新消息提示
       hasNewMessages: false, // 是否有新消息
@@ -134,7 +128,6 @@ export default {
     });
   },
   mounted() {
-    this.getScrollViewInfo();
     console.log('聊天组件已挂载');
   },
   methods: {
@@ -142,18 +135,6 @@ export default {
     async initializeChat() {
       await this.loadHistoryMessages();
       this.$nextTick(this.scrollToBottom);
-    },
-    // 获取滚动视图信息
-    getScrollViewInfo() {
-      const query = uni.createSelectorQuery().in(this);
-      query.select('.scroll-view').boundingClientRect(data => {
-        if (data) {
-          this.scrollViewHeight = data.height;
-          console.log('滚动视图高度:', this.scrollViewHeight);
-        } else {
-          console.log('获取滚动视图高度失败');
-        }
-      }).exec();
     },
     // 返回上一页
     goBack() {
@@ -323,8 +304,7 @@ export default {
     // 滚动到底部
     scrollToBottom() {
       this.$nextTick(() => {
-        const lastMessageIndex = this.list.length - 1;
-        this.scrollIntoView = `message-${lastMessageIndex}`;
+        this.$refs.messageList.scrollToBottom();
         this.showScrollToBottom = false;
         this.showNewMessageTip = false;
         this.hasNewMessages = false;
@@ -335,8 +315,7 @@ export default {
     // 处理滚动事件
     onScroll(event) {
       const { scrollTop, scrollHeight } = event.detail;
-      this.scrollViewScrollHeight = scrollHeight;
-      const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
+      const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
       
       this.isScrolledToBottom = isAtBottom;
       this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
@@ -348,15 +327,32 @@ export default {
     },
     // 加载更多消息
     async loadMoreMessages() {
+      console.log('[loadMoreMessages] 开始加载更多消息');
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
         
+        const oldContentHeight = await this.$refs.messageList.getContentHeight();
+        console.log('[loadMoreMessages] 旧内容高度:', oldContentHeight);
+
         this.currentFrom = this.currentTo + 1;
         this.currentTo = this.currentTo + 10;
         await this.loadHistoryMessages(true);
         
-        // 不再自动滚动，让用户保持在当前位置
-        this.isLoading = false;
+        this.$nextTick(async () => {
+          const newContentHeight = await this.$refs.messageList.getContentHeight();
+          console.log('[loadMoreMessages] 新内容高度:', newContentHeight);
+
+          const heightDifference = newContentHeight - oldContentHeight;
+          console.log('[loadMoreMessages] 高度差:', heightDifference);
+          
+          // 设置新的滚动位置
+          this.$refs.messageList.setScrollTop(heightDifference);
+
+          this.isLoading = false;
+          console.log('[loadMoreMessages] 加载完成');
+        });
+      } else {
+        console.log('[loadMoreMessages] 没有更多消息或正在加载中');
       }
     },
     // 添加新消息
@@ -415,7 +411,7 @@ export default {
     },
     // 加载历史消息
     async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] 加载历史消息', { 
+      console.log('[loadHistoryMessages] 开始加载历史消息', { 
         isLoadingMore, 
         from: this.currentFrom, 
         to: this.currentTo,
@@ -443,15 +439,19 @@ export default {
             isRead: msg.isRead
           }));
 
+          console.log('[loadHistoryMessages] 新消息数量:', newMessages.length);
+
           if (isLoadingMore) {
             this.list = [...newMessages, ...this.list];
+            console.log('[loadHistoryMessages] 在列表前端添加新消息');
           } else {
             this.list = newMessages;
+            console.log('[loadHistoryMessages] 替换整个消息列表');
           }
           
           this.hasMoreMessages = newMessages.length === (this.currentTo - this.currentFrom + 1);
 
-          console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
+          console.log('[loadHistoryMessages] 更新后的消息列表长度:', this.list.length);
           console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
 
           this.$nextTick(() => {

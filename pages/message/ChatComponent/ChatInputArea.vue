@@ -52,7 +52,6 @@
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
 import FileTransfer from './ChatInputAreaComponent/FileTransfer.vue'
 import LocationSharing from './ChatInputAreaComponent/LocationSharing.vue'
-import { sendMessageToUser } from '@/utils/api/message.js'
 
 export default {
   name: 'ChatInputArea',
@@ -79,13 +78,8 @@ export default {
     }
   },
   methods: {
-    async sendMessage(message) {
+    async sendMessage() {
       console.log('sendMessage 方法被调用');
-      if (typeof message === 'object' && message.type === 'location') {
-        // 处理位置消息
-        this.$emit('send-message', message);
-        return;
-      }
       
       if (typeof this.newMessage !== 'string' || !this.newMessage.trim()) {
         console.log('消息为空或不是字符串，不发送');
@@ -93,32 +87,13 @@ export default {
       }
 
       const messageData = {
-        message: this.newMessage,
+        content: this.newMessage,
         recipientId: this.recipientId
       };
       
       console.log('准备发送消息:', messageData);
       
-      this.$emit('send-message', {
-        content: this.newMessage,
-        status: 'sending'
-      });
-      
-      try {
-        console.log('调用 sendMessageToUser');
-        const response = await sendMessageToUser(messageData);
-        console.log('sendMessageToUser 响应:', response);
-        if (response.code === 200) {
-          console.log('消息发送成功');
-          this.$emit('message-sent', { ...response.data, message: this.newMessage });
-        } else {
-          console.error('消息发送失败:', response.msg);
-          this.$emit('message-failed', { message: this.newMessage });
-        }
-      } catch (error) {
-        console.error('发送消息失败:', error);
-        this.$emit('message-failed', { message: this.newMessage });
-      }
+      this.$emit('send-message', messageData);
       
       this.newMessage = ''; 
     },
@@ -143,8 +118,8 @@ export default {
       } else if (action === 'location') {
         this.openLocationSharing();
       } else if (action === 'video-call') {
-		this.$emit('video-call', action);
-	  }	else {
+        this.$emit('video-call', action);
+      } else {
         this.$emit('attach', action);
       }
       if (action !== 'location') {
@@ -203,34 +178,12 @@ export default {
       uni.chooseImage({
         count: 1,
         sourceType: ['camera'],
-        success: async (res) => {
+        success: (res) => {
           const tempFilePath = res.tempFilePaths[0];
-          try {
-            const response = await sendMessageToUser({
-              recipientId: this.recipientId,
-              content: tempFilePath,
-              messageType: 'IMAGE'
-            });
-            if (response.code === 200) {
-              console.log('图片消息发送成功');
-              this.$emit('send-message', {
-                type: 'image',
-                content: tempFilePath
-              });
-            } else {
-              console.error('发送图片消息失败:', response.msg);
-              uni.showToast({
-                title: '发送失败，请重试',
-                icon: 'none'
-              });
-            }
-          } catch (error) {
-            console.error('发送图片消息出错:', error);
-            uni.showToast({
-              title: '发送失败，请重试',
-              icon: 'none'
-            });
-          }
+          this.$emit('send-message', {
+            type: 'image',
+            content: tempFilePath
+          });
         },
         fail: (err) => {
           console.error('拍照失败:', err);
@@ -246,34 +199,12 @@ export default {
       uni.chooseImage({
         count: 1,
         sourceType: ['album'],
-        success: async (res) => {
+        success: (res) => {
           const tempFilePath = res.tempFilePaths[0];
-          try {
-            const response = await sendMessageToUser({
-              recipientId: this.recipientId,
-              content: tempFilePath,
-              messageType: 'IMAGE'
-            });
-            if (response.code === 200) {
-              console.log('图片消息发送成功');
-              this.$emit('send-message', {
-                type: 'image',
-                content: tempFilePath
-              });
-            } else {
-              console.error('发送图片消息失败:', response.msg);
-              uni.showToast({
-                title: '发送失败，请重试',
-                icon: 'none'
-              });
-            }
-          } catch (error) {
-            console.error('发送图片消息出错:', error);
-            uni.showToast({
-              title: '发送失败，请重试',
-              icon: 'none'
-            });
-          }
+          this.$emit('send-message', {
+            type: 'image',
+            content: tempFilePath
+          });
         },
         fail: (err) => {
           console.error('选择图片失败:', err);
@@ -293,45 +224,17 @@ export default {
       console.log('关闭位置分享');
       this.showLocationSharing = false;
     },
-    async handleLocationSelected(location) {
+    handleLocationSelected(location) {
       console.log('位置被选择:', JSON.stringify(location));
-      try {
-        // 模拟成功的API响应
-        const response = {
-          code: 200,
-          msg: '位置消息发送成功',
-          data: {
-            id: Date.now().toString(),
-            sendTime: new Date().toISOString()
-          }
-        };
-        console.log('模拟发送位置消息响应:', response);
-        if (response.code === 200) {
-          console.log('位置消息发送成功');
-          this.$emit('send-message', {
-            type: 'location',
-            content: location,
-            userType: 'self',
-            avatar: this._selfAvatar,
-            timestamp: new Date(response.data.sendTime),
-            id: response.data.id,
-            status: 'sent'
-          });
-        } else {
-          throw new Error(response.msg || '发送失败');
-        }
-      } catch (error) {
-        console.error('发送位置消息失败:', error);
-        uni.showToast({
-          title: '发送失败，请重试',
-          icon: 'none'
-        });
-      }
+      this.$emit('send-message', {
+        type: 'location',
+        content: location
+      });
       this.closeLocationSharing();
     },
     startVideoCall() {
       console.log('开始视频通话');
-      // 实现视频通话功能
+      this.$emit('video-call');
     }
   },
 }
