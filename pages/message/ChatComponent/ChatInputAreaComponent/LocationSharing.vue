@@ -52,11 +52,19 @@
 <script>
 import { gaodeApiKey } from '@/config/keys';
 import { signRequest } from '@/utils/api/mapUtils';
+import { sendMessageToUser } from '@/utils/api/message.js';
 
 const AMAP_API = 'https://restapi.amap.com/v3';
 
 export default {
   name: 'LocationSharing',
+  props: {
+    // 接收者ID，从父组件传入
+    recipientId: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       // 当前位置
@@ -214,7 +222,7 @@ export default {
       }
     },
     // 处理完成按钮点击
-    handleComplete() {
+    async handleComplete() {
       if (!this.selectedPOI) {
         uni.showToast({
           title: '请选择位置',
@@ -228,12 +236,31 @@ export default {
         longitude: parseFloat(this.selectedPOI.location.split(',')[0]),
         name: this.selectedPOI.name,
         address: this.selectedPOI.address,
-        messageType: 'location'
       };
 
-      console.log('LocationSharing: 发送位置数据', locationData);
-      this.$emit('location-selected', locationData);
-      this.$emit('close');
+      const locationDataString = JSON.stringify(locationData);
+	  console.log('locationDataString',typeof(locationDataString),'locationDataString')
+      try {
+        const response = await sendMessageToUser({
+          isPosition: true,
+          message: locationDataString, 
+          recipientId: this.recipientId
+        });
+
+        if (response.code === 200) {
+          console.log('位置信息发送成功:', response.data);
+          this.$emit('location-selected', locationData);
+          this.$emit('close');
+        } else {
+          throw new Error(response.msg || '发送位置信息失败');
+        }
+      } catch (error) {
+        console.error('发送位置信息失败:', error);
+        uni.showToast({
+          title: '发送位置信息失败，请重试',
+          icon: 'none'
+        });
+      }
     },
     // 格式化距离显示
     formatDistance(distance) {

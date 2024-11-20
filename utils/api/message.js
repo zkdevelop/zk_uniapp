@@ -6,6 +6,7 @@ import request from '/utils/request.js'
  * @returns {Promise} - 返回请求Promise
  */
 export const getChatList = (missionId) => {
+	missionId='1b2fdd7d0d4d4f91855602e687be632a'
   // 检查missionId是否存在
   if (!missionId) {
     console.error('getChatList 需要 missionId 参数');

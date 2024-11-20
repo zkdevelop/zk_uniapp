@@ -1,10 +1,13 @@
 <template>
   <view class="chat-input-area">
+    <!-- 聊天输入框和附加功能按钮 -->
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
+      <!-- 语音输入按钮 -->
       <view class="voice-button">
         <image src="/static/message/语音输入.png" class="voice-icon" />
       </view>
       
+      <!-- 文本输入框 -->
       <input 
         type="text" 
         class="text-input" 
@@ -14,11 +17,14 @@
         ref="messageInput"
       />
       
+      <!-- 附加功能按钮（当附加菜单未显示时） -->
       <text v-if="!showAttachMenu" class="attach-button" @click="toggleAttachMenu">+</text>
       
+      <!-- 发送按钮（当附加菜单显示时） -->
       <text v-if="showAttachMenu" class="send-button" @click="sendMessage">发送</text>
     </view>
 
+    <!-- 附加功能菜单 -->
     <attachment-menu 
       v-if="showAttachMenu" 
       @attach="attachItem"
@@ -38,12 +44,15 @@
       </template>
     </attachment-menu>
 
+    <!-- 位置共享组件 -->
     <location-sharing 
       v-if="showLocationSharing"
+      :recipientId="recipientId"
       @location-selected="handleLocationSelected"
       @close="closeLocationSharing"
     />
 
+    <!-- 文件传输组件 -->
     <file-transfer ref="fileTransfer" @file-selected="handleFileSelected" />
   </view>
 </template>
@@ -61,10 +70,12 @@ export default {
     LocationSharing
   },
   props: {
+    // 是否显示附加功能菜单
     showAttachMenu: {
       type: Boolean,
       default: false
     },
+    // 接收者ID
     recipientId: {
       type: String,
       required: true
@@ -72,20 +83,31 @@ export default {
   },
   data() {
     return {
-      newMessage: '',
-      showLocationSharing: false,
-      _selfAvatar: '/static/avatar/avatar5.jpeg',
+      newMessage: '', // 新消息内容
+      showLocationSharing: false, // 是否显示位置共享组件
+      _selfAvatar: '/static/avatar/avatar5.jpeg', // 用户头像
+    }
+  },
+  watch: {
+    // 监听recipientId的变化，防止在recipientId为空时显示LocationSharing
+    recipientId(newVal) {
+      if (!newVal) {
+        this.showLocationSharing = false;
+      }
     }
   },
   methods: {
+    // 发送消息
     async sendMessage() {
       console.log('sendMessage 方法被调用');
       
+      // 检查消息是否为空
       if (typeof this.newMessage !== 'string' || !this.newMessage.trim()) {
         console.log('消息为空或不是字符串，不发送');
         return;
       }
 
+      // 构造消息数据
       const messageData = {
         content: this.newMessage,
         recipientId: this.recipientId
@@ -93,18 +115,23 @@ export default {
       
       console.log('准备发送消息:', messageData);
       
+      // 触发发送消息事件
       this.$emit('send-message', messageData);
       
+      // 清空输入框
       this.newMessage = ''; 
     },
+    // 切换附加功能菜单
     toggleAttachMenu() {
       console.log('切换附件菜单');
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
     },
+    // 关闭附加功能菜单
     closeAttachMenu() {
       console.log('关闭附件菜单');
       this.$emit('toggle-attach-menu', false);
     },
+    // 处理附加功能项的选择
     attachItem(action) {
       console.log('附件项被选择:', action);
       if (action === 'file') {
@@ -126,10 +153,12 @@ export default {
         this.closeAttachMenu();
       }
     },
+    // 处理文件选择
     handleFileSelected(fileData) {
       console.log('文件被选择:', fileData);
       this.$emit('attach', 'file', fileData);
     },
+    // 选择阅后即焚图片
     chooseBurnAfterReadingImage() {
       console.log('选择阅后即焚图片');
       uni.chooseImage({
@@ -149,6 +178,7 @@ export default {
         }
       });
     },
+    // 应用马赛克效果
     applyMosaicEffect(imagePath, callback) {
       const ctx = uni.createCanvasContext('mosaicCanvas');
       
@@ -173,6 +203,7 @@ export default {
         });
       });
     },
+    // 拍摄照片
     async takePhoto() {
       console.log('拍摄照片');
       uni.chooseImage({
@@ -194,6 +225,7 @@ export default {
         }
       });
     },
+    // 从相册选择照片
     chooseAndSendPhoto() {
       console.log('从相册选择照片');
       uni.chooseImage({
@@ -215,15 +247,18 @@ export default {
         }
       });
     },
+    // 打开位置共享
     openLocationSharing() {
       console.log('打开位置分享');
       this.showLocationSharing = true;
       this.closeAttachMenu();
     },
+    // 关闭位置共享
     closeLocationSharing() {
       console.log('关闭位置分享');
       this.showLocationSharing = false;
     },
+    // 处理位置选择
     handleLocationSelected(location) {
       console.log('位置被选择:', JSON.stringify(location));
       this.$emit('send-message', {
@@ -232,8 +267,9 @@ export default {
       });
       this.closeLocationSharing();
     },
+    // 开始视频通话
     startVideoCall() {
-      console.log('开始视频通话');
+      console.log('开始���频通话');
       this.$emit('video-call');
     }
   },
