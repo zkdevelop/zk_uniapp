@@ -48,6 +48,7 @@
     <location-sharing 
       v-if="showLocationSharing"
       :recipientId="recipientId"
+      :missionId="missionId"
       @location-selected="handleLocationSelected"
       @close="closeLocationSharing"
     />
@@ -77,6 +78,10 @@ export default {
     },
     // 接收者ID
     recipientId: {
+      type: String,
+      required: true
+    },
+    missionId: {
       type: String,
       required: true
     }
@@ -110,7 +115,8 @@ export default {
       // 构造消息数据
       const messageData = {
         content: this.newMessage,
-        recipientId: this.recipientId
+        recipientId: this.recipientId,
+        missionId: this.missionId
       };
       
       console.log('准备发送消息:', messageData);
@@ -169,7 +175,8 @@ export default {
             this.$emit('attach', 'burn-after-reading', {
               originalPath: image,
               mosaicPath: mosaicImage,
-              duration: 5
+              duration: 5,
+              missionId: this.missionId
             });
           });
         },
@@ -213,7 +220,8 @@ export default {
           const tempFilePath = res.tempFilePaths[0];
           this.$emit('send-message', {
             type: 'image',
-            content: tempFilePath
+            content: tempFilePath,
+            missionId: this.missionId
           });
         },
         fail: (err) => {
@@ -235,7 +243,8 @@ export default {
           const tempFilePath = res.tempFilePaths[0];
           this.$emit('send-message', {
             type: 'image',
-            content: tempFilePath
+            content: tempFilePath,
+            missionId: this.missionId
           });
         },
         fail: (err) => {
@@ -263,13 +272,14 @@ export default {
       console.log('位置被选择:', JSON.stringify(location));
       this.$emit('send-message', {
         type: 'location',
-        content: location
+        content: location,
+        missionId: this.missionId
       });
       this.closeLocationSharing();
     },
     // 开始视频通话
     startVideoCall() {
-      console.log('开始���频通话');
+      console.log('开始视频通话');
       this.$emit('video-call');
     }
   },

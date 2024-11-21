@@ -22,6 +22,7 @@
       @toggle-attach-menu="toggleAttachMenu"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
+      :missionId="chatInfo.missionId"
       ref="chatInputAreaRef"
     />
 
@@ -172,7 +173,8 @@ export default {
           const response = await sendMessageToUser({
             message: message.content,
             recipientId: this.chatInfo.id,
-            messageType: message.type || 'text'
+            messageType: message.type || 'text',
+            missionId: this.chatInfo.missionId // Added missionId
           });
           console.log('[sendMessage] 发送消息响应:', response);
           if (response.code === 200) {

@@ -50,10 +50,13 @@
 </template>
 
 <script>
+// 导入所需的模块和工具函数
 import { gaodeApiKey } from '@/config/keys';
 import { signRequest } from '@/utils/api/mapUtils';
 import { sendMessageToUser } from '@/utils/api/message.js';
+import { getCurrentCoordinates } from '@/utils/locationUtils';
 
+// 定义高德地图API的基础URL
 const AMAP_API = 'https://restapi.amap.com/v3';
 
 export default {
@@ -90,28 +93,24 @@ export default {
   },
   methods: {
     // 获取当前位置
-    getCurrentLocation() {
-      uni.getLocation({
-        type: 'gcj02',
-        success: (res) => {
-          this.currentLocation = {
-            latitude: res.latitude,
-            longitude: res.longitude
-          };
-          this.updateMarkers();
-          this.searchNearbyPOIs();
-        },
-        fail: (err) => {
-          console.error('获取位置失败:', err);
-          uni.showToast({
-            title: '获取位置失败，请检查定位权限',
-            icon: 'none'
-          });
-        }
-      });
+    async getCurrentLocation() {
+      try {
+        // 使用工具函数获取当前坐标
+        const coordinates = await getCurrentCoordinates();
+        this.currentLocation = coordinates;
+        this.updateMarkers();
+        this.searchNearbyPOIs();
+      } catch (error) {
+        console.error('获取位置失败:', error);
+        uni.showToast({
+          title: '获取位置失败，请检查定位权限',
+          icon: 'none'
+        });
+      }
     },
     // 更新地图标记点
     updateMarkers() {
+      // 设置当前位置的标记
       this.markers = [{
         id: 1,
         latitude: this.currentLocation.latitude,
@@ -121,6 +120,7 @@ export default {
         height: 32
       }];
 
+      // 如果有选中的兴趣点，添加其标记
       if (this.selectedPOI) {
         this.markers.push({
           id: 2,
@@ -143,15 +143,18 @@ export default {
           radius: 1000,
           extensions: 'all'
         };
+        // 签名请求参数
         const signedParams = signRequest(params);
         const url = `${AMAP_API}/place/around?${signedParams}`;
         
+        // 发送请求获取附近兴趣点
         const response = await uni.request({
           url,
           method: 'GET'
         });
 
         if (response.data.status === '1') {
+          // 处理返回的兴趣点数据
           this.nearbyPOIs = response.data.pois.map(poi => ({
             id: poi.id,
             name: poi.name,
@@ -176,10 +179,12 @@ export default {
     },
     // 处理搜索输入
     handleSearch(event) {
+      // 清除之前的定时器
       if (this.searchDebounceTimer) {
         clearTimeout(this.searchDebounceTimer);
       }
       
+      // 设置新的定时器，实现防抖
       this.searchDebounceTimer = setTimeout(() => {
         this.searchNearbyPOIs(event.detail.value);
       }, 500);
@@ -197,12 +202,15 @@ export default {
           key: gaodeApiKey,
           location: `${longitude},${latitude}`
         };
+        // 签名请求参数
         const signedParams = signRequest(params);
         const url = `${AMAP_API}/geocode/regeo?${signedParams}`;
+        // 发送请求获取地址信息
         const response = await uni.request({ url });
         
         if (response.data.status === '1') {
           const regeocode = response.data.regeocode;
+          // 创建新的选中兴趣点
           this.selectedPOI = {
             id: Date.now().toString(),
             name: regeocode.formatted_address,
@@ -231,6 +239,7 @@ export default {
         return;
       }
 
+      // 构造位置数据
       const locationData = {
         latitude: parseFloat(this.selectedPOI.location.split(',')[1]),
         longitude: parseFloat(this.selectedPOI.location.split(',')[0]),
@@ -239,8 +248,10 @@ export default {
       };
 
       const locationDataString = JSON.stringify(locationData);
-	  console.log('locationDataString',typeof(locationDataString),'locationDataString')
+      console.log('locationDataString', typeof(locationDataString), 'locationDataString');
+      
       try {
+        // 发送位置消息
         const response = await sendMessageToUser({
           isPosition: true,
           message: locationDataString, 
