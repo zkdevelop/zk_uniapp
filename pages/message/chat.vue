@@ -429,15 +429,30 @@ export default {
         console.log('[loadHistoryMessages] 历史消息响应:', response);
 
         if (response.code === 200 && Array.isArray(response.data)) {
-          const newMessages = response.data.reverse().map(msg => ({
-            id: msg.id,
-            content: msg.message,
-            userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
-            avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
-            timestamp: new Date(msg.sendTime),
-            type: msg.messageType,
-            isRead: msg.isRead
-          }));
+          const newMessages = response.data.reverse().map(msg => {
+            let content = msg.message;
+            let type = msg.messageType;
+
+            // 处理 'POSITION' 类型的消息
+            if (type === 'POSITION') {
+              type = 'location';
+              try {
+                content = JSON.parse(msg.message);
+              } catch (e) {
+                console.error('解析位置数据失败:', e);
+              }
+            }
+
+            return {
+              id: msg.id,
+              content: content,
+              userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+              avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
+              timestamp: new Date(msg.sendTime),
+              type: type,
+              isRead: msg.isRead
+            };
+          });
 
           console.log('[loadHistoryMessages] 新消息数量:', newMessages.length);
 

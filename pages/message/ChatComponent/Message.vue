@@ -1,20 +1,16 @@
 <template>
   <view class="message" :class="[message.userType]">
-    <!-- 消息时间 -->
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content">
-      <!-- 头像 -->
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
-        <!-- 好友名称（仅在好友消息中显示） -->
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <!-- 消息内容 -->
-        <view class="content" :class="{ 'location-content': message.type === 'location' || message.messageType === 'POSITION' }">
+        <view class="content" :class="{ 'location-content': message.type === 'location' }">
           <!-- 位置消息类型 -->
-          <template v-if="(message.type === 'location' || message.messageType === 'POSITION') && message.content">
+          <template v-if="message.type === 'location' && message.content">
             <view class="location-bubble" @click="openMap(message.content)">
-              <view class="location-title">{{ parseLocationData(message.content).name }}</view>
-              <view class="location-address">{{ parseLocationData(message.content).address }}</view>
+              <view class="location-title">{{ message.content.name }}</view>
+              <view class="location-address">{{ message.content.address }}</view>
               <view class="location-map">
                 <image
                   class="map-image"
@@ -53,7 +49,6 @@
           </template>
         </view>
       </view>
-      <!-- 消息状态（仅对自己发送的消息显示） -->
       <view v-if="message.userType === 'self'" class="message-status">
         <view v-if="message.status === 'sending'" class="loading-icon"></view>
         <view v-else-if="message.status === 'failed'" class="failed-icon">!</view>
@@ -76,7 +71,6 @@ export default {
     }
   },
   methods: {
-    // 格式化时间显示
     formatTime(timestamp) {
       const date = new Date(timestamp);
       const month = date.getMonth() + 1;
@@ -85,37 +79,22 @@ export default {
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${month}-${day} ${hours}:${minutes}`;
     },
-    // 预览图片
     previewImage(url) {
       uni.previewImage({
         urls: [url],
         current: url
       });
     },
-    // 解析位置数据
-    parseLocationData(content) {
-      if (typeof content === 'string') {
-        try {
-          return JSON.parse(content);
-        } catch (e) {
-          console.error('解析位置数据失败:', e);
-          return null;
-        }
-      }
-      return content;
-    },
-    // 打开地图
     openMap(location) {
-      const parsedLocation = this.parseLocationData(location);
-      if (!parsedLocation || !parsedLocation.latitude || !parsedLocation.longitude) {
-        console.error('无效的位置数据:', parsedLocation);
+      if (!location || !location.latitude || !location.longitude) {
+        console.error('无效的位置数据:', location);
         return;
       }
       uni.openLocation({
-        latitude: parseFloat(parsedLocation.latitude),
-        longitude: parseFloat(parsedLocation.longitude),
-        name: parsedLocation.name,
-        address: parsedLocation.address,
+        latitude: parseFloat(location.latitude),
+        longitude: parseFloat(location.longitude),
+        name: location.name,
+        address: location.address,
         success: function () {
           console.log('成功打开地图');
         },
@@ -124,13 +103,9 @@ export default {
         }
       });
     },
-    // 获取静态地图URL
     getStaticMapUrl(location) {
-      const parsedLocation = this.parseLocationData(location);
-      if (!parsedLocation) return '';
-      return `${AMAP_API_URL}location=${parsedLocation.longitude},${parsedLocation.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${parsedLocation.longitude},${parsedLocation.latitude}&key=${AMAP_KEY}`;
+      return `${AMAP_API_URL}location=${location.longitude},${location.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${location.longitude},${location.latitude}&key=${AMAP_KEY}`;
     },
-    // 查看阅后即焚图片
     viewBurnAfterReading(message) {
       this.$emit('view-burn-after-reading', message);
     }
