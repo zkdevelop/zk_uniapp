@@ -22,7 +22,7 @@
       @toggle-attach-menu="toggleAttachMenu"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
-      :missionId="chatInfo.missionId"
+      :missionId="chatInfo.missionId.toString()"
       ref="chatInputAreaRef"
     />
 
@@ -91,7 +91,7 @@ export default {
         name: '',
         avatar: [],
         type: 'single',
-        missionId: '' // 任务ID
+        missionId: '' // Initialize as an empty string
       },
       list: [], // 消息列表
       showAttachMenu: false, // 是否显示附件菜单
@@ -119,10 +119,12 @@ export default {
     eventChannel.on('chatInfo', (data) => {
       this.chatInfo = data.chatInfo;
       console.log('接收到的聊天信息:', this.chatInfo);
-      // 确保 missionId 被正确设置
+      // 确保 missionId 被正确设置为字符串
       if (!this.chatInfo.missionId) {
         const userStore = useUserStore();
-        this.chatInfo.missionId = userStore.missionId;
+        this.chatInfo.missionId = userStore.missionId.toString();
+      } else if (Array.isArray(this.chatInfo.missionId)) {
+        this.chatInfo.missionId = this.chatInfo.missionId.join(',');
       }
       console.log('使用的 missionId:', this.chatInfo.missionId);
       this.initializeChat();
@@ -130,6 +132,7 @@ export default {
   },
   mounted() {
     console.log('聊天组件已挂载');
+    console.log('peerStore 初始状态:', this.peerStore);
   },
   methods: {
     // 初始化聊天
@@ -377,6 +380,7 @@ export default {
     },
     // 拒绝视频通话
     rejectVideoCall() {
+      console.log('拒绝视频通话，peerStore 状态:', this.peerStore);
       this.peerStore.dataConnection.send({
         instruction: this.peerStore.instruction.reject
       });
@@ -385,6 +389,7 @@ export default {
     },
     // 接受视频通话
     acceptVideoCall() {
+      console.log('接受视频通话，peerStore 状态:', this.peerStore);
       this.peerStore.activateNotification = false;
       
       uni.showLoading({
