@@ -87,15 +87,16 @@ export default {
       default: ''
     }
   },
-  created() {
-    console.log('ChatInputArea 接收到的 missionId:', this.missionId);
-  },
+  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call'],
   data() {
     return {
       newMessage: '',
       showLocationSharing: false,
       _selfAvatar: '/static/avatar/avatar5.jpeg',
     }
+  },
+  created() {
+    console.log('ChatInputArea 接收到的 missionId:', this.missionId);
   },
   watch: {
     recipientId(newVal) {
@@ -115,6 +116,7 @@ export default {
 
       const messageData = {
         content: this.newMessage,
+        type: 'text',
         recipientId: this.recipientId,
         missionId: this.missionId
       };
@@ -249,7 +251,7 @@ export default {
         console.log('开始获取位置信息...');
         let locationRes = { latitude: '0', longitude: '0' };
         try {
-          const coordinates = await getCurrentCoordinates();
+          const coordinates =await getCurrentCoordinates();
           console.log('获取到的位置信息:', JSON.stringify(coordinates));
           locationRes = {
             latitude: coordinates.latitude.toString(),
@@ -284,6 +286,7 @@ export default {
             this.$emit('send-message', {
               type: 'image',
               content: tempFilePath,
+              recipientId: this.recipientId,
               missionId: this.missionId
             });
           } else {

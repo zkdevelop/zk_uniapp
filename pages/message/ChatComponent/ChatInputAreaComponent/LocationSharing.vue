@@ -50,67 +50,65 @@
 </template>
 
 <script>
-// 导入所需的模块和工具函数
 import { gaodeApiKey } from '@/config/keys';
 import { signRequest } from '@/utils/api/mapUtils';
-import { sendMessageToUser } from '@/utils/api/message.js';
-import { getCurrentCoordinates } from '@/utils/locationUtils';
 
-// 定义高德地图API的基础URL
 const AMAP_API = 'https://restapi.amap.com/v3';
 
 export default {
   name: 'LocationSharing',
   props: {
-    // 接收者ID，从父组件传入
     recipientId: {
+      type: String,
+      required: true
+    },
+    missionId: {
       type: String,
       required: true
     }
   },
   data() {
     return {
-      // 当前位置
       currentLocation: {
         latitude: 39.909604,
         longitude: 116.397228
       },
-      searchKeyword: '', // 搜索关键词
-      markers: [], // 地图标记点
-      nearbyPOIs: [], // 附近兴趣点列表
-      selectedPOI: null, // 选中的兴趣点
-      searchDebounceTimer: null // 搜索防抖定时器
+      searchKeyword: '',
+      markers: [],
+      nearbyPOIs: [],
+      selectedPOI: null,
+      searchDebounceTimer: null
     }
   },
   mounted() {
-    // 组件挂载时获取当前位置并隐藏消息输入框
     this.getCurrentLocation();
     this.hideMessageInput();
   },
   beforeDestroy() {
-    // 组件销毁前显示消息输入框
     this.showMessageInput();
   },
   methods: {
-    // 获取当前位置
-    async getCurrentLocation() {
-      try {
-        // 使用工具函数获取当前坐标
-        const coordinates = await getCurrentCoordinates();
-        this.currentLocation = coordinates;
-        this.updateMarkers();
-        this.searchNearbyPOIs();
-      } catch (error) {
-        console.error('获取位置失败:', error);
-        uni.showToast({
-          title: '获取位置失败，请检查定位权限',
-          icon: 'none'
-        });
-      }
+    getCurrentLocation() {
+      uni.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          this.currentLocation = {
+            latitude: res.latitude,
+            longitude: res.longitude
+          };
+          this.updateMarkers();
+          this.searchNearbyPOIs();
+        },
+        fail: (err) => {
+          console.error('获取位置失败:', err);
+          uni.showToast({
+            title: '获取位置失败，请检查定位权限',
+            icon: 'none'
+          });
+        }
+      });
     },
-    // 更新地图标记点
     updateMarkers() {
-      // 设置当前位置的标记
       this.markers = [{
         id: 1,
         latitude: this.currentLocation.latitude,
@@ -120,7 +118,6 @@ export default {
         height: 32
       }];
 
-      // 如果有选中的兴趣点，添加其标记
       if (this.selectedPOI) {
         this.markers.push({
           id: 2,
@@ -132,7 +129,6 @@ export default {
         });
       }
     },
-    // 搜索附近兴趣点
     async searchNearbyPOIs(keyword = '') {
       try {
         const location = `${this.currentLocation.longitude},${this.currentLocation.latitude}`;
@@ -143,18 +139,15 @@ export default {
           radius: 1000,
           extensions: 'all'
         };
-        // 签名请求参数
         const signedParams = signRequest(params);
         const url = `${AMAP_API}/place/around?${signedParams}`;
         
-        // 发送请求获取附近兴趣点
         const response = await uni.request({
           url,
           method: 'GET'
         });
 
         if (response.data.status === '1') {
-          // 处理返回的兴趣点数据
           this.nearbyPOIs = response.data.pois.map(poi => ({
             id: poi.id,
             name: poi.name,
@@ -177,24 +170,19 @@ export default {
         });
       }
     },
-    // 处理搜索输入
     handleSearch(event) {
-      // 清除之前的定时器
       if (this.searchDebounceTimer) {
         clearTimeout(this.searchDebounceTimer);
       }
       
-      // 设置新的定时器，实现防抖
       this.searchDebounceTimer = setTimeout(() => {
         this.searchNearbyPOIs(event.detail.value);
       }, 500);
     },
-    // 选择位置
     selectLocation(poi) {
       this.selectedPOI = poi;
       this.updateMarkers();
     },
-    // 处理地图点击
     async handleMapTap(e) {
       const { latitude, longitude } = e.detail;
       try {
@@ -202,15 +190,12 @@ export default {
           key: gaodeApiKey,
           location: `${longitude},${latitude}`
         };
-        // 签名请求参数
         const signedParams = signRequest(params);
         const url = `${AMAP_API}/geocode/regeo?${signedParams}`;
-        // 发送请求获取地址信息
         const response = await uni.request({ url });
         
         if (response.data.status === '1') {
           const regeocode = response.data.regeocode;
-          // 创建新的选中兴趣点
           this.selectedPOI = {
             id: Date.now().toString(),
             name: regeocode.formatted_address,
@@ -229,8 +214,7 @@ export default {
         });
       }
     },
-    // 处理完成按钮点击
-    async handleComplete() {
+    handleComplete() {
       if (!this.selectedPOI) {
         uni.showToast({
           title: '请选择位置',
@@ -239,53 +223,28 @@ export default {
         return;
       }
 
-      // 构造位置数据
       const locationData = {
         latitude: parseFloat(this.selectedPOI.location.split(',')[1]),
         longitude: parseFloat(this.selectedPOI.location.split(',')[0]),
         name: this.selectedPOI.name,
         address: this.selectedPOI.address,
+        type: 'location'
       };
 
-      const locationDataString = JSON.stringify(locationData);
-      console.log('locationDataString', typeof(locationDataString), 'locationDataString');
-      
-      try {
-        // 发送位置消息
-        const response = await sendMessageToUser({
-          isPosition: true,
-          message: locationDataString, 
-          recipientId: this.recipientId
-        });
-
-        if (response.code === 200) {
-          console.log('位置信息发送成功:', response.data);
-          this.$emit('location-selected', locationData);
-          this.$emit('close');
-        } else {
-          throw new Error(response.msg || '发送位置信息失败');
-        }
-      } catch (error) {
-        console.error('发送位置信息失败:', error);
-        uni.showToast({
-          title: '发送位置信息失败，请重试',
-          icon: 'none'
-        });
-      }
+      console.log('LocationSharing: 发送位置数据', locationData);
+      this.$emit('location-selected', locationData);
+      this.$emit('close');
     },
-    // 格式化距离显示
     formatDistance(distance) {
       if (distance < 1000) {
         return `${distance}米`;
       }
       return `${(distance / 1000).toFixed(1)}千米`;
     },
-    // 隐藏消息输入框
     hideMessageInput() {
       this.$emit('hide-message-input', true);
       uni.$emit('hide-chat-input', true);
     },
-    // 显示消息输入框
     showMessageInput() {
       this.$emit('show-message-input');
     }
@@ -375,21 +334,21 @@ export default {
 
 .location-name {
   font-size: 16px;
-  color: #333;
+  font-weight: bold;
   margin-bottom: 5px;
 }
 
 .location-address {
-  font-size: 13px;
-  color: #999;
+  font-size: 14px;
+  color: #666;
 }
 
 .location-distance {
+  font-size: 12px;
+  color: #999;
   position: absolute;
   right: 15px;
   top: 15px;
-  font-size: 12px;
-  color: #999;
 }
 
 .location-check {
@@ -400,16 +359,11 @@ export default {
 }
 
 .check-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .location-item-selected {
-  border: 2px solid #4CAF50;
-  border-radius: 8px;
-}
-
-.location-check {
-  color: #4CAF50;
+  background-color: #f0f0f0;
 }
 </style>
