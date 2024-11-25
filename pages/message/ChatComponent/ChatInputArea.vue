@@ -101,7 +101,9 @@ export default {
       showLocationSharing: false,
       _selfAvatar: '/static/avatar/avatar5.jpeg',
       isVoiceInputActive: false,
-      isRecording: false
+      isRecording: false,
+      fileName: '',
+      fileType: null
     }
   },
   created() {
@@ -165,12 +167,13 @@ export default {
       } else {
         this.$emit('attach', action);
       }
-      if (action !== 'location' && action !== 'file') {
+      if (action !== 'location') {
         this.closeAttachMenu();
       }
     },
     handleFileSelected(fileData) {
       console.log('文件被选择:', fileData);
+      this.fileName = fileData.path.split('/').pop();
       this.chooseAndSendPhoto(fileData.path);
     },
     chooseBurnAfterReadingImage() {
@@ -247,23 +250,32 @@ export default {
       try {
         let tempFilePath = filePath;
         if (!tempFilePath) {
-          console.log('获取图片信息...');
-          const imageRes = await new Promise((resolve, reject) => {
-            uni.chooseImage({
+          console.log('获取文件信息...');
+          const fileRes = await new Promise((resolve, reject) => {
+            uni.chooseFile({
               count: 1,
-              sourceType: ['album'],
               success: (res) => {
-                console.log('图片选择成功:', JSON.stringify(res));
+                console.log('文件选择成功:', JSON.stringify(res));
                 resolve(res);
               },
               fail: (err) => {
-                console.error('图片选择失败:', err);
+                console.error('文件选择失败:', err);
                 reject(err);
               }
             });
           });
-          tempFilePath = imageRes.tempFilePaths[0];
+          tempFilePath = fileRes.tempFiles[0].path;
+          this.fileName = fileRes.tempFiles[0].name || tempFilePath.split('/').pop();
+        } else {
+          this.fileName = tempFilePath.split('/').pop();
         }
+        
+        // 确定文件类型
+        const fileExtension = this.fileName.split('.').pop().toLowerCase();
+        this.fileType = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension) ? 'image' : 'file';
+
+        console.log('选择的文件名:', this.fileName);
+        console.log('文件类型:', this.fileType);
 
         console.log('开始获取位置信息...');
         let locationRes = { latitude: '0', longitude: '0' };
@@ -296,15 +308,21 @@ export default {
         try {
           const response = await sendFilesToUser(sendData);
           console.log('sendFilesToUser 调用完成，响应:', JSON.stringify(response));
+          console.log('sendFilesToUser 响应数据:', JSON.stringify(response.data));
+
+          console.log('API返回的完整响应:', JSON.stringify(response));
+          console.log('API返回的message字段:', response.data.message);
 
           if (response.code === 200) {
             console.log('文件发送成功，触发message-sent事件');
+
             this.$emit('message-sent', {
-              type: filePath ? 'file' : 'image',
-              content: tempFilePath,
+              type: this.fileType,
+              content: this.fileType === 'image' ? tempFilePath : response.data.message,
               recipientId: this.recipientId,
               missionId: this.missionId
             });
+            this.closeAttachMenu();
           } else {
             throw new Error(response.msg || '发送文件消息失败');
           }
@@ -354,7 +372,6 @@ export default {
     startVoiceRecord() {
       console.log('开始录音');
       this.isRecording = true;
-      // 这里添加开始录音的逻辑
       uni.startRecord({
         success: () => {
           console.log('录音开始');
@@ -371,7 +388,6 @@ export default {
     stopVoiceRecord() {
       console.log('停止录音');
       this.isRecording = false;
-      // 这里添加停止录音并发送语音消息的逻辑
       uni.stopRecord({
         success: (res) => {
           console.log('录音结束，文件路径:', res.tempFilePath);

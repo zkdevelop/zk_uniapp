@@ -72,6 +72,7 @@ export default {
       uni.chooseFile({
         count: 1,
         success: (res) => {
+			console.log('resresres',res,'resresres')
           this.handleFileSelected(res.tempFiles[0]);
         },
         fail: (err) => {

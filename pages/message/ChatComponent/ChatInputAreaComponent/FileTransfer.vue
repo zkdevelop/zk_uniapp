@@ -22,7 +22,7 @@ export default {
         uni.showToast({ title: '请先选择文件', icon: 'none' });
         return;
       }
-
+		console.log(this.selectedFile.path,'this.selectedFile.path')
       uni.uploadFile({
         url: 'https://your-upload-api-url.com', // 替换为实际的上传 API 地址
         filePath: this.selectedFile.path,

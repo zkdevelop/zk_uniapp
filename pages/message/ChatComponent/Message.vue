@@ -1,7 +1,7 @@
 <template>
   <view class="message" :class="[message.userType]">
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
-    <view class="message-content">
+    <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
@@ -43,6 +43,14 @@
             </view>
           </template>
           
+          <!-- 文件消息类型 -->
+          <template v-else-if="message.type === 'file'">
+            <view class="file-message">
+              <image src="/static/message/file-icon.png" class="file-icon" mode="aspectFit" />
+              <text class="file-name">{{ message.content }}</text>
+            </view>
+          </template>
+
           <!-- 默认文本消息类型 -->
           <template v-else>
             {{ message.content }}
@@ -72,6 +80,7 @@ export default {
   },
   methods: {
     formatTime(timestamp) {
+      if (!timestamp) return 'Invalid Date';
       const date = new Date(timestamp);
       const month = date.getMonth() + 1;
       const day = date.getDate();
@@ -286,5 +295,26 @@ export default {
   padding: 5rpx 10rpx;
   border-radius: 5rpx;
   font-size: 24rpx;
+}
+
+.file-message {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .file-icon {
+    width: 80rpx;
+    height: 80rpx;
+    margin-right: 20rpx;
+  }
+  
+  .file-name {
+    font-size: 28rpx;
+    color: #333;
+    word-break: break-all;
+  }
 }
 </style>
