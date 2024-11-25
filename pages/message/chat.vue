@@ -20,6 +20,7 @@
       @attach="handleAttachment"
       @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
+      @image-sent="handleImageSent"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
       :missionId="chatInfo.missionId.toString()"
@@ -152,6 +153,10 @@ export default {
     },
     async sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
+      if (message.type === 'image') {
+        console.log('[sendMessage] 跳过图片类型的发送');
+        return;
+      }
       if (message.content && this.chatInfo.id) {
         const newMessage = {
           id: Date.now().toString(),
@@ -412,15 +417,17 @@ export default {
         if (response.code === 200 && Array.isArray(response.data)) {
           const newMessages = response.data.reverse().map(msg => {
             let content = msg.message;
-            let type = msg.messageType;
+            let type = msg.messageType.toLowerCase();
 
-            if (type === 'POSITION') {
-              type = 'location';
+            if (type === 'position') {
               try {
                 content = JSON.parse(msg.message);
+                type = 'location'; // 将 'position' 类型映射为 'location'
               } catch (e) {
                 console.error('解析位置数据失败:', e);
               }
+            } else if (type === 'image') {
+              content = msg.previewUrl || msg.message; // 使用 previewUrl 作为图片消息的内容，如果不存在则使用 message
             }
 
             return {
@@ -469,6 +476,18 @@ export default {
           icon: 'none'
         });
       }
+    },
+    handleImageSent(imageData) {
+      console.log('[handleImageSent] 收到图片数据:', imageData);
+      this.addNewMessage({
+        id: Date.now().toString(),
+        content: imageData.content,
+        userType: 'self',
+        avatar: this._selfAvatar,
+        timestamp: new Date(),
+        status: 'sent',
+        type: 'image'
+      });
     },
   }
 }
