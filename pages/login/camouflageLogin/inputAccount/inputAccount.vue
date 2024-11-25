@@ -9,7 +9,7 @@
 			</view>
 			<view>
 				<view style="text-align: left; margin-top: 30px;">
-					<text style="letter-spacing: 3px; font-size: 3.8ch; font-family: fantasy; font-weight: 550; width: 75%;">要开始使用，请先输入你的手机号码、邮箱地址或@用户名。</text>
+					<text style="letter-spacing: 3px; font-size:50rpx; font-family: fantasy; font-weight: 550; width: 75%;">要开始使用，请先输入你的手机号码、邮箱地址或@用户名。</text>
 				</view>
 				<view style="margin-top: 20px"><uni-easyinput class="inputValue" trim="all" v-model="username" placeholder="手机号码/邮件地址或用户名"></uni-easyinput></view>
 				<view style="margin-top: 20px"><uni-easyinput class="inputValue" type="password" trim="all" v-model="password" placeholder="密码"></uni-easyinput></view>

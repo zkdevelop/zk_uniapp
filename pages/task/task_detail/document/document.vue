@@ -63,7 +63,7 @@
 	import yshFileManager from "@/components/ysh-file-manager/ysh-file-manager.vue"
 	import { getMissionFileById, generateUrl } from '../../../../utils/api/mission'
 	export default {
-		components: {freeAudio,yshFileManager},
+		components: {freeAudio ,yshFileManager},
 		data() {
 			return {
 				missionId: '',
@@ -222,8 +222,8 @@
 					console.log(resultPath())
 				}
 			},
-			resultPath() {
-				return event.composedPath()
+			resultPath(resultPath) {
+				console.log(resultPath);
 			},
 			uploadVideo: function () {
 				var self = this;

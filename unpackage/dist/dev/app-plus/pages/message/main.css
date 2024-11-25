@@ -29,6 +29,7 @@
 }
 
 
+/* 样式保持不变 */
 .messages-container {
   display: flex;
   flex-direction: column;
@@ -172,33 +173,8 @@
   padding: 2px 6px;
   border-radius: 10px;
   min-width: 20px;
-  text-align: center;
-}
-@media screen and (max-width: 375px) {
-.message-item {
-    padding: 12px 12px;
-}
-.message-icon, .avatar {
-    width: 48px;
-    height: 48px;
-    margin-right: 8px;
-}
-.message-title {
-    font-size: 13px;
-}
-.message-preview {
-    font-size: 11px;
-}
-.message-date {
-    font-size: 10px;
-    margin-left: 8px;
-}
-.personal-chat {
-    padding: 9px 12px;
-}
-.personal-chat .message-icon,
-  .personal-chat .avatar {
-    width: 42px;
-    height: 42px;
-}
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
