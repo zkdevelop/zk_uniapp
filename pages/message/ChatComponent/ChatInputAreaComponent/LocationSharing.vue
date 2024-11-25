@@ -1,5 +1,6 @@
 <template>
   <view class="location-sharing">
+    <!-- 地图容器 -->
     <view class="map-container">
       <map
         id="locationMap"
@@ -13,6 +14,7 @@
       ></map>
     </view>
 
+    <!-- 头部搜索栏和完成按钮 -->
     <view class="header">
       <view class="search-bar">
         <input 
@@ -25,12 +27,14 @@
       <button class="complete-btn" @click="handleComplete">完成</button>
     </view>
 
+    <!-- 位置列表 -->
     <view class="location-list">
       <scroll-view scroll-y class="scroll-view">
         <view 
           v-for="(poi, index) in nearbyPOIs" 
           :key="index"
           class="location-item"
+          :class="{ 'location-item-selected': selectedPOI && selectedPOI.id === poi.id }"
           @tap="selectLocation(poi)"
         >
           <view class="location-name">{{ poi.name }}</view>
@@ -53,6 +57,16 @@ const AMAP_API = 'https://restapi.amap.com/v3';
 
 export default {
   name: 'LocationSharing',
+  props: {
+    recipientId: {
+      type: String,
+      required: true
+    },
+    missionId: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       currentLocation: {
@@ -214,7 +228,7 @@ export default {
         longitude: parseFloat(this.selectedPOI.location.split(',')[0]),
         name: this.selectedPOI.name,
         address: this.selectedPOI.address,
-        messageType: 'location'
+        type: 'location'
       };
 
       console.log('LocationSharing: 发送位置数据', locationData);
@@ -320,21 +334,21 @@ export default {
 
 .location-name {
   font-size: 16px;
-  color: #333;
+  font-weight: bold;
   margin-bottom: 5px;
 }
 
 .location-address {
-  font-size: 13px;
-  color: #999;
+  font-size: 14px;
+  color: #666;
 }
 
 .location-distance {
+  font-size: 12px;
+  color: #999;
   position: absolute;
   right: 15px;
   top: 15px;
-  font-size: 12px;
-  color: #999;
 }
 
 .location-check {
@@ -347,5 +361,9 @@ export default {
 .check-icon {
   width: 20px;
   height: 20px;
+}
+
+.location-item-selected {
+  background-color: #f0f0f0;
 }
 </style>

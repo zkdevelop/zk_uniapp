@@ -5,9 +5,8 @@
 
     <!-- 消息列表 -->
     <MessageList
+      ref="messageList"
       :messages="list"
-      :scroll-top="scrollTop"
-      :scroll-into-view="scrollIntoView"
       @load-more="loadMoreMessages"
       @scroll="onScroll"
       @view-burn-after-reading="viewBurnAfterReadingImage"
@@ -15,14 +14,16 @@
 
     <!-- 聊天输入区域 -->
     <ChatInputArea 
-      @send-message="sendMessage" 
-      @message-sent="handleMessageSent"
+      @send-message="sendMessage"
+      @message-sent="addNewMessage" 
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
       @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
+      @image-sent="handleImageSent"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
+      :missionId="chatInfo.missionId.toString()"
       ref="chatInputAreaRef"
     />
 
@@ -68,7 +69,7 @@ import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
-import { getHistoryChatMessages } from '@/utils/api/message.js'
+import { getHistoryChatMessages, sendMessageToUser } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
 import { useUserStore } from '@/store/userStore'
@@ -89,19 +90,14 @@ export default {
         name: '',
         avatar: [],
         type: 'single',
-        missionId: '' // 任务ID
+        missionId: ''
       },
-      list: [], // 消息列表
-      scrollTop: 0,
-      scrollIntoView: '',
-      _selfAvatar: '/static/avatar/avatar5.jpeg',
+      list: [],
       showAttachMenu: false,
       burnAfterReadingDuration: 5,
       currentBurnAfterReadingImage: '',
       currentBurnAfterReadingMessage: null,
       isScrolledToBottom: true,
-      scrollViewHeight: 0,
-      scrollViewScrollHeight: 0,
       showScrollToBottom: false,
       showNewMessageTip: false,
       hasNewMessages: false,
@@ -120,38 +116,25 @@ export default {
     eventChannel.on('chatInfo', (data) => {
       this.chatInfo = data.chatInfo;
       console.log('接收到的聊天信息:', this.chatInfo);
-      // 确保 missionId 被正确设置
       if (!this.chatInfo.missionId) {
         const userStore = useUserStore();
-        this.chatInfo.missionId = userStore.missionId;
+        this.chatInfo.missionId = userStore.missionId.toString();
+      } else if (Array.isArray(this.chatInfo.missionId)) {
+        this.chatInfo.missionId = this.chatInfo.missionId.join(',');
       }
       console.log('使用的 missionId:', this.chatInfo.missionId);
       this.initializeChat();
     });
   },
   mounted() {
-    this.getScrollViewInfo();
     console.log('聊天组件已挂载');
+    console.log('peerStore 初始状态:', this.peerStore);
   },
   methods: {
-    // 初始化聊天
     async initializeChat() {
       await this.loadHistoryMessages();
       this.$nextTick(this.scrollToBottom);
     },
-    // 获取滚动视图信息
-    getScrollViewInfo() {
-      const query = uni.createSelectorQuery().in(this);
-      query.select('.scroll-view').boundingClientRect(data => {
-        if (data) {
-          this.scrollViewHeight = data.height;
-          console.log('滚动视图高度:', this.scrollViewHeight);
-        } else {
-          console.log('获取滚动视图高度失败');
-        }
-      }).exec();
-    },
-    // 返回上一页
     goBack() {
       uni.navigateBack({
         success: () => {
@@ -168,10 +151,13 @@ export default {
         }
       });
     },
-    // 发送消息
-    sendMessage(message) {
+    async sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.content) {
+      if (message.type === 'image') {
+        console.log('[sendMessage] 跳过图片类型的发送');
+        return;
+      }
+      if (message.content && this.chatInfo.id) {
         const newMessage = {
           id: Date.now().toString(),
           content: message.content,
@@ -182,26 +168,59 @@ export default {
           type: message.type || 'text'
         };
         this.addNewMessage(newMessage);
+
+        try {
+          const response = await sendMessageToUser({
+            message: typeof message.content === 'object' ? JSON.stringify(message.content) : message.content,
+            recipientId: this.chatInfo.id,
+            messageType: message.type || 'text',
+            missionId: this.chatInfo.missionId,
+            isPosition: message.type === 'location'
+          });
+          console.log('[sendMessage] 发送消息响应:', response);
+          if (response.code === 200) {
+            this.handleMessageSent(response.data);
+          } else {
+            throw new Error(response.msg || '发送消息失败');
+          }
+        } catch (error) {
+          console.error('[sendMessage] 发送消息失败:', error);
+          this.handleMessageFailed(newMessage);
+        }
+      } else {
+        console.error('[sendMessage] 消息内容为空或 recipientId 未设置', {
+          content: message.content,
+          recipientId: this.chatInfo.id
+        });
       }
     },
-    // 处理消息发送成功
+    displaySentMessage(message) {
+      const newMessage = {
+        id: Date.now().toString(),
+        content: message.content,
+        userType: 'self',
+        avatar: this._selfAvatar,
+        timestamp: new Date(),
+        status: 'sending',
+        type: message.type || 'text'
+      };
+      this.addNewMessage(newMessage);
+    },
     handleMessageSent(sentMessage) {
       console.log('[handleMessageSent] 消息已发送:', sentMessage);
-      const tempMessage = this.list.find(m => m.content === sentMessage.message);
+      const tempMessage = this.list.find(m => m.content === sentMessage.message || m.content === sentMessage.content);
       if (tempMessage) {
-        tempMessage.id = sentMessage.id;
+        tempMessage.id = sentMessage.id || tempMessage.id;
         tempMessage.status = 'sent';
       }
     },
-    // 处理消息发送失败
     handleMessageFailed(failedMessage) {
       console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
-      const tempMessage = this.list.find(m => m.content === failedMessage);
+      const tempMessage = this.list.find(m => m.content === failedMessage.content && m.type === failedMessage.type);
       if (tempMessage) {
         tempMessage.status = 'failed';
       }
     },
-    // 处理附件
     handleAttachment(type, data) {
       console.log('[handleAttachment] 处理附件:', type, data);
       if (type === 'location') {
@@ -217,7 +236,6 @@ export default {
         }
       }
     },
-    // 选择图片
     chooseImage() {
       uni.chooseImage({
         success: (res) => {
@@ -231,7 +249,6 @@ export default {
         }
       });
     },
-    // 处理文件传输
     handleFileTransfer(fileData) {
       this.addNewMessage({
         content: fileData,
@@ -241,7 +258,6 @@ export default {
         timestamp: new Date()
       });
     },
-    // 处理阅后即焚
     handleBurnAfterReading(imageData) {
       this.addNewMessage({
         content: imageData,
@@ -251,21 +267,13 @@ export default {
         timestamp: new Date()
       });
     },
-    // 处理位置消息
     handleLocationMessage(locationData) {
       console.log('[handleLocationMessage] 处理位置消息:', locationData);
-      const newMessage = {
-        id: Date.now().toString(),
+      this.sendMessage({
         type: 'location',
-        content: locationData,
-        userType: 'self',
-        avatar: this._selfAvatar,
-        timestamp: new Date(),
-        status: 'sending'
-      };
-      this.addNewMessage(newMessage);
+        content: locationData
+      });
     },
-    // 查看阅后即焚图片
     viewBurnAfterReadingImage(message) {
       this.currentBurnAfterReadingImage = message.content.originalPath;
       this.currentBurnAfterReadingMessage = message;
@@ -273,7 +281,6 @@ export default {
         this.$refs.burnAfterReadingRef.open();
       });
     },
-    // 关闭阅后即焚预览
     closeBurnAfterReadingPreview() {
       this.currentBurnAfterReadingImage = '';
       if (this.currentBurnAfterReadingMessage) {
@@ -284,21 +291,17 @@ export default {
         this.currentBurnAfterReadingMessage = null;
       }
     },
-    // 切换附件菜单
     toggleAttachMenu(show) {
       this.showAttachMenu = show;
       console.log('附件菜单切换:', show);
     },
-    // 处理遮罩层点击
     handleOverlayClick() {
       this.showAttachMenu = false;
       console.log('附件菜单已关闭');
     },
-    // 滚动到底部
     scrollToBottom() {
       this.$nextTick(() => {
-        const lastMessageIndex = this.list.length - 1;
-        this.scrollIntoView = `message-${lastMessageIndex}`;
+        this.$refs.messageList.scrollToBottom();
         this.showScrollToBottom = false;
         this.showNewMessageTip = false;
         this.hasNewMessages = false;
@@ -306,11 +309,9 @@ export default {
         console.log('滚动到底部');
       });
     },
-    // 处理滚动事件
     onScroll(event) {
       const { scrollTop, scrollHeight } = event.detail;
-      this.scrollViewScrollHeight = scrollHeight;
-      const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
+      const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
       
       this.isScrolledToBottom = isAtBottom;
       this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
@@ -320,17 +321,34 @@ export default {
         this.showNewMessageTip = false;
       }
     },
-    // 加载更多消息
     async loadMoreMessages() {
+      console.log('[loadMoreMessages] 开始加载更多消息');
       if (this.hasMoreMessages && !this.isLoading) {
         this.isLoading = true;
+        
+        const oldContentHeight = await this.$refs.messageList.getContentHeight();
+        console.log('[loadMoreMessages] 旧内容高度:', oldContentHeight);
+
         this.currentFrom = this.currentTo + 1;
         this.currentTo = this.currentTo + 10;
         await this.loadHistoryMessages(true);
-        this.isLoading = false;
+        
+        this.$nextTick(async () => {
+          const newContentHeight = await this.$refs.messageList.getContentHeight();
+          console.log('[loadMoreMessages] 新内容高度:', newContentHeight);
+
+          const heightDifference = newContentHeight - oldContentHeight;
+          console.log('[loadMoreMessages] 高度差:', heightDifference);
+          
+          this.$refs.messageList.setScrollTop(heightDifference);
+
+          this.isLoading = false;
+          console.log('[loadMoreMessages] 加载完成');
+        });
+      } else {
+        console.log('[loadMoreMessages] 没有更多消息或正在加载中');
       }
     },
-    // 添加新消息
     addNewMessage(message) {
       console.log('添加新消息:', message);
       this.list.push(message);
@@ -342,22 +360,21 @@ export default {
         this.scrollToBottom();
       }
     },
-    // 打开视频通话页面
     openVideoPage(action) {
       uni.navigateTo({
         url: `/pages/message/video-call?calleePeerId=${this.chatInfo.id}`
       });
     },
-    // 拒绝视频通话
     rejectVideoCall() {
+      console.log('拒绝视频通话，peerStore 状态:', this.peerStore);
       this.peerStore.dataConnection.send({
         instruction: this.peerStore.instruction.reject
       });
       this.peerStore.dataConnection = undefined;
       this.peerStore.activateNotification = false;
     },
-    // 接受视频通话
     acceptVideoCall() {
+      console.log('接受视频通话，peerStore 状态:', this.peerStore);
       this.peerStore.activateNotification = false;
       
       uni.showLoading({
@@ -365,15 +382,10 @@ export default {
         mask: true
       });
       
-      // 监听媒体连接是否存在
       let cancel = watch(() => this.peerStore.mediaConnection, newValue => {
         if (newValue) {
-          // 关闭加载框
           uni.hideLoading();
-          
-          // 取消监听
           cancel();
-          
           uni.navigateTo({
             url: "/pages/message/video-answer"
           });
@@ -384,9 +396,8 @@ export default {
         instruction: this.peerStore.instruction.accept
       });
     },
-    // 加载历史消息
     async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] 加载历史消息', { 
+      console.log('[loadHistoryMessages] 开始加载历史消息', { 
         isLoadingMore, 
         from: this.currentFrom, 
         to: this.currentTo,
@@ -404,25 +415,45 @@ export default {
         console.log('[loadHistoryMessages] 历史消息响应:', response);
 
         if (response.code === 200 && Array.isArray(response.data)) {
-          const newMessages = response.data.reverse().map(msg => ({
-            id: msg.id,
-            content: msg.message,
-            userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
-            avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
-            timestamp: new Date(msg.sendTime),
-            type: msg.messageType,
-            isRead: msg.isRead
-          }));
+          const newMessages = response.data.reverse().map(msg => {
+            let content = msg.message;
+            let type = msg.messageType.toLowerCase();
+
+            if (type === 'position') {
+              try {
+                content = JSON.parse(msg.message);
+                type = 'location'; // 将 'position' 类型映射为 'location'
+              } catch (e) {
+                console.error('解析位置数据失败:', e);
+              }
+            } else if (type === 'image') {
+              content = msg.previewUrl || msg.message; // 使用 previewUrl 作为图片消息的内容，如果不存在则使用 message
+            }
+
+            return {
+              id: msg.id,
+              content: content,
+              userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+              avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
+              timestamp: new Date(msg.sendTime),
+              type: type,
+              isRead: msg.isRead
+            };
+          });
+
+          console.log('[loadHistoryMessages] 新消息数量:', newMessages.length);
 
           if (isLoadingMore) {
             this.list = [...newMessages, ...this.list];
+            console.log('[loadHistoryMessages] 在列表前端添加新消息');
           } else {
             this.list = newMessages;
+            console.log('[loadHistoryMessages] 替换整个消息列表');
           }
           
           this.hasMoreMessages = newMessages.length === (this.currentTo - this.currentFrom + 1);
 
-          console.log('[loadHistoryMessages] 更新后的消息列表:', this.list);
+          console.log('[loadHistoryMessages] 更新后的消息列表长度:', this.list.length);
           console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
 
           this.$nextTick(() => {
@@ -445,6 +476,18 @@ export default {
           icon: 'none'
         });
       }
+    },
+    handleImageSent(imageData) {
+      console.log('[handleImageSent] 收到图片数据:', imageData);
+      this.addNewMessage({
+        id: Date.now().toString(),
+        content: imageData.content,
+        userType: 'self',
+        avatar: this._selfAvatar,
+        timestamp: new Date(),
+        status: 'sent',
+        type: 'image'
+      });
     },
   }
 }

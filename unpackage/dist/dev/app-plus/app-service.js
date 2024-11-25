@@ -131,7 +131,11 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
+=======
+  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$Q, [["render", _sfc_render$P], ["__file", "E:/代码/new/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const ON_SHOW = "onShow";
   function requireNativePlugin(name) {
     return weex.requireModule(name);
@@ -1337,7 +1341,11 @@ Only state can be modified.`);
     {
       $subscribeOptions.onTrigger = (event) => {
         if (isListening) {
+<<<<<<< HEAD
           debuggerEvents = event;
+=======
+          debuggerEvents = event2;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         } else if (isListening == false && !store2._hotUpdating) {
           if (Array.isArray(debuggerEvents)) {
             debuggerEvents.push(event);
@@ -2052,7 +2060,11 @@ This will fail in production.`);
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/login.vue"]]);
+=======
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__file", "E:/代码/new/zk_uniapp/pages/login/login.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const isObject$1 = (val) => val !== null && typeof val === "object";
   const defaultDelimiters = ["{", "}"];
   class BaseFormatter {
@@ -2523,7 +2535,11 @@ This will fail in production.`);
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const __easycom_0$6 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+=======
+  const __easycom_0$6 = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-9245e42c"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -3243,7 +3259,11 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
+<<<<<<< HEAD
   const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+=======
+  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-d31e1c47"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const pages = [
     {
       path: "pages/login/camouflageLogin/camouflageLogin",
@@ -6906,8 +6926,13 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-91ec6a82"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
   const _sfc_main$K = {
+=======
+  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-91ec6a82"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
+  const _sfc_main$L = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "UniDataPicker",
     emits: ["popupopened", "popupclosed", "nodeclick", "input", "change", "update:modelValue", "inputclick"],
     mixins: [dataPicker],
@@ -7277,8 +7302,13 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-2653531e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
   const _sfc_main$J = {
+=======
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-2653531e"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
+  const _sfc_main$K = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     data() {
       return {
         account: "test-app",
@@ -7479,8 +7509,13 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/register/register.vue"]]);
   const _sfc_main$I = {
+=======
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__file", "E:/代码/new/zk_uniapp/pages/register/register.vue"]]);
+  const _sfc_main$J = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     data() {
       return {};
     },
@@ -7489,7 +7524,11 @@ ${i3}
   function _sfc_render$H(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
+<<<<<<< HEAD
   const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
+=======
+  const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__file", "E:/代码/new/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const _imports_0$9 = "/static/icon/finger.png";
   const _sfc_main$H = {
     data() {
@@ -7609,7 +7648,11 @@ ${i3}
       )
     ]);
   }
+<<<<<<< HEAD
   const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
+=======
+  const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__file", "E:/代码/new/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const searchMission = (query) => {
     formatAppLog("log", "at utils/api/mission.js:6", "query", query);
     return request({
@@ -7897,8 +7940,13 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesTaskTask = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task.vue"]]);
   const _sfc_main$F = {
+=======
+  const PagesTaskTask = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__file", "E:/代码/new/zk_uniapp/pages/task/task.vue"]]);
+  const _sfc_main$G = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "uni-data-select",
     mixins: [Ys.mixinDatacom || {}],
     props: {
@@ -8290,7 +8338,11 @@ ${i3}
       )
     ]);
   }
+<<<<<<< HEAD
   const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+=======
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -8667,8 +8719,13 @@ ${i3}
       [vue.vShow, $data.isShow]
     ]);
   }
+<<<<<<< HEAD
   const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
   const _sfc_main$D = {
+=======
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$E = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -9078,8 +9135,13 @@ ${i3}
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
+<<<<<<< HEAD
   const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-4dd3c44b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   const _sfc_main$C = {
+=======
+  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__scopeId", "data-v-4dd3c44b"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const _sfc_main$D = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "uniCollapseItem",
     props: {
       // 列表标题
@@ -9326,8 +9388,13 @@ ${i3}
       )
     ]);
   }
+<<<<<<< HEAD
   const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-3d2dde9f"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse-item/uni-collapse-item.vue"]]);
   const _sfc_main$B = {
+=======
+  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-3d2dde9f"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse-item/uni-collapse-item.vue"]]);
+  const _sfc_main$C = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "uniCollapse",
     emits: ["change", "activeItem", "input", "update:modelValue"],
     props: {
@@ -9443,8 +9510,13 @@ ${i3}
       vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
     ]);
   }
+<<<<<<< HEAD
   const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-3f050360"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse/uni-collapse.vue"]]);
   const _sfc_main$A = {
+=======
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-3f050360"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse/uni-collapse.vue"]]);
+  const _sfc_main$B = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "uniDataChecklist",
     mixins: [Ys.mixinDatacom || {}],
     emits: ["input", "update:modelValue", "change"],
@@ -10000,8 +10072,13 @@ ${i3}
       /* STYLE */
     );
   }
+<<<<<<< HEAD
   const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
   const _sfc_main$z = {
+=======
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-2f788efd"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
+  const _sfc_main$A = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "uniFormsItem",
     options: {
       virtualHost: true
@@ -10389,7 +10466,11 @@ ${i3}
       /* CLASS */
     );
   }
+<<<<<<< HEAD
   const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+=======
+  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-462874dd"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -10882,7 +10963,11 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
+<<<<<<< HEAD
   const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+=======
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-09fd5285"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -11750,7 +11835,11 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const __easycom_7 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+=======
+  const __easycom_7 = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-9a1e3c32"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const getOrderList = (params) => {
     return request({
       url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
@@ -13128,9 +13217,15 @@ ${i3}
     );
   }
   if (typeof block0 === "function")
+<<<<<<< HEAD
     block0(_sfc_main$w);
   const PagesTaskTaskDetailTaskDetail = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/task_detail.vue"]]);
   const _sfc_main$v = {
+=======
+    block0(_sfc_main$x);
+  const PagesTaskTaskDetailTaskDetail = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/task_detail.vue"]]);
+  const _sfc_main$w = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "UniGridItem",
     inject: ["grid"],
     props: {
@@ -13207,8 +13302,13 @@ ${i3}
       /* STYLE */
     )) : vue.createCommentVNode("v-if", true);
   }
+<<<<<<< HEAD
   const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-7a807eb7"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue"]]);
   const _sfc_main$u = {
+=======
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-7a807eb7"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue"]]);
+  const _sfc_main$v = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "UniGrid",
     emits: ["change"],
     props: {
@@ -13290,8 +13390,13 @@ ${i3}
       ], 14, ["id"])
     ]);
   }
+<<<<<<< HEAD
   const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-07acefee"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-grid/components/uni-grid/uni-grid.vue"]]);
   const _sfc_main$t = {
+=======
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-07acefee"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-grid/components/uni-grid/uni-grid.vue"]]);
+  const _sfc_main$u = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "UniSection",
     emits: ["click"],
     props: {
@@ -13407,8 +13512,13 @@ ${i3}
       )
     ]);
   }
+<<<<<<< HEAD
   const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
   const _sfc_main$s = {
+=======
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-637fd36b"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
+  const _sfc_main$t = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     props: {
       urls: {
         type: Array,
@@ -13543,8 +13653,13 @@ ${i3}
       ], 40, ["current"])
     ])) : vue.createCommentVNode("v-if", true);
   }
+<<<<<<< HEAD
   const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-fdd21252"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/q-previewImage/components/q-previewImage/q-previewImage.vue"]]);
   const _sfc_main$r = {
+=======
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-fdd21252"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/q-previewImage/components/q-previewImage/q-previewImage.vue"]]);
+  const _sfc_main$s = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "ysh-file-manager",
     props: {},
     data() {
@@ -13719,7 +13834,11 @@ ${i3}
   function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
+<<<<<<< HEAD
   const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/components/ysh-file-manager/ysh-file-manager.vue"]]);
+=======
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__file", "E:/代码/new/zk_uniapp/components/ysh-file-manager/ysh-file-manager.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   let platform = "other";
   const _sfc_main$q = {
     name: "UniFab",
@@ -13982,8 +14101,13 @@ ${i3}
       )
     ]);
   }
+<<<<<<< HEAD
   const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-85f34dfc"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-fab/components/uni-fab/uni-fab.vue"]]);
   const _sfc_main$p = {
+=======
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-85f34dfc"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-fab/components/uni-fab/uni-fab.vue"]]);
+  const _sfc_main$q = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     data() {
       return {
         context: null,
@@ -14126,7 +14250,11 @@ ${i3}
       /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
     );
   }
+<<<<<<< HEAD
   const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-615c0603"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
+=======
+  const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-615c0603"], ["__file", "E:/代码/new/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const _imports_0$6 = "/static/icon/take_video.png";
   const _imports_1$1 = "/static/icon/audio.png";
   const _sfc_main$o = {
@@ -14590,8 +14718,13 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesTaskTaskDetailDocumentDocument = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/document/document.vue"]]);
   const _sfc_main$n = {
+=======
+  const PagesTaskTaskDetailDocumentDocument = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/document/document.vue"]]);
+  const _sfc_main$o = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     data() {
       return {
         id: 0,
@@ -14652,8 +14785,13 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesTaskTaskDetailMapTestMapTest = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/map_test/map_test.vue"]]);
   const _sfc_main$m = {
+=======
+  const PagesTaskTaskDetailMapTestMapTest = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/map_test/map_test.vue"]]);
+  const _sfc_main$n = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     data() {
       return {};
     },
@@ -14678,8 +14816,13 @@ ${i3}
       vue.createElementVNode("web-view", { src: "/static/html/map_baidu.html" })
     ]);
   }
+<<<<<<< HEAD
   const PagesTaskTaskDetailBaiduMapBaiduMap = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/baidu_map/baidu_map.vue"]]);
   const _sfc_main$l = {
+=======
+  const PagesTaskTaskDetailBaiduMapBaiduMap = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/baidu_map/baidu_map.vue"]]);
+  const _sfc_main$m = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "OptionPicker",
     props: {
       title: String,
@@ -14749,7 +14892,11 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-2798e3c8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/profile/OptionPicker.vue"]]);
+=======
+  const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-2798e3c8"], ["__file", "E:/代码/new/zk_uniapp/pages/profile/OptionPicker.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const _imports_0$5 = "/static/my/编辑.svg";
   const _imports_1 = "/static/my/展开.svg";
   const _sfc_main$k = {
@@ -15047,7 +15194,11 @@ ${i3}
       }, null, 8, ["title", "options", "selectedValue"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const PagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/profile/profile.vue"]]);
+=======
+  const PagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__file", "E:/代码/new/zk_uniapp/pages/profile/profile.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const getChatList = (missionId) => {
     if (!missionId) {
       formatAppLog("error", "at utils/api/message.js:5", "getChatList 需要 missionId 参数");
@@ -15079,7 +15230,11 @@ ${i3}
       }
     });
   };
+<<<<<<< HEAD
   const _sfc_main$j = {
+=======
+  const _sfc_main$k = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "GroupAvatar",
     props: {
       avatar: {
@@ -15138,7 +15293,11 @@ ${i3}
       ))
     ]);
   }
+<<<<<<< HEAD
   const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-afb5909c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
+=======
+  const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-afb5909c"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const _imports_0$4 = "/static/message/搜索.png";
   const _sfc_main$i = {
     name: "Messages",
@@ -15265,6 +15424,13 @@ ${i3}
         fetchChatList();
         calculateScrollViewHeight();
       });
+<<<<<<< HEAD
+=======
+      vue.onActivated(() => {
+        formatAppLog("log", "at pages/message/main.vue:197", "Messages 组件被激活");
+        fetchChatList();
+      });
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       return {
         combinedMessages,
         totalMessageCount,
@@ -15408,7 +15574,11 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/main.vue"]]);
+=======
+  const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__file", "E:/代码/new/zk_uniapp/pages/message/main.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const _imports_0$3 = "/static/message/返回.png";
   const _sfc_main$h = {
     name: "ChatHeader",
@@ -15446,7 +15616,11 @@ ${i3}
       vue.createElementVNode("text", { class: "menu-button" }, "...")
     ]);
   }
+<<<<<<< HEAD
   const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-120ff10e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
+=======
+  const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-120ff10e"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const gaodeApiKey = "fc598a079d7d9cf5f54ecec04b17e414";
   const gaodeSecurityKey = "93849873dba769e7b6235a79330ae7f7";
   const AMAP_KEY = gaodeApiKey;
@@ -15634,8 +15808,13 @@ ${i3}
       /* CLASS */
     );
   }
+<<<<<<< HEAD
   const Message = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-1cea873d"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/Message.vue"]]);
   const _sfc_main$f = {
+=======
+  const Message = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-1cea873d"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/Message.vue"]]);
+  const _sfc_main$g = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "MessageList",
     components: {
       Message
@@ -15648,50 +15827,142 @@ ${i3}
       scrollTop: {
         type: Number,
         default: 0
-      },
-      scrollIntoView: {
-        type: String,
-        default: ""
       }
     },
+    data() {
+      return {
+        showLoadMore: false,
+        // 控制是否显示"加载更多"按钮
+        internalScrollTop: 0,
+        // 内部管理的滚动位置
+        scrollViewHeight: 0,
+        // 滚动视图的高度
+        lastContentHeight: 0
+        // 上一次内容的高度
+      };
+    },
+    watch: {
+      messages: {
+        handler(newMessages, oldMessages) {
+          this.$nextTick(() => {
+            const newContentHeight = this.getContentHeight();
+            if (newMessages.length > oldMessages.length) {
+              if (newMessages.length - oldMessages.length === 1 && newMessages[newMessages.length - 1].userType === "self") {
+                this.scrollToBottom();
+              } else {
+                const heightDifference = newContentHeight - this.lastContentHeight;
+                this.internalScrollTop += heightDifference;
+              }
+            }
+            this.lastContentHeight = newContentHeight;
+          });
+        },
+        immediate: true
+      }
+    },
+    mounted() {
+      this.initScrollViewHeight();
+      this.lastContentHeight = this.getContentHeight();
+    },
     methods: {
+<<<<<<< HEAD
       onScroll(event) {
         this.$emit("scroll", event);
+=======
+      // 初始化滚动视图高度
+      initScrollViewHeight() {
+        const query = uni.createSelectorQuery().in(this);
+        query.select(".message-list-container").boundingClientRect((data) => {
+          if (data) {
+            this.scrollViewHeight = data.height;
+            formatAppLog("log", "at pages/message/ChatComponent/MessageList.vue:89", "[MessageList] 滚动视图高度:", this.scrollViewHeight);
+          }
+        }).exec();
+      },
+      // 获取内容高度
+      getContentHeight() {
+        const query = uni.createSelectorQuery().in(this);
+        return new Promise((resolve) => {
+          query.select(".message-list-content").boundingClientRect((data) => {
+            if (data) {
+              formatAppLog("log", "at pages/message/ChatComponent/MessageList.vue:99", "[MessageList] 内容高度:", data.height);
+              resolve(data.height);
+            } else {
+              resolve(0);
+            }
+          }).exec();
+        });
+      },
+      // 处理滚动事件
+      onScroll(event2) {
+        const { scrollTop, scrollHeight } = event2.detail;
+        this.showLoadMore = scrollTop < 50;
+        this.$emit("scroll", event2);
+      },
+      // 处理加载更多按钮点击事件
+      handleLoadMore() {
+        this.$emit("load-more");
+      },
+      // 滚动到底部
+      scrollToBottom() {
+        this.$nextTick(async () => {
+          const contentHeight = await this.getContentHeight();
+          this.internalScrollTop = contentHeight - this.scrollViewHeight;
+        });
+      },
+      // 设置滚动位置
+      setScrollTop(value) {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageList.vue:126", "[MessageList] 设置滚动位置:", value);
+        this.internalScrollTop = value;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       }
     }
   };
   function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_message = vue.resolveComponent("message");
-    return vue.openBlock(), vue.createElementBlock("scroll-view", {
-      class: "scroll-view",
-      "scroll-y": "",
-      "scroll-with-animation": "",
-      "scroll-top": $props.scrollTop,
-      "scroll-into-view": $props.scrollIntoView,
-      onScrolltoupper: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("load-more")),
-      onScroll: _cache[2] || (_cache[2] = (...args) => $options.onScroll && $options.onScroll(...args))
-    }, [
-      vue.createElementVNode("view", { style: { "padding": "30rpx 30rpx 240rpx" } }, [
-        vue.createCommentVNode(" 遍历消息列表，渲染每条消息 "),
-        (vue.openBlock(true), vue.createElementBlock(
-          vue.Fragment,
-          null,
-          vue.renderList($props.messages, (item, index) => {
-            return vue.openBlock(), vue.createBlock(_component_message, {
-              key: index,
-              id: `message-${index}`,
-              message: item,
-              onViewBurnAfterReading: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("view-burn-after-reading", $event))
-            }, null, 8, ["id", "message"]);
-          }),
-          128
-          /* KEYED_FRAGMENT */
-        ))
-      ])
-    ], 40, ["scroll-top", "scroll-into-view"]);
+    return vue.openBlock(), vue.createElementBlock("view", { class: "message-list-container" }, [
+      vue.createElementVNode("scroll-view", {
+        class: "scroll-view",
+        "scroll-y": "",
+        "scroll-top": $data.internalScrollTop,
+        onScroll: _cache[2] || (_cache[2] = (...args) => $options.onScroll && $options.onScroll(...args)),
+        style: vue.normalizeStyle({ height: $data.scrollViewHeight + "px" })
+      }, [
+        vue.createCommentVNode(" 加载更多按钮 "),
+        $data.showLoadMore ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "load-more-button",
+          onClick: _cache[0] || (_cache[0] = (...args) => $options.handleLoadMore && $options.handleLoadMore(...args))
+        }, [
+          vue.createElementVNode("text", { class: "load-more-text" }, "点击加载更多")
+        ])) : vue.createCommentVNode("v-if", true),
+        vue.createElementVNode("view", { class: "message-list-content" }, [
+          vue.createCommentVNode(" 遍历消息列表，渲染每条消息 "),
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($props.messages, (item, index) => {
+              return vue.openBlock(), vue.createBlock(_component_message, {
+                key: item.id || index,
+                id: `message-${index}`,
+                message: item,
+                onViewBurnAfterReading: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("view-burn-after-reading", $event))
+              }, null, 8, ["id", "message"]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ])
+      ], 44, ["scroll-top"])
+    ]);
   }
+<<<<<<< HEAD
   const MessageList = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-dee4eb4b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageList.vue"]]);
   const _sfc_main$e = {
+=======
+  const MessageList = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-dee4eb4b"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageList.vue"]]);
+  const _sfc_main$f = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "AttachmentMenu",
     data() {
       return {
@@ -15875,8 +16146,13 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const AttachmentMenu = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-00ea5aaf"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachmentMenu.vue"]]);
   const _sfc_main$d = {
+=======
+  const AttachmentMenu = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-00ea5aaf"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachmentMenu.vue"]]);
+  const _sfc_main$e = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "FileTransfer",
     props: {
       selectedFile: {
@@ -15934,7 +16210,11 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const FileTransfer = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-ce413881"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/FileTransfer.vue"]]);
+=======
+  const FileTransfer = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-ce413881"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/FileTransfer.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -22981,7 +23261,11 @@ ${i3}
       ])
     ]);
   }
+<<<<<<< HEAD
   const LocationSharing = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-5719cec1"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue"]]);
+=======
+  const LocationSharing = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-5719cec1"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const _imports_0$1 = "/static/message/语音输入.png";
   const _sfc_main$b = {
     name: "ChatInputArea",
@@ -23338,8 +23622,13 @@ ${i3}
       }, null, 8, ["onFileSelected"])
     ]);
   }
+<<<<<<< HEAD
   const ChatInputArea = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-e8a570ad"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputArea.vue"]]);
   const _sfc_main$a = {
+=======
+  const ChatInputArea = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-e8a570ad"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputArea.vue"]]);
+  const _sfc_main$b = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "BurnAfterReading",
     props: {
       // 图片源
@@ -23422,8 +23711,13 @@ ${i3}
       )
     ])) : vue.createCommentVNode("v-if", true);
   }
+<<<<<<< HEAD
   const BurnAfterReading = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-dfdab274"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue.vue"]]);
   const _sfc_main$9 = {
+=======
+  const BurnAfterReading = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-dfdab274"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue.vue"]]);
+  const _sfc_main$a = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "ScrollToBottomButton",
     props: {
       show: {
@@ -23441,7 +23735,11 @@ ${i3}
       vue.createElementVNode("text", { class: "scroll-to-bottom-icon" }, "↓")
     ])) : vue.createCommentVNode("v-if", true);
   }
+<<<<<<< HEAD
   const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-92969997"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
+=======
+  const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-92969997"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const usePeerStore = defineStore("peerStore", {
     state() {
       return {
@@ -23511,6 +23809,7 @@ ${i3}
     },
     data() {
       return {
+        // 聊天信息
         chatInfo: {
           id: "",
           name: "",
@@ -23521,25 +23820,40 @@ ${i3}
         },
         list: [],
         // 消息列表
+<<<<<<< HEAD
         scrollTop: 0,
         scrollIntoView: "",
         _selfAvatar: "/static/avatar/avatar5.jpeg",
+=======
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         showAttachMenu: false,
+        // 是否显示附件菜单
         burnAfterReadingDuration: 5,
+        // 阅后即焚持续时间
         currentBurnAfterReadingImage: "",
+        // 当前阅后即焚图片
         currentBurnAfterReadingMessage: null,
+        // 当前阅后即焚消息
         isScrolledToBottom: true,
-        scrollViewHeight: 0,
-        scrollViewScrollHeight: 0,
+        // 是否滚动到底部
         showScrollToBottom: false,
+        // 是否显示滚动到底部按钮
         showNewMessageTip: false,
+        // 是否显示新消息提示
         hasNewMessages: false,
+        // 是否有新消息
         currentFrom: 0,
+        // 当前加载消息的起始位置
         currentTo: 10,
+        // 当前加载消息的结束位置
         hasMoreMessages: true,
+        // 是否还有更多消息
         isLoading: false,
+        // 是否正在加载消息
         peerStore: null,
+        // 对等连接存储
         friendStore: null
+        // 好友存储
       };
     },
     onLoad() {
@@ -23548,18 +23862,30 @@ ${i3}
       this.friendStore = useFriendStore$1();
       eventChannel.on("chatInfo", (data) => {
         this.chatInfo = data.chatInfo;
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:122", "接收到的聊天信息:", this.chatInfo);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:120", "接收到的聊天信息:", this.chatInfo);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         if (!this.chatInfo.missionId) {
           const userStore = useUserStore();
           this.chatInfo.missionId = userStore.missionId;
         }
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:128", "使用的 missionId:", this.chatInfo.missionId);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:126", "使用的 missionId:", this.chatInfo.missionId);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         this.initializeChat();
       });
     },
     mounted() {
+<<<<<<< HEAD
       this.getScrollViewInfo();
       formatAppLog("log", "at pages/message/chat.vue:134", "聊天组件已挂载");
+=======
+      formatAppLog("log", "at pages/message/chat.vue:131", "聊天组件已挂载");
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     },
     methods: {
       // 初始化聊天
@@ -23567,6 +23893,7 @@ ${i3}
         await this.loadHistoryMessages();
         this.$nextTick(this.scrollToBottom);
       },
+<<<<<<< HEAD
       // 获取滚动视图信息
       getScrollViewInfo() {
         const query = uni.createSelectorQuery().in(this);
@@ -23579,6 +23906,8 @@ ${i3}
           }
         }).exec();
       },
+=======
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       // 返回上一页
       goBack() {
         uni.navigateBack({
@@ -23586,7 +23915,11 @@ ${i3}
             uni.$emit("updateTabBarActiveTab", 1);
           },
           fail: (err) => {
+<<<<<<< HEAD
             formatAppLog("error", "at pages/message/chat.vue:161", "返回失败:", err);
+=======
+            formatAppLog("error", "at pages/message/chat.vue:146", "返回失败:", err);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             uni.reLaunch({
               url: "/pages/tabBar/tabBar",
               success: () => {
@@ -23597,9 +23930,15 @@ ${i3}
         });
       },
       // 发送消息
+<<<<<<< HEAD
       sendMessage(message) {
         formatAppLog("log", "at pages/message/chat.vue:173", "[sendMessage] 发送消息:", message);
         if (message.content) {
+=======
+      async sendMessage(message) {
+        formatAppLog("log", "at pages/message/chat.vue:158", "[sendMessage] 发送消息:", message);
+        if (message.content && this.chatInfo.id) {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           const newMessage = {
             id: Date.now().toString(),
             content: message.content,
@@ -23610,11 +23949,36 @@ ${i3}
             type: message.type || "text"
           };
           this.addNewMessage(newMessage);
+          try {
+            const response = await sendMessageToUser({
+              message: message.content,
+              recipientId: this.chatInfo.id,
+              messageType: message.type || "text"
+            });
+            formatAppLog("log", "at pages/message/chat.vue:177", "[sendMessage] 发送消息响应:", response);
+            if (response.code === 200) {
+              this.handleMessageSent(response.data);
+            } else {
+              throw new Error(response.msg || "发送消息失败");
+            }
+          } catch (error) {
+            formatAppLog("error", "at pages/message/chat.vue:184", "[sendMessage] 发送消息失败:", error);
+            this.handleMessageFailed(message.content);
+          }
+        } else {
+          formatAppLog("error", "at pages/message/chat.vue:188", "[sendMessage] 消息内容为空或 recipientId 未设置", {
+            content: message.content,
+            recipientId: this.chatInfo.id
+          });
         }
       },
       // 处理消息发送成功
       handleMessageSent(sentMessage) {
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:189", "[handleMessageSent] 消息已发送:", sentMessage);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:196", "[handleMessageSent] 消息已发送:", sentMessage);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         const tempMessage = this.list.find((m2) => m2.content === sentMessage.message);
         if (tempMessage) {
           tempMessage.id = sentMessage.id;
@@ -23623,7 +23987,11 @@ ${i3}
       },
       // 处理消息发送失败
       handleMessageFailed(failedMessage) {
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:198", "[handleMessageFailed] 消息发送失败:", failedMessage);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:205", "[handleMessageFailed] 消息发送失败:", failedMessage);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         const tempMessage = this.list.find((m2) => m2.content === failedMessage);
         if (tempMessage) {
           tempMessage.status = "failed";
@@ -23631,7 +23999,11 @@ ${i3}
       },
       // 处理附件
       handleAttachment(type, data) {
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:206", "[handleAttachment] 处理附件:", type, data);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:213", "[handleAttachment] 处理附件:", type, data);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         if (type === "location") {
           this.handleLocationMessage(data);
         } else {
@@ -23681,7 +24053,11 @@ ${i3}
       },
       // 处理位置消息
       handleLocationMessage(locationData) {
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:256", "[handleLocationMessage] 处理位置消息:", locationData);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:263", "[handleLocationMessage] 处理位置消息:", locationData);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         const newMessage = {
           id: Date.now().toString(),
           type: "location",
@@ -23715,22 +24091,30 @@ ${i3}
       // 切换附件菜单
       toggleAttachMenu(show) {
         this.showAttachMenu = show;
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:290", "附件菜单切换:", show);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:297", "附件菜单切换:", show);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       },
       // 处理遮罩层点击
       handleOverlayClick() {
         this.showAttachMenu = false;
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:295", "附件菜单已关闭");
+=======
+        formatAppLog("log", "at pages/message/chat.vue:302", "附件菜单已关闭");
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       },
       // 滚动到底部
       scrollToBottom() {
         this.$nextTick(() => {
-          const lastMessageIndex = this.list.length - 1;
-          this.scrollIntoView = `message-${lastMessageIndex}`;
+          this.$refs.messageList.scrollToBottom();
           this.showScrollToBottom = false;
           this.showNewMessageTip = false;
           this.hasNewMessages = false;
           this.isScrolledToBottom = true;
+<<<<<<< HEAD
           formatAppLog("log", "at pages/message/chat.vue:306", "滚动到底部");
         });
       },
@@ -23739,6 +24123,15 @@ ${i3}
         const { scrollTop, scrollHeight } = event.detail;
         this.scrollViewScrollHeight = scrollHeight;
         const isAtBottom = scrollHeight - (scrollTop + this.scrollViewHeight) < 10;
+=======
+          formatAppLog("log", "at pages/message/chat.vue:312", "滚动到底部");
+        });
+      },
+      // 处理滚动事件
+      onScroll(event2) {
+        const { scrollTop, scrollHeight } = event2.detail;
+        const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         this.isScrolledToBottom = isAtBottom;
         this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
         this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
@@ -23749,17 +24142,34 @@ ${i3}
       },
       // 加载更多消息
       async loadMoreMessages() {
+        formatAppLog("log", "at pages/message/chat.vue:330", "[loadMoreMessages] 开始加载更多消息");
         if (this.hasMoreMessages && !this.isLoading) {
           this.isLoading = true;
+          const oldContentHeight = await this.$refs.messageList.getContentHeight();
+          formatAppLog("log", "at pages/message/chat.vue:335", "[loadMoreMessages] 旧内容高度:", oldContentHeight);
           this.currentFrom = this.currentTo + 1;
           this.currentTo = this.currentTo + 10;
           await this.loadHistoryMessages(true);
-          this.isLoading = false;
+          this.$nextTick(async () => {
+            const newContentHeight = await this.$refs.messageList.getContentHeight();
+            formatAppLog("log", "at pages/message/chat.vue:343", "[loadMoreMessages] 新内容高度:", newContentHeight);
+            const heightDifference = newContentHeight - oldContentHeight;
+            formatAppLog("log", "at pages/message/chat.vue:346", "[loadMoreMessages] 高度差:", heightDifference);
+            this.$refs.messageList.setScrollTop(heightDifference);
+            this.isLoading = false;
+            formatAppLog("log", "at pages/message/chat.vue:352", "[loadMoreMessages] 加载完成");
+          });
+        } else {
+          formatAppLog("log", "at pages/message/chat.vue:355", "[loadMoreMessages] 没有更多消息或正在加载中");
         }
       },
       // 添加新消息
       addNewMessage(message) {
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:335", "添加新消息:", message);
+=======
+        formatAppLog("log", "at pages/message/chat.vue:360", "添加新消息:", message);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         this.list.push(message);
         if (!this.isScrolledToBottom) {
           this.hasNewMessages = true;
@@ -23805,7 +24215,11 @@ ${i3}
       },
       // 加载历史消息
       async loadHistoryMessages(isLoadingMore = false) {
+<<<<<<< HEAD
         formatAppLog("log", "at pages/message/chat.vue:389", "[loadHistoryMessages] 加载历史消息", {
+=======
+        formatAppLog("log", "at pages/message/chat.vue:414", "[loadHistoryMessages] 开始加载历史消息", {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           isLoadingMore,
           from: this.currentFrom,
           to: this.currentTo,
@@ -23818,7 +24232,11 @@ ${i3}
             to: this.currentTo,
             missionId: this.chatInfo.missionId
           });
+<<<<<<< HEAD
           formatAppLog("log", "at pages/message/chat.vue:404", "[loadHistoryMessages] 历史消息响应:", response);
+=======
+          formatAppLog("log", "at pages/message/chat.vue:429", "[loadHistoryMessages] 历史消息响应:", response);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           if (response.code === 200 && Array.isArray(response.data)) {
             const newMessages = response.data.reverse().map((msg) => ({
               id: msg.id,
@@ -23829,29 +24247,48 @@ ${i3}
               type: msg.messageType,
               isRead: msg.isRead
             }));
+            formatAppLog("log", "at pages/message/chat.vue:442", "[loadHistoryMessages] 新消息数量:", newMessages.length);
             if (isLoadingMore) {
               this.list = [...newMessages, ...this.list];
+              formatAppLog("log", "at pages/message/chat.vue:446", "[loadHistoryMessages] 在列表前端添加新消息");
             } else {
               this.list = newMessages;
+              formatAppLog("log", "at pages/message/chat.vue:449", "[loadHistoryMessages] 替换整个消息列表");
             }
             this.hasMoreMessages = newMessages.length === this.currentTo - this.currentFrom + 1;
+<<<<<<< HEAD
             formatAppLog("log", "at pages/message/chat.vue:425", "[loadHistoryMessages] 更新后的消息列表:", this.list);
             formatAppLog("log", "at pages/message/chat.vue:426", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
             this.$nextTick(() => {
               if (!isLoadingMore) {
                 formatAppLog("log", "at pages/message/chat.vue:430", "[loadHistoryMessages] 加载初始消息后滚动到底部");
+=======
+            formatAppLog("log", "at pages/message/chat.vue:454", "[loadHistoryMessages] 更新后的消息列表长度:", this.list.length);
+            formatAppLog("log", "at pages/message/chat.vue:455", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
+            this.$nextTick(() => {
+              if (!isLoadingMore) {
+                formatAppLog("log", "at pages/message/chat.vue:459", "[loadHistoryMessages] 加载初始消息后滚动到底部");
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
                 this.scrollToBottom();
               }
             });
           } else {
+<<<<<<< HEAD
             formatAppLog("error", "at pages/message/chat.vue:435", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+=======
+            formatAppLog("error", "at pages/message/chat.vue:464", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             uni.showToast({
               title: "加载历史消息失败",
               icon: "none"
             });
           }
         } catch (error) {
+<<<<<<< HEAD
           formatAppLog("error", "at pages/message/chat.vue:442", "[loadHistoryMessages] 加载历史消息出错:", error);
+=======
+          formatAppLog("error", "at pages/message/chat.vue:471", "[loadHistoryMessages] 加载历史消息出错:", error);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           uni.showToast({
             title: "网络错误，请稍后重试",
             icon: "none"
@@ -23875,13 +24312,16 @@ ${i3}
       }, null, 8, ["chat-info", "onGoBack"]),
       vue.createCommentVNode(" 消息列表 "),
       vue.createVNode(_component_MessageList, {
+        ref: "messageList",
         messages: $data.list,
-        "scroll-top": $data.scrollTop,
-        "scroll-into-view": $data.scrollIntoView,
         onLoadMore: $options.loadMoreMessages,
         onScroll: $options.onScroll,
         onViewBurnAfterReading: $options.viewBurnAfterReadingImage
+<<<<<<< HEAD
       }, null, 8, ["messages", "scroll-top", "scroll-into-view", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
+=======
+      }, null, 8, ["messages", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       vue.createCommentVNode(" 聊天输入区域 "),
       vue.createVNode(_component_ChatInputArea, {
         onSendMessage: $options.sendMessage,
@@ -23946,8 +24386,13 @@ ${i3}
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const PagesMessageChat = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-013fa921"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/chat.vue"]]);
   const _sfc_main$7 = {
+=======
+  const PagesMessageChat = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-013fa921"], ["__file", "E:/代码/new/zk_uniapp/pages/message/chat.vue"]]);
+  const _sfc_main$8 = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "ContactDetail",
     props: {
       contact: {
@@ -24144,7 +24589,11 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-8c0c75e8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
+=======
+  const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-8c0c75e8"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const searchUsers = (params) => {
     return request({
       url: "/user/searchUsers",
@@ -24152,7 +24601,11 @@ ${i3}
       data: params
     });
   };
+<<<<<<< HEAD
   const _sfc_main$6 = {
+=======
+  const _sfc_main$7 = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "Contacts",
     components: {
       ContactDetail
@@ -24385,8 +24838,13 @@ ${i3}
       }, null, 8, ["contact", "onClose"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
+<<<<<<< HEAD
   const Contacts = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-3d3ef74b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/contacts/contacts.vue"]]);
   const _sfc_main$5 = {
+=======
+  const Contacts = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-3d3ef74b"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/contacts.vue"]]);
+  const _sfc_main$6 = {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     name: "TabBar",
     components: {
       MainPage: PagesProfileProfile,
@@ -24504,7 +24962,77 @@ ${i3}
       )
     ]);
   }
+<<<<<<< HEAD
   const PagesTabBarTabBar = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/tabBar.vue"]]);
+=======
+  const PagesTabBarTabBar = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/tabBar.vue"]]);
+  const _sfc_main$5 = {
+    data() {
+      return {
+        show: false,
+        pathArr: []
+      };
+    },
+    methods: {
+      getPath(event2) {
+        formatAppLog("log", "at pages/task/task_detail/document/uploadfile/uploadfile.vue:29", event2);
+        this.pathArr = event2;
+      }
+    }
+  };
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_nk_select_file = vue.resolveComponent("nk-select-file");
+    return vue.openBlock(), vue.createElementBlock("view", null, [
+      vue.createElementVNode("button", {
+        type: "default",
+        onClick: _cache[0] || (_cache[0] = () => {
+          $data.show = true;
+        }),
+        style: { "width": "80%", "background-color": "#007AFF", "color": "#fff", "margin-top": "60rpx" }
+      }, "选择文件"),
+      (vue.openBlock(true), vue.createElementBlock(
+        vue.Fragment,
+        null,
+        vue.renderList($data.pathArr, (item, index) => {
+          return vue.openBlock(), vue.createElementBlock("view", {
+            class: "textStyle",
+            key: index
+          }, [
+            vue.createElementVNode(
+              "view",
+              null,
+              " 文件名：" + vue.toDisplayString(item.name),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode(
+              "view",
+              null,
+              " 文件地址：" + vue.toDisplayString(item.url),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode(
+              "view",
+              null,
+              " 文件大小：" + vue.toDisplayString(item.sizeMB),
+              1
+              /* TEXT */
+            )
+          ]);
+        }),
+        128
+        /* KEYED_FRAGMENT */
+      )),
+      vue.createVNode(_component_nk_select_file, {
+        modelValue: $data.show,
+        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.show = $event),
+        onConfirm: $options.getPath
+      }, null, 8, ["modelValue", "onConfirm"])
+    ]);
+  }
+  const PagesTaskTaskDetailDocumentUploadfileUploadfile = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/document/uploadfile/uploadfile.vue"]]);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   const poster = "/static/icon/poster.gif";
   const _sfc_main$4 = {
     __name: "video-call",
@@ -24679,7 +25207,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesMessageVideoCall = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-call.vue"]]);
+  const PagesMessageVideoCall = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "E:/代码/new/zk_uniapp/pages/message/video-call.vue"]]);
   const _sfc_main$3 = {
     data() {
       return {};
@@ -24689,7 +25217,7 @@ ${i3}
   function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesMessageChatComponentCallReminder = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/CallReminder.vue"]]);
+  const PagesMessageChatComponentCallReminder = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/CallReminder.vue"]]);
   const _sfc_main$2 = {
     __name: "video-answer",
     setup(__props, { expose: __expose }) {
@@ -24830,7 +25358,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesMessageVideoAnswer = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-answer.vue"]]);
+  const PagesMessageVideoAnswer = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "E:/代码/new/zk_uniapp/pages/message/video-answer.vue"]]);
   const _imports_0 = "/static/icon/关闭.png";
   const _sfc_main$1 = {
     __name: "inputAccount",
@@ -24969,7 +25497,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesLoginCamouflageLoginInputAccountInputAccount = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/inputAccount/inputAccount.vue"]]);
+  const PagesLoginCamouflageLoginInputAccountInputAccount = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "E:/代码/new/zk_uniapp/pages/login/camouflageLogin/inputAccount/inputAccount.vue"]]);
   __definePage("pages/login/camouflageLogin/camouflageLogin", PagesLoginCamouflageLoginCamouflageLogin);
   __definePage("pages/login/login", PagesLoginLogin);
   __definePage("pages/register/register", PagesRegisterRegister);
@@ -25856,12 +26384,21 @@ ${i3}
               } else {
                 receiver = { track: te2.track };
               }
+<<<<<<< HEAD
               const event = new Event("track");
               event.track = te2.track;
               event.receiver = receiver;
               event.transceiver = { receiver };
               event.streams = [e2.stream];
               this.dispatchEvent(event);
+=======
+              const event2 = new Event("track");
+              event2.track = te2.track;
+              event2.receiver = receiver;
+              event2.transceiver = { receiver };
+              event2.streams = [e2.stream];
+              this.dispatchEvent(event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             });
             e2.stream.getTracks().forEach((track) => {
               let receiver;
@@ -25870,12 +26407,21 @@ ${i3}
               } else {
                 receiver = { track };
               }
+<<<<<<< HEAD
               const event = new Event("track");
               event.track = track;
               event.receiver = receiver;
               event.transceiver = { receiver };
               event.streams = [e2.stream];
               this.dispatchEvent(event);
+=======
+              const event2 = new Event("track");
+              event2.track = track;
+              event2.receiver = receiver;
+              event2.transceiver = { receiver };
+              event2.streams = [e2.stream];
+              this.dispatchEvent(event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             });
           };
           this.addEventListener("addstream", this._ontrackpoly);
@@ -26770,9 +27316,15 @@ ${i3}
                 return;
               }
               this._remoteStreams.push(stream);
+<<<<<<< HEAD
               const event = new Event("addstream");
               event.stream = stream;
               this.dispatchEvent(event);
+=======
+              const event2 = new Event("addstream");
+              event2.stream = stream;
+              this.dispatchEvent(event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             });
           });
         }
@@ -26790,9 +27342,15 @@ ${i3}
                 return;
               }
               pc._remoteStreams.push(stream);
+<<<<<<< HEAD
               const event = new Event("addstream");
               event.stream = stream;
               pc.dispatchEvent(event);
+=======
+              const event2 = new Event("addstream");
+              event2.stream = stream;
+              pc.dispatchEvent(event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             });
           });
         }
@@ -28324,10 +28882,17 @@ ${i3}
     this.context = context;
     this.once = once || false;
   }
+<<<<<<< HEAD
   function $c4dcfd1d1ea86647$var$addListener(emitter, event, fn, context, once) {
     if (typeof fn !== "function")
       throw new TypeError("The listener must be a function");
     var listener = new $c4dcfd1d1ea86647$var$EE(fn, context || emitter, once), evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event : event;
+=======
+  function $c4dcfd1d1ea86647$var$addListener(emitter, event2, fn, context, once) {
+    if (typeof fn !== "function")
+      throw new TypeError("The listener must be a function");
+    var listener = new $c4dcfd1d1ea86647$var$EE(fn, context || emitter, once), evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event2 : event2;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     if (!emitter._events[evt])
       emitter._events[evt] = listener, emitter._eventsCount++;
     else if (!emitter._events[evt].fn)
@@ -28360,8 +28925,13 @@ ${i3}
       return names.concat(Object.getOwnPropertySymbols(events));
     return names;
   };
+<<<<<<< HEAD
   $c4dcfd1d1ea86647$var$EventEmitter.prototype.listeners = function listeners(event) {
     var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event : event, handlers = this._events[evt];
+=======
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.listeners = function listeners(event2) {
+    var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event2 : event2, handlers = this._events[evt];
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     if (!handlers)
       return [];
     if (handlers.fn)
@@ -28372,22 +28942,36 @@ ${i3}
       ee2[i2] = handlers[i2].fn;
     return ee2;
   };
+<<<<<<< HEAD
   $c4dcfd1d1ea86647$var$EventEmitter.prototype.listenerCount = function listenerCount(event) {
     var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event : event, listeners = this._events[evt];
+=======
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.listenerCount = function listenerCount(event2) {
+    var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event2 : event2, listeners = this._events[evt];
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     if (!listeners)
       return 0;
     if (listeners.fn)
       return 1;
     return listeners.length;
   };
+<<<<<<< HEAD
   $c4dcfd1d1ea86647$var$EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
     var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event : event;
+=======
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.emit = function emit(event2, a1, a2, a3, a4, a5) {
+    var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event2 : event2;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     if (!this._events[evt])
       return false;
     var listeners = this._events[evt], len = arguments.length, args, i2;
     if (listeners.fn) {
       if (listeners.once)
+<<<<<<< HEAD
         this.removeListener(event, listeners.fn, void 0, true);
+=======
+        this.removeListener(event2, listeners.fn, void 0, true);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       switch (len) {
         case 1:
           return listeners.fn.call(listeners.context), true;
@@ -28409,7 +28993,11 @@ ${i3}
       var length = listeners.length, j2;
       for (i2 = 0; i2 < length; i2++) {
         if (listeners[i2].once)
+<<<<<<< HEAD
           this.removeListener(event, listeners[i2].fn, void 0, true);
+=======
+          this.removeListener(event2, listeners[i2].fn, void 0, true);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         switch (len) {
           case 1:
             listeners[i2].fn.call(listeners[i2].context);
@@ -28433,6 +29021,7 @@ ${i3}
     }
     return true;
   };
+<<<<<<< HEAD
   $c4dcfd1d1ea86647$var$EventEmitter.prototype.on = function on(event, fn, context) {
     return $c4dcfd1d1ea86647$var$addListener(this, event, fn, context, false);
   };
@@ -28441,6 +29030,16 @@ ${i3}
   };
   $c4dcfd1d1ea86647$var$EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
     var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event : event;
+=======
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.on = function on(event2, fn, context) {
+    return $c4dcfd1d1ea86647$var$addListener(this, event2, fn, context, false);
+  };
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.once = function once(event2, fn, context) {
+    return $c4dcfd1d1ea86647$var$addListener(this, event2, fn, context, true);
+  };
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.removeListener = function removeListener(event2, fn, context, once) {
+    var evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event2 : event2;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
     if (!this._events[evt])
       return this;
     if (!fn) {
@@ -28462,10 +29061,17 @@ ${i3}
     }
     return this;
   };
+<<<<<<< HEAD
   $c4dcfd1d1ea86647$var$EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
     var evt;
     if (event) {
       evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event : event;
+=======
+  $c4dcfd1d1ea86647$var$EventEmitter.prototype.removeAllListeners = function removeAllListeners(event2) {
+    var evt;
+    if (event2) {
+      evt = $c4dcfd1d1ea86647$var$prefix ? $c4dcfd1d1ea86647$var$prefix + event2 : event2;
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
       if (this._events[evt])
         $c4dcfd1d1ea86647$var$clearEvent(this, evt);
     } else {
@@ -28562,6 +29168,7 @@ ${i3}
         return;
       this._socket = new WebSocket(wsUrl + "&version=" + $f5f881ec4575f1fc$exports.version);
       this._disconnected = false;
+<<<<<<< HEAD
       this._socket.onmessage = (event) => {
         let data;
         try {
@@ -28569,14 +29176,30 @@ ${i3}
           (0, $257947e92926277a$export$2e2bcd8739ae039).log("Server message received:", data);
         } catch (e2) {
           $257947e92926277a$export$2e2bcd8739ae039.log("Invalid server message", event.data);
+=======
+      this._socket.onmessage = (event2) => {
+        let data;
+        try {
+          data = JSON.parse(event2.data);
+          (0, $257947e92926277a$export$2e2bcd8739ae039).log("Server message received:", data);
+        } catch (e2) {
+          $257947e92926277a$export$2e2bcd8739ae039.log("Invalid server message", event2.data);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           return;
         }
         this.emit($78455e22dea96b8c$export$3b5c4a4b6354f023.Message, data);
       };
+<<<<<<< HEAD
       this._socket.onclose = (event) => {
         if (this._disconnected)
           return;
         $257947e92926277a$export$2e2bcd8739ae039.log("Socket closed.", event);
+=======
+      this._socket.onclose = (event2) => {
+        if (this._disconnected)
+          return;
+        $257947e92926277a$export$2e2bcd8739ae039.log("Socket closed.", event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         this._cleanup();
         this._disconnected = true;
         this.emit($78455e22dea96b8c$export$3b5c4a4b6354f023.Disconnected);
@@ -29975,7 +30598,11 @@ ${i3}
         this.onerror = null;
         this.onmessage = null;
         this.onopen = null;
+<<<<<<< HEAD
         this._handleOpen = function(event) {
+=======
+        this._handleOpen = function(event2) {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           _this._debug("open event");
           var _a = _this._options.minUptime, minUptime = _a === void 0 ? DEFAULT.minUptime : _a;
           clearTimeout(_this._connectTimeout);
@@ -29988,6 +30615,7 @@ ${i3}
           });
           _this._messageQueue = [];
           if (_this.onopen) {
+<<<<<<< HEAD
             _this.onopen(event);
           }
           _this._listeners.open.forEach(function(listener) {
@@ -30016,16 +30644,53 @@ ${i3}
           _this._connect();
         };
         this._handleClose = function(event) {
+=======
+            _this.onopen(event2);
+          }
+          _this._listeners.open.forEach(function(listener) {
+            return _this._callEventListener(event2, listener);
+          });
+        };
+        this._handleMessage = function(event2) {
+          _this._debug("message event");
+          if (_this.onmessage) {
+            _this.onmessage(event2);
+          }
+          _this._listeners.message.forEach(function(listener) {
+            return _this._callEventListener(event2, listener);
+          });
+        };
+        this._handleError = function(event2) {
+          _this._debug("error event", event2.message);
+          _this._disconnect(void 0, event2.message === "TIMEOUT" ? "timeout" : void 0);
+          if (_this.onerror) {
+            _this.onerror(event2);
+          }
+          _this._debug("exec error listeners");
+          _this._listeners.error.forEach(function(listener) {
+            return _this._callEventListener(event2, listener);
+          });
+          _this._connect();
+        };
+        this._handleClose = function(event2) {
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           _this._debug("close event");
           _this._clearTimeouts();
           if (_this._shouldReconnect) {
             _this._connect();
           }
           if (_this.onclose) {
+<<<<<<< HEAD
             _this.onclose(event);
           }
           _this._listeners.close.forEach(function(listener) {
             return _this._callEventListener(event, listener);
+=======
+            _this.onclose(event2);
+          }
+          _this._listeners.close.forEach(function(listener) {
+            return _this._callEventListener(event2, listener);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
           });
         };
         this._url = url;
@@ -30229,14 +30894,24 @@ ${i3}
           this._listeners[type].push(listener);
         }
       };
+<<<<<<< HEAD
       ReconnectingWebSocket2.prototype.dispatchEvent = function(event) {
         var e_1, _a;
         var listeners = this._listeners[event.type];
+=======
+      ReconnectingWebSocket2.prototype.dispatchEvent = function(event2) {
+        var e_1, _a;
+        var listeners = this._listeners[event2.type];
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         if (listeners) {
           try {
             for (var listeners_1 = __values(listeners), listeners_1_1 = listeners_1.next(); !listeners_1_1.done; listeners_1_1 = listeners_1.next()) {
               var listener = listeners_1_1.value;
+<<<<<<< HEAD
               this._callEventListener(event, listener);
+=======
+              this._callEventListener(event2, listener);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
             }
           } catch (e_1_1) {
             e_1 = { error: e_1_1 };
@@ -30357,11 +31032,19 @@ ${i3}
         this._debug("accept open");
         this._retryCount = 0;
       };
+<<<<<<< HEAD
       ReconnectingWebSocket2.prototype._callEventListener = function(event, listener) {
         if ("handleEvent" in listener) {
           listener.handleEvent(event);
         } else {
           listener(event);
+=======
+      ReconnectingWebSocket2.prototype._callEventListener = function(event2, listener) {
+        if ("handleEvent" in listener) {
+          listener.handleEvent(event2);
+        } else {
+          listener(event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         }
       };
       ReconnectingWebSocket2.prototype._removeListeners = function() {
@@ -30401,6 +31084,7 @@ ${i3}
         let token = uni.getStorageSync("token");
         let { host, port, path } = { ...networkConfiguration.webSocketServer };
         let connection = new ReconnectingWebSocket(`ws://${host}:${port}${path}/${peerStore.localPeer.id}`, [token]);
+<<<<<<< HEAD
         connection.onmessage = (event) => {
           let message = JSON.parse(event.data);
           friendStore.onlineList = message;
@@ -30416,6 +31100,23 @@ ${i3}
         };
         connection.onopen = (event) => {
           formatAppLog("log", "at plugins/initialize-websocket/index.js:33", "webSocketConnection.onopen:", event);
+=======
+        connection.onmessage = (event2) => {
+          let message = JSON.parse(event2.data);
+          friendStore.onlineList = message;
+          formatAppLog("log", "at plugins/initialize-websocket/index.js:19", "webSocketConnection.onmessage:", message);
+        };
+        connection.onclose = (event2) => {
+          formatAppLog("log", "at plugins/initialize-websocket/index.js:23", "webSocketConnection.onclose:", event2);
+          showToast("network connection closed");
+        };
+        connection.onerror = (event2) => {
+          formatAppLog("log", "at plugins/initialize-websocket/index.js:28", "webSocketConnection.onerror:", event2);
+          showToast("network connection error");
+        };
+        connection.onopen = (event2) => {
+          formatAppLog("log", "at plugins/initialize-websocket/index.js:33", "webSocketConnection.onopen:", event2);
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
         };
       });
     }
@@ -30663,7 +31364,7 @@ ${i3}
       formatAppLog("log", "at App.vue:12", "App Hide");
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "E:/代码/new/zk_uniapp/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     const pinia = createPinia();

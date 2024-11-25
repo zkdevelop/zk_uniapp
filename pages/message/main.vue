@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onActivated } from 'vue'
 import { getChatList } from '@/utils/api/message.js'
 import { useUserStore } from '@/store/userStore'
 import GroupAvatar from './ChatComponent/GroupAvatar.vue'
@@ -190,6 +190,12 @@ export default {
       console.log('从 store 获取的 missionId:', missionId.value)
       fetchChatList()
       calculateScrollViewHeight()
+    })
+
+    // 添加 onActivated 钩子
+    onActivated(() => {
+      console.log('Messages 组件被激活')
+      fetchChatList() // 重新获取聊天列表
     })
 
     return {

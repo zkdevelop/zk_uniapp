@@ -227,11 +227,32 @@
 }
 /* 水平间距 */
 /* 水平间距 */
+.message-list-container[data-v-dee4eb4b] {
+  flex: 1;
+  overflow: hidden;
+}
 .scroll-view[data-v-dee4eb4b] {
+<<<<<<< HEAD
   height: calc(100vh - 44px - 3.75rem);
   height: calc(100vh - 3.75rem);
+=======
+>>>>>>> 68165c0643eb63a1c5aa2548bc5aec4267392191
   background: #eee;
-  box-sizing: border-box;
+}
+.message-list-content[data-v-dee4eb4b] {
+  padding: 0.9375rem 0.9375rem 7.5rem;
+}
+.load-more-button[data-v-dee4eb4b] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.625rem 0;
+  background: transparent;
+}
+.load-more-text[data-v-dee4eb4b] {
+  color: #007AFF;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .attach-menu[data-v-00ea5aaf] {
