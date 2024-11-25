@@ -15,12 +15,11 @@
     <!-- 聊天输入区域 -->
     <ChatInputArea 
       @send-message="sendMessage"
-      @message-sent="addNewMessage" 
+      @message-sent="handleImageOrFileSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
       @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
-      @image-sent="handleImageSent"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
       :missionId="chatInfo.missionId.toString()"
@@ -153,8 +152,8 @@ export default {
     },
     async sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.type === 'image') {
-        console.log('[sendMessage] 跳过图片类型的发送');
+      if (message.type === 'image' || message.type === 'file') {
+        console.log('[sendMessage] 跳过图片和文件类型的发送');
         return;
       }
       if (message.content && this.chatInfo.id) {
@@ -194,17 +193,17 @@ export default {
         });
       }
     },
-    displaySentMessage(message) {
-      const newMessage = {
+    handleImageOrFileSent(message) {
+      console.log('[handleImageOrFileSent] 收到图片或文件数据:', message);
+      this.addNewMessage({
         id: Date.now().toString(),
         content: message.content,
         userType: 'self',
         avatar: this._selfAvatar,
         timestamp: new Date(),
-        status: 'sending',
-        type: message.type || 'text'
-      };
-      this.addNewMessage(newMessage);
+        status: 'sent',
+        type: message.type
+      });
     },
     handleMessageSent(sentMessage) {
       console.log('[handleMessageSent] 消息已发送:', sentMessage);
@@ -476,18 +475,6 @@ export default {
           icon: 'none'
         });
       }
-    },
-    handleImageSent(imageData) {
-      console.log('[handleImageSent] 收到图片数据:', imageData);
-      this.addNewMessage({
-        id: Date.now().toString(),
-        content: imageData.content,
-        userType: 'self',
-        avatar: this._selfAvatar,
-        timestamp: new Date(),
-        status: 'sent',
-        type: 'image'
-      });
     },
   }
 }

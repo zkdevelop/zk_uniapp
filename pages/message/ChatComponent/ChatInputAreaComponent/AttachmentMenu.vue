@@ -48,12 +48,9 @@ export default {
   methods: {
     handleAttachItem(action) { 
       if (action === 'file') {
+        this.$emit('attach', 'file');
         this.chooseFile();
-      } else if (action === 'location') { 
-        this.$emit('attach', action);
-      } else if (action === 'video-call') {
-		  this.$emit('attach', action);
-	  } else {
+      } else {
         this.$emit('attach', action);
       }
     },
@@ -71,18 +68,20 @@ export default {
       // #endif
     },
     chooseFileH5() {
+      console.log('选择文件 (H5/微信小程序)');
       uni.chooseFile({
         count: 1,
         success: (res) => {
           this.handleFileSelected(res.tempFiles[0]);
         },
         fail: (err) => {
-          // console.error('选择文件失败', err);
+          console.error('选择文件失败', err);
           uni.showToast({ title: '选择文件失败', icon: 'none' });
         }
       });
     },
     chooseFileAndroid() {
+      console.log('选择文件 (Android)');
       const main = plus.android.runtimeMainActivity();
       const Intent = plus.android.importClass('android.content.Intent');
       const intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -125,6 +124,7 @@ export default {
       };
     },
     chooseFileIOS() {
+      console.log('选择文件 (iOS)');
       plus.io.chooseFile({
         title: '选择文件',
         multiple: false,
@@ -136,7 +136,7 @@ export default {
           });
         },
         fail: (err) => {
-          // console.error('选择文件失败', err);
+          console.error('选择文件失败', err);
           uni.showToast({ title: '选择文件失败', icon: 'none' });
         }
       });
@@ -147,6 +147,7 @@ export default {
         size: this.formatFileSize(file.size),
         path: file.path
       };
+      console.log(this.selectedFile, 'selectedFile');
       this.$emit('file-selected', this.selectedFile);
     },
     formatFileSize(bytes) {

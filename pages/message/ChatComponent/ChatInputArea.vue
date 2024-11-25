@@ -3,12 +3,13 @@
     <!-- 聊天输入框和附加功能按钮 -->
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
       <!-- 语音输入按钮 -->
-      <view class="voice-button">
-        <image src="/static/message/语音输入.png" class="voice-icon" />
+      <view class="voice-button" @click="toggleVoiceInput">
+        <image :src="isVoiceInputActive ? '/static/message/键盘输入.png' : '/static/message/语音输入.png'" class="voice-icon" />
       </view>
       
       <!-- 文本输入框 -->
       <input 
+        v-if="!isVoiceInputActive"
         type="text" 
         class="text-input" 
         placeholder="输入消息..." 
@@ -17,17 +18,23 @@
         ref="messageInput"
       />
       
+      <!-- 语音输入按钮 -->
+      <view v-else class="voice-input-button" @touchstart="startVoiceRecord" @touchend="stopVoiceRecord">
+        按住说话
+      </view>
+      
       <!-- 附加功能按钮（当附加菜单未显示时） -->
       <text v-if="!showAttachMenu" class="attach-button" @click="toggleAttachMenu">+</text>
       
-      <!-- 发送按钮（当附加菜单显示时） -->
-      <text v-if="showAttachMenu" class="send-button" @click="sendMessage">发送</text>
+      <!-- 发送按钮（当附加菜单显示时或有文本输入时） -->
+      <text v-if="showAttachMenu || newMessage.trim().length > 0" class="send-button" @click="sendMessage">发送</text>
     </view>
 
     <!-- 附加功能菜单 -->
     <attachment-menu 
       v-if="showAttachMenu" 
       @attach="attachItem"
+      @file-selected="handleFileSelected"
       @close="closeAttachMenu"
     >
       <template v-slot:album>
@@ -87,12 +94,14 @@ export default {
       default: ''
     }
   },
-  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call'],
+  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'message-sent'],
   data() {
     return {
       newMessage: '',
       showLocationSharing: false,
       _selfAvatar: '/static/avatar/avatar5.jpeg',
+      isVoiceInputActive: false,
+      isRecording: false
     }
   },
   created() {
@@ -135,10 +144,14 @@ export default {
       console.log('关闭附件菜单');
       this.$emit('toggle-attach-menu', false);
     },
-    attachItem(action) {
+    attachItem(action, data) {
       console.log('附件项被选择:', action);
       if (action === 'file') {
-        this.$refs.fileTransfer.chooseFile();
+        if (data) {
+          this.handleFileSelected(data);
+        } else {
+          this.$refs.fileTransfer.chooseFile();
+        }
       } else if (action === 'burn-after-reading') {
         this.chooseBurnAfterReadingImage();
       } else if (action === 'camera') {
@@ -152,13 +165,13 @@ export default {
       } else {
         this.$emit('attach', action);
       }
-      if (action !== 'location') {
+      if (action !== 'location' && action !== 'file') {
         this.closeAttachMenu();
       }
     },
     handleFileSelected(fileData) {
       console.log('文件被选择:', fileData);
-      this.$emit('attach', 'file', fileData);
+      this.chooseAndSendPhoto(fileData.path);
     },
     chooseBurnAfterReadingImage() {
       console.log('选择阅后即焚图片');
@@ -211,7 +224,7 @@ export default {
         sourceType: ['camera'],
         success: (res) => {
           const tempFilePath = res.tempFilePaths[0];
-          this.$emit('send-message', {
+          this.$emit('message-sent', {
             type: 'image',
             content: tempFilePath,
             missionId: this.missionId
@@ -226,32 +239,36 @@ export default {
         }
       });
     },
-    async chooseAndSendPhoto() {
+    async chooseAndSendPhoto(filePath = null) {
       console.log('chooseAndSendPhoto 方法被调用');
       console.log('当前 missionId:', this.missionId);
       console.log('当前 recipientId:', this.recipientId);
-      console.log('开始选择并发送照片');
+      console.log('开始选择并发送照片或文件');
       try {
-        console.log('获取图片信息...');
-        const imageRes = await new Promise((resolve, reject) => {
-          uni.chooseImage({
-            count: 1,
-            sourceType: ['album'],
-            success: (res) => {
-              console.log('图片选择成功:', JSON.stringify(res));
-              resolve(res);
-            },
-            fail: (err) => {
-              console.error('图片选择失败:', err);
-              reject(err);
-            }
+        let tempFilePath = filePath;
+        if (!tempFilePath) {
+          console.log('获取图片信息...');
+          const imageRes = await new Promise((resolve, reject) => {
+            uni.chooseImage({
+              count: 1,
+              sourceType: ['album'],
+              success: (res) => {
+                console.log('图片选择成功:', JSON.stringify(res));
+                resolve(res);
+              },
+              fail: (err) => {
+                console.error('图片选择失败:', err);
+                reject(err);
+              }
+            });
           });
-        });
+          tempFilePath = imageRes.tempFilePaths[0];
+        }
 
         console.log('开始获取位置信息...');
         let locationRes = { latitude: '0', longitude: '0' };
         try {
-          const coordinates =await getCurrentCoordinates();
+          const coordinates = await getCurrentCoordinates();
           console.log('获取到的位置信息:', JSON.stringify(coordinates));
           locationRes = {
             latitude: coordinates.latitude.toString(),
@@ -262,8 +279,7 @@ export default {
         }
 
         console.log('位置信息处理完成');
-        const tempFilePath = imageRes.tempFilePaths[0];
-        console.log('选择的图片路径:', tempFilePath);
+        console.log('选择的文件路径:', tempFilePath);
 
         console.log('准备上传文件...');
         const sendData = {
@@ -282,18 +298,18 @@ export default {
           console.log('sendFilesToUser 调用完成，响应:', JSON.stringify(response));
 
           if (response.code === 200) {
-            console.log('图片发送成功，触发send-message事件');
-            this.$emit('send-message', {
-              type: 'image',
+            console.log('文件发送成功，触发message-sent事件');
+            this.$emit('message-sent', {
+              type: filePath ? 'file' : 'image',
               content: tempFilePath,
               recipientId: this.recipientId,
               missionId: this.missionId
             });
           } else {
-            throw new Error(response.msg || '发送图片消息失败');
+            throw new Error(response.msg || '发送文件消息失败');
           }
         } catch (error) {
-          console.error('发送图片消息出错:', error);
+          console.error('发送文件消息出错:', error);
           console.error('错误详情:', error.message);
           uni.showToast({
             title: '发送失败，请重试',
@@ -302,7 +318,7 @@ export default {
         }
 
       } catch (error) {
-        console.error('选择或发送图片时出错:', error);
+        console.error('选择或发送文件时出错:', error);
         console.error('错误详情:', error.message);
         uni.showToast({
           title: '发送失败，请重试',
@@ -331,6 +347,49 @@ export default {
     startVideoCall() {
       console.log('开始视频通话');
       this.$emit('video-call');
+    },
+    toggleVoiceInput() {
+      this.isVoiceInputActive = !this.isVoiceInputActive;
+    },
+    startVoiceRecord() {
+      console.log('开始录音');
+      this.isRecording = true;
+      // 这里添加开始录音的逻辑
+      uni.startRecord({
+        success: () => {
+          console.log('录音开始');
+        },
+        fail: (err) => {
+          console.error('录音开始失败:', err);
+          uni.showToast({
+            title: '录音开始失败',
+            icon: 'none'
+          });
+        }
+      });
+    },
+    stopVoiceRecord() {
+      console.log('停止录音');
+      this.isRecording = false;
+      // 这里添加停止录音并发送语音消息的逻辑
+      uni.stopRecord({
+        success: (res) => {
+          console.log('录音结束，文件路径:', res.tempFilePath);
+          this.$emit('send-message', {
+            type: 'voice',
+            content: res.tempFilePath,
+            recipientId: this.recipientId,
+            missionId: this.missionId
+          });
+        },
+        fail: (err) => {
+          console.error('录音结束失败:', err);
+          uni.showToast({
+            title: '录音结束失败',
+            icon: 'none'
+          });
+        }
+      });
     }
   },
 }
@@ -375,6 +434,17 @@ export default {
 .voice-icon {
   width: 24px;
   height: 24px;
+}
+
+.voice-input-button {
+  flex: 1;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  background-color: #FFFFFF;
+  border: 1px solid #e0e0e0;
+  border-radius: 18px;
+  margin-right: 10px;
 }
 
 .attach-button {
