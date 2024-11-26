@@ -5,7 +5,7 @@
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <view class="content" :class="{ 'location-content': message.type === 'location', 'file-message': message.type === 'file' }">
+        <view class="content" :class="{ 'location-content': message.type === 'location', 'file-message': message.type === 'file', 'message-image': message.type === 'image' }">
           <LocationMessage v-if="message.type === 'location'" :content="message.content" />
           <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
           <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
@@ -86,6 +86,7 @@ export default {
     display: flex;
     align-items: flex-start;
     width: 100%;
+    max-width: 100%;
   }
 
   .avatar {
@@ -102,13 +103,15 @@ export default {
     font-size: 28rpx;
     line-height: 1.3;
     border-radius: 10rpx;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
   }
 
-  .content:not(.location-content):not(.file-message) {
+  .content:not(.location-content):not(.file-message):not(.message-image) {
     padding: 20rpx;
     background: #fff;
   }
-
 
   &.self {
     align-items: flex-end;
@@ -123,7 +126,7 @@ export default {
       margin-left: 20rpx;
     }
 
-    .content:not(.location-content) {
+    .content:not(.location-content):not(.file-message):not(.message-image) {
       background: #4e8cff;
       color: #fff;
     }
@@ -136,7 +139,7 @@ export default {
       flex-direction: row;
     }
 
-    .content:not(.location-content) {
+    .content:not(.location-content):not(.file-message):not(.message-image) {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -182,12 +185,18 @@ export default {
 .content-wrapper {
   display: flex;
   flex-direction: column;
-  max-width: calc(100% - 100rpx);
+  max-width: calc(100% - 120rpx);
 }
 
 .friend-name {
   font-size: 24rpx;
   color: #999;
   margin-bottom: 5rpx;
+}
+
+.message-image {
+  background: transparent !important;
+  padding: 0 !important;
+  overflow: hidden;
 }
 </style>

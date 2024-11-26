@@ -54,12 +54,13 @@ export default {
 
 <style lang="scss" scoped>
 .location-bubble {
+  max-width: 100%;
   width: 480rpx;
   border-radius: 12rpx;
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 10rpx 0;
+  box-sizing: border-box;
 }
 
 .location-title {
@@ -77,7 +78,7 @@ export default {
 
 .location-map {
   width: 100%;
-  height: 240rpx;
+  height: 200rpx;
   overflow: hidden;
 
   .map-image {

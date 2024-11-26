@@ -3,52 +3,40 @@
     <view class="file-name">{{ content }}</view>
     <image 
       v-if="messageType.toUpperCase() === 'TEXT'"
-      src="../icon/text.png"
+      src="./icon/text.png"
       class="file-type-icon" 
       mode="aspectFit"
     />
     <image 
       v-else-if="messageType.toUpperCase() === 'DOCX'"
-      src="../icon/docx.png"
+      src="./icon/docx.png"
       class="file-type-icon" 
       mode="aspectFit"
     />
     <image 
       v-else-if="messageType.toUpperCase() === 'JPG'"
-      src="../icon/jpg.png"
+      src="./icon/jpg.png"
       class="file-type-icon" 
       mode="aspectFit"
     />
     <image 
       v-else-if="messageType.toUpperCase() === 'PNG'"
-      src="../icon/png.png"
+      src="./icon/png.png"
       class="file-type-icon" 
       mode="aspectFit"
     />
     <image 
       v-else-if="messageType.toUpperCase() === 'PPTX'"
-      src="../icon/pptx.png"
+      src="./icon/pptx.png"
       class="file-type-icon" 
       mode="aspectFit"
     />
     <image 
       v-else-if="messageType.toUpperCase() === 'XLSX'"
-      src="../icon/xlsx.png"
+      src="./icon/xlsx.png"
       class="file-type-icon" 
       mode="aspectFit"
-    />
-    <!--   <image 
-      v-else-if="messageType.toUpperCase() === 'ZIP'"
-      src="./icon/zip.png"
-      class="file-type-icon" 
-      mode="aspectFit"
-    /> -->
-    <image
-      v-else
-      src="../icon/text.png"
-      class="file-type-icon" 
-      mode="aspectFit"
-    />
+    /> 
   </view>
 </template>
 
@@ -78,7 +66,8 @@ export default {
   border-radius: 4px;
   padding: 11px 11px 15px 12px;
   width: 210px;
-  height: 83px;
+  min-height: 83px;
+  box-sizing: border-box;
 }
 
 .file-name {
@@ -93,8 +82,11 @@ export default {
   word-break: break-all;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: calc(100% - 47px); /* Adjust based on icon width and margin */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  max-width: calc(100% - 47px);
 }
 
 .file-type-icon {
