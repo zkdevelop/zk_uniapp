@@ -5,7 +5,7 @@
 				<!-- 推特logo -->
 			<view style="text-align: center; margin-top: 10px;"><image src="../../../static/icon/X.png" style="width: 25px; height: 25px;"></image></view>
 			<view style="margin-top: 250px; text-align: left;">
-				<text style="letter-spacing: 3px; font-size: 5ch; font-family: fantasy; font-weight: 550; width: 75%;">查看世界各地的新鲜事。</text>
+				<text style="letter-spacing: 3px; font-size: 65rpx; font-family: fantasy; font-weight: 550; width: 75%;">查看世界各地的新鲜事。</text>
 			</view>
 			<view class="createAccount"><button @click="goToRegister" type="primary" style="border-radius: 20px; background: #1d9bf0;">创建账号</button></view>
 		</view>

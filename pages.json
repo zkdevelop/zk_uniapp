@@ -155,13 +155,6 @@
 		}
 	},
 	{
-		"path" : "pages/task/task_detail/document/uploadfile/uploadfile",
-		"style" : 
-		{
-			"navigationBarTitleText" : "文件上传"
-		}
-	},
-	{
 		"path" : "pages/message/video-call",
 		"style" : 
 		{
