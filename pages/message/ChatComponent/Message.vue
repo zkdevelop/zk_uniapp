@@ -5,53 +5,11 @@
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <view class="content" :class="{ 'location-content': message.type === 'location' }">
-          <!-- 位置消息类型 -->
-          <template v-if="message.type === 'location' && message.content">
-            <view class="location-bubble" @click="openMap(message.content)">
-              <view class="location-title">{{ message.content.name }}</view>
-              <view class="location-address">{{ message.content.address }}</view>
-              <view class="location-map">
-                <image
-                  class="map-image"
-                  :src="getStaticMapUrl(message.content)"
-                  mode="aspectFill"
-                />
-              </view>
-            </view>
-          </template>
-
-          <!-- 图片消息类型 -->
-          <template v-else-if="message.type === 'image'">
-            <image 
-              :src="message.content" 
-              mode="widthFix" 
-              class="message-image" 
-              @click="previewImage(message.content)"
-            ></image>
-          </template>
-
-          <!-- 阅后即焚消息类型 -->
-          <template v-else-if="message.type === 'burn-after-reading'">
-            <view class="burn-after-reading" @click="viewBurnAfterReading(message)">
-              <image 
-                :src="message.content.mosaicPath" 
-                mode="widthFix" 
-                class="message-image"
-              ></image>
-              <text class="burn-after-reading-text">阅后即焚</text>
-            </view>
-          </template>
-          
-          <!-- 文件消息类型 -->
-          <template v-else-if="message.type === 'file'">
-            <view class="file-message">
-              <image src="/static/message/file-icon.png" class="file-icon" mode="aspectFit" />
-              <text class="file-name">{{ message.content }}</text>
-            </view>
-          </template>
-
-          <!-- 默认文本消息类型 -->
+        <view class="content" :class="{ 'location-content': message.type === 'location', 'file-message': message.type === 'file' }">
+          <LocationMessage v-if="message.type === 'location'" :content="message.content" />
+          <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
+          <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
+          <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
           <template v-else>
             {{ message.content }}
           </template>
@@ -66,20 +24,28 @@
 </template>
 
 <script>
-import { gaodeApiKey } from '@/config/keys';
-const AMAP_KEY = gaodeApiKey;
-const AMAP_API_URL = 'https://restapi.amap.com/v3/staticmap?';
+import { ref } from 'vue';
+import LocationMessage from './MessageComponent/LocationMessage.vue';
+import ImageMessage from './MessageComponent/ImageMessage.vue';
+import FileMessage from './MessageComponent/FileMessage.vue';
+import BurnAfterReadingMessage from './MessageComponent/BurnAfterReadingMessage.vue';
 
 export default {
   name: 'Message',
+  components: {
+    LocationMessage,
+    ImageMessage,
+    FileMessage,
+    BurnAfterReadingMessage
+  },
   props: {
     message: {
       type: Object,
       required: true
     }
   },
-  methods: {
-    formatTime(timestamp) {
+  setup() {
+    const formatTime = (timestamp) => {
       if (!timestamp) return 'Invalid Date';
       const date = new Date(timestamp);
       const month = date.getMonth() + 1;
@@ -87,39 +53,18 @@ export default {
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${month}-${day} ${hours}:${minutes}`;
-    },
-    previewImage(url) {
-      uni.previewImage({
-        urls: [url],
-        current: url
-      });
-    },
-    openMap(location) {
-      if (!location || !location.latitude || !location.longitude) {
-        console.error('无效的位置数据:', location);
-        return;
-      }
-      uni.openLocation({
-        latitude: parseFloat(location.latitude),
-        longitude: parseFloat(location.longitude),
-        name: location.name,
-        address: location.address,
-        success: function () {
-          console.log('成功打开地图');
-        },
-        fail: function (error) {
-          console.error('打开地图失败:', error);
-        }
-      });
-    },
-    getStaticMapUrl(location) {
-      return `${AMAP_API_URL}location=${location.longitude},${location.latitude}&zoom=14&size=480*240&scale=2&markers=mid,,A:${location.longitude},${location.latitude}&key=${AMAP_KEY}`;
-    },
-    viewBurnAfterReading(message) {
-      this.$emit('view-burn-after-reading', message);
-    }
+    };
+
+    const viewBurnAfterReading = (message) => {
+      // Implement the logic for viewing burn-after-reading messages
+    };
+
+    return {
+      formatTime,
+      viewBurnAfterReading
+    };
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -156,75 +101,45 @@ export default {
     box-sizing: border-box;
     font-size: 28rpx;
     line-height: 1.3;
-    padding: 20rpx;
     border-radius: 10rpx;
-    background: #fff;
-    
-    &.location-content {
-      padding: 0;
-      background: transparent;
-    }
   }
 
+  .content:not(.location-content):not(.file-message) {
+    padding: 20rpx;
+    background: #fff;
+  }
+
+
   &.self {
+    align-items: flex-end;
+
     .message-content {
       flex-direction: row-reverse;
       align-items: center;
     }
+
     .avatar {
       margin-right: 0;
       margin-left: 20rpx;
     }
+
     .content:not(.location-content) {
       background: #4e8cff;
       color: #fff;
     }
-    align-items: flex-end;
   }
 
   &.friend {
+    align-items: flex-start;
+
     .message-content {
       flex-direction: row;
     }
+
     .content:not(.location-content) {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    align-items: flex-start;
-  }
-}
-
-.location-bubble {
-  width: 480rpx;
-  border-radius: 12rpx;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 10rpx 0;
-}
-
-.location-title {
-  font-size: 28rpx;
-  color: #333;
-  padding: 20rpx 20rpx 10rpx;
-  font-weight: 500;
-}
-
-.location-address {
-  font-size: 24rpx;
-  color: #999;
-  padding: 0 20rpx 20rpx;
-}
-
-.location-map {
-  width: 100%;
-  height: 240rpx;
-  overflow: hidden;
-  
-  .map-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 }
 
@@ -274,47 +189,5 @@ export default {
   font-size: 24rpx;
   color: #999;
   margin-bottom: 5rpx;
-}
-
-.message-image {
-  max-width: 100%;
-  border-radius: 5px;
-}
-
-.burn-after-reading {
-  position: relative;
-  overflow: hidden;
-}
-
-.burn-after-reading-text {
-  position: absolute;
-  bottom: 10rpx;
-  right: 10rpx;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  padding: 5rpx 10rpx;
-  border-radius: 5rpx;
-  font-size: 24rpx;
-}
-
-.file-message {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  padding: 20rpx;
-  border-radius: 10rpx;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
-  .file-icon {
-    width: 80rpx;
-    height: 80rpx;
-    margin-right: 20rpx;
-  }
-  
-  .file-name {
-    font-size: 28rpx;
-    color: #333;
-    word-break: break-all;
-  }
 }
 </style>

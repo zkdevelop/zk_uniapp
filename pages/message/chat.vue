@@ -427,6 +427,8 @@ export default {
               }
             } else if (type === 'image') {
               content = msg.previewUrl || msg.message; // 使用 previewUrl 作为图片消息的内容，如果不存在则使用 message
+            } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
+              type = 'file'; // 将 .txt 文件识别为文件类型
             }
 
             return {
@@ -436,7 +438,8 @@ export default {
               avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
               timestamp: new Date(msg.sendTime),
               type: type,
-              isRead: msg.isRead
+              isRead: msg.isRead,
+              messageType: msg.messageType // 添加原始的 messageType
             };
           });
 
