@@ -171,10 +171,50 @@ export default {
         this.closeAttachMenu();
       }
     },
-    handleFileSelected(fileData) {
+    async handleFileSelected(fileData) {
       console.log('文件被选择:', fileData);
       this.fileName = fileData.path.split('/').pop();
-      this.chooseAndSendPhoto(fileData.path);
+      try {
+        const response = await sendFilesToUser({
+          files: [fileData.path],
+          isGroup: false,
+          isSelfDestruct: false,
+          latitude: '0',
+          longitude: '0',
+          missionId: this.missionId,
+          receptionId: this.recipientId
+        });
+
+        console.log('文件上传响应:', response);
+
+        if (response.code === 200) {
+          const messageType = response.data.messageType.toUpperCase();
+          const content = response.data.message;
+
+          let type = 'file';
+          if (messageType === 'AUDIO') {
+            type = 'audio';
+          } else if (messageType === 'IMAGE') {
+            type = 'image';
+          }
+
+          this.$emit('message-sent', {
+            type: type,
+            content: content,
+            messageType: messageType,
+            recipientId: this.recipientId,
+            missionId: this.missionId
+          });
+        } else {
+          throw new Error(response.msg || '发送文件消息失败');
+        }
+      } catch (error) {
+        console.error('发送文件消息出错:', error);
+        uni.showToast({
+          title: '发送失败，请重试',
+          icon: 'none'
+        });
+      }
     },
     chooseBurnAfterReadingImage() {
       console.log('选择阅后即焚图片');

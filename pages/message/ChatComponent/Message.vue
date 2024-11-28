@@ -5,10 +5,11 @@
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <view class="content" :class="{ 'location-content': message.type === 'location', 'file-message': message.type === 'file', 'message-image': message.type === 'image' }">
+        <view class="content" :class="{ 'location-content': message.type === 'location', 'file-message': message.type === 'file', 'message-image': message.type === 'image', 'audio-message': message.type === 'audio' }">
           <LocationMessage v-if="message.type === 'location'" :content="message.content" />
           <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
           <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
+          <AudioMessage v-else-if="message.type === 'audio'" :content="message.content" :messageType="message.messageType" />
           <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
           <template v-else>
             {{ message.content }}
@@ -28,6 +29,7 @@ import { ref } from 'vue';
 import LocationMessage from './MessageComponent/LocationMessage.vue';
 import ImageMessage from './MessageComponent/ImageMessage.vue';
 import FileMessage from './MessageComponent/FileMessage.vue';
+import AudioMessage from './MessageComponent/AudioMessage.vue';
 import BurnAfterReadingMessage from './MessageComponent/BurnAfterReadingMessage.vue';
 
 export default {
@@ -36,6 +38,7 @@ export default {
     LocationMessage,
     ImageMessage,
     FileMessage,
+    AudioMessage,
     BurnAfterReadingMessage
   },
   props: {
@@ -56,7 +59,8 @@ export default {
     };
 
     const viewBurnAfterReading = (message) => {
-      // Implement the logic for viewing burn-after-reading messages
+      // 实现查看阅后即焚消息的逻辑
+      console.log('查看阅后即焚消息:', message);
     };
 
     return {
@@ -108,7 +112,7 @@ export default {
     white-space: normal;
   }
 
-  .content:not(.location-content):not(.file-message):not(.message-image) {
+  .content:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
     padding: 20rpx;
     background: #fff;
   }
@@ -126,7 +130,7 @@ export default {
       margin-left: 20rpx;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
       background: #4e8cff;
       color: #fff;
     }
@@ -139,7 +143,7 @@ export default {
       flex-direction: row;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -195,6 +199,12 @@ export default {
 }
 
 .message-image {
+  background: transparent !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.audio-message {
   background: transparent !important;
   padding: 0 !important;
   overflow: hidden;
