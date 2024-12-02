@@ -149,14 +149,12 @@ export default {
     // 处理附件项选择
     attachItem(action, data) {
       console.log('附件项被选择:', action);
-      if (action === 'file') {
+      if (action === 'file' || action === 'album') {
         this.chooseAndSendPhoto();
       } else if (action === 'burn-after-reading') {
         this.chooseBurnAfterReadingImage();
       } else if (action === 'camera') {
         this.takePhoto();
-      } else if (action === 'album') {
-        this.chooseAndSendPhoto();
       } else if (action === 'location') {
         this.openLocationSharing();
       } else if (action === 'video-call') {
@@ -175,31 +173,29 @@ export default {
       try {
         let tempFilePath = filePath;
         if (!tempFilePath) {
-          console.log('获取文件信息...');
-          const fileRes = await new Promise((resolve, reject) => {
-            uni.chooseFile({
+          console.log('获取图片信息...');
+          const imageRes = await new Promise((resolve, reject) => {
+            uni.chooseImage({
               count: 1,
               success: (res) => {
-                console.log('文件选择成功:', JSON.stringify(res));
+                console.log('图片选择成功:', JSON.stringify(res));
                 resolve(res);
               },
               fail: (err) => {
-                console.error('文件选择失败:', err);
+                console.error('图片选择失败:', err);
                 reject(err);
               }
             });
           });
-          tempFilePath = fileRes.tempFiles[0].path;
-          this.fileName = fileRes.tempFiles[0].name || tempFilePath.split('/').pop();
+          tempFilePath = imageRes.tempFilePaths[0];
+          this.fileName = tempFilePath.split('/').pop();
         } else {
           this.fileName = tempFilePath.split('/').pop();
         }
         
-        // 确定文件类型
-        const fileExtension = this.fileName.split('.').pop().toLowerCase();
-        this.fileType = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension) ? 'image' : 'file';
+        this.fileType = 'image';
 
-        console.log('选择的文件名:', this.fileName);
+        console.log('选择的图片名:', this.fileName);
         console.log('文件类型:', this.fileType);
 
         // 发出文件选择事件
@@ -212,7 +208,7 @@ export default {
         });
         this.closeAttachMenu();
       } catch (error) {
-        console.error('选择文件时出错:', error);
+        console.error('选择图片时出错:', error);
         uni.showToast({
           title: '选择失败，请重试',
           icon: 'none'

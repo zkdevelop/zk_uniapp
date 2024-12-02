@@ -91,7 +91,7 @@ export default {
         type: 'single',
         missionId: ''
       },
-      list: [],
+      list: [], // 消息列表
       showAttachMenu: false,
       burnAfterReadingDuration: 5,
       currentBurnAfterReadingImage: '',
@@ -130,10 +130,12 @@ export default {
     console.log('peerStore 初始状态:', this.peerStore);
   },
   methods: {
+    // 初始化聊天
     async initializeChat() {
       await this.loadHistoryMessages();
       this.$nextTick(this.scrollToBottom);
     },
+    // 返回上一页
     goBack() {
       uni.navigateBack({
         success: () => {
@@ -150,20 +152,10 @@ export default {
         }
       });
     },
+    // 发送消息
     async sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
       if (message.content && this.chatInfo.id) {
-        const newMessage = {
-          id: Date.now().toString(),
-          content: message.content,
-          userType: 'self',
-          avatar: this._selfAvatar,
-          timestamp: new Date(),
-          status: 'sending',
-          type: message.type || 'text'
-        };
-        this.addNewMessage(newMessage);
-
         try {
           const response = await sendMessageToUser({
             message: typeof message.content === 'object' ? JSON.stringify(message.content) : message.content,
@@ -175,13 +167,13 @@ export default {
           console.log('[sendMessage] 发送消息响应:', response);
           if (response.code === 200) {
             this.handleMessageSent(response.data);
-            await this.updateMessageList();
+            await this.updateMessageList(); // 发送消息后更新消息列表
           } else {
             throw new Error(response.msg || '发送消息失败');
           }
         } catch (error) {
           console.error('[sendMessage] 发送消息失败:', error);
-          this.handleMessageFailed(newMessage);
+          // 错误处理
         }
       } else {
         console.error('[sendMessage] 消息内容为空或 recipientId 未设置', {
@@ -190,21 +182,17 @@ export default {
         });
       }
     },
+    // 处理消息发送成功
     handleMessageSent(sentMessage) {
       console.log('[handleMessageSent] 消息已发送:', sentMessage);
-      const tempMessage = this.list.find(m => m.content === sentMessage.message || m.content === sentMessage.content);
-      if (tempMessage) {
-        tempMessage.id = sentMessage.id || tempMessage.id;
-        tempMessage.status = 'sent';
-      }
+      // 可以在这里添加一些额外的处理逻辑，如更新UI等
     },
+    // 处理消息发送失败
     handleMessageFailed(failedMessage) {
       console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
-      const tempMessage = this.list.find(m => m.content === failedMessage.content && m.type === failedMessage.type);
-      if (tempMessage) {
-        tempMessage.status = 'failed';
-      }
+      // 可以在这里添加一些失败后的处理逻辑，如显示错误提示等
     },
+    // 处理附件
     handleAttachment(type, data) {
       console.log('[handleAttachment] 处理附件:', type, data);
       if (type === 'location') {
@@ -220,6 +208,7 @@ export default {
         }
       }
     },
+    // 处理位置消息
     handleLocationMessage(locationData) {
       console.log('[handleLocationMessage] 处理位置消息:', locationData);
       this.sendMessage({
@@ -227,6 +216,7 @@ export default {
         content: locationData
       });
     },
+    // 查看阅后即焚图片
     viewBurnAfterReadingImage(message) {
       this.currentBurnAfterReadingImage = message.content.originalPath;
       this.currentBurnAfterReadingMessage = message;
@@ -234,6 +224,7 @@ export default {
         this.$refs.burnAfterReadingRef.open();
       });
     },
+    // 关闭阅后即焚预览
     closeBurnAfterReadingPreview() {
       this.currentBurnAfterReadingImage = '';
       if (this.currentBurnAfterReadingMessage) {
@@ -245,14 +236,17 @@ export default {
       }
       this.updateMessageList();
     },
+    // 切换附件菜单
     toggleAttachMenu(show) {
       this.showAttachMenu = show;
       console.log('附件菜单切换:', show);
     },
+    // 处理遮罩层点击
     handleOverlayClick() {
       this.showAttachMenu = false;
       console.log('附件菜单已关闭');
     },
+    // 滚动到底部
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messageList.scrollToBottom();
@@ -263,6 +257,7 @@ export default {
         console.log('滚动到底部');
       });
     },
+    // 处理滚动事件
     onScroll(event) {
       const { scrollTop, scrollHeight } = event.detail;
       const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
@@ -275,6 +270,7 @@ export default {
         this.showNewMessageTip = false;
       }
     },
+    // 加载更多消息
     async loadMoreMessages() {
       console.log('[loadMoreMessages] 开始加载更多消息');
       if (this.hasMoreMessages && !this.isLoading) {
@@ -303,22 +299,13 @@ export default {
         console.log('[loadMoreMessages] 没有更多消息或正在加载中');
       }
     },
-    addNewMessage(message) {
-      console.log('添加新消息:', message);
-      this.list.push(message);
-      if (!this.isScrolledToBottom) {
-        this.hasNewMessages = true;
-        this.showScrollToBottom = true;
-        this.showNewMessageTip = true;
-      } else {
-        this.scrollToBottom();
-      }
-    },
+    // 打开视频通话页面
     openVideoPage(action) {
       uni.navigateTo({
         url: `/pages/message/video-call?calleePeerId=${this.chatInfo.id}`
       });
     },
+    // 拒绝视频通话
     rejectVideoCall() {
       console.log('拒绝视频通话，peerStore 状态:', this.peerStore);
       this.peerStore.dataConnection.send({
@@ -327,6 +314,7 @@ export default {
       this.peerStore.dataConnection = undefined;
       this.peerStore.activateNotification = false;
     },
+    // 接受视频通话
     acceptVideoCall() {
       console.log('接受视频通话，peerStore 状态:', this.peerStore);
       this.peerStore.activateNotification = false;
@@ -350,6 +338,7 @@ export default {
         instruction: this.peerStore.instruction.accept
       });
     },
+    // 加载历史消息
     async loadHistoryMessages(isLoadingMore = false) {
       console.log('[loadHistoryMessages] 开始加载历史消息', { 
         isLoadingMore, 
@@ -434,6 +423,7 @@ export default {
         });
       }
     },
+    // 更新消息列表
     async updateMessageList() {
       console.log('[updateMessageList] 开始更新消息列表');
       try {
@@ -474,29 +464,14 @@ export default {
             };
           });
 
-          // 比较并更新消息列表
-          const updatedList = [...this.list];
-          newMessages.forEach(newMsg => {
-            const existingIndex = updatedList.findIndex(msg => msg.id === newMsg.id);
-            if (existingIndex === -1) {
-              updatedList.push(newMsg);
-            }
-          });
-
-          // 按时间戳排序，确保最新消息在底部
-          updatedList.sort((a, b) => a.timestamp - b.timestamp);
-
-          // 更新列表
-          this.list = updatedList;
+          // 直接替换整个消息列表
+          this.list = newMessages;
 
           console.log('[updateMessageList] 消息列表已更新，新长度:', this.list.length);
 
-          // 如果有新消息，滚动到底部
-          if (updatedList.length > this.list.length) {
-            this.$nextTick(() => {
-              this.scrollToBottom();
-            });
-          }
+          this.$nextTick(() => {
+            this.scrollToBottom();
+          });
         } else {
           console.error('[updateMessageList] 获取新消息失败:', response.msg);
         }
@@ -504,6 +479,7 @@ export default {
         console.error('[updateMessageList] 更新消息列表出错:', error);
       }
     },
+    // 处理文件选择
     async handleFileSelected(fileInfo) {
       console.log('文件被选择:', fileInfo);
       try {
@@ -520,26 +496,6 @@ export default {
         console.log('文件上传响应:', response);
 
         if (response.code === 200) {
-          const messageType = response.data.messageType.toUpperCase();
-          const content = response.data.message;
-
-          let type = 'file';
-          if (messageType === 'AUDIO') {
-            type = 'audio';
-          } else if (messageType === 'IMAGE') {
-            type = 'image';
-          }
-
-          this.addNewMessage({
-            id: Date.now().toString(),
-            type: type,
-            content: content,
-            userType: 'self',
-            avatar: this._selfAvatar,
-            timestamp: new Date(),
-            status: 'sent',
-            messageType: messageType
-          });
           await this.updateMessageList();
         } else {
           throw new Error(response.msg || '发送文件消息失败');
