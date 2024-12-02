@@ -34,7 +34,6 @@
     <attachment-menu 
       v-if="showAttachMenu" 
       @attach="attachItem"
-      @file-selected="handleFileSelected"
       @close="closeAttachMenu"
     >
       <template v-slot:album>
@@ -59,24 +58,18 @@
       @location-selected="handleLocationSelected"
       @close="closeLocationSharing"
     />
-
-    <!-- 文件传输组件 -->
-    <file-transfer ref="fileTransfer" @file-selected="handleFileSelected" />
   </view>
 </template>
 
 <script>
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
-import FileTransfer from './ChatInputAreaComponent/FileTransfer.vue'
 import LocationSharing from './ChatInputAreaComponent/LocationSharing.vue'
-import { sendFilesToUser } from '@/utils/api/message.js'
 import { getCurrentCoordinates } from '@/utils/locationUtils'
 
 export default {
   name: 'ChatInputArea',
   components: {
     AttachmentMenu,
-    FileTransfer,
     LocationSharing
   },
   props: {
@@ -94,7 +87,7 @@ export default {
       default: ''
     }
   },
-  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'message-sent'],
+  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'file-selected'],
   data() {
     return {
       newMessage: '',
@@ -103,7 +96,8 @@ export default {
       isVoiceInputActive: false,
       isRecording: false,
       fileName: '',
-      fileType: null
+      fileType: null,
+      selectedFile: null
     }
   },
   created() {
@@ -117,6 +111,7 @@ export default {
     }
   },
   methods: {
+    // 发送文本消息
     async sendMessage() {
       console.log('sendMessage 方法被调用');
       
@@ -138,22 +133,24 @@ export default {
       
       this.newMessage = ''; 
     },
+
+    // 切换附件菜单显示状态
     toggleAttachMenu() {
       console.log('切换附件菜单');
       this.$emit('toggle-attach-menu', !this.showAttachMenu);
     },
+
+    // 关闭附件菜单
     closeAttachMenu() {
       console.log('关闭附件菜单');
       this.$emit('toggle-attach-menu', false);
     },
+
+    // 处理附件项选择
     attachItem(action, data) {
       console.log('附件项被选择:', action);
       if (action === 'file') {
-        if (data) {
-          this.handleFileSelected(data);
-        } else {
-          this.$refs.fileTransfer.chooseFile();
-        }
+        this.chooseAndSendPhoto();
       } else if (action === 'burn-after-reading') {
         this.chooseBurnAfterReadingImage();
       } else if (action === 'camera') {
@@ -167,126 +164,14 @@ export default {
       } else {
         this.$emit('attach', action);
       }
-      if (action !== 'location') {
+      if (action !== 'location' && action !== 'file') {
         this.closeAttachMenu();
       }
     },
-    async handleFileSelected(fileData) {
-      console.log('文件被选择:', fileData);
-      this.fileName = fileData.path.split('/').pop();
-      try {
-        const response = await sendFilesToUser({
-          files: [fileData.path],
-          isGroup: false,
-          isSelfDestruct: false,
-          latitude: '0',
-          longitude: '0',
-          missionId: this.missionId,
-          receptionId: this.recipientId
-        });
 
-        console.log('文件上传响应:', response);
-
-        if (response.code === 200) {
-          const messageType = response.data.messageType.toUpperCase();
-          const content = response.data.message;
-
-          let type = 'file';
-          if (messageType === 'AUDIO') {
-            type = 'audio';
-          } else if (messageType === 'IMAGE') {
-            type = 'image';
-          }
-
-          this.$emit('message-sent', {
-            type: type,
-            content: content,
-            messageType: messageType,
-            recipientId: this.recipientId,
-            missionId: this.missionId
-          });
-        } else {
-          throw new Error(response.msg || '发送文件消息失败');
-        }
-      } catch (error) {
-        console.error('发送文件消息出错:', error);
-        uni.showToast({
-          title: '发送失败，请重试',
-          icon: 'none'
-        });
-      }
-    },
-    chooseBurnAfterReadingImage() {
-      console.log('选择阅后即焚图片');
-      uni.chooseImage({
-        count: 1,
-        success: (res) => {
-          const image = res.tempFilePaths[0];
-          this.applyMosaicEffect(image, (mosaicImage) => {
-            this.$emit('attach', 'burn-after-reading', {
-              originalPath: image,
-              mosaicPath: mosaicImage,
-              duration: 5,
-              missionId: this.missionId
-            });
-          });
-        },
-        fail: (err) => {
-          console.error('选择图片失败', err);
-        }
-      });
-    },
-    applyMosaicEffect(imagePath, callback) {
-      const ctx = uni.createCanvasContext('mosaicCanvas');
-      
-      ctx.drawImage(imagePath, 0, 0, 300, 300);
-      
-      ctx.setFillStyle('rgba(0, 0, 0, 0.5)');
-      for (let y = 0; y < 300; y += 10) {
-        for (let x = 0; x < 300; x += 10) {
-          ctx.fillRect(x, y, 10, 10);
-        }
-      }
-      
-      ctx.draw(false, () => {
-        uni.canvasToTempFilePath({
-          canvasId: 'mosaicCanvas',
-          success: (res) => {
-            callback(res.tempFilePath);
-          },
-          fail: (err) => {
-            console.error('马赛克处理失败', err);
-          }
-        });
-      });
-    },
-    async takePhoto() {
-      console.log('拍摄照片');
-      uni.chooseImage({
-        count: 1,
-        sourceType: ['camera'],
-        success: (res) => {
-          const tempFilePath = res.tempFilePaths[0];
-          this.$emit('message-sent', {
-            type: 'image',
-            content: tempFilePath,
-            missionId: this.missionId
-          });
-        },
-        fail: (err) => {
-          console.error('拍照失败:', err);
-          uni.showToast({
-            title: '拍照失败',
-            icon: 'none'
-          });
-        }
-      });
-    },
+    // 选择并发送照片或文件
     async chooseAndSendPhoto(filePath = null) {
       console.log('chooseAndSendPhoto 方法被调用');
-      console.log('当前 missionId:', this.missionId);
-      console.log('当前 recipientId:', this.recipientId);
-      console.log('开始选择并发送照片或文件');
       try {
         let tempFilePath = filePath;
         if (!tempFilePath) {
@@ -317,82 +202,64 @@ export default {
         console.log('选择的文件名:', this.fileName);
         console.log('文件类型:', this.fileType);
 
-        console.log('开始获取位置信息...');
-        let locationRes = { latitude: '0', longitude: '0' };
-        try {
-          const coordinates = await getCurrentCoordinates();
-          console.log('获取到的位置信息:', JSON.stringify(coordinates));
-          locationRes = {
-            latitude: coordinates.latitude.toString(),
-            longitude: coordinates.longitude.toString()
-          };
-        } catch (error) {
-          console.error('获取位置信息失败，使用默认值:', error);
-        }
-
-        console.log('位置信息处理完成');
-        console.log('选择的文件路径:', tempFilePath);
-
-        console.log('准备上传文件...');
-        const sendData = {
-          files: [tempFilePath],
-          isGroup: false,
-          isSelfDestruct: false,
-          latitude: locationRes.latitude,
-          longitude: locationRes.longitude,
-          missionId: this.missionId,
-          receptionId: this.recipientId
-        };
-        console.log('准备调用 sendFilesToUser，参数:', JSON.stringify(sendData));
-
-        try {
-          const response = await sendFilesToUser(sendData);
-          console.log('sendFilesToUser 调用完成，响应:', JSON.stringify(response));
-          console.log('sendFilesToUser 响应数据:', JSON.stringify(response.data));
-
-          console.log('API返回的完整响应:', JSON.stringify(response));
-          console.log('API返回的message字段:', response.data.message);
-
-          if (response.code === 200) {
-            console.log('文件发送成功，触发message-sent事件');
-
-            this.$emit('message-sent', {
-              type: this.fileType,
-              content: this.fileType === 'image' ? tempFilePath : response.data.message,
-              recipientId: this.recipientId,
-              missionId: this.missionId
-            });
-            this.closeAttachMenu();
-          } else {
-            throw new Error(response.msg || '发送文件消息失败');
-          }
-        } catch (error) {
-          console.error('发送文件消息出错:', error);
-          console.error('错误详情:', error.message);
-          uni.showToast({
-            title: '发送失败，请重试',
-            icon: 'none'
-          });
-        }
-
+        // 发出文件选择事件
+        this.$emit('file-selected', {
+          type: this.fileType,
+          path: tempFilePath,
+          name: this.fileName,
+          recipientId: this.recipientId,
+          missionId: this.missionId
+        });
+        this.closeAttachMenu();
       } catch (error) {
-        console.error('选择或发送文件时出错:', error);
-        console.error('错误详情:', error.message);
+        console.error('选择文件时出错:', error);
         uni.showToast({
-          title: '发送失败，请重试',
+          title: '选择失败，请重试',
           icon: 'none'
         });
       }
     },
+
+    // 拍摄照片
+    async takePhoto() {
+      console.log('拍摄照片');
+      uni.chooseImage({
+        count: 1,
+        sourceType: ['camera'],
+        success: (res) => {
+          const tempFilePath = res.tempFilePaths[0];
+          this.$emit('file-selected', {
+            type: 'image',
+            path: tempFilePath,
+            name: 'camera_photo.jpg',
+            recipientId: this.recipientId,
+            missionId: this.missionId
+          });
+        },
+        fail: (err) => {
+          console.error('拍照失败:', err);
+          uni.showToast({
+            title: '拍照失败',
+            icon: 'none'
+          });
+        }
+      });
+    },
+
+    // 打开位置共享
     openLocationSharing() {
       console.log('打开位置分享');
       this.showLocationSharing = true;
       this.closeAttachMenu();
     },
+
+    // 关闭位置共享
     closeLocationSharing() {
       console.log('关闭位置分享');
       this.showLocationSharing = false;
     },
+
+    // 处理位置选择
     handleLocationSelected(location) {
       console.log('位置被选择:', JSON.stringify(location));
       this.$emit('send-message', {
@@ -402,13 +269,19 @@ export default {
       });
       this.closeLocationSharing();
     },
+
+    // 开始视频通话
     startVideoCall() {
       console.log('开始视频通话');
       this.$emit('video-call');
     },
+
+    // 切换语音输入
     toggleVoiceInput() {
       this.isVoiceInputActive = !this.isVoiceInputActive;
     },
+
+    // 开始语音录制
     startVoiceRecord() {
       console.log('开始录音');
       this.isRecording = true;
@@ -425,15 +298,18 @@ export default {
         }
       });
     },
+
+    // 停止语音录制
     stopVoiceRecord() {
       console.log('停止录音');
       this.isRecording = false;
       uni.stopRecord({
         success: (res) => {
           console.log('录音结束，文件路径:', res.tempFilePath);
-          this.$emit('send-message', {
+          this.$emit('file-selected', {
             type: 'voice',
-            content: res.tempFilePath,
+            path: res.tempFilePath,
+            name: 'voice_message.mp3',
             recipientId: this.recipientId,
             missionId: this.missionId
           });

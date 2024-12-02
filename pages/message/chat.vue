@@ -15,11 +15,11 @@
     <!-- 聊天输入区域 -->
     <ChatInputArea 
       @send-message="sendMessage"
-      @message-sent="handleImageOrFileSent"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
       @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
+      @file-selected="handleFileSelected"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
       :missionId="chatInfo.missionId.toString()"
@@ -68,7 +68,7 @@ import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
-import { getHistoryChatMessages, sendMessageToUser } from '@/utils/api/message.js'
+import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
 import { useUserStore } from '@/store/userStore'
@@ -152,10 +152,6 @@ export default {
     },
     async sendMessage(message) {
       console.log('[sendMessage] 发送消息:', message);
-      if (message.type === 'image' || message.type === 'file') {
-        console.log('[sendMessage] 跳过图片和文件类型的发送');
-        return;
-      }
       if (message.content && this.chatInfo.id) {
         const newMessage = {
           id: Date.now().toString(),
@@ -179,6 +175,7 @@ export default {
           console.log('[sendMessage] 发送消息响应:', response);
           if (response.code === 200) {
             this.handleMessageSent(response.data);
+            await this.updateMessageList();
           } else {
             throw new Error(response.msg || '发送消息失败');
           }
@@ -192,18 +189,6 @@ export default {
           recipientId: this.chatInfo.id
         });
       }
-    },
-    handleImageOrFileSent(message) {
-      console.log('[handleImageOrFileSent] 收到图片或文件数据:', message);
-      this.addNewMessage({
-        id: Date.now().toString(),
-        content: message.content,
-        userType: 'self',
-        avatar: this._selfAvatar,
-        timestamp: new Date(),
-        status: 'sent',
-        type: message.type
-      });
     },
     handleMessageSent(sentMessage) {
       console.log('[handleMessageSent] 消息已发送:', sentMessage);
@@ -235,37 +220,6 @@ export default {
         }
       }
     },
-    chooseImage() {
-      uni.chooseImage({
-        success: (res) => {
-          this.addNewMessage({
-            content: res.tempFilePaths[0],
-            userType: 'self',
-            type: 'image',
-            avatar: this._selfAvatar,
-            timestamp: new Date()
-          });
-        }
-      });
-    },
-    handleFileTransfer(fileData) {
-      this.addNewMessage({
-        content: fileData,
-        userType: 'self',
-        type: 'file',
-        avatar: this._selfAvatar,
-        timestamp: new Date()
-      });
-    },
-    handleBurnAfterReading(imageData) {
-      this.addNewMessage({
-        content: imageData,
-        userType: 'self',
-        type: 'burn-after-reading',
-        avatar: this._selfAvatar,
-        timestamp: new Date()
-      });
-    },
     handleLocationMessage(locationData) {
       console.log('[handleLocationMessage] 处理位置消息:', locationData);
       this.sendMessage({
@@ -289,6 +243,7 @@ export default {
         }
         this.currentBurnAfterReadingMessage = null;
       }
+      this.updateMessageList();
     },
     toggleAttachMenu(show) {
       this.showAttachMenu = show;
@@ -421,14 +376,14 @@ export default {
             if (type === 'position') {
               try {
                 content = JSON.parse(msg.message);
-                type = 'location'; // 将 'position' 类型映射为 'location'
+                type = 'location';
               } catch (e) {
                 console.error('解析位置数据失败:', e);
               }
             } else if (type === 'image') {
-              content = msg.previewUrl || msg.message; // 使用 previewUrl 作为图片消息的内容，如果不存在则使用 message
+              content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-              type = 'file'; // 将 .txt 文件识别为文件类型
+              type = 'file';
             }
 
             return {
@@ -439,7 +394,7 @@ export default {
               timestamp: new Date(msg.sendTime),
               type: type,
               isRead: msg.isRead,
-              messageType: msg.messageType // 添加原始的 messageType
+              messageType: msg.messageType
             };
           });
 
@@ -475,6 +430,124 @@ export default {
         console.error('[loadHistoryMessages] 加载历史消息出错:', error);
         uni.showToast({
           title: '网络错误，请稍后重试',
+          icon: 'none'
+        });
+      }
+    },
+    async updateMessageList() {
+      console.log('[updateMessageList] 开始更新消息列表');
+      try {
+        const response = await getHistoryChatMessages({
+          opponentId: this.chatInfo.id,
+          from: 0,
+          to: 10,
+          missionId: this.chatInfo.missionId
+        });
+
+        if (response.code === 200 && Array.isArray(response.data)) {
+          const newMessages = response.data.reverse().map(msg => {
+            let content = msg.message;
+            let type = msg.messageType.toLowerCase();
+
+            if (type === 'position') {
+              try {
+                content = JSON.parse(msg.message);
+                type = 'location';
+              } catch (e) {
+                console.error('解析位置数据失败:', e);
+              }
+            } else if (type === 'image') {
+              content = msg.previewUrl || msg.message;
+            } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
+              type = 'file';
+            }
+
+            return {
+              id: msg.id,
+              content: content,
+              userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
+              avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
+              timestamp: new Date(msg.sendTime),
+              type: type,
+              isRead: msg.isRead,
+              messageType: msg.messageType
+            };
+          });
+
+          // 比较并更新消息列表
+          const updatedList = [...this.list];
+          newMessages.forEach(newMsg => {
+            const existingIndex = updatedList.findIndex(msg => msg.id === newMsg.id);
+            if (existingIndex === -1) {
+              updatedList.push(newMsg);
+            }
+          });
+
+          // 按时间戳排序，确保最新消息在底部
+          updatedList.sort((a, b) => a.timestamp - b.timestamp);
+
+          // 更新列表
+          this.list = updatedList;
+
+          console.log('[updateMessageList] 消息列表已更新，新长度:', this.list.length);
+
+          // 如果有新消息，滚动到底部
+          if (updatedList.length > this.list.length) {
+            this.$nextTick(() => {
+              this.scrollToBottom();
+            });
+          }
+        } else {
+          console.error('[updateMessageList] 获取新消息失败:', response.msg);
+        }
+      } catch (error) {
+        console.error('[updateMessageList] 更新消息列表出错:', error);
+      }
+    },
+    async handleFileSelected(fileInfo) {
+      console.log('文件被选择:', fileInfo);
+      try {
+        const response = await sendFilesToUser({
+          files: [fileInfo.path],
+          isGroup: false,
+          isSelfDestruct: false,
+          latitude: '0',
+          longitude: '0',
+          missionId: this.chatInfo.missionId,
+          receptionId: this.chatInfo.id
+        });
+
+        console.log('文件上传响应:', response);
+
+        if (response.code === 200) {
+          const messageType = response.data.messageType.toUpperCase();
+          const content = response.data.message;
+
+          let type = 'file';
+          if (messageType === 'AUDIO') {
+            type = 'audio';
+          } else if (messageType === 'IMAGE') {
+            type = 'image';
+          }
+
+          this.addNewMessage({
+            id: Date.now().toString(),
+            type: type,
+            content: content,
+            userType: 'self',
+            avatar: this._selfAvatar,
+            timestamp: new Date(),
+            status: 'sent',
+            messageType: messageType
+          });
+          await this.updateMessageList();
+        } else {
+          throw new Error(response.msg || '发送文件消息失败');
+        }
+      } catch (error) {
+        console.error('发送文件消息出错:', error);
+        uni.showToast({
+          title: '发送失败，请重试',
           icon: 'none'
         });
       }

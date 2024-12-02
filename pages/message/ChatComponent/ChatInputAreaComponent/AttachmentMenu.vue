@@ -41,121 +41,12 @@ export default {
         { icon: '/static/message/文件传输.png', label: '文件传输', action: 'file' },
         { icon: '/static/message/阅后即焚.png', label: '阅后即焚', action: 'burn-after-reading' },
         { icon: '/static/message/位置.png', label: '位置', action: 'location' },
-      ],
-      selectedFile: null
+      ]
     }
   },
   methods: {
     handleAttachItem(action) { 
-      if (action === 'file') {
-        this.$emit('attach', 'file');
-        this.chooseFile();
-      } else {
-        this.$emit('attach', action);
-      }
-    },
-    chooseFile() {
-      // #ifdef H5 || MP-WEIXIN
-      this.chooseFileH5();
-      // #endif
-
-      // #ifdef APP-PLUS
-      if (uni.getSystemInfoSync().platform === 'android') {
-        this.chooseFileAndroid();
-      } else {
-        this.chooseFileIOS();
-      }
-      // #endif
-    },
-    chooseFileH5() {
-      console.log('选择文件 (H5/微信小程序)');
-      uni.chooseFile({
-        count: 1,
-        success: (res) => {
-			console.log('resresres',res,'resresres')
-          this.handleFileSelected(res.tempFiles[0]);
-        },
-        fail: (err) => {
-          console.error('选择文件失败', err);
-          uni.showToast({ title: '选择文件失败', icon: 'none' });
-        }
-      });
-    },
-    chooseFileAndroid() {
-      console.log('选择文件 (Android)');
-      const main = plus.android.runtimeMainActivity();
-      const Intent = plus.android.importClass('android.content.Intent');
-      const intent = new Intent(Intent.ACTION_GET_CONTENT);
-      intent.setType('*/*');
-      intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-      main.startActivityForResult(intent, 200);
-
-      main.onActivityResult = (requestCode, resultCode, data) => {
-        if (requestCode === 200 && data) {
-          const uri = data.getData();
-          const path = uri.getPath();
-          const DocumentsContract = plus.android.importClass('android.provider.DocumentsContract');
-          const docId = DocumentsContract.getDocumentId(uri);
-          const split = docId.split(':');
-          const type = split[0];
-          const MediaStore = plus.android.importClass('android.provider.MediaStore');
-          const contentResolver = main.getContentResolver();
-          plus.android.importClass(contentResolver);
-
-          let cursor = contentResolver.query(MediaStore.Files.getContentUri('external'), ['_data'], '_id=?', [split[1]], null);
-          plus.android.importClass(cursor);
-
-          if (cursor && cursor.moveToFirst()) {
-            const columnIndex = cursor.getColumnIndexOrThrow('_data');
-            const filePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            plus.io.resolveLocalFileSystemURL('file://' + filePath, (entry) => {
-              entry.file((file) => {
-                this.handleFileSelected({
-                  name: file.name,
-                  size: file.size,
-                  path: filePath
-                });
-              });
-            });
-          }
-        }
-      };
-    },
-    chooseFileIOS() {
-      console.log('选择文件 (iOS)');
-      plus.io.chooseFile({
-        title: '选择文件',
-        multiple: false,
-        success: (res) => {
-          this.handleFileSelected({
-            name: res.files[0].name,
-            size: res.files[0].size,
-            path: res.files[0].path
-          });
-        },
-        fail: (err) => {
-          console.error('选择文件失败', err);
-          uni.showToast({ title: '选择文件失败', icon: 'none' });
-        }
-      });
-    },
-    handleFileSelected(file) {
-      this.selectedFile = {
-        name: file.name,
-        size: this.formatFileSize(file.size),
-        path: file.path
-      };
-      console.log(this.selectedFile, 'selectedFile');
-      this.$emit('file-selected', this.selectedFile);
-    },
-    formatFileSize(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
-      else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + ' MB';
-      else return (bytes / 1073741824).toFixed(2) + ' GB';
+      this.$emit('attach', action);
     }
   }
 }
