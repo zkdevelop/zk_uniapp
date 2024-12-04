@@ -33,7 +33,6 @@
               <path d="M14 9l-2 2m0 0l-2 2m2-2l2 2m-2-2l-2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </view>
-          
         </view>
       </view>
     </view>
@@ -72,6 +71,11 @@ export default {
       return this.duration > 0 ? (this.currentTime / this.duration) * 100 : 0;
     }
   },
+  mounted() {
+    if (this.isAudioFile) {
+      this.initAudioContext();
+    }
+  },
   methods: {
     formatDuration(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -83,9 +87,6 @@ export default {
         this.audioContext.pause();
         clearInterval(this.updateInterval);
       } else {
-        if (!this.audioContext) {
-          this.initAudioContext();
-        }
         this.audioContext.play();
         this.updateInterval = setInterval(this.updateProgress, 1000);
       }
@@ -94,10 +95,11 @@ export default {
     initAudioContext() {
       this.audioContext = uni.createInnerAudioContext();
       this.audioContext.src = this.content;
-      this.audioContext.playbackRate = 1; // Default speed
+      this.audioContext.playbackRate = 1; // 默认速度
       
       this.audioContext.onCanplay(() => {
-        this.duration = this.audioContext.duration;
+        // 在音频可以播放时获取总时长
+        this.getDuration();
       });
       
       this.audioContext.onEnded(() => {
@@ -107,12 +109,23 @@ export default {
       });
       
       this.audioContext.onError((res) => {
-        console.error('Audio error:', res.errMsg);
+        console.error('音频错误:', res.errMsg);
         uni.showToast({
-          title: 'Audio playback error',
+          title: '音频播放错误',
           icon: 'none'
         });
       });
+    },
+    getDuration() {
+      // 尝试获取音频时长
+      const checkDuration = () => {
+        if (this.audioContext.duration > 0) {
+          this.duration = this.audioContext.duration;
+        } else {
+          setTimeout(checkDuration, 100); // 如果还没有获取到时长，100毫秒后再次尝试
+        }
+      };
+      checkDuration();
     },
     updateProgress() {
       if (this.audioContext) {
@@ -152,6 +165,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* 样式保持不变 */
 .audio-message {
   width: 100%;
   position: relative;

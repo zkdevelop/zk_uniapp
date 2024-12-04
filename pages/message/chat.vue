@@ -1,3 +1,4 @@
+<!-- chat.vue - 聊天页面主组件 -->
 <template>
   <view class="chat-page">
     <!-- 聊天头部 -->
@@ -373,6 +374,9 @@ export default {
               content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
               type = 'file';
+            } else if (type === 'audio') {
+              // 处理音频消息
+              content = msg.previewUrl || msg.message;
             }
 
             return {
@@ -450,6 +454,9 @@ export default {
               content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
               type = 'file';
+            } else if (type === 'audio') {
+              // 处理音频消息
+              content = msg.previewUrl || msg.message;
             }
 
             return {
