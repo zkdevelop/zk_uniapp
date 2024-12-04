@@ -1,135 +1,213 @@
-// useVoiceInput.js
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
+
+export function afterAudioRecord() {
+    getApp().globalData.audioRecording = false
+}
+
+export function afterAudioPlay() {
+    getApp().globalData.audioPlaying = false
+}
+
+export function beforeAudioRecordOrPlay(type) {
+    const audioPlaying = getApp().globalData.audioPlaying
+    const audioRecording = getApp().globalData.audioRecording
+    if (audioPlaying || audioRecording) {
+        uni.showToast({
+            title: audioPlaying ? '请先暂停其他音频播放' : '请先结束其他录音',
+            icon: 'none'
+        })
+        return false
+    } else {
+        if (type === 'play') {
+            getApp().globalData.audioPlaying = true
+        } else if (type === 'record') {
+            getApp().globalData.audioRecording = true
+        } else {
+            throw new Error('type Error', type)
+        }
+        return true
+    }
+}
 
 export default function useVoiceInput(emit) {
-  const isRecording = ref(false);
-  const recordAuth = ref(false);
-  const duration = ref(0);
-  const voiceStatus = ref({
+  const isRecording = ref(false)
+  const recordAuth = ref(false)
+  const duration = ref(600000) // 最大录音时长，10分钟
+  const tempFilePath = ref('')
+  const time = ref(0)
+  const voiceAllTime = ref(0)
+  const playStatus = ref(0)
+  const recordImg = ref('/static/images/icon_record.png')
+
+  const voiceStatus = reactive({
     status: 'ready',
     duration: 0,
     volume: 0,
-  });
+  })
 
-  let recorder = null;
-  let audioContext = null;
-  let audioStream = null;
-
-  // 初始化录音
-  async function initRecorder() {
-    try {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      recorder = audioContext.createMediaStreamSource(audioStream);
-      recordAuth.value = true;
-      console.log('录音初始化成功');
-    } catch (error) {
-      console.error('录音初始化失败:', error);
-      uni.showToast({
-        title: '无法初始化录音',
-        icon: 'none'
-      });
-    }
-  }
-
-  // 开始录音
-  async function startVoiceRecord() {
-    if (!recordAuth.value) {
-      await initRecorder();
-    }
-
-    if (!recorder) {
-      console.error('录音器未初始化');
-      return;
-    }
-
-    isRecording.value = true;
-    voiceStatus.value = {
-      status: 'recording',
-      duration: 0,
-      volume: 0,
-    };
-
-    const chunks = [];
-    const mediaRecorder = new MediaRecorder(audioStream);
-
-    mediaRecorder.ondataavailable = (e) => {
-      chunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'audio/webm' });
-      const audioUrl = URL.createObjectURL(blob);
-      emit('file-selected', {
-        type: 'voice',
-        path: audioUrl,
-        duration: Math.round(duration.value / 1000),
-        size: blob.size,
-        name: 'voice_message.webm'
-      });
-    };
-
-    mediaRecorder.start();
-
-    // 更新录音状态
-    const startTime = Date.now();
-    const updateStatus = setInterval(() => {
-      duration.value = Date.now() - startTime;
-      voiceStatus.value.duration = duration.value;
-      // 这里可以添加音量检测逻辑
-    }, 100);
-
-    // 保存停止函数以便后续调用
-    const stopRecording = () => {
-      clearInterval(updateStatus);
-      mediaRecorder.stop();
-      isRecording.value = false;
-      voiceStatus.value.status = 'ready';
-    };
-
-    return stopRecording;
-  }
-
-  // 停止录音
-  function stopVoiceRecord(stopRecording) {
-    if (stopRecording) {
-      stopRecording();
-    }
-  }
-
-  // 获取录音权限
-  async function getRecordPermission() {
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      recordAuth.value = true;
-    } catch (error) {
-      console.error('无法获取录音权限:', error);
-      uni.showToast({
-        title: '无法获取录音权限',
-        icon: 'none'
-      });
-    }
-  }
+  let recorderManager = null
+  let timer = null
 
   onMounted(() => {
-    getRecordPermission();
-  });
+    initRecorderManager()
+  })
 
   onUnmounted(() => {
-    if (audioStream) {
-      audioStream.getTracks().forEach(track => track.stop());
+    if (recorderManager) {
+      recorderManager.onStop(() => {})
+      recorderManager.onError(() => {})
     }
-    if (audioContext) {
-      audioContext.close();
+    stopTimer()
+  })
+
+  function initRecorderManager() {
+    if (typeof uni !== 'undefined' && uni.getRecorderManager) {
+      recorderManager = uni.getRecorderManager()
+      if (recorderManager) {
+        recorderManager.onStart((e) => onStart(e))
+        recorderManager.onPause((e) => onPause(e))
+        recorderManager.onResume((e) => onResume(e))
+        recorderManager.onInterruptionBegin((e) => onInterruptionBegin(e))
+        recorderManager.onInterruptionEnd((e) => onInterruptionEnd(e))
+        recorderManager.onError((e) => onError(e))
+        recorderManager.onStop((e) => onStop(e))
+        console.log('RecorderManager initialized successfully')
+      } else {
+        console.error('Failed to get RecorderManager instance')
+      }
+    } else {
+      console.error('RecorderManager is not available on this platform')
     }
-  });
+  }
+
+  function startVoiceRecord() {
+    if (!recorderManager) {
+      console.error('RecorderManager is not initialized')
+      uni.showToast({
+        title: '录音功能初始化失败',
+        icon: 'none'
+      })
+      return
+    }
+
+    if (recordImg.value === '/static/images/icon_record.png' && beforeAudioRecordOrPlay('record')) {
+      // Reset timer and status before starting
+      resetTimer()
+      recorderManager.start({
+        duration: duration.value,
+        format: 'mp3',
+        sampleRate: 22050,
+      })
+    } else if (recordImg.value === '/static/images/icon_recording.png') {
+      stopVoiceRecord()
+    }
+  }
+
+  function stopVoiceRecord() {
+    if (!recorderManager) {
+      console.error('RecorderManager is not initialized')
+      return
+    }
+
+    recorderManager.stop()
+    afterAudioRecord()
+  }
+
+  function onStart(e) {
+    console.log('开始录音', e)
+    recordImg.value = '/static/images/icon_recording.png'
+    isRecording.value = true
+    voiceStatus.status = 'recording'
+    startTimer()
+  }
+
+  function onPause(e) {
+    console.log('录音暂停', e)
+    afterAudioRecord()
+    stopTimer()
+  }
+
+  function onResume(e) {
+    console.log('录音恢复', e)
+    startTimer()
+  }
+
+  function onStop(e) {
+    console.log('录音结束', e)
+    recordImg.value = '/static/images/icon_record.png'
+    isRecording.value = false
+    voiceStatus.status = 'ready'
+    tempFilePath.value = e.tempFilePath
+    time.value = Math.round(e.duration / 1000)
+    voiceAllTime.value = time.value
+    voiceStatus.duration = time.value
+    stopTimer()
+    uploadMp3Action(e)
+  }
+
+  function onInterruptionBegin(e) {
+    console.log('录音因为受到系统占用而被中断', e)
+    stopTimer()
+  }
+
+  function onInterruptionEnd(e) {
+    console.log('录音中断结束', e)
+    startTimer()
+  }
+
+  function onError(e) {
+    console.log('录音错误', e)
+    uni.showToast({
+      title: '录音失败，请重试',
+      icon: 'none'
+    })
+    stopTimer()
+    resetTimer()
+  }
+
+  function startTimer() {
+    if (!timer) {
+      timer = setInterval(() => {
+        time.value++
+        voiceStatus.duration = time.value
+      }, 1000)
+    }
+  }
+
+  function stopTimer() {
+    if (timer) {
+      clearInterval(timer)
+      timer = null
+    }
+  }
+
+  function resetTimer() {
+    stopTimer()
+    time.value = 0
+    voiceStatus.duration = 0
+  }
+
+  function uploadMp3Action(e) {
+    console.log('Uploading MP3', e)
+    emit('file-selected', {
+      type: 'voice',
+      path: e.tempFilePath,
+      duration: time.value,
+      size: e.fileSize
+    })
+  }
 
   return {
     isRecording,
     recordAuth,
     duration,
+    tempFilePath,
+    time,
+    voiceAllTime,
+    playStatus,
     voiceStatus,
+    recordImg,
     startVoiceRecord,
     stopVoiceRecord,
-  };
+  }
 }

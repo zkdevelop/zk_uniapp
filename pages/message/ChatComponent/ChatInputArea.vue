@@ -2,57 +2,46 @@
 <template>
   <view class="chat-input-area">
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
-      <!-- 语音输入模式 -->
-      <template v-if="isVoiceInputActive">
-        <voice-input-button
-          :is-voice-input-active="isVoiceInputActive"
-          :is-recording="isRecording"
-          :voice-status="voiceStatus"
-          :start-voice-record="startVoiceRecord"
-          :stop-voice-record="stopVoiceRecord"
-          @toggle-voice-input="toggleVoiceInput"
-        />
-        
-        <attach-button
-          v-if="!showAttachMenu"
-          @click="toggleAttachMenu"
-        />
-      </template>
-
-      <!-- 文本输入模式 -->
-      <template v-else>
-        <voice-input-button
-          :is-voice-input-active="isVoiceInputActive"
-          :is-recording="isRecording"
-          :voice-status="voiceStatus"
-          :start-voice-record="startVoiceRecord"
-          :stop-voice-record="stopVoiceRecord"
-          @toggle-voice-input="toggleVoiceInput"
-        />
-        
-        <text-input
-          v-model="newMessage"
-          @send="sendMessage"
-        />
-        
-        <attach-button
-          v-if="!showAttachMenu"
-          @click="toggleAttachMenu"
-        />
-        
-        <send-button
-          v-if="showAttachMenu || newMessage.trim().length > 0"
-          @click="sendMessage"
-        />
-      </template>
+      <!-- 语音输入按钮 -->
+      <voice-input-button
+        :is-voice-input-active="isVoiceInputActive"
+        :is-recording="isRecording"
+        :voice-status="voiceStatus"
+        :start-voice-record="startVoiceRecord"
+        :stop-voice-record="stopVoiceRecord"
+        @toggle-voice-input="toggleVoiceInput"
+        class="input-item"
+      />
+      
+      <!-- 文本输入框 -->
+      <text-input
+        v-if="!isVoiceInputActive"
+        v-model="newMessage"
+        @send="sendMessage"
+        class="input-item"
+      />
+      
+      <!-- 附件按钮 -->
+      <attach-button
+        v-if="!showAttachMenu"
+        @click="toggleAttachMenu"
+      />
+      
+      <!-- 发送按钮 -->
+      <send-button
+        v-if="!isVoiceInputActive && (showAttachMenu || newMessage.trim().length > 0)"
+        @click="sendMessage"
+      />
     </view>
 
+    <!-- 附件菜单 -->
     <attachment-menu
       v-if="showAttachMenu"
       @attach="attachItem"
       @close="closeAttachMenu"
     />
 
+    <!-- 位置共享组件 -->
     <location-sharing
       v-if="showLocationSharing"
       :recipient-id="recipientId"
@@ -86,14 +75,17 @@ export default {
     SendButton
   },
   props: {
+    // 是否显示附件菜单
     showAttachMenu: {
       type: Boolean,
       default: false
     },
+    // 接收者ID
     recipientId: {
       type: String,
       required: true
     },
+    // 任务ID
     missionId: {
       type: String,
       required: true,
@@ -106,6 +98,7 @@ export default {
     const showLocationSharing = ref(false)
     const isVoiceInputActive = ref(false)
 
+    // 使用语音输入组合式函数
     const { 
       isRecording, 
       recordAuth, 
@@ -115,6 +108,7 @@ export default {
       stopVoiceRecord
     } = useVoiceInput(emit)
     
+    // 使用附件处理组合式函数
     const { 
       attachItem, 
       handleFileSelected, 
@@ -123,26 +117,33 @@ export default {
       handleLocationSelected,
       showLocationSharing: locationSharingState
     } = useAttachmentHandling(emit, props)
+
+    // 使用消息发送组合式函数
     const { sendMessage } = useMessageSending(newMessage, emit, props)
 
+    // 切换语音输入模式
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
     }
 
+    // 切换附件菜单显示状态
     const toggleAttachMenu = () => {
       emit('toggle-attach-menu', !props.showAttachMenu)
     }
 
+    // 关闭附件菜单
     const closeAttachMenu = () => {
       emit('toggle-attach-menu', false)
     }
 
+    // 监听接收者ID变化
     watch(() => props.recipientId, (newVal) => {
       if (!newVal) {
         showLocationSharing.value = false
       }
     })
 
+    // 监听位置共享状态变化
     watch(locationSharingState, (newVal) => {
       showLocationSharing.value = newVal
     })
@@ -198,20 +199,8 @@ export default {
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.voice-press-button {
+.input-item {
   flex: 1;
-  height: 36px;
-  background-color: #FFFFFF;
-  border: 1px solid #e0e0e0;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin: 0 10px;
-}
-
-.voice-text {
-  color: #999;
-  font-size: 14px;
 }
 </style>

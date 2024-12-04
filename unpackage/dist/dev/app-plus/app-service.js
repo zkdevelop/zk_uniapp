@@ -23344,14 +23344,17 @@ ${i3}
   const _sfc_main$f = {
     name: "VoiceInputButton",
     props: {
+      // 是否处于语音输入模式
       isVoiceInputActive: {
         type: Boolean,
         required: true
       },
+      // 是否正在录音
       isRecording: {
         type: Boolean,
         default: false
       },
+      // 语音状态对象
       voiceStatus: {
         type: Object,
         default: () => ({
@@ -23360,77 +23363,60 @@ ${i3}
           volume: 0
         })
       },
+      // 开始录音的方法
       startVoiceRecord: {
         type: Function,
         required: true
       },
+      // 停止录音的方法
       stopVoiceRecord: {
         type: Function,
         required: true
       }
     },
     emits: ["toggle-voice-input"],
-    data() {
-      return {
-        stopRecordingCallback: null
-      };
-    },
     methods: {
-      toggleVoiceInput() {
-        this.$emit("toggle-voice-input");
+      // 格式化时间显示
+      formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
       },
-      formatTime(ms2) {
-        const seconds = Math.floor(ms2 / 1e3);
-        return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+      // 开始录音
+      startRecording() {
+        this.startVoiceRecord();
       },
-      async startRecording() {
-        this.stopRecordingCallback = await this.startVoiceRecord();
-      },
+      // 停止录音
       stopRecording() {
-        if (this.stopRecordingCallback) {
-          this.stopVoiceRecord(this.stopRecordingCallback);
-          this.stopRecordingCallback = null;
-        }
+        this.stopVoiceRecord();
       }
     }
   };
   function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "voice-input-container" }, [
-      vue.createCommentVNode(" 语音按钮 "),
-      vue.createElementVNode(
+      vue.createCommentVNode(" 语音/键盘切换按钮 "),
+      vue.createElementVNode("image", {
+        onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("toggle-voice-input")),
+        src: $props.isVoiceInputActive ? "/static/message/键盘.png" : "/static/message/语音.png",
+        class: "toggle-button"
+      }, null, 8, ["src"]),
+      vue.createCommentVNode(" 录音按钮 "),
+      $props.isVoiceInputActive ? (vue.openBlock(), vue.createElementBlock(
         "view",
         {
-          class: vue.normalizeClass(["voice-button", { "recording": $props.isRecording }]),
-          onTouchstart: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.startRecording && $options.startRecording(...args), ["prevent"])),
-          onTouchend: _cache[1] || (_cache[1] = vue.withModifiers((...args) => $options.stopRecording && $options.stopRecording(...args), ["prevent"])),
-          onTouchcancel: _cache[2] || (_cache[2] = vue.withModifiers((...args) => $options.stopRecording && $options.stopRecording(...args), ["prevent"]))
+          key: 0,
+          onTouchstart: _cache[1] || (_cache[1] = vue.withModifiers((...args) => $options.startRecording && $options.startRecording(...args), ["prevent"])),
+          onTouchend: _cache[2] || (_cache[2] = vue.withModifiers((...args) => $options.stopRecording && $options.stopRecording(...args), ["prevent"])),
+          onTouchcancel: _cache[3] || (_cache[3] = vue.withModifiers((...args) => $options.stopRecording && $options.stopRecording(...args), ["prevent"])),
+          class: "record-button"
         },
         [
-          vue.createElementVNode("image", {
-            src: $props.isVoiceInputActive ? "/static/message/键盘.png" : "/static/message/语音输入.png",
-            class: "voice-icon"
-          }, null, 8, ["src"])
+          vue.createElementVNode("text", { class: "record-text" }, "按住 说话")
         ],
-        34
-        /* CLASS, NEED_HYDRATION */
-      ),
-      vue.createCommentVNode(" 录音状态指示器 "),
-      $props.isRecording ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 0,
-        class: "voice-status-indicator"
-      }, [
-        vue.createElementVNode(
-          "view",
-          {
-            class: "volume-bar",
-            style: vue.normalizeStyle({ height: `${$props.voiceStatus.volume}%` })
-          },
-          null,
-          4
-          /* STYLE */
-        )
-      ])) : vue.createCommentVNode("v-if", true),
-      vue.createCommentVNode(" 录音提示蒙层 "),
+        32
+        /* NEED_HYDRATION */
+      )) : vue.createCommentVNode("v-if", true),
+      vue.createCommentVNode(" 录音状态覆盖层 "),
       $props.isRecording ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
         class: "voice-overlay"
@@ -23443,19 +23429,7 @@ ${i3}
             1
             /* TEXT */
           ),
-          vue.createElementVNode("view", { class: "voice-hint" }, "松开 结束"),
-          vue.createElementVNode("view", { class: "voice-volume" }, [
-            vue.createElementVNode(
-              "view",
-              {
-                class: "volume-wave",
-                style: vue.normalizeStyle({ transform: `scale(${1 + $props.voiceStatus.volume / 100})` })
-              },
-              null,
-              4
-              /* STYLE */
-            )
-          ])
+          vue.createElementVNode("view", { class: "voice-hint" }, "松开 结束")
         ])
       ])) : vue.createCommentVNode("v-if", true)
     ]);
@@ -23527,110 +23501,187 @@ ${i3}
     ]);
   }
   const SendButton = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-ab1b8027"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/SendButton.vue"]]);
+  function afterAudioRecord() {
+    getApp().globalData.audioRecording = false;
+  }
+  function beforeAudioRecordOrPlay(type) {
+    const audioPlaying = getApp().globalData.audioPlaying;
+    const audioRecording = getApp().globalData.audioRecording;
+    if (audioPlaying || audioRecording) {
+      uni.showToast({
+        title: audioPlaying ? "请先暂停其他音频播放" : "请先结束其他录音",
+        icon: "none"
+      });
+      return false;
+    } else {
+      if (type === "play") {
+        getApp().globalData.audioPlaying = true;
+      } else if (type === "record") {
+        getApp().globalData.audioRecording = true;
+      } else {
+        throw new Error("type Error", type);
+      }
+      return true;
+    }
+  }
   function useVoiceInput(emit) {
     const isRecording = vue.ref(false);
     const recordAuth = vue.ref(false);
-    const duration = vue.ref(0);
-    const voiceStatus = vue.ref({
+    const duration = vue.ref(6e5);
+    const tempFilePath = vue.ref("");
+    const time = vue.ref(0);
+    const voiceAllTime = vue.ref(0);
+    const playStatus = vue.ref(0);
+    const recordImg = vue.ref("/static/images/icon_record.png");
+    const voiceStatus = vue.reactive({
       status: "ready",
       duration: 0,
       volume: 0
     });
-    let recorder = null;
-    let audioContext = null;
-    let audioStream = null;
-    async function initRecorder() {
-      try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recorder = audioContext.createMediaStreamSource(audioStream);
-        recordAuth.value = true;
-        formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:25", "录音初始化成功");
-      } catch (error) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:27", "录音初始化失败:", error);
-        uni.showToast({
-          title: "无法初始化录音",
-          icon: "none"
-        });
-      }
-    }
-    async function startVoiceRecord() {
-      if (!recordAuth.value) {
-        await initRecorder();
-      }
-      if (!recorder) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:42", "录音器未初始化");
-        return;
-      }
-      isRecording.value = true;
-      voiceStatus.value = {
-        status: "recording",
-        duration: 0,
-        volume: 0
-      };
-      const chunks = [];
-      const mediaRecorder = new MediaRecorder(audioStream);
-      mediaRecorder.ondataavailable = (e2) => {
-        chunks.push(e2.data);
-      };
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "audio/webm" });
-        const audioUrl = URL.createObjectURL(blob);
-        emit("file-selected", {
-          type: "voice",
-          path: audioUrl,
-          duration: Math.round(duration.value / 1e3),
-          size: blob.size,
-          name: "voice_message.webm"
-        });
-      };
-      mediaRecorder.start();
-      const startTime = Date.now();
-      const updateStatus = setInterval(() => {
-        duration.value = Date.now() - startTime;
-        voiceStatus.value.duration = duration.value;
-      }, 100);
-      const stopRecording = () => {
-        clearInterval(updateStatus);
-        mediaRecorder.stop();
-        isRecording.value = false;
-        voiceStatus.value.status = "ready";
-      };
-      return stopRecording;
-    }
-    function stopVoiceRecord(stopRecording) {
-      if (stopRecording) {
-        stopRecording();
-      }
-    }
-    async function getRecordPermission() {
-      try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        recordAuth.value = true;
-      } catch (error) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:106", "无法获取录音权限:", error);
-        uni.showToast({
-          title: "无法获取录音权限",
-          icon: "none"
-        });
-      }
-    }
+    let recorderManager = null;
+    let timer = null;
     vue.onMounted(() => {
-      getRecordPermission();
+      initRecorderManager();
     });
     vue.onUnmounted(() => {
-      if (audioStream) {
-        audioStream.getTracks().forEach((track) => track.stop());
+      if (recorderManager) {
+        recorderManager.onStop(() => {
+        });
+        recorderManager.onError(() => {
+        });
       }
-      if (audioContext) {
-        audioContext.close();
-      }
+      stopTimer();
     });
+    function initRecorderManager() {
+      if (typeof uni !== "undefined" && uni.getRecorderManager) {
+        recorderManager = uni.getRecorderManager();
+        if (recorderManager) {
+          recorderManager.onStart((e2) => onStart(e2));
+          recorderManager.onPause((e2) => onPause(e2));
+          recorderManager.onResume((e2) => onResume(e2));
+          recorderManager.onInterruptionBegin((e2) => onInterruptionBegin(e2));
+          recorderManager.onInterruptionEnd((e2) => onInterruptionEnd(e2));
+          recorderManager.onError((e2) => onError(e2));
+          recorderManager.onStop((e2) => onStop(e2));
+          formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:74", "RecorderManager initialized successfully");
+        } else {
+          formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:76", "Failed to get RecorderManager instance");
+        }
+      } else {
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:79", "RecorderManager is not available on this platform");
+      }
+    }
+    function startVoiceRecord() {
+      if (!recorderManager) {
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:85", "RecorderManager is not initialized");
+        uni.showToast({
+          title: "录音功能初始化失败",
+          icon: "none"
+        });
+        return;
+      }
+      if (recordImg.value === "/static/images/icon_record.png" && beforeAudioRecordOrPlay("record")) {
+        resetTimer();
+        recorderManager.start({
+          duration: duration.value,
+          format: "mp3",
+          sampleRate: 22050
+        });
+      } else if (recordImg.value === "/static/images/icon_recording.png") {
+        stopVoiceRecord();
+      }
+    }
+    function stopVoiceRecord() {
+      if (!recorderManager) {
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:108", "RecorderManager is not initialized");
+        return;
+      }
+      recorderManager.stop();
+      afterAudioRecord();
+    }
+    function onStart(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:117", "开始录音", e2);
+      recordImg.value = "/static/images/icon_recording.png";
+      isRecording.value = true;
+      voiceStatus.status = "recording";
+      startTimer();
+    }
+    function onPause(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:125", "录音暂停", e2);
+      afterAudioRecord();
+      stopTimer();
+    }
+    function onResume(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:131", "录音恢复", e2);
+      startTimer();
+    }
+    function onStop(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:136", "录音结束", e2);
+      recordImg.value = "/static/images/icon_record.png";
+      isRecording.value = false;
+      voiceStatus.status = "ready";
+      tempFilePath.value = e2.tempFilePath;
+      time.value = Math.round(e2.duration / 1e3);
+      voiceAllTime.value = time.value;
+      voiceStatus.duration = time.value;
+      stopTimer();
+      uploadMp3Action(e2);
+    }
+    function onInterruptionBegin(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:149", "录音因为受到系统占用而被中断", e2);
+      stopTimer();
+    }
+    function onInterruptionEnd(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:154", "录音中断结束", e2);
+      startTimer();
+    }
+    function onError(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:159", "录音错误", e2);
+      uni.showToast({
+        title: "录音失败，请重试",
+        icon: "none"
+      });
+      stopTimer();
+      resetTimer();
+    }
+    function startTimer() {
+      if (!timer) {
+        timer = setInterval(() => {
+          time.value++;
+          voiceStatus.duration = time.value;
+        }, 1e3);
+      }
+    }
+    function stopTimer() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+    function resetTimer() {
+      stopTimer();
+      time.value = 0;
+      voiceStatus.duration = 0;
+    }
+    function uploadMp3Action(e2) {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:191", "Uploading MP3", e2);
+      emit("file-selected", {
+        type: "voice",
+        path: e2.tempFilePath,
+        duration: time.value,
+        size: e2.fileSize
+      });
+    }
     return {
       isRecording,
       recordAuth,
       duration,
+      tempFilePath,
+      time,
+      voiceAllTime,
+      playStatus,
       voiceStatus,
+      recordImg,
       startVoiceRecord,
       stopVoiceRecord
     };
@@ -23809,14 +23860,17 @@ ${i3}
       SendButton
     },
     props: {
+      // 是否显示附件菜单
       showAttachMenu: {
         type: Boolean,
         default: false
       },
+      // 接收者ID
       recipientId: {
         type: String,
         required: true
       },
+      // 任务ID
       missionId: {
         type: String,
         required: true,
@@ -23886,8 +23940,8 @@ ${i3}
   };
   function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_voice_input_button = vue.resolveComponent("voice-input-button");
-    const _component_attach_button = vue.resolveComponent("attach-button");
     const _component_text_input = vue.resolveComponent("text-input");
+    const _component_attach_button = vue.resolveComponent("attach-button");
     const _component_send_button = vue.resolveComponent("send-button");
     const _component_attachment_menu = vue.resolveComponent("attachment-menu");
     const _component_location_sharing = vue.resolveComponent("location-sharing");
@@ -23898,65 +23952,45 @@ ${i3}
           class: vue.normalizeClass(["chat-input", { "elevated": $props.showAttachMenu }])
         },
         [
-          vue.createCommentVNode(" 语音输入模式 "),
-          $setup.isVoiceInputActive ? (vue.openBlock(), vue.createElementBlock(
-            vue.Fragment,
-            { key: 0 },
-            [
-              vue.createVNode(_component_voice_input_button, {
-                "is-voice-input-active": $setup.isVoiceInputActive,
-                "is-recording": $setup.isRecording,
-                "voice-status": $setup.voiceStatus,
-                "start-voice-record": $setup.startVoiceRecord,
-                "stop-voice-record": $setup.stopVoiceRecord,
-                onToggleVoiceInput: $setup.toggleVoiceInput
-              }, null, 8, ["is-voice-input-active", "is-recording", "voice-status", "start-voice-record", "stop-voice-record", "onToggleVoiceInput"]),
-              !$props.showAttachMenu ? (vue.openBlock(), vue.createBlock(_component_attach_button, {
-                key: 0,
-                onClick: $setup.toggleAttachMenu
-              }, null, 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
-            ],
-            64
-            /* STABLE_FRAGMENT */
-          )) : (vue.openBlock(), vue.createElementBlock(
-            vue.Fragment,
-            { key: 1 },
-            [
-              vue.createCommentVNode(" 文本输入模式 "),
-              vue.createVNode(_component_voice_input_button, {
-                "is-voice-input-active": $setup.isVoiceInputActive,
-                "is-recording": $setup.isRecording,
-                "voice-status": $setup.voiceStatus,
-                "start-voice-record": $setup.startVoiceRecord,
-                "stop-voice-record": $setup.stopVoiceRecord,
-                onToggleVoiceInput: $setup.toggleVoiceInput
-              }, null, 8, ["is-voice-input-active", "is-recording", "voice-status", "start-voice-record", "stop-voice-record", "onToggleVoiceInput"]),
-              vue.createVNode(_component_text_input, {
-                modelValue: $setup.newMessage,
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.newMessage = $event),
-                onSend: $setup.sendMessage
-              }, null, 8, ["modelValue", "onSend"]),
-              !$props.showAttachMenu ? (vue.openBlock(), vue.createBlock(_component_attach_button, {
-                key: 0,
-                onClick: $setup.toggleAttachMenu
-              }, null, 8, ["onClick"])) : vue.createCommentVNode("v-if", true),
-              $props.showAttachMenu || $setup.newMessage.trim().length > 0 ? (vue.openBlock(), vue.createBlock(_component_send_button, {
-                key: 1,
-                onClick: $setup.sendMessage
-              }, null, 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
-            ],
-            64
-            /* STABLE_FRAGMENT */
-          ))
+          vue.createCommentVNode(" 语音输入按钮 "),
+          vue.createVNode(_component_voice_input_button, {
+            "is-voice-input-active": $setup.isVoiceInputActive,
+            "is-recording": $setup.isRecording,
+            "voice-status": $setup.voiceStatus,
+            "start-voice-record": $setup.startVoiceRecord,
+            "stop-voice-record": $setup.stopVoiceRecord,
+            onToggleVoiceInput: $setup.toggleVoiceInput,
+            class: "input-item"
+          }, null, 8, ["is-voice-input-active", "is-recording", "voice-status", "start-voice-record", "stop-voice-record", "onToggleVoiceInput"]),
+          vue.createCommentVNode(" 文本输入框 "),
+          !$setup.isVoiceInputActive ? (vue.openBlock(), vue.createBlock(_component_text_input, {
+            key: 0,
+            modelValue: $setup.newMessage,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.newMessage = $event),
+            onSend: $setup.sendMessage,
+            class: "input-item"
+          }, null, 8, ["modelValue", "onSend"])) : vue.createCommentVNode("v-if", true),
+          vue.createCommentVNode(" 附件按钮 "),
+          !$props.showAttachMenu ? (vue.openBlock(), vue.createBlock(_component_attach_button, {
+            key: 1,
+            onClick: $setup.toggleAttachMenu
+          }, null, 8, ["onClick"])) : vue.createCommentVNode("v-if", true),
+          vue.createCommentVNode(" 发送按钮 "),
+          !$setup.isVoiceInputActive && ($props.showAttachMenu || $setup.newMessage.trim().length > 0) ? (vue.openBlock(), vue.createBlock(_component_send_button, {
+            key: 2,
+            onClick: $setup.sendMessage
+          }, null, 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
         ],
         2
         /* CLASS */
       ),
+      vue.createCommentVNode(" 附件菜单 "),
       $props.showAttachMenu ? (vue.openBlock(), vue.createBlock(_component_attachment_menu, {
         key: 0,
         onAttach: $setup.attachItem,
         onClose: $setup.closeAttachMenu
       }, null, 8, ["onAttach", "onClose"])) : vue.createCommentVNode("v-if", true),
+      vue.createCommentVNode(" 位置共享组件 "),
       $setup.showLocationSharing ? (vue.openBlock(), vue.createBlock(_component_location_sharing, {
         key: 1,
         "recipient-id": $props.recipientId,
