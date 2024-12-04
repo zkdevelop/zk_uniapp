@@ -2,20 +2,25 @@
 <template>
   <view class="chat-input-area">
     <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
-      <!-- 语音输入按钮 -->
-      <voice-input-button
+      <!-- 语音/键盘切换按钮 -->
+      <toggle-voice-button
         :is-voice-input-active="isVoiceInputActive"
+        @toggle-voice-input="toggleVoiceInput"
+      />
+      
+      <!-- 语音录音按钮 -->
+      <voice-record-button
+        v-if="isVoiceInputActive"
         :is-recording="isRecording"
         :voice-status="voiceStatus"
         :start-voice-record="startVoiceRecord"
         :stop-voice-record="stopVoiceRecord"
-        @toggle-voice-input="toggleVoiceInput"
         class="input-item"
       />
       
       <!-- 文本输入框 -->
       <text-input
-        v-if="!isVoiceInputActive"
+        v-else
         v-model="newMessage"
         @send="sendMessage"
         class="input-item"
@@ -56,7 +61,8 @@
 import { ref, watch, onMounted } from 'vue'
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
 import LocationSharing from './ChatInputAreaComponent/LocationSharing.vue'
-import VoiceInputButton from './ChatInputAreaComponent/VoiceInputButton.vue'
+import ToggleVoiceButton from './ChatInputAreaComponent/ToggleVoiceButton.vue'
+import VoiceRecordButton from './ChatInputAreaComponent/VoiceRecordButton.vue'
 import TextInput from './ChatInputAreaComponent/TextInput.vue'
 import AttachButton from './ChatInputAreaComponent/AttachButton.vue'
 import SendButton from './ChatInputAreaComponent/SendButton.vue'
@@ -69,23 +75,21 @@ export default {
   components: {
     AttachmentMenu,
     LocationSharing,
-    VoiceInputButton,
+    ToggleVoiceButton,
+    VoiceRecordButton,
     TextInput,
     AttachButton,
     SendButton
   },
   props: {
-    // 是否显示附件菜单
     showAttachMenu: {
       type: Boolean,
       default: false
     },
-    // 接收者ID
     recipientId: {
       type: String,
       required: true
     },
-    // 任务ID
     missionId: {
       type: String,
       required: true,
@@ -98,7 +102,6 @@ export default {
     const showLocationSharing = ref(false)
     const isVoiceInputActive = ref(false)
 
-    // 使用语音输入组合式函数
     const { 
       isRecording, 
       recordAuth, 
@@ -108,7 +111,6 @@ export default {
       stopVoiceRecord
     } = useVoiceInput(emit)
     
-    // 使用附件处理组合式函数
     const { 
       attachItem, 
       handleFileSelected, 
@@ -118,32 +120,26 @@ export default {
       showLocationSharing: locationSharingState
     } = useAttachmentHandling(emit, props)
 
-    // 使用消息发送组合式函数
     const { sendMessage } = useMessageSending(newMessage, emit, props)
 
-    // 切换语音输入模式
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
     }
 
-    // 切换附件菜单显示状态
     const toggleAttachMenu = () => {
       emit('toggle-attach-menu', !props.showAttachMenu)
     }
 
-    // 关闭附件菜单
     const closeAttachMenu = () => {
       emit('toggle-attach-menu', false)
     }
 
-    // 监听接收者ID变化
     watch(() => props.recipientId, (newVal) => {
       if (!newVal) {
         showLocationSharing.value = false
       }
     })
 
-    // 监听位置共享状态变化
     watch(locationSharingState, (newVal) => {
       showLocationSharing.value = newVal
     })

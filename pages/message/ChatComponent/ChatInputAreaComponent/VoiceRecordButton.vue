@@ -1,14 +1,6 @@
 <template>
-  <view class="voice-input-container">
-    <!-- 语音/键盘切换按钮 -->
-    <image 
-      @click="$emit('toggle-voice-input')"
-      :src="isVoiceInputActive ? '/static/message/键盘.png' : '/static/message/语音.png'"
-      class="toggle-button"
-    />
-    <!-- 录音按钮 -->
+  <view class="voice-record-container">
     <view 
-      v-if="isVoiceInputActive"
       @touchstart.prevent="startRecording"
       @touchend.prevent="stopRecording"
       @touchcancel.prevent="stopRecording"
@@ -16,7 +8,6 @@
     >
       <text class="record-text">按住 说话</text>
     </view>
-    <!-- 录音状态覆盖层 -->
     <view v-if="isRecording" class="voice-overlay">
       <view class="voice-popup">
         <view class="voice-time">{{ formatTime(voiceStatus.duration) }}</view>
@@ -28,19 +19,12 @@
 
 <script>
 export default {
-  name: 'VoiceInputButton',
+  name: 'VoiceRecordButton',
   props: {
-    // 是否处于语音输入模式
-    isVoiceInputActive: {
-      type: Boolean,
-      required: true
-    },
-    // 是否正在录音
     isRecording: {
       type: Boolean,
       default: false
     },
-    // 语音状态对象
     voiceStatus: {
       type: Object,
       default: () => ({
@@ -49,30 +33,24 @@ export default {
         volume: 0
       })
     },
-    // 开始录音的方法
     startVoiceRecord: {
       type: Function,
       required: true
     },
-    // 停止录音的方法
     stopVoiceRecord: {
       type: Function,
       required: true
     }
   },
-  emits: ['toggle-voice-input'],
   methods: {
-    // 格式化时间显示
     formatTime(seconds) {
       const minutes = Math.floor(seconds / 60)
       const remainingSeconds = seconds % 60
       return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`
     },
-    // 开始录音
     startRecording() {
       this.startVoiceRecord()
     },
-    // 停止录音
     stopRecording() {
       this.stopVoiceRecord()
     }
@@ -81,16 +59,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.voice-input-container {
+.voice-record-container {
   position: relative;
   display: flex;
-  align-items: center; 
-}
-
-.toggle-button {
-  width: 36px;
-  height: 36px;
-  margin-right: 10px;
+  align-items: center;
+  flex: 1;
 }
 
 .record-button {
