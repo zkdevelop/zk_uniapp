@@ -337,6 +337,7 @@
 		mounted() {
 			// 设置当前地图中心点
 			this.$ownerInstance.callMethod('setPoint');
+			
 			// 设置geoJson数据
 			this.$ownerInstance.callMethod('setGeoJson');
 			this.$nextTick(() => {
