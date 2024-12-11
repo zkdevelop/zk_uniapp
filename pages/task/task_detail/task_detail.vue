@@ -367,6 +367,7 @@
 					// 加载行动轨迹
 					this.getLine();
 					// 加载geoJson数据
+					// 加载geoJson数据
 					this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
 				} else {
 					this.mapType = value;
@@ -656,19 +657,19 @@
 					// {
 					// 	src: '../../../static/uni.png',
 					// 	sender_name: 'admin',
-					// 	detail: '111,
+					// 	detail: '测试指令1',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	src: '../../../static/uni.png',
 					// 	sender_name: 'lihua',
-					// 	detail: '222',
+					// 	detail: '测试指令2',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	src: '../../../static/uni.png',
 					// 	sender_name: 'wanghao',
-					// 	detail: '333',
+					// 	detail: '测试指令3',
 					// 	isConfirmed: false
 					// },
 				],
@@ -677,28 +678,28 @@
 					// 	alert_grade: '重要告警',
 					// 	alert_time: '2024.5.1',
 					// 	sender_name: '张三',
-					// 	alert_content: '靠近目标，开始行动！1',
+					// 	alert_content: '告警内容',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	alert_grade: '一般告警',
 					// 	alert_time: '2024.2.6',
 					// 	sender_name: '李四',
-					// 	alert_content: '靠近目标，开始行动！2',
+					// 	alert_content: '告警内容',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	alert_grade: '重要告警',
 					// 	alert_time: '2024.1.3',
 					// 	sender_name: '张三',
-					// 	alert_content: '靠近目标，开始行动！3',
+					// 	alert_content: '告警内容',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	alert_grade: '严重告警',
 					// 	alert_time: '2024.7.9',
 					// 	sender_name: '张三',
-					// 	alert_content: '靠近目标，开始行动！4',
+					// 	alert_content: '告警内容',
 					// 	isConfirmed: false
 					// },
 				],
@@ -707,25 +708,25 @@
 					// 	alert_grade: '一般告警',
 					// 	alert_time: '2024.5.1',
 					// 	sender_name: '张三',
-					// 	alert_content: '目标视野丢失'
+					// 	alert_content: '告警内容'
 					// },
 					// {
 					// 	alert_grade: '一般告警',
 					// 	alert_time: '2024.2.6',
 					// 	sender_name: '李四',
-					// 	alert_content: '发现嫌疑人'
+					// 	alert_content: '告警内容'
 					// },
 					// {
 					// 	alert_grade: '重要告警',
 					// 	alert_time: '2024.1.3',
 					// 	sender_name: '张三',
-					// 	alert_content: '行动暂停'
+					// 	alert_content: '告警内容'
 					// },
 					// {
 					// 	alert_grade: '严重告警',
 					// 	alert_time: '2024.7.9',
 					// 	sender_name: '张三',
-					// 	alert_content: '行动继续'
+					// 	alert_content: '告警内容'
 					// },
 				],
 				// 行动回溯，false停止，true播放
@@ -1091,6 +1092,8 @@
 								}
 							})
 						}
+					}else {
+						this.instruct_none = true;
 					}
 				})
 			},
