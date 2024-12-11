@@ -1,7 +1,7 @@
 <template>
 	<!-- 地图容器 -->
-	<div id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
-		:change:replay='m.getReplay' :position="position" :change:position='m.getPosition' :geoJson="geoJson"
+	<view id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
+		:change:replay='m.setReplay' :position="position" :change:position='m.setPosition' :geoJson="geoJson"
 		:change:geoJson='m.setGeoJson' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
@@ -336,10 +336,10 @@
 		},
 		mounted() {
 			// 设置当前地图中心点
-			this.$ownerInstance.callMethod('setPoint');
-			
+			// this.$ownerInstance.callMethod('setPoint');
+			console.log(this.position,'m,this.position')
 			// 设置geoJson数据
-			this.$ownerInstance.callMethod('setGeoJson');
+			// this.$ownerInstance.callMethod('setGeoJson');
 			this.$nextTick(() => {
 				this.initMap();
 				this.getLine();
@@ -351,7 +351,8 @@
 			/** position变更时调用方法
 			 * @param {Object} position
 			 */
-			getPosition(position) {
+			setPosition(position) {
+				console.log(position,"m.position")
 				this.position = position;
 				if (map != null) {
 					map.setView(L.latLng(this.position.latitude, this.position.longitude), 12);
@@ -375,6 +376,15 @@
 					this.changeMap(this.mapType);
 					// 加载geoJson数据
 					// this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
+				}
+			},
+			/** 任务回溯状态变更时调用方法
+			 * @param {Boolean} replay
+			 */
+			setReplay(replay) {
+				this.replay = replay;
+				if (replay) {
+					this.replayMission();
 				}
 			},
 			/**
@@ -468,15 +478,6 @@
 				setTimeout(() => {
 					map.invalidateSize();
 				}, 500);
-			},
-			/** 任务回溯状态变更时调用方法
-			 * @param {Boolean} replay
-			 */
-			getReplay(replay) {
-				this.replay = replay;
-				if (replay) {
-					this.replayMission();
-				}
 			},
 			replayMission() {
 				let index = 1;
@@ -772,7 +773,10 @@
 					longitude: e.longitude,
 					geoJson: e.geoJson
 				}))[0];
-				console.log(this.taskItem,'taskItem');
+				this.position.latitude = this.taskItem.latitude;
+				this.position.longitude = this.taskItem.longitude;
+				this.geoJson = this.taskItem.geoJson;
+				console.log(toRaw(this.position),'taskItem');
 				uni.hideLoading()
 			});
 		},
@@ -1026,14 +1030,15 @@
 				this.getWarning();
 			},
 			// 设置经纬度
-			setPoint() {
-				this.position.latitude = this.taskItem.latitude;
-				this.position.longitude = this.taskItem.longitude;
-			},
-			setGeoJson() {
-				this.geoJson = this.taskItem.geoJson;
-				console.log(this.geoJson, 'owner-setGeoJson')
-			},
+			// setPoint() {
+			// 	this.position.latitude = this.taskItem.latitude;
+			// 	this.position.longitude = this.taskItem.longitude;
+			// 	console.log(this.position,'position')
+			// },
+			// setGeoJson() {
+			// 	this.geoJson = this.taskItem.geoJson;
+			// 	console.log(this.geoJson, 'owner-setGeoJson')
+			// },
 			// 删除任务
 			deleteMisson() {
 				const id = this.taskItem.id;
