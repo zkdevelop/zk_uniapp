@@ -5,6 +5,12 @@
 		:change:geoJson='m.setGeoJson' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
+		<view class="task_header">
+		  <text class="title">任务详情</text>
+		  <view class="search-icon">
+		    <image src="../../../static/icon/points.png" style="width: 30px; height: 30px;" @click="open"></image>
+		  </view>
+		</view>
 		<!-- 按钮组 -->
 		<view class="condition_icons">
 			<!-- 左侧-选择任务状态按钮 -->
@@ -103,6 +109,9 @@
 								@click="deleteMisson"></image>
 						</view>
 					</view>
+					<view style="height: 50px;">
+						
+					</view>
 				</view>
 			</uni-popup>
 		</view>
@@ -130,6 +139,9 @@
 								<view style="text-align: center;"><text>{{ item.name }}</text></view>
 							</view>
 						</view>
+					</view>
+					<view style="height: 50px;">
+						
 					</view>
 				</view>
 			</uni-popup>
@@ -168,6 +180,9 @@
 								</view>
 							</view>
 						</view>
+					</view>
+					<view style="height: 50px;">
+						
 					</view>
 				</view>
 			</uni-popup>
@@ -241,6 +256,9 @@
 								<button type="primary" @click="open_alert_form">发布告警</button>
 							</view>
 						</view>
+					</view>
+					<view style="height: 50px;">
+						
 					</view>
 				</view>
 			</uni-popup>
@@ -537,7 +555,8 @@
 <script>
 	import {
 		deleteMission,
-		getMissionDetails
+		getMissionDetails,
+		searchMission
 	} from '@/utils/api/mission.js'
 	import {
 		backendHost
@@ -607,25 +626,25 @@
 				},
 				map_options: [{
 						key: 'google',
-						src: '../../../static/icon/google.png',
+						src: '../../static/icon/google.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '谷歌地图'
 					},
 					{
 						key: 'gaode',
-						src: '../../../static/icon/gaode.png',
+						src: '../../static/icon/gaode.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '高德地图'
 					},
 					{
 						key: 'baidu',
-						src: '../../../static/icon/baidu.png',
+						src: '../../static/icon/baidu.png',
 						htmlSrc: '/static/html/map_baidu.html',
 						name: '百度地图'
 					},
 					{
 						key: 'local',
-						src: '../../../static/icon/offline.png',
+						src: '../../static/icon/offline.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '离线地图'
 					},
@@ -709,24 +728,57 @@
 				],
 				// 行动回溯，false停止，true播放
 				replay: false,
+				query: {
+					"param": {
+						"curPage": 1,
+						"pageSize": 10
+					},
+					"statuses": [
+						"USING",
+						"UNUSED",
+						"COMING"
+					]
+				},
 				// geoJson数据
 				geoJson: '0'
 			}
 		},
-		onNavigationBarButtonTap() {
-			this.$refs.popup.open('bottom')
-		},
+		// onNavigationBarButtonTap() {
+		// 	this.$refs.popup.open('bottom')
+		// },
 		mounted() {
 			this.getOrder();
 			this.getWarning();
+			uni.showLoading({
+				title: '正在加载任务',
+				mask: true
+			})
+			searchMission(this.query).then(res => {
+				this.taskItem = res.data.records.map(e => ({
+					id: e.id,
+					task_name: e.missionName,
+					country: e.missionCountry,
+					position: e.missionCity,
+					start_time: e.missionStartTime,
+					end_time: e.missionEndTime,
+					type: this.getTaskType(e.missionStartTime, e.missionEndTime),
+					description: e.missionDescription,
+					key: e.missionPassword,
+					latitude: e.latitude,
+					longitude: e.longitude,
+					geoJson: e.geoJson
+				}))[0];
+				console.log(this.taskItem,'taskItem');
+				uni.hideLoading()
+			});
 		},
 		onLoad(options) {
 			// 页面加载时执行
-			if (options.taskItem) {
-				this.taskItem = JSON.parse(options.taskItem); // 设置类型
-			} else {
-				console.error('没有传递类型参数');
-			};
+			// if (options.taskItem) {
+			// 	this.taskItem = JSON.parse(options.taskItem); // 设置类型
+			// } else {
+			// 	console.error('没有传递类型参数');
+			// };
 
 			this.recorderManager = uni.getRecorderManager();
 			this.innerAudioContext = uni.createInnerAudioContext();
@@ -872,6 +924,9 @@
 			delete_alert_mine(index) {
 				this.alert_data_mine.splice(index, 1);
 			},
+			open() {
+				this.$refs.popup.open()
+			},
 			close() {
 				this.$refs.popup.close()
 			},
@@ -900,8 +955,9 @@
 				this.$refs.task_instructions.close()
 			},
 			goToDocument() {
+				const missionId = this.taskItem.id;
 				uni.navigateTo({
-					url: '/pages/task/task_detail/document/document'
+					url: `/pages/task/task_detail/document/document?missionId=${missionId}`
 				})
 			},
 			goToMainPage() {
@@ -1038,6 +1094,17 @@
 					}
 				})
 			},
+			getTaskType(startTime, endTime) {
+				const start = new Date(startTime);
+				const end = new Date(endTime);
+				if (this.currentTime < start) {
+					return "1"; // 未开始
+				} else if (this.currentTime >= start && this.currentTime <= end) {
+					return "2"; // 进行中
+				} else {
+					return "3"; // 已完成
+				}
+			},
 			getWarning() {
 				// 加载告警
 				getWarningList({
@@ -1099,6 +1166,33 @@
 <style lang="scss">
 	@import url("/static/leaflet/leaflet.css");
 
+	.task_header {
+	  height: 44px;
+	  background-color: #fff;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  position: relative;
+	  border-bottom: 1px solid #eee;
+	  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	  z-index: 10;
+	  .title {
+	    font-size: 18px;
+	    font-weight: 500;
+	  }
+	  .search-icon {
+	    position: absolute;
+	    right: 8px;
+	    top: 50%;
+	    transform: translateY(-50%);
+	    color: #333;
+	    cursor: pointer;
+	    padding: 3px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	  }
+	}
 	.layout_task_detail {
 		/* 确保填满整个视口 */
 		height: 100vh;
@@ -1125,6 +1219,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
+		margin-top: 50px;
 	}
 
 	.condition_selector {

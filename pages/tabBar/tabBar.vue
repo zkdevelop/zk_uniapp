@@ -2,10 +2,10 @@
 	<view class="main-container">
 		<!-- 主要内容区域 -->
 		<view class="content-area">
-			<TaskPage v-if="currentTab === 0"></TaskPage>
-			<messages v-else-if="currentTab === 1"></messages>
+			<TaskDetail v-if="currentTab === 2"></TaskDetail>
+			<messages v-else-if="currentTab === 0"></messages>
 			<main-page v-else-if="currentTab === 3"></main-page>
-			<contacts v-else-if="currentTab === 2"></contacts>
+			<contacts v-else-if="currentTab === 1"></contacts>
 			<view v-else class="placeholder-content">
 				<text>这是{{ ['首页', '', '', ''][currentTab] }}的内容</text>
 			</view>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import TaskPage from '@/pages/task/task.vue'
+	import TaskDetail from '../task/task_detail/task_detail.vue'
 	import Messages from '../message/main.vue'
 	import MainPage from '../profile/profile.vue'
 	import Contacts from './contacts/contacts.vue'
@@ -33,7 +33,7 @@
 			MainPage,
 			Messages,
 			Contacts,
-			TaskPage
+			TaskDetail
 		},
 		data() {
 			return {
@@ -44,14 +44,14 @@
 						label: '首页'
 					},
 					{
-						icon_nochoice: '../../static/tabBar/消息-未选中.png',
-						icon_choice: '../../static/tabBar/消息-选中.png',
-						label: '消息'
-					},
-					{
 						icon_nochoice: '../../static/tabBar/通讯录-未选中.png',
 						icon_choice: '../../static/tabBar/通讯录-选中.png',
 						label: '通讯录'
+					},
+					{
+						icon_nochoice: '../../static/tabBar/任务-未选中.png',
+						icon_choice: '../../static/tabBar/任务-选中.png',
+						label: '任务'
 					},
 					{
 						icon_nochoice: '../../static/tabBar/我的-未选中.png',
