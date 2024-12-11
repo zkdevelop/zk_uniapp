@@ -157,6 +157,10 @@
 						</view>
 					</view>
 					<view class="divider"></view>
+					<view v-if="instruct_none" style="text-align: center;">
+						<image  src="../../../static/images/none.png" style="width: 60%; height: 60%;" mode="widthFix"></image>
+						<view>暂未发现任务指令</view>
+					</view>
 					<view style="margin-top: 20px;">
 						<view class="instructions">
 							<view v-for="(item, index) in task_instructions" :key="index" class="instructions_item"
@@ -205,6 +209,10 @@
 						</view>
 						<!-- 内容切换 -->
 						<view class="alert_content" v-if="navIndex == 0">
+							<view v-if="alert_none1" style="text-align: center;">
+								<image  src="../../../static/images/none.png" style="width: 60%; height: 60%;" mode="widthFix"></image>
+								<view>暂未发现告警信息</view>
+							</view>
 							<uni-collapse ref="collapse" accordion>
 								<uni-collapse-item v-for="(item, index) in alert_data" :key="index"
 									:title="item.alert_content">
@@ -225,6 +233,10 @@
 							</uni-collapse>
 						</view>
 						<view class="content" v-if="navIndex == 1">
+							<view v-if="alert_none2" style="text-align: center; margin-bottom: 15px;" >
+								<image  src="../../../static/images/none.png" style="width: 60%; height: 60%;" mode="widthFix"></image>
+								<view>暂未发现告警信息</view>
+							</view>
 							<uni-collapse ref="collapse" accordion>
 								<uni-collapse-item v-for="(item, index) in alert_data_mine" :key="index"
 									:title="item.alert_content">
@@ -569,6 +581,9 @@
 				innerAudioContext: {},
 				selectedMap: 'gaode', //当前地图
 				navIndex: 0,
+				instruct_none: false,
+				alert_none1: false,
+				alert_none2: false,
 				filePaths: {
 					imagePath: '',
 					videoPath: '',
@@ -1063,6 +1078,11 @@
 							detail: item.message,
 							isConfirmed: item.isRead
 						}))
+						if(this.task_instructions.length === 0) {
+							this.instruct_none = true;
+						} else {
+							this.instruct_none = false;
+						}
 						// 根据用户id查询账号名称
 						for (let order of this.task_instructions) {
 							searchUser(order.sender_name).then(res => {
@@ -1111,6 +1131,16 @@
 								sender_name: item.senderId,
 								alert_content: item.message,
 							}))
+						if(this.alert_data.length === 0){
+							this.alert_none1 = true;
+						} else {
+							this.alert_none1 = false;
+						}
+						if(this.alert_data_mine.length === 0){
+							this.alert_none2 = true;
+						} else {
+							this.alert_none2 = false;
+						}
 						// 根据用户id查询账号名称
 						for (let order of this.alert_data) {
 							searchUser(order.sender_name).then(res => {
