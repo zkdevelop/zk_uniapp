@@ -1,16 +1,13 @@
 <template>
+	<view>
+		<uni-nav-bar :fixed="true" status-bar shadow rightIcon="more-filled" @clickRight="open" title="任务详情" />
+	</view>
 	<!-- 地图容器 -->
 	<view id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
 		:change:replay='m.setReplay' :position="position" :change:position='m.setPosition' :geoJson="geoJson"
 		:change:geoJson='m.setGeoJson' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
-		<view class="task_header">
-		  <text class="title">任务详情</text>
-		  <view class="search-icon">
-		    <image src="../../../static/icon/points.png" style="width: 30px; height: 30px;" @click="open"></image>
-		  </view>
-		</view>
 		<!-- 按钮组 -->
 		<view class="condition_icons">
 			<!-- 左侧-选择任务状态按钮 -->
@@ -1175,39 +1172,6 @@
 <style lang="scss">
 	@import url("/static/leaflet/leaflet.css");
 
-	.task_header {
-	  height: 44px;
-	  background-color: #fff;
-	  display: flex;
-	  justify-content: center;
-	  align-items: center;
-	  position: relative;
-	  border-bottom: 1px solid #eee;
-	  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	  z-index: 10;
-	  .title {
-	    font-size: 18px;
-	    font-weight: 500;
-	  }
-	  .search-icon {
-	    position: absolute;
-	    right: 8px;
-	    top: 50%;
-	    transform: translateY(-50%);
-	    color: #333;
-	    cursor: pointer;
-	    padding: 3px;
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	  }
-	}
-	.layout_task_detail {
-		/* 确保填满整个视口 */
-		height: 100vh;
-		z-index: 20;
-	}
-
 	#map_container {
 		height: 100%;
 		width: 100%;
@@ -1226,9 +1190,8 @@
 		// 消除内边距影响
 		box-sizing: border-box;
 		position: absolute;
-		top: 0;
+		top: 100px;
 		left: 0;
-		margin-top: 50px;
 	}
 
 	.condition_selector {

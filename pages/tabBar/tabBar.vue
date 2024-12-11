@@ -64,10 +64,10 @@
 		methods: {
 			onTabClick(index) {
 				this.currentTab = index;
-				const title = this.tabs[index].label;
-				uni.setNavigationBarTitle({
-					title: title
-				})
+				// const title = this.tabs[index].label;
+				// uni.setNavigationBarTitle({
+				// 	title: title
+				// })
 			},
 			hideTabBar() {
 				if (this.$refs.tabBar) {

@@ -23536,8 +23536,7 @@ __renderjsModules["55b5cda2"] = (() => {
     created() {
     },
     mounted() {
-      this.$ownerInstance.callMethod("setPoint");
-      this.$ownerInstance.callMethod("setGeoJson");
+      __f__("log", "at pages/task/task_detail/task_detail.vue:337", this.position, "m,this.position");
       this.$nextTick(() => {
         this.initMap();
         this.getLine();
@@ -23548,7 +23547,8 @@ __renderjsModules["55b5cda2"] = (() => {
       /** position变更时调用方法
        * @param {Object} position
        */
-      getPosition(position) {
+      setPosition(position) {
+        __f__("log", "at pages/task/task_detail/task_detail.vue:352", position, "m.position");
         this.position = position;
         if (map != null) {
           map.setView(L.latLng(this.position.latitude, this.position.longitude), 12);
@@ -23567,6 +23567,15 @@ __renderjsModules["55b5cda2"] = (() => {
         } else {
           this.mapType = value;
           this.changeMap(this.mapType);
+        }
+      },
+      /** 任务回溯状态变更时调用方法
+       * @param {Boolean} replay
+       */
+      setReplay(replay) {
+        this.replay = replay;
+        if (replay) {
+          this.replayMission();
         }
       },
       /**
@@ -23650,15 +23659,6 @@ __renderjsModules["55b5cda2"] = (() => {
         setTimeout(() => {
           map.invalidateSize();
         }, 500);
-      },
-      /** 任务回溯状态变更时调用方法
-       * @param {Boolean} replay
-       */
-      getReplay(replay) {
-        this.replay = replay;
-        if (replay) {
-          this.replayMission();
-        }
       },
       replayMission() {
         let index = 1;

@@ -1,11 +1,14 @@
 <template>
   <view class="messages-container">
+	<view>
+		<uni-nav-bar :fixed="true" status-bar rightIcon="search" @clickRight="" title="消息" />
+	</view>
     <view class="messages-view">
       <view class="messages-header">
         <text class="header-title">消息({{ totalMessageCount }})</text>
-        <view class="search-icon">
+        <!-- <view class="search-icon">
           <image src="/static/message/搜索.png" mode="aspectFit" class="search-image"></image>
-        </view>
+        </view> -->
       </view>
       
       <scroll-view class="messages-list" scroll-y enable-flex :style="{ height: scrollViewHeight + 'px' }">
@@ -239,17 +242,6 @@ export default {
 .header-title {
   font-size: 16px;
   font-weight: bold;
-}
-
-.search-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-image {
-  width: 20px;
-  height: 20px;
 }
 
 .messages-list {
