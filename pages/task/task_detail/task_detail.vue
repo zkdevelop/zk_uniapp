@@ -372,6 +372,9 @@
 			 */
 			initMap() {
 				// 清除原有地图容器
+				if(map!=null){
+					map.remove();
+				}
 				var container = L.DomUtil.get('map_container');
 				if (container != null) {
 					container._leaflet_id = null;
