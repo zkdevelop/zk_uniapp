@@ -157,10 +157,6 @@
 						</view>
 					</view>
 					<view class="divider"></view>
-					<view v-if="instruct_none" style="text-align: center;">
-						<image  src="../../../static/images/none.png" style="width: 60%; height: 60%;" mode="widthFix"></image>
-						<view>暂未发现任务指令</view>
-					</view>
 					<view style="margin-top: 20px;">
 						<view class="instructions">
 							<view v-for="(item, index) in task_instructions" :key="index" class="instructions_item"
@@ -209,10 +205,6 @@
 						</view>
 						<!-- 内容切换 -->
 						<view class="alert_content" v-if="navIndex == 0">
-							<view v-if="alert_none1" style="text-align: center;">
-								<image  src="../../../static/images/none.png" style="width: 60%; height: 60%;" mode="widthFix"></image>
-								<view>暂未发现告警信息</view>
-							</view>
 							<uni-collapse ref="collapse" accordion>
 								<uni-collapse-item v-for="(item, index) in alert_data" :key="index"
 									:title="item.alert_content">
@@ -233,10 +225,6 @@
 							</uni-collapse>
 						</view>
 						<view class="content" v-if="navIndex == 1">
-							<view v-if="alert_none2" style="text-align: center; margin-bottom: 15px;" >
-								<image  src="../../../static/images/none.png" style="width: 60%; height: 60%;" mode="widthFix"></image>
-								<view>暂未发现告警信息</view>
-							</view>
 							<uni-collapse ref="collapse" accordion>
 								<uni-collapse-item v-for="(item, index) in alert_data_mine" :key="index"
 									:title="item.alert_content">
@@ -367,7 +355,6 @@
 					// 加载行动轨迹
 					this.getLine();
 					// 加载geoJson数据
-					// 加载geoJson数据
 					this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
 				} else {
 					this.mapType = value;
@@ -390,6 +377,9 @@
 			 */
 			initMap() {
 				// 清除原有地图容器
+				if(map!=null){
+					map.remove();
+				}
 				var container = L.DomUtil.get('map_container');
 				if (container != null) {
 					container._leaflet_id = null;
@@ -579,9 +569,6 @@
 				innerAudioContext: {},
 				selectedMap: 'gaode', //当前地图
 				navIndex: 0,
-				instruct_none: false,
-				alert_none1: false,
-				alert_none2: false,
 				filePaths: {
 					imagePath: '',
 					videoPath: '',
@@ -654,19 +641,19 @@
 					// {
 					// 	src: '../../../static/uni.png',
 					// 	sender_name: 'admin',
-					// 	detail: '测试指令1',
+					// 	detail: '111,
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	src: '../../../static/uni.png',
 					// 	sender_name: 'lihua',
-					// 	detail: '测试指令2',
+					// 	detail: '222',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	src: '../../../static/uni.png',
 					// 	sender_name: 'wanghao',
-					// 	detail: '测试指令3',
+					// 	detail: '333',
 					// 	isConfirmed: false
 					// },
 				],
@@ -675,28 +662,28 @@
 					// 	alert_grade: '重要告警',
 					// 	alert_time: '2024.5.1',
 					// 	sender_name: '张三',
-					// 	alert_content: '告警内容',
+					// 	alert_content: '靠近目标，开始行动！1',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	alert_grade: '一般告警',
 					// 	alert_time: '2024.2.6',
 					// 	sender_name: '李四',
-					// 	alert_content: '告警内容',
+					// 	alert_content: '靠近目标，开始行动！2',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	alert_grade: '重要告警',
 					// 	alert_time: '2024.1.3',
 					// 	sender_name: '张三',
-					// 	alert_content: '告警内容',
+					// 	alert_content: '靠近目标，开始行动！3',
 					// 	isConfirmed: false
 					// },
 					// {
 					// 	alert_grade: '严重告警',
 					// 	alert_time: '2024.7.9',
 					// 	sender_name: '张三',
-					// 	alert_content: '告警内容',
+					// 	alert_content: '靠近目标，开始行动！4',
 					// 	isConfirmed: false
 					// },
 				],
@@ -705,25 +692,25 @@
 					// 	alert_grade: '一般告警',
 					// 	alert_time: '2024.5.1',
 					// 	sender_name: '张三',
-					// 	alert_content: '告警内容'
+					// 	alert_content: '目标视野丢失'
 					// },
 					// {
 					// 	alert_grade: '一般告警',
 					// 	alert_time: '2024.2.6',
 					// 	sender_name: '李四',
-					// 	alert_content: '告警内容'
+					// 	alert_content: '发现嫌疑人'
 					// },
 					// {
 					// 	alert_grade: '重要告警',
 					// 	alert_time: '2024.1.3',
 					// 	sender_name: '张三',
-					// 	alert_content: '告警内容'
+					// 	alert_content: '行动暂停'
 					// },
 					// {
 					// 	alert_grade: '严重告警',
 					// 	alert_time: '2024.7.9',
 					// 	sender_name: '张三',
-					// 	alert_content: '告警内容'
+					// 	alert_content: '行动继续'
 					// },
 				],
 				// 行动回溯，false停止，true播放
@@ -1076,11 +1063,6 @@
 							detail: item.message,
 							isConfirmed: item.isRead
 						}))
-						if(this.task_instructions.length === 0) {
-							this.instruct_none = true;
-						} else {
-							this.instruct_none = false;
-						}
 						// 根据用户id查询账号名称
 						for (let order of this.task_instructions) {
 							searchUser(order.sender_name).then(res => {
@@ -1089,8 +1071,6 @@
 								}
 							})
 						}
-					}else {
-						this.instruct_none = true;
 					}
 				})
 			},
@@ -1131,16 +1111,6 @@
 								sender_name: item.senderId,
 								alert_content: item.message,
 							}))
-						if(this.alert_data.length === 0){
-							this.alert_none1 = true;
-						} else {
-							this.alert_none1 = false;
-						}
-						if(this.alert_data_mine.length === 0){
-							this.alert_none2 = true;
-						} else {
-							this.alert_none2 = false;
-						}
 						// 根据用户id查询账号名称
 						for (let order of this.alert_data) {
 							searchUser(order.sender_name).then(res => {
