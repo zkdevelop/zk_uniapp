@@ -7613,7 +7613,6 @@ ${i3}
   }
   const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$S, [["render", _sfc_render$R], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
   const searchMission = (query) => {
-    formatAppLog("log", "at utils/api/mission.js:6", "query", query);
     return request({
       url: `/mission/search`,
       method: "post",
@@ -12086,11 +12085,12 @@ ${i3}
     (Comp.$renderjs || (Comp.$renderjs = [])).push("m");
     (Comp.$renderjsModules || (Comp.$renderjsModules = {}))["m"] = "55b5cda2";
   };
+  const recorderManager = uni.getRecorderManager();
+  const innerAudioContext = uni.createInnerAudioContext();
+  innerAudioContext.autoplay = true;
   const _sfc_main$F = {
     data() {
       return {
-        recorderManager: {},
-        innerAudioContext: {},
         selectedMap: "gaode",
         //当前地图
         navIndex: 0,
@@ -12289,14 +12289,10 @@ ${i3}
         this.position.latitude = this.taskItem.latitude;
         this.position.longitude = this.taskItem.longitude;
         this.geoJson = this.taskItem.geoJson;
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:776", vue.toRaw(this.position), "taskItem");
         uni.hideLoading();
       });
     },
     onLoad(options) {
-      this.recorderManager = uni.getRecorderManager();
-      this.innerAudioContext = uni.createInnerAudioContext();
-      this.innerAudioContext.autoplay = true;
       let self2 = this;
       this.recorderManager.onStop(function(res) {
         self2.filePaths.voicePath = res.tempFilePath;
@@ -12311,7 +12307,7 @@ ${i3}
           // 只允许从相机拍照
           success: function(res) {
             const tempFilePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:809", "拍照成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:804", "拍照成功，文件路径：", tempFilePath);
             uni.previewImage({
               urls: [tempFilePath]
             });
@@ -12345,7 +12341,7 @@ ${i3}
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:848", "拍照失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:843", "拍照失败：", err);
           }
         });
       },
@@ -12361,7 +12357,7 @@ ${i3}
           success: function(res) {
             const tempFilePath = res.tempFilePath;
             self2.filePaths.videoPath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:863", "录像成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:858", "录像成功，文件路径：", tempFilePath);
             uni.uploadFile({
               url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${"d56f22fe8f3c40bdba6c0ad609e2f3e6"}&receptionId=${"69fc9284fc5d4dd7b05092af4715ab9d"}`,
               filePath: tempFilePath,
@@ -12392,25 +12388,25 @@ ${i3}
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:896", "录像失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:891", "录像失败：", err);
           }
         });
       },
       startRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:901", "开始录音");
-        this.recorderManager.start();
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:896", "开始录音");
+        recorderManager.start();
         uni.showLoading({
           title: "正在录音"
         });
       },
       stopRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:910", "录音结束");
-        this.recorderManager.stop();
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:905", "录音结束");
+        recorderManager.stop();
         uni.hideLoading();
       },
       playVoice() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:915", "播放录音");
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:916", "this.voicePath", this.filePaths.voicePath);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:910", "播放录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:911", "this.voicePath", this.filePaths.voicePath);
         if (this.filePaths.voicePath) {
           this.innerAudioContext.src = this.filePaths.voicePath;
           this.innerAudioContext.play();
@@ -12456,9 +12452,8 @@ ${i3}
         this.$refs.task_instructions.close();
       },
       goToDocument() {
-        const missionId = this.taskItem.id;
         uni.navigateTo({
-          url: `/pages/task/task_detail/document/document?missionId=${missionId}`
+          url: `/pages/task/task_detail/document/document?missionId=${this.taskItem.id}`
         });
       },
       goToMainPage() {
@@ -12521,11 +12516,11 @@ ${i3}
       // setPoint() {
       // 	this.position.latitude = this.taskItem.latitude;
       // 	this.position.longitude = this.taskItem.longitude;
-      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1033',this.position,'position')
+      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1027',this.position,'position')
       // },
       // setGeoJson() {
       // 	this.geoJson = this.taskItem.geoJson;
-      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1037',this.geoJson, 'owner-setGeoJson')
+      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1031',this.geoJson, 'owner-setGeoJson')
       // },
       // 删除任务
       deleteMisson() {
@@ -14581,6 +14576,11 @@ ${i3}
       this.initializeDocuments();
     },
     onLoad(options) {
+      if (options.missionId) {
+        this.missionId = options.missionId;
+      } else {
+        formatAppLog("error", "at pages/task/task_detail/document/document.vue:154", "没有传递类型参数");
+      }
     },
     methods: {
       initializeDocuments() {
@@ -14588,9 +14588,9 @@ ${i3}
           title: "正在加载文件",
           mask: true
         });
-        getMissionFileById(this.missionId).then((res) => {
+        getMissionFileById(this.missionId, 1, 50).then((res) => {
           this.fileInfo = res.data.missionFiles.records;
-          formatAppLog("log", "at pages/task/task_detail/document/document.vue:165", this.fileInfo);
+          formatAppLog("log", "at pages/task/task_detail/document/document.vue:165", "fileInfo", this.fileInfo);
           uni.hideLoading();
         });
       },
@@ -14637,11 +14637,10 @@ ${i3}
           this.uploadVideo();
         } else if (e2.item.text === "其他文件") {
           this.uploadFile();
-          formatAppLog("log", "at pages/task/task_detail/document/document.vue:222", resultPath());
         }
       },
-      resultPath(resultPath2) {
-        formatAppLog("log", "at pages/task/task_detail/document/document.vue:226", resultPath2);
+      handleResult(fileInfo) {
+        formatAppLog("log", "at pages/task/task_detail/document/document.vue:225", fileInfo);
       },
       uploadVideo: function() {
         uni.chooseVideo({
@@ -14679,7 +14678,7 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/document/document.vue:265", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/document/document.vue:264", uploadFileRes.data);
               }
             });
           }
@@ -14940,7 +14939,7 @@ ${i3}
       vue.createCommentVNode(" 文件上传 "),
       vue.createVNode(_component_ysh_file_manager, {
         ref: "filemanager",
-        onResult: $options.resultPath
+        onResult: $options.handleResult
       }, null, 8, ["onResult"]),
       vue.createElementVNode("view", { style: { "background-color": "#fff" } }, [
         vue.createVNode(_component_uni_fab, {
@@ -23922,31 +23921,31 @@ ${i3}
       duration: 0,
       volume: 0
     });
-    let recorderManager = null;
+    let recorderManager2 = null;
     let timer = null;
     vue.onMounted(() => {
       initRecorderManager();
     });
     vue.onUnmounted(() => {
-      if (recorderManager) {
-        recorderManager.onStop(() => {
+      if (recorderManager2) {
+        recorderManager2.onStop(() => {
         });
-        recorderManager.onError(() => {
+        recorderManager2.onError(() => {
         });
       }
       stopTimer();
     });
     function initRecorderManager() {
       if (typeof uni !== "undefined" && uni.getRecorderManager) {
-        recorderManager = uni.getRecorderManager();
-        if (recorderManager) {
-          recorderManager.onStart((e2) => onStart(e2));
-          recorderManager.onPause((e2) => onPause(e2));
-          recorderManager.onResume((e2) => onResume(e2));
-          recorderManager.onInterruptionBegin((e2) => onInterruptionBegin(e2));
-          recorderManager.onInterruptionEnd((e2) => onInterruptionEnd(e2));
-          recorderManager.onError((e2) => onError(e2));
-          recorderManager.onStop((e2) => onStop(e2));
+        recorderManager2 = uni.getRecorderManager();
+        if (recorderManager2) {
+          recorderManager2.onStart((e2) => onStart(e2));
+          recorderManager2.onPause((e2) => onPause(e2));
+          recorderManager2.onResume((e2) => onResume(e2));
+          recorderManager2.onInterruptionBegin((e2) => onInterruptionBegin(e2));
+          recorderManager2.onInterruptionEnd((e2) => onInterruptionEnd(e2));
+          recorderManager2.onError((e2) => onError(e2));
+          recorderManager2.onStop((e2) => onStop(e2));
           formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:74", "RecorderManager initialized successfully");
         } else {
           formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:76", "Failed to get RecorderManager instance");
@@ -23956,7 +23955,7 @@ ${i3}
       }
     }
     function startVoiceRecord() {
-      if (!recorderManager) {
+      if (!recorderManager2) {
         formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:85", "RecorderManager is not initialized");
         uni.showToast({
           title: "录音功能初始化失败",
@@ -23966,7 +23965,7 @@ ${i3}
       }
       if (recordImg.value === "/static/images/icon_record.png" && beforeAudioRecordOrPlay("record")) {
         resetTimer();
-        recorderManager.start({
+        recorderManager2.start({
           duration: duration.value,
           format: "mp3",
           sampleRate: 22050
@@ -23976,11 +23975,11 @@ ${i3}
       }
     }
     function stopVoiceRecord() {
-      if (!recorderManager) {
+      if (!recorderManager2) {
         formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:108", "RecorderManager is not initialized");
         return;
       }
-      recorderManager.stop();
+      recorderManager2.stop();
       afterAudioRecord();
     }
     function onStart(e2) {
@@ -25072,19 +25071,19 @@ ${i3}
         this.$emit("close");
       },
       handleRemark() {
-        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:93", "处理备注");
+        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:96", "处理备注");
       },
       handleMessage() {
         this.navigateToChat();
       },
       handleClearHistory() {
         this.showConfirmDialog("您确认要删除所有聊天记录吗？", () => {
-          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:102", "清空聊天记录");
+          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:105", "清空聊天记录");
         });
       },
       handleDelete() {
         this.showConfirmDialog("您确认要删除此联系人吗？", () => {
-          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:108", "删除联系人");
+          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:111", "删除联系人");
           this.$emit("close");
         });
       },
@@ -25111,34 +25110,36 @@ ${i3}
           recipientId: this.contact.id
           // 确保使用正确的 id
         };
-        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:139", "准备导航到聊天页面，chatInfo:", chatInfo);
+        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:142", "准备导航到聊天页面，chatInfo:", chatInfo);
         uni.navigateTo({
           url: "/pages/message/chat",
           success: (res) => {
             res.eventChannel.emit("chatInfo", { chatInfo });
-            formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:145", "成功导航到聊天页面并发送 chatInfo");
+            formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:148", "成功导航到聊天页面并发送 chatInfo");
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/tabBar/contacts/ContactDetail.vue:148", "导航到聊天页面失败:", err);
+            formatAppLog("error", "at pages/tabBar/contacts/ContactDetail.vue:151", "导航到聊天页面失败:", err);
           }
         });
       }
     }
   };
   function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_nav_bar = resolveEasycom(vue.resolveDynamicComponent("uni-nav-bar"), __easycom_0$3);
     return vue.openBlock(), vue.createElementBlock("view", { class: "contact-detail" }, [
-      vue.createElementVNode("view", { class: "header" }, [
-        vue.createElementVNode("view", {
-          class: "back-button",
-          onClick: _cache[0] || (_cache[0] = (...args) => $options.handleClose && $options.handleClose(...args))
-        }, [
-          vue.createElementVNode("text", { class: "icon" }, "←")
-        ]),
-        vue.createElementVNode("text", { class: "header-title" }, "通讯录"),
-        vue.createElementVNode("view", { class: "more-options" }, [
-          vue.createElementVNode("text", { class: "icon" }, "⋯")
-        ])
+      vue.createElementVNode("view", null, [
+        vue.createVNode(_component_uni_nav_bar, {
+          fixed: true,
+          "status-bar": "",
+          "left-icon": "arrow-left",
+          rightIcon: "more-filled",
+          onClickLeft: $options.handleClose,
+          onClickRight: _cache[0] || (_cache[0] = () => {
+          }),
+          title: "通讯录"
+        }, null, 8, ["onClickLeft"])
       ]),
+      vue.createCommentVNode(' <view class="header">\r\n      <view class="back-button" @click="handleClose">\r\n        <text class="icon">←</text>\r\n      </view>\r\n      <text class="header-title">通讯录</text>\r\n      <view class="more-options">\r\n        <text class="icon">⋯</text>\r\n      </view>\r\n    </view> '),
       vue.createElementVNode("scroll-view", {
         class: "content",
         "scroll-y": ""
@@ -25930,7 +25931,7 @@ ${i3}
         uni.navigateBack();
       };
       const goToTask = () => {
-        uni.redirectTo({
+        uni.reLaunch({
           url: "/pages/tabBar/tabBar"
         });
       };

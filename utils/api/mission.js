@@ -3,7 +3,7 @@ import request from '/utils/request.js'
 
 // 查询任务
 export const searchMission = (query) => {
-	console.log('query', query)
+	// console.log('query', query)
 	return request({
 		url: `/mission/search`,
 		method: 'post',

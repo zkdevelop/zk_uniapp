@@ -574,11 +574,13 @@
 	import {
 		toRaw
 	} from 'vue'
+	const recorderManager = uni.getRecorderManager();
+	const innerAudioContext = uni.createInnerAudioContext();
+	
+	innerAudioContext.autoplay = true;
 	export default {
 		data() {
 			return {
-				recorderManager: {},
-				innerAudioContext: {},
 				selectedMap: 'gaode', //当前地图
 				navIndex: 0,
 				instruct_none: false,
@@ -773,7 +775,7 @@
 				this.position.latitude = this.taskItem.latitude;
 				this.position.longitude = this.taskItem.longitude;
 				this.geoJson = this.taskItem.geoJson;
-				console.log(toRaw(this.position),'taskItem');
+				// console.log(toRaw(this.position),'taskItem');
 				uni.hideLoading()
 			});
 		},
@@ -784,13 +786,6 @@
 			// } else {
 			// 	console.error('没有传递类型参数');
 			// };
-
-			this.recorderManager = uni.getRecorderManager();
-			this.innerAudioContext = uni.createInnerAudioContext();
-
-			this.innerAudioContext.autoplay = true;
-
-			// console.log("uni.getRecorderManager()", uni.getRecorderManager())
 			let self = this;
 			this.recorderManager.onStop(function(res) {
 				// console.log('recorder stop' + JSON.stringify(res));
@@ -899,7 +894,7 @@
 			},
 			startRecording() {
 				console.log('开始录音');
-				this.recorderManager.start();
+				recorderManager.start();
 				//显示加载框
 				uni.showLoading({
 					title: '正在录音'
@@ -908,7 +903,7 @@
 			},
 			stopRecording() {
 				console.log('录音结束');
-				this.recorderManager.stop();
+				recorderManager.stop();
 				uni.hideLoading()
 			},
 			playVoice() {
@@ -960,9 +955,8 @@
 				this.$refs.task_instructions.close()
 			},
 			goToDocument() {
-				const missionId = this.taskItem.id;
 				uni.navigateTo({
-					url: `/pages/task/task_detail/document/document?missionId=${missionId}`
+					url: `/pages/task/task_detail/document/document?missionId=${this.taskItem.id}`
 				})
 			},
 			goToMainPage() {

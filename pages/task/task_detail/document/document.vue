@@ -44,7 +44,7 @@
 			</view>
 		</uni-popup>
 		<!-- 文件上传 -->
-		<ysh-file-manager ref="filemanager" @result="resultPath"></ysh-file-manager>
+		<ysh-file-manager ref="filemanager" @result="handleResult"></ysh-file-manager>
 		<view style="background-color: #fff;">
 			<uni-fab
 				:pattern="pattern"
@@ -148,11 +148,11 @@
 			this.initializeDocuments();
 		},
 		onLoad(options) {
-			// if(options.missionId){
-			// 	this.missionId = options.missionId;
-			// } else {
-			// 	console.error('没有传递类型参数');
-			// };
+			if(options.missionId){
+				this.missionId = options.missionId;
+			} else {
+				console.error('没有传递类型参数');
+			};
 		},
 		methods: {
 			initializeDocuments(){
@@ -160,9 +160,9 @@
 					title: '正在加载文件',
 					mask: true
 				})
-				getMissionFileById(this.missionId).then(res => {
+				getMissionFileById(this.missionId, 1, 50).then(res => {
 					this.fileInfo = res.data.missionFiles.records;
-					console.log(this.fileInfo)
+					console.log('fileInfo', this.fileInfo)
 					uni.hideLoading()
 				})
 			},
@@ -219,11 +219,10 @@
 					this.uploadVideo()
 				}else if(e.item.text === '其他文件'){
 					this.uploadFile()
-					console.log(resultPath())
 				}
 			},
-			resultPath(resultPath) {
-				console.log(resultPath);
+			handleResult(fileInfo) {
+				console.log(fileInfo)
 			},
 			uploadVideo: function () {
 				var self = this;
