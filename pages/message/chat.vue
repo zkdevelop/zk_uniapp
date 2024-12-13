@@ -374,7 +374,7 @@ export default {
               content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
               type = 'file';
-            } else if (type === 'audio') {
+            } else if (type === 'audio'||type === 'voice_message') {
               // 处理音频消息
               content = msg.previewUrl || msg.message;
             }
@@ -454,7 +454,7 @@ export default {
               content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
               type = 'file';
-            } else if (type === 'audio') {
+            } else if (type === 'audio'||type === 'voice_message') {
               // 处理音频消息
               content = msg.previewUrl || msg.message;
             }
@@ -487,34 +487,54 @@ export default {
       }
     },
     // 处理文件选择
-    async handleFileSelected(fileInfo) {
-      console.log('文件被选择:', fileInfo);
-      try {
-        const response = await sendFilesToUser({
-          files: [fileInfo.path],
-          isGroup: false,
-          isSelfDestruct: false,
-          latitude: '0',
-          longitude: '0',
-          missionId: this.chatInfo.missionId,
-          receptionId: this.chatInfo.id
-        });
-
-        console.log('文件上传响应:', response);
-
-        if (response.code === 200) {
-          await this.updateMessageList();
-        } else {
-          throw new Error(response.msg || '发送文件消息失败');
-        }
-      } catch (error) {
-        console.error('发送文件消息出错:', error);
-        uni.showToast({
-          title: '发送失败，请重试',
-          icon: 'none'
-        });
-      }
-    },
+   async handleFileSelected(fileInfo) {
+         console.log('文件被选择，完整的 fileInfo:', JSON.stringify(fileInfo));
+         
+         if (!fileInfo || typeof fileInfo !== 'object') {
+           console.error('文件信息无效:', fileInfo);
+           uni.showToast({
+             title: '文件信息无效，请重试',
+             icon: 'none'
+           });
+           return;
+         }
+   
+         if (!fileInfo.path) {
+           console.error('文件路径缺失:', fileInfo);
+           uni.showToast({
+             title: '文件路径缺失，请重试',
+             icon: 'none'
+           });
+           return;
+         }
+   
+         try {
+           const response = await sendFilesToUser({
+             files: [fileInfo.path],
+             isGroup: false,
+             isSelfDestruct: false,
+             latitude: '0',
+             longitude: '0',
+             missionId: this.chatInfo.missionId,
+             receptionId: this.chatInfo.id,
+             voiceMessage: fileInfo.fromVoiceInput || false
+           });
+   
+           console.log('文件上传响应:', response);
+   
+           if (response.code === 200) {
+             await this.updateMessageList();
+           } else {
+             throw new Error(response.msg || '发送文件消息失败');
+           }
+         } catch (error) {
+           console.error('发送文件消息出错:', error);
+           uni.showToast({
+             title: '发送失败，请重试',
+             icon: 'none'
+           });
+         }
+       },
   }
 }
 </script>

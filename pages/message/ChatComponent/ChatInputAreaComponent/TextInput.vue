@@ -16,14 +16,18 @@ export default {
   props: {
     modelValue: {
       type: String,
-      required: true
+      default: ''
     }
   },
   emits: ['update:modelValue', 'send'],
   methods: {
     // 更新输入值
     updateValue(event) {
-      this.$emit('update:modelValue', event.target.value)
+      // 兼容处理不同平台的事件对象
+      const value = event.detail!=undefined ? event.detail.value : event.target.value;
+	  console.log(event.detail,'value')
+      // 确保始终发送一个字符串值，即使是空字符串
+      this.$emit('update:modelValue', value || '');
     },
     // 发送消息
     sendMessage() {
@@ -41,8 +45,11 @@ export default {
   border-radius: 18px;
   padding: 0 15px;
   font-size: 14px;
-  margin-left: 10px;
-  margin-right:10px
-  
+  border: 1px solid #e0e0e0;
+  outline: none;
+}
+
+.text-input:focus {
+  border-color: #007AFF;
 }
 </style>

@@ -15092,10 +15092,11 @@ ${i3}
           latitude: data.latitude,
           longitude: data.longitude,
           missionId: data.missionId,
-          receptionId: data.receptionId
+          receptionId: data.receptionId,
+          voiceMessage: data.voiceMessage !== void 0 ? data.voiceMessage : false
         },
         success: (uploadFileRes) => {
-          formatAppLog("log", "at utils/api/message.js:59", "服务器原始响应:", uploadFileRes);
+          formatAppLog("log", "at utils/api/message.js:60", "服务器原始响应:", uploadFileRes);
           if (uploadFileRes.statusCode === 404) {
             reject(new Error("服务器端点未找到 (404)"));
             return;
@@ -15113,22 +15114,22 @@ ${i3}
             } else {
               throw new Error("服务器返回了空响应或无效的JSON");
             }
-            formatAppLog("log", "at utils/api/message.js:77", "解析后的响应:", response);
+            formatAppLog("log", "at utils/api/message.js:78", "解析后的响应:", response);
             resolve(response);
           } catch (error) {
-            formatAppLog("error", "at utils/api/message.js:80", "解析服务器响应失败:", error);
+            formatAppLog("error", "at utils/api/message.js:81", "解析服务器响应失败:", error);
             reject(new Error("解析服务器响应失败"));
           }
         },
         fail: (error) => {
-          formatAppLog("error", "at utils/api/message.js:85", "上传失败:", error);
+          formatAppLog("error", "at utils/api/message.js:86", "上传失败:", error);
           reject(error);
         }
       });
       uploadTask.onProgressUpdate((res) => {
-        formatAppLog("log", "at utils/api/message.js:91", "上传进度", res.progress);
-        formatAppLog("log", "at utils/api/message.js:92", "已经上传的数据长度", res.totalBytesSent);
-        formatAppLog("log", "at utils/api/message.js:93", "预期需要上传的数据总长度", res.totalBytesExpectedToSend);
+        formatAppLog("log", "at utils/api/message.js:92", "上传进度", res.progress);
+        formatAppLog("log", "at utils/api/message.js:93", "已经上传的数据长度", res.totalBytesSent);
+        formatAppLog("log", "at utils/api/message.js:94", "预期需要上传的数据总长度", res.totalBytesExpectedToSend);
       });
     });
   };
@@ -15669,308 +15670,228 @@ ${i3}
   }
   const FileMessage = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-ba23d37a"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/FileMessage.vue"]]);
   const _sfc_main$m = {
-    name: "AudioMessage",
+    __name: "VoiceMessageBubble",
     props: {
       content: {
         type: Object,
-        required: true
-      },
-      previewUrl: {
-        type: String,
-        required: true
-      },
-      messageType: {
-        type: String,
-        required: true
+        required: true,
+        default: () => ({
+          url: "",
+          duration: 0,
+          isSelf: false
+        })
       }
     },
-    setup(props) {
-      const audioContext = vue.ref(null);
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const props = __props;
       const isPlaying = vue.ref(false);
-      const currentTime = vue.ref(0);
-      const duration = vue.ref(0);
-      const updateInterval = vue.ref(null);
-      const isLoading = vue.ref(false);
-      const isMuted = vue.ref(false);
-      const previousVolume = vue.ref(1);
-      const isAudioFile = vue.computed(() => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:79", "检查是否为音频文件:", props.messageType);
-        return props.messageType === "AUDIO";
-      });
-      const progress = vue.computed(() => duration.value > 0 ? currentTime.value / duration.value * 100 : 0);
-      const formatDuration = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.floor(seconds % 60);
-        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+      const audioDuration = vue.ref(0);
+      let audioContext = null;
+      const formatDuration = (duration) => {
+        return Math.round(duration || 0);
       };
-      const initAudioContext = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:92", "初始化音频上下文");
-        isLoading.value = true;
-        audioContext.value = uni.createInnerAudioContext();
-        if (props.previewUrl) {
-          audioContext.value.src = props.previewUrl;
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:98", "设置音频源:", audioContext.value.src);
-        } else {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:100", "音频源 URL 未定义");
-          isLoading.value = false;
-          return;
-        }
-        audioContext.value.autoplay = false;
-        audioContext.value.onCanplay(() => {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:108", "音频可以播放");
-          duration.value = audioContext.value.duration || 0;
-          isLoading.value = false;
-        });
-        audioContext.value.onTimeUpdate(() => {
-          currentTime.value = audioContext.value.currentTime || 0;
-        });
-        audioContext.value.onEnded(() => {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:118", "音频播放结束");
-          isPlaying.value = false;
-          currentTime.value = 0;
-          clearInterval(updateInterval.value);
-        });
-        audioContext.value.onError((res) => {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:125", "音频错误:", res.errMsg);
+      const beforeAudioRecordOrPlay2 = (type) => {
+        const globalData = getApp().globalData;
+        const audioPlaying = globalData.audioPlaying;
+        const audioRecording = globalData.audioRecording;
+        if (audioPlaying || audioRecording) {
           uni.showToast({
-            title: "音频播放错误: " + res.errMsg,
+            title: audioPlaying ? "请先暂停其他音频播放" : "请先结束其他录音",
             icon: "none"
           });
-          isLoading.value = false;
-          isPlaying.value = false;
-        });
-      };
-      const togglePlay = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:136", "切换播放/暂停");
-        if (!audioContext.value) {
-          initAudioContext();
-        }
-        if (audioContext.value && audioContext.value.src) {
-          if (isPlaying.value) {
-            audioContext.value.pause();
-            clearInterval(updateInterval.value);
-          } else {
-            audioContext.value.play();
-            updateInterval.value = setInterval(updateProgress, 100);
-          }
-          isPlaying.value = !isPlaying.value;
-        } else {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:151", "音频源未设置，无法播放");
-          uni.showToast({
-            title: "无法播放音频",
-            icon: "none"
-          });
-        }
-      };
-      const updateProgress = () => {
-        if (audioContext.value) {
-          currentTime.value = audioContext.value.currentTime || 0;
-          duration.value = audioContext.value.duration || 0;
-        }
-      };
-      const seekAudio = (event) => {
-        if (!audioContext.value)
-          return;
-        const rect = event.target.getBoundingClientRect();
-        const clickPosition = event.clientX - rect.left;
-        const percentage = clickPosition / rect.width * 100;
-        const newTime = percentage / 100 * duration.value;
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:174", "跳转到音频位置:", newTime);
-        audioContext.value.seek(newTime);
-        currentTime.value = newTime;
-      };
-      const toggleMute = () => {
-        if (!audioContext.value)
-          return;
-        if (isMuted.value) {
-          audioContext.value.volume = previousVolume.value;
-        } else {
-          previousVolume.value = audioContext.value.volume;
-          audioContext.value.volume = 0;
-        }
-        isMuted.value = !isMuted.value;
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:189", "切换静音:", isMuted.value);
-      };
-      const checkAudioFileAccess = async () => {
-        if (!props.previewUrl) {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:194", "音频文件 URL 未定义");
           return false;
-        }
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:198", "检查音频文件访问，URL:", props.previewUrl);
-        try {
-          const response = await uni.request({
-            url: props.previewUrl,
-            method: "HEAD"
-          });
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:204", "音频文件访问检查响应:", response);
-          if (response.statusCode === 200) {
-            formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:206", "音频文件可访问");
-            return true;
+        } else {
+          if (type === "play") {
+            globalData.audioPlaying = true;
+          } else if (type === "record") {
+            globalData.audioRecording = true;
           } else {
-            formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:209", "音频文件不可访问:", response.statusCode);
+            formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:64", `无效的类型: ${type}`);
             return false;
           }
-        } catch (error) {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:213", "检查音频文件访问时出错:", error);
-          return false;
+          return true;
         }
       };
-      vue.onMounted(() => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:220", "AudioMessage 组件挂载，content:", props.content, "previewUrl:", props.previewUrl);
-        checkAudioFileAccess().then((isAccessible) => {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:222", "音频文件是否可访问:", isAccessible);
-          if (!isAccessible) {
-            uni.showToast({
-              title: "音频文件不可用",
-              icon: "none"
-            });
-          }
+      const afterAudioPlay = () => {
+        getApp().globalData.audioPlaying = false;
+      };
+      const checkAudioFileExists = (url) => {
+        return new Promise((resolve, reject) => {
+          uni.downloadFile({
+            url,
+            success: (res) => {
+              if (res.statusCode === 200) {
+                resolve(true);
+              } else {
+                reject(new Error(`音频文件下载失败，状态码：${res.statusCode}`));
+              }
+            },
+            fail: (err) => {
+              reject(new Error(`音频文件检查失败：${err.errMsg}`));
+            }
+          });
         });
-      });
-      vue.onBeforeUnmount(() => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:233", "AudioMessage 组件即将卸载");
-        if (audioContext.value) {
-          audioContext.value.destroy();
-        }
-        clearInterval(updateInterval.value);
-      });
-      return {
-        isPlaying,
-        currentTime,
-        duration,
-        isLoading,
-        isMuted,
-        isAudioFile,
-        progress,
-        formatDuration,
-        togglePlay,
-        seekAudio,
-        toggleMute
       };
+      const createAudioContext = async () => {
+        if (audioContext) {
+          audioContext.destroy();
+        }
+        if (!props.content.url) {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:101", "音频 URL 未定义");
+          uni.showToast({
+            title: "音频文件不存在",
+            icon: "none"
+          });
+          return null;
+        }
+        try {
+          await checkAudioFileExists(props.content.url);
+        } catch (error) {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:112", "音频文件检查失败:", error);
+          uni.showToast({
+            title: "音频文件不可用",
+            icon: "none"
+          });
+          return null;
+        }
+        audioContext = uni.createInnerAudioContext();
+        audioContext.src = props.content.url;
+        audioContext.onCanplay(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:124", "音频可以播放");
+          audioDuration.value = audioContext.duration || props.content.duration || 0;
+        });
+        audioContext.onPlay(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:129", "音频开始播放");
+          isPlaying.value = true;
+        });
+        audioContext.onEnded(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:134", "音频播放结束");
+          isPlaying.value = false;
+          afterAudioPlay();
+        });
+        audioContext.onError((res) => {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:140", "音频播放错误:", res.errMsg, res.errCode);
+          uni.showToast({
+            title: "播放失败: " + res.errMsg,
+            icon: "none"
+          });
+          isPlaying.value = false;
+          afterAudioPlay();
+        });
+        audioContext.onWaiting(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:150", "音频加载中...");
+        });
+        return audioContext;
+      };
+      const bubbleStyle = vue.computed(() => {
+        const minWidth = 120;
+        const maxWidth = 300;
+        const widthPerSecond = 10;
+        const duration = audioDuration.value || 0;
+        let width = minWidth + duration * widthPerSecond;
+        width = Math.min(width, maxWidth);
+        return {
+          width: `${width}rpx`
+        };
+      });
+      const togglePlay = async () => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:173", "togglePlay 被调用");
+        if (!audioContext) {
+          audioContext = await createAudioContext();
+        }
+        if (!audioContext) {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:178", "无法创建音频上下文");
+          return;
+        }
+        if (isPlaying.value) {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:183", "停止播放");
+          audioContext.stop();
+          isPlaying.value = false;
+          afterAudioPlay();
+        } else {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:188", "开始播放");
+          if (beforeAudioRecordOrPlay2("play")) {
+            try {
+              await audioContext.play();
+            } catch (error) {
+              formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:193", "播放音频失败:", error);
+              uni.showToast({
+                title: "播放失败，请重试",
+                icon: "none"
+              });
+              isPlaying.value = false;
+              afterAudioPlay();
+            }
+          }
+        }
+      };
+      vue.onMounted(async () => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:206", "VoiceMessageBubble 组件已挂载");
+        audioContext = await createAudioContext();
+      });
+      vue.onUnmounted(() => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:211", "VoiceMessageBubble 组件即将卸载");
+        if (audioContext) {
+          audioContext.destroy();
+        }
+      });
+      vue.watch(() => props.content, async (newContent) => {
+        if (newContent.url !== (audioContext == null ? void 0 : audioContext.src)) {
+          audioContext = await createAudioContext();
+        }
+        audioDuration.value = newContent.duration || 0;
+      }, { deep: true });
+      const __returned__ = { props, isPlaying, audioDuration, get audioContext() {
+        return audioContext;
+      }, set audioContext(v2) {
+        audioContext = v2;
+      }, formatDuration, beforeAudioRecordOrPlay: beforeAudioRecordOrPlay2, afterAudioPlay, checkAudioFileExists, createAudioContext, bubbleStyle, togglePlay, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, watch: vue.watch, computed: vue.computed };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
     }
   };
   function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "audio-message" }, [
-      $setup.isAudioFile ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 0,
-        class: "audio-player"
-      }, [
-        vue.createElementVNode("view", { class: "player-container" }, [
-          vue.createCommentVNode(" 播放/暂停按钮 "),
-          vue.createElementVNode("view", {
-            class: "play-pause-button",
-            onClick: _cache[0] || (_cache[0] = (...args) => $setup.togglePlay && $setup.togglePlay(...args))
-          }, [
-            $setup.isLoading ? (vue.openBlock(), vue.createElementBlock("view", {
-              key: 0,
-              class: "loading-icon"
-            })) : !$setup.isPlaying ? (vue.openBlock(), vue.createElementBlock("svg", {
-              key: 1,
-              class: "play-icon",
-              viewBox: "0 0 24 24",
-              fill: "none",
-              xmlns: "http://www.w3.org/2000/svg"
-            }, [
-              vue.createElementVNode("path", {
-                d: "M8 5.14v14.72L19 12 8 5.14z",
-                fill: "currentColor"
-              })
-            ])) : (vue.openBlock(), vue.createElementBlock("svg", {
-              key: 2,
-              class: "pause-icon",
-              viewBox: "0 0 24 24",
-              fill: "none",
-              xmlns: "http://www.w3.org/2000/svg"
-            }, [
-              vue.createElementVNode("path", {
-                d: "M8 5h3v14H8V5zm5 0h3v14h-3V5z",
-                fill: "currentColor"
-              })
-            ]))
-          ]),
-          vue.createCommentVNode(" 时间进度显示 "),
-          vue.createElementVNode("view", { class: "time-progress" }, [
-            vue.createElementVNode("view", { class: "time-display" }, [
-              vue.createElementVNode(
-                "text",
-                null,
-                vue.toDisplayString($setup.formatDuration($setup.currentTime)),
-                1
-                /* TEXT */
-              ),
-              vue.createElementVNode("text", { class: "duration-separator" }, "/"),
-              vue.createElementVNode(
-                "text",
-                null,
-                vue.toDisplayString($setup.formatDuration($setup.duration)),
-                1
-                /* TEXT */
-              )
-            ]),
-            vue.createElementVNode("view", {
-              class: "progress-bar",
-              onClick: _cache[1] || (_cache[1] = (...args) => $setup.seekAudio && $setup.seekAudio(...args))
-            }, [
-              vue.createElementVNode(
-                "view",
-                {
-                  class: "progress",
-                  style: vue.normalizeStyle({ width: `${$setup.progress}%` })
-                },
-                null,
-                4
-                /* STYLE */
-              )
-            ])
-          ]),
-          vue.createCommentVNode(" 音量控制 "),
-          vue.createElementVNode("view", { class: "controls" }, [
-            vue.createElementVNode("view", {
-              class: "volume-control",
-              onClick: _cache[2] || (_cache[2] = (...args) => $setup.toggleMute && $setup.toggleMute(...args))
-            }, [
-              !$setup.isMuted ? (vue.openBlock(), vue.createElementBlock("svg", {
-                key: 0,
-                class: "volume-icon",
-                viewBox: "0 0 24 24",
-                fill: "none",
-                xmlns: "http://www.w3.org/2000/svg"
-              }, [
-                vue.createElementVNode("path", {
-                  d: "M16 9.5c.83.27 1.5 1.34 1.5 2.5s-.67 2.23-1.5 2.5",
-                  stroke: "currentColor",
-                  "stroke-width": "2",
-                  "stroke-linecap": "round"
-                }),
-                vue.createElementVNode("path", {
-                  d: "M3 11v2h2l3.5 3.5V7.5L5 11H3z",
-                  fill: "currentColor"
-                })
-              ])) : (vue.openBlock(), vue.createElementBlock("svg", {
-                key: 1,
-                class: "volume-icon",
-                viewBox: "0 0 24 24",
-                fill: "none",
-                xmlns: "http://www.w3.org/2000/svg"
-              }, [
-                vue.createElementVNode("path", {
-                  d: "M3 11v2h2l3.5 3.5V7.5L5 11H3z",
-                  fill: "currentColor"
-                }),
-                vue.createElementVNode("path", {
-                  d: "M14 9l-2 2m0 0l-2 2m2-2l2 2m-2-2l-2-2",
-                  stroke: "currentColor",
-                  "stroke-width": "2",
-                  "stroke-linecap": "round"
-                })
-              ]))
-            ])
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["voice-message-bubble", [
+          $props.content.isSelf ? "self" : "friend",
+          $setup.isPlaying ? "playing" : ""
+        ]]),
+        style: vue.normalizeStyle($setup.bubbleStyle),
+        onClick: $setup.togglePlay
+      },
+      [
+        vue.createElementVNode("view", { class: "audio-icon" }, [
+          vue.createElementVNode("view", { class: "speaker-waves" }, [
+            (vue.openBlock(), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList(3, (i2) => {
+                return vue.createElementVNode("view", {
+                  class: "wave",
+                  key: i2
+                });
+              }),
+              64
+              /* STABLE_FRAGMENT */
+            ))
           ])
-        ])
-      ])) : vue.createCommentVNode("v-if", true)
-    ]);
+        ]),
+        vue.createElementVNode(
+          "text",
+          { class: "duration" },
+          vue.toDisplayString($setup.formatDuration($setup.audioDuration)) + '"',
+          1
+          /* TEXT */
+        )
+      ],
+      6
+      /* CLASS, STYLE */
+    );
   }
-  const AudioMessage = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-3578ca20"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/AudioMessage.vue"]]);
+  const VoiceMessageBubble = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-021f7c82"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue"]]);
   const _sfc_main$l = {
     name: "BurnAfterReadingMessage",
     props: {
@@ -16005,7 +15926,7 @@ ${i3}
       LocationMessage,
       ImageMessage,
       FileMessage,
-      AudioMessage,
+      VoiceMessageBubble,
       BurnAfterReadingMessage
     },
     props: {
@@ -16026,7 +15947,7 @@ ${i3}
         return `${month}-${day} ${hours}:${minutes}`;
       };
       const viewBurnAfterReading = (message) => {
-        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:63", "查看阅后即焚消息:", message);
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:78", "查看阅后即焚消息:", message);
       };
       return {
         formatTime,
@@ -16038,7 +15959,7 @@ ${i3}
     const _component_LocationMessage = vue.resolveComponent("LocationMessage");
     const _component_ImageMessage = vue.resolveComponent("ImageMessage");
     const _component_FileMessage = vue.resolveComponent("FileMessage");
-    const _component_AudioMessage = vue.resolveComponent("AudioMessage");
+    const _component_VoiceMessageBubble = vue.resolveComponent("VoiceMessageBubble");
     const _component_BurnAfterReadingMessage = vue.resolveComponent("BurnAfterReadingMessage");
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -16078,7 +15999,12 @@ ${i3}
               vue.createElementVNode(
                 "view",
                 {
-                  class: vue.normalizeClass(["content", { "location-content": $props.message.type === "location", "file-message": $props.message.type === "file", "message-image": $props.message.type === "image", "audio-message": $props.message.type === "audio" }])
+                  class: vue.normalizeClass(["content", {
+                    "location-content": $props.message.type === "location",
+                    "file-message": $props.message.type === "file",
+                    "message-image": $props.message.type === "image",
+                    "voice-message": $props.message.type === "voice_message"
+                  }])
                 },
                 [
                   $props.message.type === "location" ? (vue.openBlock(), vue.createBlock(_component_LocationMessage, {
@@ -16091,11 +16017,14 @@ ${i3}
                     key: 2,
                     content: $props.message.content,
                     messageType: $props.message.messageType
-                  }, null, 8, ["content", "messageType"])) : $props.message.type === "audio" ? (vue.openBlock(), vue.createBlock(_component_AudioMessage, {
+                  }, null, 8, ["content", "messageType"])) : $props.message.type === "voice_message" ? (vue.openBlock(), vue.createBlock(_component_VoiceMessageBubble, {
                     key: 3,
-                    content: $props.message.content,
-                    messageType: $props.message.messageType
-                  }, null, 8, ["content", "messageType"])) : $props.message.type === "burn-after-reading" ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReadingMessage, {
+                    content: {
+                      url: $props.message.content,
+                      duration: $props.message.duration,
+                      isSelf: $props.message.userType === "self"
+                    }
+                  }, null, 8, ["content"])) : $props.message.type === "burn-after-reading" ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReadingMessage, {
                     key: 4,
                     content: $props.message.content,
                     onViewBurnAfterReading: $setup.viewBurnAfterReading
@@ -23513,20 +23442,22 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const VoiceRecordButton = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-e82c7418"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/VoiceRecordButton.vue"]]);
+  const VoiceInputButton = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-595166a0"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/VoiceInputButton.vue"]]);
   const _sfc_main$e = {
     name: "TextInput",
     props: {
       modelValue: {
         type: String,
-        required: true
+        default: ""
       }
     },
     emits: ["update:modelValue", "send"],
     methods: {
       // 更新输入值
       updateValue(event) {
-        this.$emit("update:modelValue", event.target.value);
+        const value = event.detail != void 0 ? event.detail.value : event.target.value;
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputAreaComponent/TextInput.vue:28", event.detail, "value");
+        this.$emit("update:modelValue", value || "");
       },
       // 发送消息
       sendMessage() {
@@ -23603,7 +23534,7 @@ ${i3}
       return true;
     }
   }
-  function useVoiceInput(emit) {
+  function useVoiceInput(onFileSelected) {
     const isRecording = vue.ref(false);
     const recordAuth = vue.ref(false);
     const duration = vue.ref(6e5);
@@ -23642,17 +23573,17 @@ ${i3}
           recorderManager.onInterruptionEnd((e2) => onInterruptionEnd(e2));
           recorderManager.onError((e2) => onError(e2));
           recorderManager.onStop((e2) => onStop(e2));
-          formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:74", "RecorderManager initialized successfully");
+          formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:80", "录音管理器初始化成功");
         } else {
-          formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:76", "Failed to get RecorderManager instance");
+          formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:82", "获取录音管理器实例失败");
         }
       } else {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:79", "RecorderManager is not available on this platform");
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:85", "当前平台不支持录音管理器");
       }
     }
     function startVoiceRecord() {
       if (!recorderManager) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:85", "RecorderManager is not initialized");
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:92", "录音管理器未初始化");
         uni.showToast({
           title: "录音功能初始化失败",
           icon: "none"
@@ -23672,30 +23603,30 @@ ${i3}
     }
     function stopVoiceRecord() {
       if (!recorderManager) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:108", "RecorderManager is not initialized");
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:116", "录音管理器未初始化");
         return;
       }
       recorderManager.stop();
       afterAudioRecord();
     }
     function onStart(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:117", "开始录音", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:126", "开始录音", e2);
       recordImg.value = "/static/images/icon_recording.png";
       isRecording.value = true;
       voiceStatus.status = "recording";
       startTimer();
     }
     function onPause(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:125", "录音暂停", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:135", "录音暂停", e2);
       afterAudioRecord();
       stopTimer();
     }
     function onResume(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:131", "录音恢复", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:142", "录音恢复", e2);
       startTimer();
     }
     function onStop(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:136", "录音结束", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:148", "录音结束", e2);
       recordImg.value = "/static/images/icon_record.png";
       isRecording.value = false;
       voiceStatus.status = "ready";
@@ -23707,15 +23638,15 @@ ${i3}
       uploadMp3Action(e2);
     }
     function onInterruptionBegin(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:149", "录音因为受到系统占用而被中断", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:162", "录音因为受到系统占用而被中断", e2);
       stopTimer();
     }
     function onInterruptionEnd(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:154", "录音中断结束", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:168", "录音中断结束", e2);
       startTimer();
     }
     function onError(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:159", "录音错误", e2);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:174", "录音错误", e2);
       uni.showToast({
         title: "录音失败，请重试",
         icon: "none"
@@ -23743,13 +23674,24 @@ ${i3}
       voiceStatus.duration = 0;
     }
     function uploadMp3Action(e2) {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:191", "Uploading MP3", e2);
-      emit("file-selected", {
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:210", "上传MP3，完整的事件对象:", JSON.stringify(e2));
+      if (!e2 || !e2.tempFilePath) {
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:213", "录音文件路径缺失:", e2);
+        uni.showToast({
+          title: "录音文件保存失败，请重试",
+          icon: "none"
+        });
+        return;
+      }
+      const fileInfo = {
         type: "voice",
         path: e2.tempFilePath,
         duration: time.value,
-        size: e2.fileSize
-      });
+        size: e2.fileSize,
+        fromVoiceInput: true
+      };
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:229", "准备发送的文件信息:", JSON.stringify(fileInfo));
+      onFileSelected(fileInfo);
     }
     return {
       isRecording,
@@ -23934,7 +23876,7 @@ ${i3}
       AttachmentMenu,
       LocationSharing,
       ToggleVoiceButton,
-      VoiceRecordButton,
+      VoiceInputButton,
       TextInput,
       AttachButton,
       SendButton
@@ -23959,6 +23901,22 @@ ${i3}
       const newMessage = vue.ref("");
       const showLocationSharing = vue.ref(false);
       const isVoiceInputActive = vue.ref(false);
+      const handleVoiceFileSelected = (fileInfo) => {
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:107", "useVoiceInput 回调被触发，完整的文件信息:", JSON.stringify(fileInfo));
+        if (fileInfo && typeof fileInfo === "object" && fileInfo.fromVoiceInput) {
+          if (!fileInfo.path) {
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:111", "语音文件路径缺失:", fileInfo);
+            uni.showToast({
+              title: "语音文件保存失败，请重试",
+              icon: "none"
+            });
+            return;
+          }
+          emit("file-selected", fileInfo);
+        } else {
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:121", "无效的文件信息:", fileInfo);
+        }
+      };
       const {
         isRecording,
         recordAuth,
@@ -23966,7 +23924,7 @@ ${i3}
         voiceStatus,
         startVoiceRecord,
         stopVoiceRecord
-      } = useVoiceInput(emit);
+      } = useVoiceInput(handleVoiceFileSelected);
       const {
         attachItem,
         handleFileSelected,
@@ -24017,7 +23975,7 @@ ${i3}
   };
   function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_toggle_voice_button = vue.resolveComponent("toggle-voice-button");
-    const _component_voice_record_button = vue.resolveComponent("voice-record-button");
+    const _component_voice_input_button = vue.resolveComponent("voice-input-button");
     const _component_text_input = vue.resolveComponent("text-input");
     const _component_attach_button = vue.resolveComponent("attach-button");
     const _component_send_button = vue.resolveComponent("send-button");
@@ -24036,7 +23994,7 @@ ${i3}
             onToggleVoiceInput: $setup.toggleVoiceInput
           }, null, 8, ["is-voice-input-active", "onToggleVoiceInput"]),
           vue.createCommentVNode(" 语音录音按钮 "),
-          $setup.isVoiceInputActive ? (vue.openBlock(), vue.createBlock(_component_voice_record_button, {
+          $setup.isVoiceInputActive ? (vue.openBlock(), vue.createBlock(_component_voice_input_button, {
             key: 0,
             "is-recording": $setup.isRecording,
             "voice-status": $setup.voiceStatus,
@@ -24257,44 +24215,70 @@ ${i3}
       MessageList,
       ChatInputArea,
       BurnAfterReading,
-      ScrollToBottomButton,
-      AudioMessage
+      ScrollToBottomButton
     },
-    setup() {
-      const chatInfo = vue.ref({
-        id: "",
-        name: "",
-        avatar: [],
-        type: "single",
-        missionId: ""
-      });
-      const list = vue.ref([]);
-      const showAttachMenu = vue.ref(false);
-      const burnAfterReadingDuration = vue.ref(5);
-      const currentBurnAfterReadingImage = vue.ref("");
-      const currentBurnAfterReadingMessage = vue.ref(null);
-      const isScrolledToBottom = vue.ref(true);
-      const showScrollToBottom = vue.ref(false);
-      const showNewMessageTip = vue.ref(false);
-      const hasNewMessages = vue.ref(false);
-      const currentFrom = vue.ref(0);
-      const currentTo = vue.ref(10);
-      const hasMoreMessages = vue.ref(true);
-      const isLoading = vue.ref(false);
-      const peerStore = usePeerStore();
-      useFriendStore$1();
-      const messageListRef = vue.ref(null);
-      const initializeChat = async () => {
-        await loadHistoryMessages();
-        scrollToBottom();
+    data() {
+      return {
+        chatInfo: {
+          id: "",
+          name: "",
+          avatar: [],
+          type: "single",
+          missionId: ""
+        },
+        list: [],
+        // 消息列表
+        showAttachMenu: false,
+        burnAfterReadingDuration: 5,
+        currentBurnAfterReadingImage: "",
+        currentBurnAfterReadingMessage: null,
+        isScrolledToBottom: true,
+        showScrollToBottom: false,
+        showNewMessageTip: false,
+        hasNewMessages: false,
+        currentFrom: 0,
+        currentTo: 10,
+        hasMoreMessages: true,
+        isLoading: false,
+        peerStore: null,
+        friendStore: null
       };
-      const goBack = () => {
+    },
+    onLoad() {
+      const eventChannel = this.getOpenerEventChannel();
+      this.peerStore = usePeerStore();
+      this.friendStore = useFriendStore$1();
+      eventChannel.on("chatInfo", (data) => {
+        this.chatInfo = data.chatInfo;
+        formatAppLog("log", "at pages/message/chat.vue:118", "接收到的聊天信息:", this.chatInfo);
+        if (!this.chatInfo.missionId) {
+          const userStore = useUserStore();
+          this.chatInfo.missionId = userStore.missionId.toString();
+        } else if (Array.isArray(this.chatInfo.missionId)) {
+          this.chatInfo.missionId = this.chatInfo.missionId.join(",");
+        }
+        formatAppLog("log", "at pages/message/chat.vue:125", "使用的 missionId:", this.chatInfo.missionId);
+        this.initializeChat();
+      });
+    },
+    mounted() {
+      formatAppLog("log", "at pages/message/chat.vue:130", "聊天组件已挂载");
+      formatAppLog("log", "at pages/message/chat.vue:131", "peerStore 初始状态:", this.peerStore);
+    },
+    methods: {
+      // 初始化聊天
+      async initializeChat() {
+        await this.loadHistoryMessages();
+        this.$nextTick(this.scrollToBottom);
+      },
+      // 返回上一页
+      goBack() {
         uni.navigateBack({
           success: () => {
             uni.$emit("updateTabBarActiveTab", 1);
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/chat.vue:131", "返回失败:", err);
+            formatAppLog("error", "at pages/message/chat.vue:146", "返回失败:", err);
             uni.reLaunch({
               url: "/pages/tabBar/tabBar",
               success: () => {
@@ -24303,148 +24287,168 @@ ${i3}
             });
           }
         });
-      };
-      const sendMessage = async (message) => {
-        formatAppLog("log", "at pages/message/chat.vue:144", "[sendMessage] 发送消息:", message);
-        if (message.content && chatInfo.value.id) {
+      },
+      // 发送消息
+      async sendMessage(message) {
+        formatAppLog("log", "at pages/message/chat.vue:158", "[sendMessage] 发送消息:", message);
+        if (message.content && this.chatInfo.id) {
           try {
             const response = await sendMessageToUser({
               message: typeof message.content === "object" ? JSON.stringify(message.content) : message.content,
-              recipientId: chatInfo.value.id,
+              recipientId: this.chatInfo.id,
               messageType: message.type || "text",
-              missionId: chatInfo.value.missionId,
+              missionId: this.chatInfo.missionId,
               isPosition: message.type === "location"
             });
-            formatAppLog("log", "at pages/message/chat.vue:154", "[sendMessage] 发送消息响应:", response);
+            formatAppLog("log", "at pages/message/chat.vue:168", "[sendMessage] 发送消息响应:", response);
             if (response.code === 200) {
-              handleMessageSent(response.data);
-              await updateMessageList();
+              this.handleMessageSent(response.data);
+              await this.updateMessageList();
             } else {
               throw new Error(response.msg || "发送消息失败");
             }
           } catch (error) {
-            formatAppLog("error", "at pages/message/chat.vue:162", "[sendMessage] 发送消息失败:", error);
+            formatAppLog("error", "at pages/message/chat.vue:176", "[sendMessage] 发送消息失败:", error);
           }
         } else {
-          formatAppLog("error", "at pages/message/chat.vue:166", "[sendMessage] 消息内容为空或 recipientId 未设置", {
+          formatAppLog("error", "at pages/message/chat.vue:180", "[sendMessage] 消息内容为空或 recipientId 未设置", {
             content: message.content,
-            recipientId: chatInfo.value.id
+            recipientId: this.chatInfo.id
           });
         }
-      };
-      const handleMessageSent = (sentMessage) => {
-        formatAppLog("log", "at pages/message/chat.vue:175", "[handleMessageSent] 消息已发送:", sentMessage);
-      };
-      const handleMessageFailed = (failedMessage) => {
-        formatAppLog("log", "at pages/message/chat.vue:181", "[handleMessageFailed] 消息发送失败:", failedMessage);
-      };
-      const handleAttachment = (type, data) => {
-        formatAppLog("log", "at pages/message/chat.vue:187", "[handleAttachment] 处理附件:", type, data);
+      },
+      // 处理消息发送成功
+      handleMessageSent(sentMessage) {
+        formatAppLog("log", "at pages/message/chat.vue:188", "[handleMessageSent] 消息已发送:", sentMessage);
+      },
+      // 处理消息发送失败
+      handleMessageFailed(failedMessage) {
+        formatAppLog("log", "at pages/message/chat.vue:193", "[handleMessageFailed] 消息发送失败:", failedMessage);
+      },
+      // 处理附件
+      handleAttachment(type, data) {
+        formatAppLog("log", "at pages/message/chat.vue:198", "[handleAttachment] 处理附件:", type, data);
         if (type === "location") {
-          handleLocationMessage(data);
+          this.handleLocationMessage(data);
         } else {
           const handlers = {
-            album: chooseImage,
-            file: () => handleFileTransfer(data),
-            "burn-after-reading": () => handleBurnAfterReading(data)
+            album: this.chooseImage,
+            file: () => this.handleFileTransfer(data),
+            "burn-after-reading": () => this.handleBurnAfterReading(data)
           };
           if (handlers[type]) {
             handlers[type]();
           }
         }
-      };
-      const handleLocationMessage = (locationData) => {
-        formatAppLog("log", "at pages/message/chat.vue:204", "[handleLocationMessage] 处理位置消息:", locationData);
-        sendMessage({
+      },
+      // 处理位置消息
+      handleLocationMessage(locationData) {
+        formatAppLog("log", "at pages/message/chat.vue:214", "[handleLocationMessage] 处理位置消息:", locationData);
+        this.sendMessage({
           type: "location",
           content: locationData
         });
-      };
-      const viewBurnAfterReadingImage = (message) => {
-        currentBurnAfterReadingImage.value = message.content.originalPath;
-        currentBurnAfterReadingMessage.value = message;
-      };
-      const closeBurnAfterReadingPreview = () => {
-        currentBurnAfterReadingImage.value = "";
-        if (currentBurnAfterReadingMessage.value) {
-          const index = list.value.indexOf(currentBurnAfterReadingMessage.value);
+      },
+      // 查看阅后即焚图片
+      viewBurnAfterReadingImage(message) {
+        this.currentBurnAfterReadingImage = message.content.originalPath;
+        this.currentBurnAfterReadingMessage = message;
+        this.$nextTick(() => {
+          this.$refs.burnAfterReadingRef.open();
+        });
+      },
+      // 关闭阅后即焚预览
+      closeBurnAfterReadingPreview() {
+        this.currentBurnAfterReadingImage = "";
+        if (this.currentBurnAfterReadingMessage) {
+          const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
           if (index > -1) {
-            list.value.splice(index, 1);
+            this.list.splice(index, 1);
           }
-          currentBurnAfterReadingMessage.value = null;
+          this.currentBurnAfterReadingMessage = null;
         }
-        updateMessageList();
-      };
-      const toggleAttachMenu = (show) => {
-        showAttachMenu.value = show;
-        formatAppLog("log", "at pages/message/chat.vue:233", "附件菜单切换:", show);
-      };
-      const handleOverlayClick = () => {
-        showAttachMenu.value = false;
-        formatAppLog("log", "at pages/message/chat.vue:239", "附件菜单已关闭");
-      };
-      const scrollToBottom = () => {
-        isScrolledToBottom.value = true;
-        showScrollToBottom.value = false;
-        showNewMessageTip.value = false;
-        hasNewMessages.value = false;
-        formatAppLog("log", "at pages/message/chat.vue:248", "滚动到底部");
-        if (messageListRef.value) {
-          messageListRef.value.scrollToBottom();
-        }
-      };
-      const onScroll = (event) => {
+        this.updateMessageList();
+      },
+      // 切换附件菜单
+      toggleAttachMenu(show) {
+        this.showAttachMenu = show;
+        formatAppLog("log", "at pages/message/chat.vue:243", "附件菜单切换:", show);
+      },
+      // 处理遮罩层点击
+      handleOverlayClick() {
+        this.showAttachMenu = false;
+        formatAppLog("log", "at pages/message/chat.vue:248", "附件菜单已关闭");
+      },
+      // 滚动到底部
+      scrollToBottom() {
+        this.$nextTick(() => {
+          this.$refs.messageList.scrollToBottom();
+          this.showScrollToBottom = false;
+          this.showNewMessageTip = false;
+          this.hasNewMessages = false;
+          this.isScrolledToBottom = true;
+          formatAppLog("log", "at pages/message/chat.vue:258", "滚动到底部");
+        });
+      },
+      // 处理滚动事件
+      onScroll(event) {
         const { scrollTop, scrollHeight } = event.detail;
-        const isAtBottom = scrollHeight - (scrollTop + event.target.offsetHeight) < 10;
-        isScrolledToBottom.value = isAtBottom;
-        showScrollToBottom.value = !isAtBottom && hasNewMessages.value;
-        showNewMessageTip.value = !isAtBottom && hasNewMessages.value;
+        const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
+        this.isScrolledToBottom = isAtBottom;
+        this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
+        this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
         if (isAtBottom) {
-          hasNewMessages.value = false;
-          showNewMessageTip.value = false;
+          this.hasNewMessages = false;
+          this.showNewMessageTip = false;
         }
-      };
-      const loadMoreMessages = async () => {
-        formatAppLog("log", "at pages/message/chat.vue:270", "[loadMoreMessages] 开始加载更多消息");
-        if (hasMoreMessages.value && !isLoading.value) {
-          isLoading.value = true;
-          const oldContentHeight = await getContentHeight();
-          formatAppLog("log", "at pages/message/chat.vue:275", "[loadMoreMessages] 旧内容高度:", oldContentHeight);
-          currentFrom.value = currentTo.value + 1;
-          currentTo.value = currentTo.value + 10;
-          await loadHistoryMessages(true);
-          const newContentHeight = await getContentHeight();
-          formatAppLog("log", "at pages/message/chat.vue:282", "[loadMoreMessages] 新内容高度:", newContentHeight);
-          const heightDifference = newContentHeight - oldContentHeight;
-          formatAppLog("log", "at pages/message/chat.vue:285", "[loadMoreMessages] 高度差:", heightDifference);
-          setScrollTop(heightDifference);
-          isLoading.value = false;
-          formatAppLog("log", "at pages/message/chat.vue:290", "[loadMoreMessages] 加载完成");
+      },
+      // 加载更多消息
+      async loadMoreMessages() {
+        formatAppLog("log", "at pages/message/chat.vue:276", "[loadMoreMessages] 开始加载更多消息");
+        if (this.hasMoreMessages && !this.isLoading) {
+          this.isLoading = true;
+          const oldContentHeight = await this.$refs.messageList.getContentHeight();
+          formatAppLog("log", "at pages/message/chat.vue:281", "[loadMoreMessages] 旧内容高度:", oldContentHeight);
+          this.currentFrom = this.currentTo + 1;
+          this.currentTo = this.currentTo + 10;
+          await this.loadHistoryMessages(true);
+          this.$nextTick(async () => {
+            const newContentHeight = await this.$refs.messageList.getContentHeight();
+            formatAppLog("log", "at pages/message/chat.vue:289", "[loadMoreMessages] 新内容高度:", newContentHeight);
+            const heightDifference = newContentHeight - oldContentHeight;
+            formatAppLog("log", "at pages/message/chat.vue:292", "[loadMoreMessages] 高度差:", heightDifference);
+            this.$refs.messageList.setScrollTop(heightDifference);
+            this.isLoading = false;
+            formatAppLog("log", "at pages/message/chat.vue:297", "[loadMoreMessages] 加载完成");
+          });
         } else {
-          formatAppLog("log", "at pages/message/chat.vue:292", "[loadMoreMessages] 没有更多消息或正在加载中");
+          formatAppLog("log", "at pages/message/chat.vue:300", "[loadMoreMessages] 没有更多消息或正在加载中");
         }
-      };
-      const openVideoPage = (action) => {
+      },
+      // 打开视频通话页面
+      openVideoPage(action) {
         uni.navigateTo({
-          url: `/pages/message/video-call?calleePeerId=${chatInfo.value.id}`
+          url: `/pages/message/video-call?calleePeerId=${this.chatInfo.id}`
         });
-      };
-      const rejectVideoCall = () => {
-        formatAppLog("log", "at pages/message/chat.vue:305", "拒绝视频通话，peerStore 状态:", peerStore);
-        peerStore.dataConnection.send({
-          instruction: peerStore.instruction.reject
+      },
+      // 拒绝视频通话
+      rejectVideoCall() {
+        formatAppLog("log", "at pages/message/chat.vue:311", "拒绝视频通话，peerStore 状态:", this.peerStore);
+        this.peerStore.dataConnection.send({
+          instruction: this.peerStore.instruction.reject
         });
-        peerStore.dataConnection = void 0;
-        peerStore.activateNotification = false;
-      };
-      const acceptVideoCall = () => {
-        formatAppLog("log", "at pages/message/chat.vue:315", "接受视频通话，peerStore 状态:", peerStore);
-        peerStore.activateNotification = false;
+        this.peerStore.dataConnection = void 0;
+        this.peerStore.activateNotification = false;
+      },
+      // 接受视频通话
+      acceptVideoCall() {
+        formatAppLog("log", "at pages/message/chat.vue:320", "接受视频通话，peerStore 状态:", this.peerStore);
+        this.peerStore.activateNotification = false;
         uni.showLoading({
           title: "等待对方连接...",
           mask: true
         });
-        let cancel = vue.watch(() => peerStore.mediaConnection, (newValue) => {
+        let cancel = watch(() => this.peerStore.mediaConnection, (newValue) => {
           if (newValue) {
             uni.hideLoading();
             cancel();
@@ -24453,25 +24457,26 @@ ${i3}
             });
           }
         }, { immediate: true });
-        peerStore.dataConnection.send({
-          instruction: peerStore.instruction.accept
+        this.peerStore.dataConnection.send({
+          instruction: this.peerStore.instruction.accept
         });
-      };
-      const loadHistoryMessages = async (isLoadingMore = false) => {
-        formatAppLog("log", "at pages/message/chat.vue:340", "[loadHistoryMessages] 开始加载历史消息", {
+      },
+      // 加载历史消息
+      async loadHistoryMessages(isLoadingMore = false) {
+        formatAppLog("log", "at pages/message/chat.vue:344", "[loadHistoryMessages] 开始加载历史消息", {
           isLoadingMore,
-          from: currentFrom.value,
-          to: currentTo.value,
-          missionId: chatInfo.value.missionId
+          from: this.currentFrom,
+          to: this.currentTo,
+          missionId: this.chatInfo.missionId
         });
         try {
           const response = await getHistoryChatMessages({
-            opponentId: chatInfo.value.id,
-            from: currentFrom.value,
-            to: currentTo.value,
-            missionId: chatInfo.value.missionId
+            opponentId: this.chatInfo.id,
+            from: this.currentFrom,
+            to: this.currentTo,
+            missionId: this.chatInfo.missionId
           });
-          formatAppLog("log", "at pages/message/chat.vue:355", "[loadHistoryMessages] 历史消息响应:", response);
+          formatAppLog("log", "at pages/message/chat.vue:359", "[loadHistoryMessages] 历史消息响应:", response);
           if (response.code === 200 && Array.isArray(response.data)) {
             const newMessages = response.data.reverse().map((msg) => {
               let content = msg.message;
@@ -24481,63 +24486,67 @@ ${i3}
                   content = JSON.parse(msg.message);
                   type = "location";
                 } catch (e2) {
-                  formatAppLog("error", "at pages/message/chat.vue:367", "解析位置数据失败:", e2);
+                  formatAppLog("error", "at pages/message/chat.vue:371", "解析位置数据失败:", e2);
                 }
               } else if (type === "image") {
                 content = msg.previewUrl || msg.message;
               } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
                 type = "file";
+              } else if (type === "audio" || type === "voice_message") {
+                content = msg.previewUrl || msg.message;
               }
               return {
                 id: msg.id,
                 content,
-                previewUrl: msg.previewUrl,
-                userType: msg.senderId === chatInfo.value.id ? "other" : "self",
-                avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : "_selfAvatar",
+                userType: msg.senderId === this.chatInfo.id ? "other" : "self",
+                avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
                 timestamp: new Date(msg.sendTime),
                 type,
                 isRead: msg.isRead,
                 messageType: msg.messageType
               };
             });
-            formatAppLog("log", "at pages/message/chat.vue:388", "[loadHistoryMessages] 新消息数量:", newMessages.length);
+            formatAppLog("log", "at pages/message/chat.vue:394", "[loadHistoryMessages] 新消息数量:", newMessages.length);
             if (isLoadingMore) {
-              list.value = [...newMessages, ...list.value];
-              formatAppLog("log", "at pages/message/chat.vue:392", "[loadHistoryMessages] 在列表前端添加新消息");
+              this.list = [...newMessages, ...this.list];
+              formatAppLog("log", "at pages/message/chat.vue:398", "[loadHistoryMessages] 在列表前端添加新消息");
             } else {
-              list.value = newMessages;
-              formatAppLog("log", "at pages/message/chat.vue:395", "[loadHistoryMessages] 替换整个消息列表");
+              this.list = newMessages;
+              formatAppLog("log", "at pages/message/chat.vue:401", "[loadHistoryMessages] 替换整个消息列表");
             }
-            hasMoreMessages.value = newMessages.length === currentTo.value - currentFrom.value + 1;
-            formatAppLog("log", "at pages/message/chat.vue:400", "[loadHistoryMessages] 更新后的消息列表长度:", list.value.length);
-            formatAppLog("log", "at pages/message/chat.vue:401", "[loadHistoryMessages] 是否有更多消息:", hasMoreMessages.value);
-            if (!isLoadingMore) {
-              formatAppLog("log", "at pages/message/chat.vue:404", "[loadHistoryMessages] 加载初始消息后滚动到底部");
-              scrollToBottom();
-            }
+            this.hasMoreMessages = newMessages.length === this.currentTo - this.currentFrom + 1;
+            formatAppLog("log", "at pages/message/chat.vue:406", "[loadHistoryMessages] 更新后的消息列表长度:", this.list.length);
+            formatAppLog("log", "at pages/message/chat.vue:407", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
+            this.$nextTick(() => {
+              if (!isLoadingMore) {
+                formatAppLog("log", "at pages/message/chat.vue:411", "[loadHistoryMessages] 加载初始消息后滚动到底部");
+                this.scrollToBottom();
+              }
+            });
           } else {
-            formatAppLog("error", "at pages/message/chat.vue:408", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+            formatAppLog("error", "at pages/message/chat.vue:416", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
             uni.showToast({
               title: "加载历史消息失败",
               icon: "none"
             });
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:415", "[loadHistoryMessages] 加载历史消息出错:", error);
+          formatAppLog("error", "at pages/message/chat.vue:423", "[loadHistoryMessages] 加载历史消息出错:", error);
           uni.showToast({
             title: "网络错误，请稍后重试",
             icon: "none"
           });
         }
-      };
-      const updateMessageList = async () => {
-        formatAppLog("log", "at pages/message/chat.vue:425", "[updateMessageList] 开始更新消息列表");
+      },
+      // 更新消息列表
+      async updateMessageList() {
+        formatAppLog("log", "at pages/message/chat.vue:432", "[updateMessageList] 开始更新消息列表");
         try {
           const response = await getHistoryChatMessages({
-            opponentId: chatInfo.value.id,
+            opponentId: this.chatInfo.id,
             from: 0,
             to: 10,
-            missionId: chatInfo.value.missionId
+            missionId: this.chatInfo.missionId
           });
           if (response.code === 200 && Array.isArray(response.data)) {
             const newMessages = response.data.reverse().map((msg) => {
@@ -24548,37 +24557,57 @@ ${i3}
                   content = JSON.parse(msg.message);
                   type = "location";
                 } catch (e2) {
-                  formatAppLog("error", "at pages/message/chat.vue:444", "解析位置数据失败:", e2);
+                  formatAppLog("error", "at pages/message/chat.vue:451", "解析位置数据失败:", e2);
                 }
               } else if (type === "image") {
                 content = msg.previewUrl || msg.message;
               } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
                 type = "file";
+              } else if (type === "audio" || type === "voice_message") {
+                content = msg.previewUrl || msg.message;
               }
               return {
                 id: msg.id,
                 content,
-                previewUrl: msg.previewUrl,
-                userType: msg.senderId === chatInfo.value.id ? "other" : "self",
-                avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : "_selfAvatar",
+                userType: msg.senderId === this.chatInfo.id ? "other" : "self",
+                avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
                 timestamp: new Date(msg.sendTime),
                 type,
                 isRead: msg.isRead,
                 messageType: msg.messageType
               };
             });
-            list.value = newMessages;
-            formatAppLog("log", "at pages/message/chat.vue:468", "[updateMessageList] 消息列表已更新，新长度:", list.value.length);
-            scrollToBottom();
+            this.list = newMessages;
+            formatAppLog("log", "at pages/message/chat.vue:477", "[updateMessageList] 消息列表已更新，新长度:", this.list.length);
+            this.$nextTick(() => {
+              this.scrollToBottom();
+            });
           } else {
-            formatAppLog("error", "at pages/message/chat.vue:472", "[updateMessageList] 获取新消息失败:", response.msg);
+            formatAppLog("error", "at pages/message/chat.vue:483", "[updateMessageList] 获取新消息失败:", response.msg);
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:475", "[updateMessageList] 更新消息列表出错:", error);
+          formatAppLog("error", "at pages/message/chat.vue:486", "[updateMessageList] 更新消息列表出错:", error);
         }
-      };
-      const handleFileSelected = async (fileInfo) => {
-        formatAppLog("log", "at pages/message/chat.vue:481", "文件被选择:", fileInfo);
+      },
+      // 处理文件选择
+      async handleFileSelected(fileInfo) {
+        formatAppLog("log", "at pages/message/chat.vue:491", "文件被选择，完整的 fileInfo:", JSON.stringify(fileInfo));
+        if (!fileInfo || typeof fileInfo !== "object") {
+          formatAppLog("error", "at pages/message/chat.vue:494", "文件信息无效:", fileInfo);
+          uni.showToast({
+            title: "文件信息无效，请重试",
+            icon: "none"
+          });
+          return;
+        }
+        if (!fileInfo.path) {
+          formatAppLog("error", "at pages/message/chat.vue:503", "文件路径缺失:", fileInfo);
+          uni.showToast({
+            title: "文件路径缺失，请重试",
+            icon: "none"
+          });
+          return;
+        }
         try {
           const response = await sendFilesToUser({
             files: [fileInfo.path],
@@ -24586,82 +24615,29 @@ ${i3}
             isSelfDestruct: false,
             latitude: "0",
             longitude: "0",
-            missionId: chatInfo.value.missionId,
-            receptionId: chatInfo.value.id
+            missionId: this.chatInfo.missionId,
+            receptionId: this.chatInfo.id,
+            voiceMessage: fileInfo.fromVoiceInput || false
           });
-          formatAppLog("log", "at pages/message/chat.vue:493", "文件上传响应:", response);
+          formatAppLog("log", "at pages/message/chat.vue:523", "文件上传响应:", response);
           if (response.code === 200) {
-            await updateMessageList();
+            await this.updateMessageList();
           } else {
             throw new Error(response.msg || "发送文件消息失败");
           }
         } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:501", "发送文件消息出错:", error);
+          formatAppLog("error", "at pages/message/chat.vue:531", "发送文件消息出错:", error);
           uni.showToast({
             title: "发送失败，请重试",
             icon: "none"
           });
         }
-      };
-      const getChatInfoFromUrl = () => {
-        const pages2 = getCurrentPages();
-        const currentPage = pages2[pages2.length - 1];
-        const options = currentPage.options || {};
-        formatAppLog("log", "at pages/message/chat.vue:515", "从 URL 获取的参数:", options);
-        chatInfo.value = {
-          id: options.id || "",
-          name: decodeURIComponent(options.name || ""),
-          avatar: options.avatar ? [decodeURIComponent(options.avatar)] : [],
-          type: options.type || "single",
-          missionId: options.missionId || ""
-        };
-        formatAppLog("log", "at pages/message/chat.vue:525", "解析后的聊天信息:", chatInfo.value);
-        if (!chatInfo.value.missionId) {
-          const userStore = useUserStore();
-          chatInfo.value.missionId = userStore.missionId.toString();
-        } else if (Array.isArray(chatInfo.value.missionId)) {
-          chatInfo.value.missionId = chatInfo.value.missionId.join(",");
-        }
-        formatAppLog("log", "at pages/message/chat.vue:534", "使用的 missionId:", chatInfo.value.missionId);
-      };
-      vue.onMounted(() => {
-        getChatInfoFromUrl();
-        initializeChat();
-        formatAppLog("log", "at pages/message/chat.vue:541", "聊天组件已挂载");
-        formatAppLog("log", "at pages/message/chat.vue:542", "peerStore 初始状态:", peerStore);
-      });
-      return {
-        chatInfo,
-        list,
-        showAttachMenu,
-        burnAfterReadingDuration,
-        currentBurnAfterReadingImage,
-        showScrollToBottom,
-        showNewMessageTip,
-        peerStore,
-        messageListRef,
-        goBack,
-        sendMessage,
-        handleMessageFailed,
-        handleAttachment,
-        viewBurnAfterReadingImage,
-        closeBurnAfterReadingPreview,
-        toggleAttachMenu,
-        handleOverlayClick,
-        scrollToBottom,
-        onScroll,
-        loadMoreMessages,
-        openVideoPage,
-        rejectVideoCall,
-        acceptVideoCall,
-        handleFileSelected
-      };
+      }
     }
   };
   function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     var _a;
     const _component_ChatHeader = vue.resolveComponent("ChatHeader");
-    const _component_AudioMessage = vue.resolveComponent("AudioMessage");
     const _component_MessageList = vue.resolveComponent("MessageList");
     const _component_ChatInputArea = vue.resolveComponent("ChatInputArea");
     const _component_BurnAfterReading = vue.resolveComponent("BurnAfterReading");
@@ -24669,61 +24645,51 @@ ${i3}
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-page" }, [
       vue.createCommentVNode(" 聊天头部 "),
       vue.createVNode(_component_ChatHeader, {
-        "chat-info": $setup.chatInfo,
-        onGoBack: $setup.goBack
+        "chat-info": $data.chatInfo,
+        onGoBack: $options.goBack
       }, null, 8, ["chat-info", "onGoBack"]),
       vue.createCommentVNode(" 消息列表 "),
       vue.createVNode(_component_MessageList, {
         ref: "messageList",
-        messages: $setup.list,
-        onLoadMore: $setup.loadMoreMessages,
-        onScroll: $setup.onScroll,
-        onViewBurnAfterReading: $setup.viewBurnAfterReadingImage
-      }, {
-        "audio-message": vue.withCtx(({ message }) => [
-          vue.createVNode(_component_AudioMessage, {
-            content: message.content,
-            previewUrl: message.previewUrl,
-            messageType: message.messageType
-          }, null, 8, ["content", "previewUrl", "messageType"])
-        ]),
-        _: 1
-        /* STABLE */
-      }, 8, ["messages", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
+        messages: $data.list,
+        onLoadMore: $options.loadMoreMessages,
+        onScroll: $options.onScroll,
+        onViewBurnAfterReading: $options.viewBurnAfterReadingImage
+      }, null, 8, ["messages", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
       vue.createCommentVNode(" 聊天输入区域 "),
       vue.createVNode(_component_ChatInputArea, {
-        onSendMessage: $setup.sendMessage,
-        onMessageFailed: $setup.handleMessageFailed,
-        onAttach: $setup.handleAttachment,
-        onVideoCall: $setup.openVideoPage,
-        onToggleAttachMenu: $setup.toggleAttachMenu,
-        onFileSelected: $setup.handleFileSelected,
-        "show-attach-menu": $setup.showAttachMenu,
-        recipientId: $setup.chatInfo.id,
-        missionId: $setup.chatInfo.missionId.toString(),
+        onSendMessage: $options.sendMessage,
+        onMessageFailed: $options.handleMessageFailed,
+        onAttach: $options.handleAttachment,
+        onVideoCall: $options.openVideoPage,
+        onToggleAttachMenu: $options.toggleAttachMenu,
+        onFileSelected: $options.handleFileSelected,
+        "show-attach-menu": $data.showAttachMenu,
+        recipientId: $data.chatInfo.id,
+        missionId: $data.chatInfo.missionId.toString(),
         ref: "chatInputAreaRef"
       }, null, 8, ["onSendMessage", "onMessageFailed", "onAttach", "onVideoCall", "onToggleAttachMenu", "onFileSelected", "show-attach-menu", "recipientId", "missionId"]),
       vue.createCommentVNode(" 阅后即焚组件 "),
-      $setup.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
+      $data.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
         key: 0,
-        imageSrc: $setup.currentBurnAfterReadingImage,
-        duration: $setup.burnAfterReadingDuration,
-        onClose: $setup.closeBurnAfterReadingPreview,
+        imageSrc: $data.currentBurnAfterReadingImage,
+        duration: $data.burnAfterReadingDuration,
+        onClose: $options.closeBurnAfterReadingPreview,
         ref: "burnAfterReadingRef"
       }, null, 8, ["imageSrc", "duration", "onClose"])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 滚动到底部按钮 "),
       vue.createVNode(_component_ScrollToBottomButton, {
-        show: $setup.showScrollToBottom,
-        onClick: vue.withModifiers($setup.scrollToBottom, ["stop"])
+        show: $data.showScrollToBottom,
+        onClick: vue.withModifiers($options.scrollToBottom, ["stop"])
       }, null, 8, ["show", "onClick"]),
       vue.createCommentVNode(" 新消息提示 "),
-      $setup.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
+      $data.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
         class: "new-message-tip",
-        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $setup.scrollToBottom && $setup.scrollToBottom(...args), ["stop"]))
+        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.scrollToBottom && $options.scrollToBottom(...args), ["stop"]))
       }, " 新消息 ")) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 来电提醒 "),
-      $setup.peerStore.activateNotification ? (vue.openBlock(), vue.createElementBlock("view", {
+      $data.peerStore.activateNotification ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 2,
         class: "modal"
       }, [
@@ -24731,27 +24697,27 @@ ${i3}
           vue.createElementVNode(
             "text",
             null,
-            vue.toDisplayString((_a = $setup.peerStore.dataConnection) == null ? void 0 : _a.peer) + " 邀请你视频通话",
+            vue.toDisplayString((_a = $data.peerStore.dataConnection) == null ? void 0 : _a.peer) + " 邀请你视频通话",
             1
             /* TEXT */
           )
         ]),
         vue.createElementVNode("view", { class: "modal-content" }, [
           vue.createElementVNode("button", {
-            onClick: _cache[1] || (_cache[1] = (...args) => $setup.acceptVideoCall && $setup.acceptVideoCall(...args)),
+            onClick: _cache[1] || (_cache[1] = (...args) => $options.acceptVideoCall && $options.acceptVideoCall(...args)),
             type: "default"
           }, "接听"),
           vue.createElementVNode("button", {
-            onClick: _cache[2] || (_cache[2] = (...args) => $setup.rejectVideoCall && $setup.rejectVideoCall(...args)),
+            onClick: _cache[2] || (_cache[2] = (...args) => $options.rejectVideoCall && $options.rejectVideoCall(...args)),
             type: "warn"
           }, "拒绝")
         ])
       ])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 附件菜单遮罩层 "),
-      $setup.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
+      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
         key: 3,
         class: "overlay",
-        onClick: _cache[3] || (_cache[3] = (...args) => $setup.handleOverlayClick && $setup.handleOverlayClick(...args))
+        onClick: _cache[3] || (_cache[3] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }

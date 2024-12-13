@@ -9,7 +9,7 @@
       />
       
       <!-- 语音录音按钮 -->
-      <voice-record-button
+      <voice-input-button
         v-if="isVoiceInputActive"
         :is-recording="isRecording"
         :voice-status="voiceStatus"
@@ -58,11 +58,11 @@
 </template>
 
 <script>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
 import LocationSharing from './ChatInputAreaComponent/LocationSharing.vue'
 import ToggleVoiceButton from './ChatInputAreaComponent/ToggleVoiceButton.vue'
-import VoiceRecordButton from './ChatInputAreaComponent/VoiceRecordButton.vue'
+import VoiceInputButton from './ChatInputAreaComponent/VoiceInputButton.vue'
 import TextInput from './ChatInputAreaComponent/TextInput.vue'
 import AttachButton from './ChatInputAreaComponent/AttachButton.vue'
 import SendButton from './ChatInputAreaComponent/SendButton.vue'
@@ -76,7 +76,7 @@ export default {
     AttachmentMenu,
     LocationSharing,
     ToggleVoiceButton,
-    VoiceRecordButton,
+    VoiceInputButton,
     TextInput,
     AttachButton,
     SendButton
@@ -102,6 +102,27 @@ export default {
     const showLocationSharing = ref(false)
     const isVoiceInputActive = ref(false)
 
+    // 处理语音文件选择
+    const handleVoiceFileSelected = (fileInfo) => {
+      console.log('useVoiceInput 回调被触发，完整的文件信息:', JSON.stringify(fileInfo))
+      
+      if (fileInfo && typeof fileInfo === 'object' && fileInfo.fromVoiceInput) {
+        if (!fileInfo.path) {
+          console.error('语音文件路径缺失:', fileInfo)
+          uni.showToast({
+            title: '语音文件保存失败，请重试',
+            icon: 'none'
+          })
+          return
+        }
+        
+        emit('file-selected', fileInfo)
+      } else {
+        console.error('无效的文件信息:', fileInfo)
+      }
+    }
+
+    // 使用语音输入钩子
     const { 
       isRecording, 
       recordAuth, 
@@ -109,8 +130,9 @@ export default {
       voiceStatus,
       startVoiceRecord, 
       stopVoiceRecord
-    } = useVoiceInput(emit)
+    } = useVoiceInput(handleVoiceFileSelected)
     
+    // 使用附件处理钩子
     const { 
       attachItem, 
       handleFileSelected, 
@@ -120,26 +142,32 @@ export default {
       showLocationSharing: locationSharingState
     } = useAttachmentHandling(emit, props)
 
+    // 使用消息发送钩子
     const { sendMessage } = useMessageSending(newMessage, emit, props)
 
+    // 切换语音输入模式
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
     }
 
+    // 切换附件菜单
     const toggleAttachMenu = () => {
       emit('toggle-attach-menu', !props.showAttachMenu)
     }
 
+    // 关闭附件菜单
     const closeAttachMenu = () => {
       emit('toggle-attach-menu', false)
     }
 
+    // 监听接收者ID的变化
     watch(() => props.recipientId, (newVal) => {
       if (!newVal) {
         showLocationSharing.value = false
       }
     })
 
+    // 监听位置共享状态的变化
     watch(locationSharingState, (newVal) => {
       showLocationSharing.value = newVal
     })
@@ -199,4 +227,4 @@ export default {
   flex: 1;
   margin: 0 10px;
 }
-</style>
+</style> 

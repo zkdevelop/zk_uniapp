@@ -1,13 +1,17 @@
+// useVoiceInput.js
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 
+// 音频录制结束后的处理函数
 export function afterAudioRecord() {
     getApp().globalData.audioRecording = false
 }
 
+// 音频播放结束后的处理函数
 export function afterAudioPlay() {
     getApp().globalData.audioPlaying = false
 }
 
+// 在音频录制或播放前的检查函数
 export function beforeAudioRecordOrPlay(type) {
     const audioPlaying = getApp().globalData.audioPlaying
     const audioRecording = getApp().globalData.audioRecording
@@ -29,7 +33,8 @@ export function beforeAudioRecordOrPlay(type) {
     }
 }
 
-export default function useVoiceInput(emit) {
+// 语音输入钩子函数
+export default function useVoiceInput(onFileSelected) {
   const isRecording = ref(false)
   const recordAuth = ref(false)
   const duration = ref(600000) // 最大录音时长，10分钟
@@ -60,6 +65,7 @@ export default function useVoiceInput(emit) {
     stopTimer()
   })
 
+  // 初始化录音管理器
   function initRecorderManager() {
     if (typeof uni !== 'undefined' && uni.getRecorderManager) {
       recorderManager = uni.getRecorderManager()
@@ -71,18 +77,19 @@ export default function useVoiceInput(emit) {
         recorderManager.onInterruptionEnd((e) => onInterruptionEnd(e))
         recorderManager.onError((e) => onError(e))
         recorderManager.onStop((e) => onStop(e))
-        console.log('RecorderManager initialized successfully')
+        console.log('录音管理器初始化成功')
       } else {
-        console.error('Failed to get RecorderManager instance')
+        console.error('获取录音管理器实例失败')
       }
     } else {
-      console.error('RecorderManager is not available on this platform')
+      console.error('当前平台不支持录音管理器')
     }
   }
 
+  // 开始录音
   function startVoiceRecord() {
     if (!recorderManager) {
-      console.error('RecorderManager is not initialized')
+      console.error('录音管理器未初始化')
       uni.showToast({
         title: '录音功能初始化失败',
         icon: 'none'
@@ -91,7 +98,7 @@ export default function useVoiceInput(emit) {
     }
 
     if (recordImg.value === '/static/images/icon_record.png' && beforeAudioRecordOrPlay('record')) {
-      // Reset timer and status before starting
+      // 重置计时器和状态
       resetTimer()
       recorderManager.start({
         duration: duration.value,
@@ -103,9 +110,10 @@ export default function useVoiceInput(emit) {
     }
   }
 
+  // 停止录音
   function stopVoiceRecord() {
     if (!recorderManager) {
-      console.error('RecorderManager is not initialized')
+      console.error('录音管理器未初始化')
       return
     }
 
@@ -113,6 +121,7 @@ export default function useVoiceInput(emit) {
     afterAudioRecord()
   }
 
+  // 录音开始回调
   function onStart(e) {
     console.log('开始录音', e)
     recordImg.value = '/static/images/icon_recording.png'
@@ -121,17 +130,20 @@ export default function useVoiceInput(emit) {
     startTimer()
   }
 
+  // 录音暂停回调
   function onPause(e) {
     console.log('录音暂停', e)
     afterAudioRecord()
     stopTimer()
   }
 
+  // 录音恢复回调
   function onResume(e) {
     console.log('录音恢复', e)
     startTimer()
   }
 
+  // 录音结束回调
   function onStop(e) {
     console.log('录音结束', e)
     recordImg.value = '/static/images/icon_record.png'
@@ -145,16 +157,19 @@ export default function useVoiceInput(emit) {
     uploadMp3Action(e)
   }
 
+  // 录音被中断开始回调
   function onInterruptionBegin(e) {
     console.log('录音因为受到系统占用而被中断', e)
     stopTimer()
   }
 
+  // 录音中断结束回调
   function onInterruptionEnd(e) {
     console.log('录音中断结束', e)
     startTimer()
   }
 
+  // 录音错误回调
   function onError(e) {
     console.log('录音错误', e)
     uni.showToast({
@@ -165,6 +180,7 @@ export default function useVoiceInput(emit) {
     resetTimer()
   }
 
+  // 开始计时器
   function startTimer() {
     if (!timer) {
       timer = setInterval(() => {
@@ -174,6 +190,7 @@ export default function useVoiceInput(emit) {
     }
   }
 
+  // 停止计时器
   function stopTimer() {
     if (timer) {
       clearInterval(timer)
@@ -181,20 +198,36 @@ export default function useVoiceInput(emit) {
     }
   }
 
+  // 重置计时器
   function resetTimer() {
     stopTimer()
     time.value = 0
     voiceStatus.duration = 0
   }
 
+  // 上传MP3文件
   function uploadMp3Action(e) {
-    console.log('Uploading MP3', e)
-    emit('file-selected', {
+    console.log('上传MP3，完整的事件对象:', JSON.stringify(e))
+    
+    if (!e || !e.tempFilePath) {
+      console.error('录音文件路径缺失:', e)
+      uni.showToast({
+        title: '录音文件保存失败，请重试',
+        icon: 'none'
+      })
+      return
+    }
+
+    const fileInfo = {
       type: 'voice',
       path: e.tempFilePath,
       duration: time.value,
-      size: e.fileSize
-    })
+      size: e.fileSize,
+      fromVoiceInput: true
+    }
+    
+    console.log('准备发送的文件信息:', JSON.stringify(fileInfo))
+    onFileSelected(fileInfo)
   }
 
   return {

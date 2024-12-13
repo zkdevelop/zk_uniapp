@@ -144,91 +144,80 @@
 }
 /* 水平间距 */
 /* 水平间距 */
-.audio-message[data-v-3578ca20] {
-  width: 100%;
-  position: relative;
-}
-.player-container[data-v-3578ca20] {
-  background-color: #ffffff;
-  border-radius: 24px;
-  padding: 8px 16px;
+.voice-message-bubble[data-v-021f7c82] {
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 1.125rem;
+  background-color: #f5f5f5;
+  min-width: 3.75rem;
+  max-width: 9.375rem;
 }
-.play-pause-button[data-v-3578ca20] {
-  width: 32px;
-  height: 32px;
+.voice-message-bubble.friend[data-v-021f7c82] {
+  background-color: #f5f5f5;
+}
+.voice-message-bubble.friend .audio-icon[data-v-021f7c82] {
+  margin-right: 0.5rem;
+}
+.voice-message-bubble.friend .speaker-waves[data-v-021f7c82] {
+  flex-direction: row;
+}
+.voice-message-bubble.self[data-v-021f7c82] {
+  background-color: #4e8cff;
+  flex-direction: row-reverse;
+}
+.voice-message-bubble.self .audio-icon[data-v-021f7c82] {
+  margin-left: 0.5rem;
+}
+.voice-message-bubble.self .duration[data-v-021f7c82] {
+  color: #ffffff;
+}
+.audio-icon[data-v-021f7c82] {
+  width: 1rem;
+  height: 1rem;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  cursor: pointer;
+  opacity: 0.6;
 }
-.play-icon[data-v-3578ca20], .pause-icon[data-v-3578ca20] {
-  width: 20px;
-  height: 20px;
-  color: #333333;
-}
-.time-progress[data-v-3578ca20] {
-  flex: 1;
-  min-width: 0;
-}
-.time-display[data-v-3578ca20] {
+.speaker-waves[data-v-021f7c82] {
   display: flex;
-  gap: 4px;
-  font-size: 12px;
-  color: #666666;
-  margin-bottom: 4px;
-}
-.duration-separator[data-v-3578ca20] {
-  color: #999999;
-}
-.progress-bar[data-v-3578ca20] {
-  height: 4px;
-  background-color: #E5E7EB;
-  border-radius: 2px;
-  overflow: hidden;
-  cursor: pointer;
-}
-.progress[data-v-3578ca20] {
+  align-items: center;
   height: 100%;
-  background-color: #007AFF;
-  transition: width 0.1s linear;
+  gap: 0.125rem;
 }
-.controls[data-v-3578ca20] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.wave[data-v-021f7c82] {
+  width: 0.09375rem;
+  height: 0.1875rem;
+  background-color: #666;
+  border-radius: 0.04688rem;
 }
-.volume-control[data-v-3578ca20] {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+.self .wave[data-v-021f7c82] {
+  background-color: #ffffff;
 }
-.volume-icon[data-v-3578ca20] {
-  width: 20px;
-  height: 20px;
+.playing .wave[data-v-021f7c82] {
+  animation: waveAnimation-021f7c82 1s ease infinite;
+}
+.playing .wave[data-v-021f7c82]:nth-child(2) {
+  animation-delay: 0.2s;
+  height: 0.375rem;
+}
+.playing .wave[data-v-021f7c82]:nth-child(3) {
+  animation-delay: 0.4s;
+  height: 0.5rem;
+}
+@keyframes waveAnimation-021f7c82 {
+0%, 100% {
+    transform: scaleY(1);
+}
+50% {
+    transform: scaleY(1.5);
+}
+}
+.duration[data-v-021f7c82] {
+  font-size: 0.875rem;
   color: #666666;
-}
-.loading-icon[data-v-3578ca20] {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #3498db;
-  border-radius: 50%;
-  animation: spin-3578ca20 1s linear infinite;
-}
-@keyframes spin-3578ca20 {
-0% {
-    transform: rotate(0deg);
-}
-100% {
-    transform: rotate(360deg);
-}
+  font-weight: normal;
 }
 /* 水平间距 */
 /* 水平间距 */
@@ -288,7 +277,7 @@
   word-break: break-all;
   white-space: normal;
 }
-.message .content[data-v-1cea873d]:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
+.message .content[data-v-1cea873d]:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
   padding: 0.625rem;
   background: #fff;
 }
@@ -303,7 +292,7 @@
   margin-right: 0;
   margin-left: 0.625rem;
 }
-.message.self .content[data-v-1cea873d]:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
+.message.self .content[data-v-1cea873d]:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
   background: #4e8cff;
   color: #fff;
 }
@@ -313,7 +302,7 @@
 .message.friend .message-content[data-v-1cea873d] {
   flex-direction: row;
 }
-.message.friend .content[data-v-1cea873d]:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
+.message.friend .content[data-v-1cea873d]:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -368,7 +357,7 @@
   padding: 0 !important;
   overflow: hidden;
 }
-.audio-message[data-v-1cea873d] {
+.voice-message[data-v-1cea873d] {
   background: transparent !important;
   padding: 0 !important;
   overflow: hidden;
@@ -560,13 +549,13 @@
 }
 /* 水平间距 */
 /* 水平间距 */
-.voice-record-container[data-v-e82c7418] {
+.voice-record-container[data-v-595166a0] {
   position: relative;
   display: flex;
   align-items: center;
   flex: 1;
 }
-.record-button[data-v-e82c7418] {
+.record-button[data-v-595166a0] {
   flex: 1;
   height: 36px;
   background-color: #FFFFFF;
@@ -577,13 +566,13 @@
   justify-content: center;
   padding: 0 15px;
 }
-.record-text[data-v-e82c7418] {
+.record-text[data-v-595166a0] {
   color: #999;
   font-size: 14px;
   width: 100%;
   text-align: center;
 }
-.voice-overlay[data-v-e82c7418] {
+.voice-overlay[data-v-595166a0] {
   position: fixed;
   top: 0;
   left: 0;
@@ -595,7 +584,7 @@
   align-items: center;
   justify-content: center;
 }
-.voice-popup[data-v-e82c7418] {
+.voice-popup[data-v-595166a0] {
   width: 7.5rem;
   height: 7.5rem;
   background: rgba(255, 255, 255, 0.9);
@@ -605,12 +594,12 @@
   align-items: center;
   justify-content: center;
 }
-.voice-popup .voice-time[data-v-e82c7418] {
+.voice-popup .voice-time[data-v-595166a0] {
   font-size: 1rem;
   color: #333;
   margin-bottom: 0.5rem;
 }
-.voice-popup .voice-hint[data-v-e82c7418] {
+.voice-popup .voice-hint[data-v-595166a0] {
   font-size: 0.875rem;
   color: #666;
 }
@@ -622,8 +611,11 @@
   border-radius: 18px;
   padding: 0 15px;
   font-size: 14px;
-  margin-left: 10px;
-  margin-right:10px
+  border: 1px solid #e0e0e0;
+  outline: none;
+}
+.text-input[data-v-c73de84a]:focus {
+  border-color: #007AFF;
 }
 
 

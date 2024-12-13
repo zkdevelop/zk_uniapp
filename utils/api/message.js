@@ -53,7 +53,8 @@ export const sendFilesToUser = (data) => {
         latitude: data.latitude,
         longitude: data.longitude,
         missionId: data.missionId,
-        receptionId: data.receptionId
+        receptionId: data.receptionId,
+        voiceMessage: data.voiceMessage !== undefined ? data.voiceMessage : false
       },
       success: (uploadFileRes) => {
         console.log('服务器原始响应:', uploadFileRes);

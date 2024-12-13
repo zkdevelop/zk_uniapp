@@ -1,15 +1,28 @@
-<template>
+<!-- Message.vue -->
+<template> 
   <view class="message" :class="[message.userType]">
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <view class="content" :class="{ 'location-content': message.type === 'location', 'file-message': message.type === 'file', 'message-image': message.type === 'image', 'audio-message': message.type === 'audio' }">
+        <view class="content" :class="{ 
+          'location-content': message.type === 'location', 
+          'file-message': message.type === 'file', 
+          'message-image': message.type === 'image', 
+          'voice-message': message.type === 'voice_message' 
+        }">
           <LocationMessage v-if="message.type === 'location'" :content="message.content" />
           <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
           <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
-          <AudioMessage v-else-if="message.type === 'audio'" :content="message.content" :messageType="message.messageType" />
+          <VoiceMessageBubble 
+            v-else-if="message.type === 'voice_message'" 
+            :content="{ 
+              url: message.content, 
+              duration: message.duration, 
+              isSelf: message.userType === 'self' 
+            }" 
+          />
           <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
           <template v-else>
             {{ message.content }}
@@ -29,7 +42,7 @@ import { ref } from 'vue';
 import LocationMessage from './MessageComponent/LocationMessage.vue';
 import ImageMessage from './MessageComponent/ImageMessage.vue';
 import FileMessage from './MessageComponent/FileMessage.vue';
-import AudioMessage from './MessageComponent/AudioMessage.vue';
+import VoiceMessageBubble from './MessageComponent/VoiceMessageBubble.vue';
 import BurnAfterReadingMessage from './MessageComponent/BurnAfterReadingMessage.vue';
 
 export default {
@@ -38,7 +51,7 @@ export default {
     LocationMessage,
     ImageMessage,
     FileMessage,
-    AudioMessage,
+    VoiceMessageBubble,
     BurnAfterReadingMessage
   },
   props: {
@@ -48,6 +61,7 @@ export default {
     }
   },
   setup() {
+    // 格式化时间显示
     const formatTime = (timestamp) => {
       if (!timestamp) return 'Invalid Date';
       const date = new Date(timestamp);
@@ -58,6 +72,7 @@ export default {
       return `${month}-${day} ${hours}:${minutes}`;
     };
 
+    // 查看阅后即焚消息
     const viewBurnAfterReading = (message) => {
       // 实现查看阅后即焚消息的逻辑
       console.log('查看阅后即焚消息:', message);
@@ -112,7 +127,7 @@ export default {
     white-space: normal;
   }
 
-  .content:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
+  .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
     padding: 20rpx;
     background: #fff;
   }
@@ -130,7 +145,7 @@ export default {
       margin-left: 20rpx;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
       background: #4e8cff;
       color: #fff;
     }
@@ -143,7 +158,7 @@ export default {
       flex-direction: row;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image):not(.audio-message) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -204,7 +219,7 @@ export default {
   overflow: hidden;
 }
 
-.audio-message {
+.voice-message {
   background: transparent !important;
   padding: 0 !important;
   overflow: hidden;
