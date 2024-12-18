@@ -39,7 +39,7 @@ const backToFirstPage = () => {
 }
 
 const goToTask = () => {
-  uni.redirectTo({
+  uni.reLaunch({
     url: '/pages/tabBar/tabBar'
   })
 }

@@ -1,7 +1,9 @@
 <template>
   <view class="contact-detail">
-    <!-- 头部 -->
-    <view class="header">
+	<view>
+		<uni-nav-bar :fixed="true" status-bar left-icon="arrow-left" rightIcon="more-filled" @clickLeft="handleClose" @clickRight="" title="通讯录" />
+	</view>
+    <!-- <view class="header">
       <view class="back-button" @click="handleClose">
         <text class="icon">←</text>
       </view>
@@ -9,7 +11,7 @@
       <view class="more-options">
         <text class="icon">⋯</text>
       </view>
-    </view>
+    </view> -->
 
     <!-- 内容区域 -->
     <scroll-view class="content" scroll-y>
@@ -185,30 +187,9 @@ export default {
   z-index: 1000;
 }
 
-.header {
-  height: 44px;
-  background-color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  position: sticky;
-  top: 0;
-  z-index: 1001;
-  border-bottom: 1px solid #eee;
-}
-
 .header-title {
   font-size: 16px;
   font-weight: 500;
-}
-
-.back-button, .more-options {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .icon {

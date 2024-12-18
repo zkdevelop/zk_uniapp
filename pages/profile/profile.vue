@@ -1,5 +1,8 @@
 <template>
   <view class="container">
+	  <view>
+		<uni-nav-bar :fixed="true" status-bar title="我的" />
+	  </view>
     <!-- 用户头像、姓名、用户名和电话 -->
     <view class="user-info">
       <image class="avatar" :src="userData.avatarUrl || '/static/my/默认头像.svg'"></image>

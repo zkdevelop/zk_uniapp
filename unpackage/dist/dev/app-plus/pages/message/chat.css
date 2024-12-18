@@ -144,7 +144,15 @@
 }
 /* 水平间距 */
 /* 水平间距 */
-.voice-message-bubble[data-v-021f7c82] {
+/* 样式保持不变 */
+.audio-message[data-v-3578ca20] {
+  width: 100%;
+  position: relative;
+}
+.player-container[data-v-3578ca20] {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   padding: 0.375rem 0.75rem;
@@ -217,7 +225,10 @@
 .duration[data-v-021f7c82] {
   font-size: 0.875rem;
   color: #666666;
+<<<<<<< HEAD
   font-weight: normal;
+=======
+>>>>>>> b04141a3a604f4019b68e0195506ae29124f9823
 }
 /* 水平间距 */
 /* 水平间距 */

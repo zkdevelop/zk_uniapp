@@ -145,6 +145,7 @@
 		"style" : 
 		{
 			"navigationBarTitleText" : "首页",
+			"navigationStyle": "custom",
 			"titleNView": {
 				"autoBackButton": false
 			},
@@ -190,7 +191,8 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"app-plus": {
-			"background": "#efeff4"
+			"background": "#efeff4",
+			"bounce": "none"
 		}
 	}
 }

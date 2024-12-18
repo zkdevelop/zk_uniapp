@@ -509,6 +509,95 @@
 }
 /* 水平间距 */
 /* 水平间距 */
+.uni-status-bar[data-v-7920e3e0] {
+  height: 20px;
+}
+/* 水平间距 */
+/* 水平间距 */
+.uni-nav-bar-text[data-v-26544265] {
+  font-size: 1.0625rem;
+}
+.uni-nav-bar-right-text[data-v-26544265] {
+  font-size: 12px;
+}
+.uni-navbar__content[data-v-26544265] {
+  position: relative;
+  background-color: transparent;
+}
+.uni-navbar-btn-text[data-v-26544265] {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  line-height: 12px;
+}
+.uni-navbar__header[data-v-26544265] {
+  display: flex;
+  padding: 0 10px;
+  flex-direction: row;
+  height: 44px;
+  font-size: 12px;
+}
+.uni-navbar__header-btns[data-v-26544265] {
+  overflow: hidden;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  width: 3.75rem;
+  justify-content: center;
+  align-items: center;
+}
+.uni-navbar__header-btns-left[data-v-26544265] {
+  display: flex;
+  width: 3.75rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+.uni-navbar__header-btns-right[data-v-26544265] {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+.uni-navbar__header-container[data-v-26544265] {
+  display: flex;
+  flex: 1;
+  padding: 0 10px;
+  overflow: hidden;
+}
+.uni-navbar__header-container-inner[data-v-26544265] {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  overflow: hidden;
+}
+.uni-navbar__placeholder-view[data-v-26544265] {
+  height: 44px;
+}
+.uni-navbar--fixed[data-v-26544265] {
+  position: fixed;
+  z-index: 99;
+  left: 0;
+  right: 0;
+}
+.uni-navbar--shadow[data-v-26544265] {
+  box-shadow: 0 1px 6px #ccc;
+}
+.uni-navbar--border[data-v-26544265] {
+  border-bottom-width: 0.03125rem;
+  border-bottom-style: solid;
+  border-bottom-color: #eee;
+}
+.uni-ellipsis-1[data-v-26544265] {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 水平间距 */
+/* 水平间距 */
 @media screen and (max-width: 500px) {
 .hide-on-phone[data-v-ddf9e0a2] {
     display: none;
@@ -2040,11 +2129,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 		print-color-adjust: exact;
 }
 }
-.layout_task_detail {
-  /* 确保填满整个视口 */
-  height: 100vh;
-  z-index: 20;
-}
 #map_container {
   height: 100%;
   width: 100%;
@@ -2061,7 +2145,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   width: 100%;
   box-sizing: border-box;
   position: absolute;
-  top: 0;
+  top: 100px;
   left: 0;
 }
 .condition_selector {

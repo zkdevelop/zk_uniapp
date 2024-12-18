@@ -1,7 +1,10 @@
 <template>
+	<view>
+		<uni-nav-bar :fixed="true" status-bar shadow rightIcon="more-filled" @clickRight="open" title="任务详情" />
+	</view>
 	<!-- 地图容器 -->
-	<div id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
-		:change:replay='m.getReplay' :position="position" :change:position='m.getPosition' :geoJson="geoJson"
+	<view id="map_container" :selectedMap="selectedMap" :change:selectedMap="m.setMapType" :replay
+		:change:replay='m.setReplay' :position="position" :change:position='m.setPosition' :geoJson="geoJson"
 		:change:geoJson='m.setGeoJson' />
 	<!-- task_detail -->
 	<view class="layout_task_detail">
@@ -103,6 +106,9 @@
 								@click="deleteMisson"></image>
 						</view>
 					</view>
+					<view style="height: 50px;">
+						
+					</view>
 				</view>
 			</uni-popup>
 		</view>
@@ -130,6 +136,9 @@
 								<view style="text-align: center;"><text>{{ item.name }}</text></view>
 							</view>
 						</view>
+					</view>
+					<view style="height: 50px;">
+						
 					</view>
 				</view>
 			</uni-popup>
@@ -168,6 +177,9 @@
 								</view>
 							</view>
 						</view>
+					</view>
+					<view style="height: 50px;">
+						
 					</view>
 				</view>
 			</uni-popup>
@@ -241,6 +253,9 @@
 								<button type="primary" @click="open_alert_form">发布告警</button>
 							</view>
 						</view>
+					</view>
+					<view style="height: 50px;">
+						
 					</view>
 				</view>
 			</uni-popup>
@@ -318,9 +333,10 @@
 		},
 		mounted() {
 			// 设置当前地图中心点
-			this.$ownerInstance.callMethod('setPoint');
+			// this.$ownerInstance.callMethod('setPoint');
+			console.log(this.position,'m,this.position')
 			// 设置geoJson数据
-			this.$ownerInstance.callMethod('setGeoJson');
+			// this.$ownerInstance.callMethod('setGeoJson');
 			this.$nextTick(() => {
 				this.initMap();
 				this.getLine();
@@ -332,7 +348,8 @@
 			/** position变更时调用方法
 			 * @param {Object} position
 			 */
-			getPosition(position) {
+			setPosition(position) {
+				console.log(position,"m.position")
 				this.position = position;
 				if (map != null) {
 					map.setView(L.latLng(this.position.latitude, this.position.longitude), 12);
@@ -358,6 +375,15 @@
 					// this.addGeoJsonLayer(this.geoJson, 'red', featureGroup);
 				}
 			},
+			/** 任务回溯状态变更时调用方法
+			 * @param {Boolean} replay
+			 */
+			setReplay(replay) {
+				this.replay = replay;
+				if (replay) {
+					this.replayMission();
+				}
+			},
 			/**
 			 * GeoJson变更时调用方法
 			 * @param {Object} geoJson
@@ -372,6 +398,9 @@
 			 */
 			initMap() {
 				// 清除原有地图容器
+				if(map!=null){
+					map.remove();
+				}
 				var container = L.DomUtil.get('map_container');
 				if (container != null) {
 					container._leaflet_id = null;
@@ -446,15 +475,6 @@
 				setTimeout(() => {
 					map.invalidateSize();
 				}, 500);
-			},
-			/** 任务回溯状态变更时调用方法
-			 * @param {Boolean} replay
-			 */
-			getReplay(replay) {
-				this.replay = replay;
-				if (replay) {
-					this.replayMission();
-				}
 			},
 			replayMission() {
 				let index = 1;
@@ -537,7 +557,8 @@
 <script>
 	import {
 		deleteMission,
-		getMissionDetails
+		getMissionDetails,
+		searchMission
 	} from '@/utils/api/mission.js'
 	import {
 		backendHost
@@ -553,11 +574,13 @@
 	import {
 		toRaw
 	} from 'vue'
+	const recorderManager = uni.getRecorderManager();
+	const innerAudioContext = uni.createInnerAudioContext();
+	
+	innerAudioContext.autoplay = true;
 	export default {
 		data() {
 			return {
-				recorderManager: {},
-				innerAudioContext: {},
 				selectedMap: 'gaode', //当前地图
 				navIndex: 0,
 				instruct_none: false,
@@ -607,25 +630,25 @@
 				},
 				map_options: [{
 						key: 'google',
-						src: '../../../static/icon/google.png',
+						src: '../../static/icon/google.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '谷歌地图'
 					},
 					{
 						key: 'gaode',
-						src: '../../../static/icon/gaode.png',
+						src: '../../static/icon/gaode.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '高德地图'
 					},
 					{
 						key: 'baidu',
-						src: '../../../static/icon/baidu.png',
+						src: '../../static/icon/baidu.png',
 						htmlSrc: '/static/html/map_baidu.html',
 						name: '百度地图'
 					},
 					{
 						key: 'local',
-						src: '../../../static/icon/offline.png',
+						src: '../../static/icon/offline.png',
 						htmlSrc: '/static/html/map_gaode.html',
 						name: '离线地图'
 					},
@@ -709,31 +732,60 @@
 				],
 				// 行动回溯，false停止，true播放
 				replay: false,
+				query: {
+					"param": {
+						"curPage": 1,
+						"pageSize": 10
+					},
+					"statuses": [
+						"USING",
+						"UNUSED",
+						"COMING"
+					]
+				},
 				// geoJson数据
 				geoJson: '0'
 			}
 		},
-		onNavigationBarButtonTap() {
-			this.$refs.popup.open('bottom')
-		},
+		// onNavigationBarButtonTap() {
+		// 	this.$refs.popup.open('bottom')
+		// },
 		mounted() {
 			this.getOrder();
 			this.getWarning();
+			uni.showLoading({
+				title: '正在加载任务',
+				mask: true
+			})
+			searchMission(this.query).then(res => {
+				this.taskItem = res.data.records.map(e => ({
+					id: e.id,
+					task_name: e.missionName,
+					country: e.missionCountry,
+					position: e.missionCity,
+					start_time: e.missionStartTime,
+					end_time: e.missionEndTime,
+					type: this.getTaskType(e.missionStartTime, e.missionEndTime),
+					description: e.missionDescription,
+					key: e.missionPassword,
+					latitude: e.latitude,
+					longitude: e.longitude,
+					geoJson: e.geoJson
+				}))[0];
+				this.position.latitude = this.taskItem.latitude;
+				this.position.longitude = this.taskItem.longitude;
+				this.geoJson = this.taskItem.geoJson;
+				// console.log(toRaw(this.position),'taskItem');
+				uni.hideLoading()
+			});
 		},
 		onLoad(options) {
 			// 页面加载时执行
-			if (options.taskItem) {
-				this.taskItem = JSON.parse(options.taskItem); // 设置类型
-			} else {
-				console.error('没有传递类型参数');
-			};
-
-			this.recorderManager = uni.getRecorderManager();
-			this.innerAudioContext = uni.createInnerAudioContext();
-
-			this.innerAudioContext.autoplay = true;
-
-			// console.log("uni.getRecorderManager()", uni.getRecorderManager())
+			// if (options.taskItem) {
+			// 	this.taskItem = JSON.parse(options.taskItem); // 设置类型
+			// } else {
+			// 	console.error('没有传递类型参数');
+			// };
 			let self = this;
 			this.recorderManager.onStop(function(res) {
 				// console.log('recorder stop' + JSON.stringify(res));
@@ -842,7 +894,7 @@
 			},
 			startRecording() {
 				console.log('开始录音');
-				this.recorderManager.start();
+				recorderManager.start();
 				//显示加载框
 				uni.showLoading({
 					title: '正在录音'
@@ -851,7 +903,7 @@
 			},
 			stopRecording() {
 				console.log('录音结束');
-				this.recorderManager.stop();
+				recorderManager.stop();
 				uni.hideLoading()
 			},
 			playVoice() {
@@ -871,6 +923,9 @@
 			},
 			delete_alert_mine(index) {
 				this.alert_data_mine.splice(index, 1);
+			},
+			open() {
+				this.$refs.popup.open()
 			},
 			close() {
 				this.$refs.popup.close()
@@ -901,7 +956,7 @@
 			},
 			goToDocument() {
 				uni.navigateTo({
-					url: '/pages/task/task_detail/document/document'
+					url: `/pages/task/task_detail/document/document?missionId=${this.taskItem.id}`
 				})
 			},
 			goToMainPage() {
@@ -966,14 +1021,15 @@
 				this.getWarning();
 			},
 			// 设置经纬度
-			setPoint() {
-				this.position.latitude = this.taskItem.latitude;
-				this.position.longitude = this.taskItem.longitude;
-			},
-			setGeoJson() {
-				this.geoJson = this.taskItem.geoJson;
-				console.log(this.geoJson, 'owner-setGeoJson')
-			},
+			// setPoint() {
+			// 	this.position.latitude = this.taskItem.latitude;
+			// 	this.position.longitude = this.taskItem.longitude;
+			// 	console.log(this.position,'position')
+			// },
+			// setGeoJson() {
+			// 	this.geoJson = this.taskItem.geoJson;
+			// 	console.log(this.geoJson, 'owner-setGeoJson')
+			// },
 			// 删除任务
 			deleteMisson() {
 				const id = this.taskItem.id;
@@ -1038,6 +1094,17 @@
 					}
 				})
 			},
+			getTaskType(startTime, endTime) {
+				const start = new Date(startTime);
+				const end = new Date(endTime);
+				if (this.currentTime < start) {
+					return "1"; // 未开始
+				} else if (this.currentTime >= start && this.currentTime <= end) {
+					return "2"; // 进行中
+				} else {
+					return "3"; // 已完成
+				}
+			},
 			getWarning() {
 				// 加载告警
 				getWarningList({
@@ -1099,12 +1166,6 @@
 <style lang="scss">
 	@import url("/static/leaflet/leaflet.css");
 
-	.layout_task_detail {
-		/* 确保填满整个视口 */
-		height: 100vh;
-		z-index: 20;
-	}
-
 	#map_container {
 		height: 100%;
 		width: 100%;
@@ -1123,7 +1184,7 @@
 		// 消除内边距影响
 		box-sizing: border-box;
 		position: absolute;
-		top: 0;
+		top: 100px;
 		left: 0;
 	}
 

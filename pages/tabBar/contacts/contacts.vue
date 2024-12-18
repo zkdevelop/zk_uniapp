@@ -1,15 +1,8 @@
 <template>
   <view class="contacts-container">
-    <view class="header">
-      <text class="title">通讯录</text>
-      <view class="search-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </view>
+    <view>
+    	<uni-nav-bar :fixed="true" status-bar rightIcon="search" @clickRight="" title="通讯录" />
     </view>
-
     <scroll-view class="contact-list" scroll-y @scrolltolower="loadMoreContacts">
       <view v-if="loading" class="loading">加载中...</view>
       <view v-else-if="groups.length === 0" class="no-contacts">暂无联系人</view>
