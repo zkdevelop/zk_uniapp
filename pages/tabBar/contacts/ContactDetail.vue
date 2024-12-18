@@ -1,5 +1,6 @@
 <template>
   <view class="contact-detail">
+    <!-- 头部 -->
     <view class="header">
       <view class="back-button" @click="handleClose">
         <text class="icon">←</text>
@@ -10,7 +11,9 @@
       </view>
     </view>
 
+    <!-- 内容区域 -->
     <scroll-view class="content" scroll-y>
+      <!-- 主要信息 -->
       <view class="main-info">
         <view class="profile-section">
           <image class="avatar" :src="contact.avatar" mode="aspectFill"></image>
@@ -35,6 +38,7 @@
         </view>
       </view>
 
+      <!-- 备注部分 -->
       <view class="remark-section">
         <view class="action-item" @click="handleRemark">
           <text class="action-text">备注</text>
@@ -42,6 +46,7 @@
         </view>
       </view>
 
+      <!-- 操作按钮 -->
       <view class="message-button" @click="handleMessage">
         <text class="button-text">发信息</text>
       </view>
@@ -69,6 +74,8 @@
 </template>
 
 <script>
+import { useUserStore } from '@/store/userStore'
+
 export default {
   name: 'ContactDetail',
   props: {
@@ -85,24 +92,29 @@ export default {
     }
   },
   methods: {
+    // 处理关闭
     handleClose() {
       this.$emit('close');
     },
     
+    // 处理备注
     handleRemark() {
       console.log('处理备注');
     },
     
+    // 处理发送消息
     handleMessage() {
       this.navigateToChat();
     },
     
+    // 处理清空聊天记录
     handleClearHistory() {
       this.showConfirmDialog('您确认要删除所有聊天记录吗？', () => {
         console.log('清空聊天记录');
       });
     },
     
+    // 处理删除联系人
     handleDelete() {
       this.showConfirmDialog('您确认要删除此联系人吗？', () => {
         console.log('删除联系人');
@@ -110,16 +122,19 @@ export default {
       });
     },
     
+    // 显示确认对话框
     showConfirmDialog(content, callback) {
       this.modalContent = content;
       this.modalCallback = callback;
       this.showModal = true;
     },
     
+    // 处理模态框取消
     handleModalCancel() {
       this.showModal = false;
     },
     
+    // 处理模态框确认
     handleModalConfirm() {
       this.showModal = false;
       if (this.modalCallback) {
@@ -127,13 +142,16 @@ export default {
       }
     },
     
+    // 导航到聊天页面
     navigateToChat() {
+      const userStore = useUserStore();
       const chatInfo = {
         id: this.contact.id,
         name: this.contact.name,
         avatar: this.contact.avatar ? [this.contact.avatar] : [],
         type: 'single',
-        recipientId: this.contact.id  // 确保使用正确的 id
+        recipientId: this.contact.id,
+        missionId: userStore.missionId ? userStore.missionId.toString() : ''
       };
       
       console.log('准备导航到聊天页面，chatInfo:', chatInfo);
@@ -141,6 +159,7 @@ export default {
       uni.navigateTo({
         url: '/pages/message/chat',
         success: (res) => {
+          // 使用事件通道传递chatInfo
           res.eventChannel.emit('chatInfo', { chatInfo: chatInfo });
           console.log('成功导航到聊天页面并发送 chatInfo');
         },
@@ -398,3 +417,4 @@ export default {
   }
 }
 </style>
+

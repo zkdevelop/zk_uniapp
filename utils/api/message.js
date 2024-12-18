@@ -3,7 +3,7 @@ import {backendHost} from '/config.js';
 
 // 获取聊天列表
 export const getChatList = (missionId) => {
-  missionId='1b2fdd7d0d4d4f91855602e687be632a'
+   missionId='d3629439f69f47b8810422c7e8c6d877'
   // 检查missionId是否存在
   if (!missionId) {
     console.error('getChatList 需要 missionId 参数');
@@ -11,8 +11,9 @@ export const getChatList = (missionId) => {
   }
   // 发送GET请求获取聊天列表
   return request({
-    url: `/message/chatList/${missionId}`,
-    method: 'get'
+    url: `/message/chatList`,
+    method: 'get',
+    data: { missionId:missionId }
   })
 }
 
@@ -109,3 +110,18 @@ export const getHistoryChatMessages = (data) => {
     }
   })
 }
+
+// 阅读自毁消息
+export const readSelfDestructMessage = (data) => {
+  // 发送POST请求阅读自毁消息
+  return request({
+    url: '/message/read/selfDestruct/message',
+    method: 'post',
+    data: {
+      isGroup: data.isGroup,
+      messageId: data.messageId,
+      messageType: data.messageType
+    }
+  })
+}
+

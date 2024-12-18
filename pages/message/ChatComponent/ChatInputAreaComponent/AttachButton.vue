@@ -2,7 +2,7 @@
 <template>
   <view class="attach-button" @click="$emit('click')">
     <image 
-      src="/static/message/展开对话工具.png" 
+      :src="isBurnAfterReadingMode ? '/static/message/fire-展开对话工具.png' : '/static/message/展开对话工具.png'" 
       class="attach-icon"
     />
   </view>
@@ -11,7 +11,13 @@
 <script>
 export default {
   name: 'AttachButton',
-  emits: ['click']
+  emits: ['click'],
+  props: {
+    isBurnAfterReadingMode: {
+      type: Boolean,
+      default: false
+    }
+  }
 }
 </script>
 

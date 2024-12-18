@@ -4,6 +4,8 @@ import { ref } from 'vue'
 export default function useAttachmentHandling(emit, props) {
   // 是否显示位置共享
   const showLocationSharing = ref(false)
+  // 阅后即焚模式状态
+  const isBurnAfterReadingMode = ref(false)
 
   // 处理附件项选择
   const attachItem = (action, data) => {
@@ -17,8 +19,7 @@ export default function useAttachmentHandling(emit, props) {
         chooseAndSendPhoto()
         break
       case 'burn-after-reading':
-        // 实现阅后即焚功能
-        console.log('阅后即焚功能尚未实现')
+        toggleBurnAfterReadingMode()
         break
       case 'camera':
         takePhoto()
@@ -34,7 +35,7 @@ export default function useAttachmentHandling(emit, props) {
     }
 
     // 关闭附件菜单（除了位置和文件选择）
-    if (action !== 'location' && action !== 'file') {
+    if (action !== 'location' && action !== 'file' && action !== 'burn-after-reading') {
       emit('toggle-attach-menu', false)
     }
   }
@@ -66,7 +67,8 @@ export default function useAttachmentHandling(emit, props) {
         path: tempFilePath,
         name: fileName,
         recipientId: props.recipientId,
-        missionId: props.missionId
+        missionId: props.missionId,
+        isBurnAfterReading: isBurnAfterReadingMode.value
       })
       emit('toggle-attach-menu', false)
     } catch (error) {
@@ -91,7 +93,8 @@ export default function useAttachmentHandling(emit, props) {
           path: tempFilePath,
           name: 'camera_photo.jpg',
           recipientId: props.recipientId,
-          missionId: props.missionId
+          missionId: props.missionId,
+          isBurnAfterReading: isBurnAfterReadingMode.value
         })
       },
       fail: (err) => {
@@ -123,7 +126,8 @@ export default function useAttachmentHandling(emit, props) {
     emit('send-message', {
       type: 'location',
       content: location,
-      missionId: props.missionId
+      missionId: props.missionId,
+      isBurnAfterReading: isBurnAfterReadingMode.value
     })
     closeLocationSharing()
   }
@@ -141,7 +145,8 @@ export default function useAttachmentHandling(emit, props) {
           path: tempFilePath,
           name: fileName,
           recipientId: props.recipientId,
-          missionId: props.missionId
+          missionId: props.missionId,
+          isBurnAfterReading: isBurnAfterReadingMode.value
         })
         emit('toggle-attach-menu', false)
       },
@@ -155,6 +160,13 @@ export default function useAttachmentHandling(emit, props) {
     })
   }
 
+  // 切换阅后即焚模式
+  const toggleBurnAfterReadingMode = () => {
+    isBurnAfterReadingMode.value = !isBurnAfterReadingMode.value
+    console.log('阅后即焚模式已切换:', isBurnAfterReadingMode.value)
+    emit('toggle-burn-after-reading', isBurnAfterReadingMode.value)
+  }
+
   return {
     showLocationSharing,
     attachItem,
@@ -162,6 +174,8 @@ export default function useAttachmentHandling(emit, props) {
     chooseAndSendFile,
     openLocationSharing,
     closeLocationSharing,
-    handleLocationSelected
+    handleLocationSelected,
+    isBurnAfterReadingMode,
+    toggleBurnAfterReadingMode
   }
 }

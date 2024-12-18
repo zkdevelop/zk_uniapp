@@ -21,6 +21,7 @@
       @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
       @file-selected="handleFileSelected"
+      @toggle-burn-after-reading="toggleBurnAfterReadingMode"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
       :missionId="chatInfo.missionId.toString()"
@@ -69,7 +70,7 @@ import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
 import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
-import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser } from '@/utils/api/message.js'
+import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser, readSelfDestructMessage } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
 import { useUserStore } from '@/store/userStore'
@@ -107,6 +108,7 @@ export default {
       isLoading: false,
       peerStore: null,
       friendStore: null,
+      isBurnAfterReadingMode: false, // 阅后即焚模式
     };
   },
   onLoad() {
@@ -163,18 +165,22 @@ export default {
             recipientId: this.chatInfo.id,
             messageType: message.type || 'text',
             missionId: this.chatInfo.missionId,
-            isPosition: message.type === 'location'
+            isPosition: message.type === 'location',
+            isSelfDestruct: this.isBurnAfterReadingMode
           });
           console.log('[sendMessage] 发送消息响应:', response);
           if (response.code === 200) {
-            this.handleMessageSent(response.data);
-            await this.updateMessageList(); // 发送消息后更新消息列表
+            const sentMessage = {
+              ...response.data,
+              selfDestruct: response.data.selfDestruct
+            };
+            this.handleMessageSent(sentMessage);
+            await this.updateMessageList();
           } else {
             throw new Error(response.msg || '发送消息失败');
           }
         } catch (error) {
           console.error('[sendMessage] 发送消息失败:', error);
-          // 错误处理
         }
       } else {
         console.error('[sendMessage] 消息内容为空或 recipientId 未设置', {
@@ -374,12 +380,11 @@ export default {
               content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
               type = 'file';
-            } else if (type === 'audio'||type === 'voice_message') {
-              // 处理音频消息
+            } else if (type === 'audio' || type === 'voice_message') {
               content = msg.previewUrl || msg.message;
             }
 
-            return {
+            const mappedMessage = {
               id: msg.id,
               content: content,
               userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
@@ -387,8 +392,14 @@ export default {
               timestamp: new Date(msg.sendTime),
               type: type,
               isRead: msg.isRead,
-              messageType: msg.messageType
+              messageType: msg.messageType,
+              selfDestruct: msg.selfDestruct
             };
+
+            // 处理自毁消息
+            this.handleSelfDestructMessage(mappedMessage);
+
+            return mappedMessage;
           });
 
           console.log('[loadHistoryMessages] 新消息数量:', newMessages.length);
@@ -454,8 +465,7 @@ export default {
               content = msg.previewUrl || msg.message;
             } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
               type = 'file';
-            } else if (type === 'audio'||type === 'voice_message') {
-              // 处理音频消息
+            } else if (type === 'audio' || type === 'voice_message') {
               content = msg.previewUrl || msg.message;
             }
 
@@ -467,7 +477,8 @@ export default {
               timestamp: new Date(msg.sendTime),
               type: type,
               isRead: msg.isRead,
-              messageType: msg.messageType
+              messageType: msg.messageType,
+              selfDestruct: msg.selfDestruct
             };
           });
 
@@ -487,54 +498,85 @@ export default {
       }
     },
     // 处理文件选择
-   async handleFileSelected(fileInfo) {
-         console.log('文件被选择，完整的 fileInfo:', JSON.stringify(fileInfo));
-         
-         if (!fileInfo || typeof fileInfo !== 'object') {
-           console.error('文件信息无效:', fileInfo);
-           uni.showToast({
-             title: '文件信息无效，请重试',
-             icon: 'none'
-           });
-           return;
-         }
-   
-         if (!fileInfo.path) {
-           console.error('文件路径缺失:', fileInfo);
-           uni.showToast({
-             title: '文件路径缺失，请重试',
-             icon: 'none'
-           });
-           return;
-         }
-   
-         try {
-           const response = await sendFilesToUser({
-             files: [fileInfo.path],
-             isGroup: false,
-             isSelfDestruct: false,
-             latitude: '0',
-             longitude: '0',
-             missionId: this.chatInfo.missionId,
-             receptionId: this.chatInfo.id,
-             voiceMessage: fileInfo.fromVoiceInput || false
-           });
-   
-           console.log('文件上传响应:', response);
-   
-           if (response.code === 200) {
-             await this.updateMessageList();
-           } else {
-             throw new Error(response.msg || '发送文件消息失败');
-           }
-         } catch (error) {
-           console.error('发送文件消息出错:', error);
-           uni.showToast({
-             title: '发送失败，请重试',
-             icon: 'none'
-           });
-         }
-       },
+    async handleFileSelected(fileInfo) {
+      console.log('文件被选择，完整的 fileInfo:', JSON.stringify(fileInfo));
+      
+      if (!fileInfo || typeof fileInfo !== 'object') {
+        console.error('文件信息无效:', fileInfo);
+        uni.showToast({
+          title: '文件信息无效，请重试',
+          icon: 'none'
+        });
+        return;
+      }
+
+      if (!fileInfo.path) {
+        console.error('文件路径缺失:', fileInfo);
+        uni.showToast({
+          title: '文件路径缺失，请重试',
+          icon: 'none'
+        });
+        return;
+      }
+
+      try {
+        const response = await sendFilesToUser({
+          files: [fileInfo.path],
+          isGroup: false,
+          isSelfDestruct: this.isBurnAfterReadingMode,
+          latitude: '0',
+          longitude: '0',
+          missionId: this.chatInfo.missionId,
+          receptionId: this.chatInfo.id,
+          voiceMessage: fileInfo.fromVoiceInput || false
+        });
+
+        console.log('文件上传响应:', response);
+
+        if (response.code === 200) {
+          await this.updateMessageList();
+        } else {
+          throw new Error(response.msg || '发送文件消息失败');
+        }
+      } catch (error) {
+        console.error('发送文件消息出错:', error);
+        uni.showToast({
+          title: '发送失败，请重试',
+          icon: 'none'
+        });
+      }
+    },
+    // 切换阅后即焚模式
+    toggleBurnAfterReadingMode(isActive) {
+      this.isBurnAfterReadingMode = isActive;
+    },
+    // 删除消息
+    deleteMessage(messageId) {
+      const index = this.list.findIndex(msg => msg.id === messageId);
+      if (index !== -1) {
+        this.list.splice(index, 1);
+      }
+    },
+    // 处理自毁消息
+    handleSelfDestructMessage(message) {
+      if (message.userType === 'other' && message.selfDestruct) {
+        readSelfDestructMessage({
+          isGroup: this.chatInfo.type === 'group',
+          messageId: message.id,
+          messageType: message.messageType
+        }).then(() => {
+          console.log('自毁消息已成功阅读');
+          
+          // 启动 10 秒计时器
+          setTimeout(() => {
+            // 10 秒后删除该消息
+            this.deleteMessage(message.id);
+          }, 10000);
+        }).catch((error) => {
+          console.error('阅读自毁消息时出错:', error);
+        });
+      }
+    },
   }
 }
 </script>
@@ -604,3 +646,4 @@ export default {
   background-color: #f44336;
 }
 </style>
+

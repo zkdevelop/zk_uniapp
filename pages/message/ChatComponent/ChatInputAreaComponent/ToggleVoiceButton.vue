@@ -1,7 +1,8 @@
+<!-- ToggleVoiceButton.vue - 切换语音/键盘输入按钮组件 -->
 <template>
   <image 
     @click="$emit('toggle-voice-input')"
-    :src="isVoiceInputActive ? '/static/message/键盘.png' : '/static/message/语音.png'"
+    :src="getButtonImage()"
     class="toggle-button"
   />
 </template>
@@ -13,9 +14,22 @@ export default {
     isVoiceInputActive: {
       type: Boolean,
       required: true
+    },
+    isBurnAfterReadingMode: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['toggle-voice-input']
+  emits: ['toggle-voice-input'],
+  methods: {
+    getButtonImage() {
+      if (this.isBurnAfterReadingMode) {
+        return this.isVoiceInputActive ? '/static/message/fire-键盘.png' : '/static/message/fire-语音.png'
+      } else {
+        return this.isVoiceInputActive ? '/static/message/键盘.png' : '/static/message/语音.png'
+      }
+    }
+  }
 }
 </script>
 

@@ -5,6 +5,7 @@
       <!-- 语音/键盘切换按钮 -->
       <toggle-voice-button
         :is-voice-input-active="isVoiceInputActive"
+        :is-burn-after-reading-mode="isBurnAfterReadingMode"
         @toggle-voice-input="toggleVoiceInput"
       />
       
@@ -30,6 +31,7 @@
       <attach-button
         v-if="!showAttachMenu"
         @click="toggleAttachMenu"
+        :is-burn-after-reading-mode="isBurnAfterReadingMode"
       />
       
       <!-- 发送按钮 -->
@@ -96,11 +98,12 @@ export default {
       default: ''
     }
   },
-  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'file-selected'],
+  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'file-selected', 'toggle-burn-after-reading'],
   setup(props, { emit }) {
     const newMessage = ref('')
     const showLocationSharing = ref(false)
     const isVoiceInputActive = ref(false)
+    const isBurnAfterReadingMode = ref(false)
 
     // 处理语音文件选择
     const handleVoiceFileSelected = (fileInfo) => {
@@ -139,11 +142,13 @@ export default {
       openLocationSharing, 
       closeLocationSharing, 
       handleLocationSelected,
-      showLocationSharing: locationSharingState
+      showLocationSharing: locationSharingState,
+      isBurnAfterReadingMode: burnMode,
+      toggleBurnAfterReadingMode
     } = useAttachmentHandling(emit, props)
 
     // 使用消息发送钩子
-    const { sendMessage } = useMessageSending(newMessage, emit, props)
+    const { sendMessage } = useMessageSending(newMessage, emit, props, burnMode)
 
     // 切换语音输入模式
     const toggleVoiceInput = () => {
@@ -172,6 +177,12 @@ export default {
       showLocationSharing.value = newVal
     })
 
+    // 监听阅后即焚模式的变化
+    watch(burnMode, (newVal) => {
+      isBurnAfterReadingMode.value = newVal
+      emit('toggle-burn-after-reading', newVal)
+    })
+
     return {
       newMessage,
       showLocationSharing,
@@ -190,7 +201,9 @@ export default {
       handleFileSelected,
       openLocationSharing,
       closeLocationSharing,
-      handleLocationSelected
+      handleLocationSelected,
+      isBurnAfterReadingMode,
+      toggleBurnAfterReadingMode
     }
   }
 }
@@ -227,4 +240,4 @@ export default {
   flex: 1;
   margin: 0 10px;
 }
-</style> 
+</style>
