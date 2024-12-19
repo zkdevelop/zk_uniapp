@@ -96,14 +96,22 @@ export default {
       type: String,
       required: true,
       default: ''
+    },
+    initialBurnAfterReadingMode: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'file-selected', 'toggle-burn-after-reading'],
   setup(props, { emit }) {
+    // 新消息内容
     const newMessage = ref('')
+    // 是否显示位置共享
     const showLocationSharing = ref(false)
+    // 是否激活语音输入
     const isVoiceInputActive = ref(false)
-    const isBurnAfterReadingMode = ref(false)
+    // 阅后即焚模式
+    const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode || false)
 
     // 处理语音文件选择
     const handleVoiceFileSelected = (fileInfo) => {
@@ -183,6 +191,11 @@ export default {
       emit('toggle-burn-after-reading', newVal)
     })
 
+    // 监听初始阅后即焚模式的变化
+    watch(() => props.initialBurnAfterReadingMode, (newVal) => {
+      isBurnAfterReadingMode.value = newVal
+    })
+
     return {
       newMessage,
       showLocationSharing,
@@ -241,3 +254,4 @@ export default {
   margin: 0 10px;
 }
 </style>
+

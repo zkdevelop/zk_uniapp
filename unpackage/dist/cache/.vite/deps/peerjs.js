@@ -3,11 +3,11 @@ import {
   __export,
   __privateAdd,
   __toESM
-} from "./chunk-7PP4VGQN.js";
+} from "./chunk-WMW6TFF4.js";
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/sdp/sdp.js
+// E:/代码/new/zk_uniapp/node_modules/sdp/sdp.js
 var require_sdp = __commonJS({
-  "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/sdp/sdp.js"(exports, module) {
+  "E:/代码/new/zk_uniapp/node_modules/sdp/sdp.js"(exports, module) {
     "use strict";
     var SDPUtils2 = {};
     SDPUtils2.generateIdentifier = function() {
@@ -617,7 +617,7 @@ var require_sdp = __commonJS({
   }
 });
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/peerjs-js-binarypack/dist/binarypack.mjs
+// E:/代码/new/zk_uniapp/node_modules/peerjs-js-binarypack/dist/binarypack.mjs
 var $e8379818650e2442$export$93654d4f2d6cd524 = class {
   constructor() {
     this.encoder = new TextEncoder();
@@ -1096,7 +1096,7 @@ var $0cfd7828ad59115f$export$b9ec4b114aa40074 = class {
   }
 };
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/utils.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/utils.js
 var logDisabled_ = true;
 var deprecationWarnings_ = true;
 function extractVersion(uastring, expr, pos) {
@@ -1304,7 +1304,7 @@ function filterStats(result, track, outbound) {
   return filteredResult;
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js
 var chrome_shim_exports = {};
 __export(chrome_shim_exports, {
   fixNegotiationNeeded: () => fixNegotiationNeeded,
@@ -1318,7 +1318,7 @@ __export(chrome_shim_exports, {
   shimSenderReceiverGetStats: () => shimSenderReceiverGetStats
 });
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js
 var logging = log;
 function shimGetUserMedia(window2, browserDetails) {
   const navigator2 = window2 && window2.navigator;
@@ -1476,7 +1476,7 @@ function shimGetUserMedia(window2, browserDetails) {
   }
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js
 function shimMediaStream(window2) {
   window2.MediaStream = window2.MediaStream || window2.webkitMediaStream;
 }
@@ -2004,7 +2004,7 @@ function fixNegotiationNeeded(window2, browserDetails) {
   });
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js
 var firefox_shim_exports = {};
 __export(firefox_shim_exports, {
   shimAddTransceiver: () => shimAddTransceiver,
@@ -2021,7 +2021,7 @@ __export(firefox_shim_exports, {
   shimSenderGetStats: () => shimSenderGetStats
 });
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js
 function shimGetUserMedia2(window2, browserDetails) {
   const navigator2 = window2 && window2.navigator;
   const MediaStreamTrack = window2 && window2.MediaStreamTrack;
@@ -2071,7 +2071,7 @@ function shimGetUserMedia2(window2, browserDetails) {
   }
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/getdisplaymedia.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/getdisplaymedia.js
 function shimGetDisplayMedia(window2, preferredMediaSource) {
   if (window2.navigator.mediaDevices && "getDisplayMedia" in window2.navigator.mediaDevices) {
     return;
@@ -2095,7 +2095,7 @@ function shimGetDisplayMedia(window2, preferredMediaSource) {
   };
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js
 function shimOnTrack2(window2) {
   if (typeof window2 === "object" && window2.RTCTrackEvent && "receiver" in window2.RTCTrackEvent.prototype && !("transceiver" in window2.RTCTrackEvent.prototype)) {
     Object.defineProperty(window2.RTCTrackEvent.prototype, "transceiver", {
@@ -2324,7 +2324,7 @@ function shimCreateAnswer(window2) {
   };
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/safari/safari_shim.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/safari/safari_shim.js
 var safari_shim_exports = {};
 __export(safari_shim_exports, {
   shimAudioContext: () => shimAudioContext,
@@ -2640,7 +2640,7 @@ function shimAudioContext(window2) {
   window2.AudioContext = window2.webkitAudioContext;
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/common_shim.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/common_shim.js
 var common_shim_exports = {};
 __export(common_shim_exports, {
   removeExtmapAllowMixed: () => removeExtmapAllowMixed,
@@ -2985,7 +2985,7 @@ function shimParameterlessSetLocalDescription(window2, browserDetails) {
   };
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/adapter_factory.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/adapter_factory.js
 var sdp = __toESM(require_sdp());
 function adapterFactory({ window: window2 } = {}, options = {
   shimChrome: true,
@@ -3087,11 +3087,11 @@ function adapterFactory({ window: window2 } = {}, options = {
   return adapter2;
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/webrtc-adapter/src/js/adapter_core.js
+// E:/代码/new/zk_uniapp/node_modules/webrtc-adapter/src/js/adapter_core.js
 var adapter = adapterFactory({ window: typeof window === "undefined" ? void 0 : window });
 var adapter_core_default = adapter;
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/int.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/int.mjs
 var UINT32_MAX = 4294967295;
 function setUint64(view, offset, value) {
   var high = value / 4294967296;
@@ -3116,7 +3116,7 @@ function getUint64(view, offset) {
   return high * 4294967296 + low;
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/utf8.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/utf8.mjs
 var _a;
 var _b;
 var _c;
@@ -3241,7 +3241,7 @@ function utf8DecodeTD(bytes, inputOffset, byteLength) {
   return sharedTextDecoder.decode(stringBytes);
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/ExtData.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/ExtData.mjs
 var ExtData = (
   /** @class */
   /* @__PURE__ */ function() {
@@ -3253,7 +3253,7 @@ var ExtData = (
   }()
 );
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/DecodeError.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/DecodeError.mjs
 var __extends = /* @__PURE__ */ function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
@@ -3294,7 +3294,7 @@ var DecodeError = (
   }(Error)
 );
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/timestamp.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/timestamp.mjs
 var EXT_TIMESTAMP = -1;
 var TIMESTAMP32_MAX_SEC = 4294967296 - 1;
 var TIMESTAMP64_MAX_SEC = 17179869184 - 1;
@@ -3375,7 +3375,7 @@ var timestampExtension = {
   decode: decodeTimestampExtension
 };
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/ExtensionCodec.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/ExtensionCodec.mjs
 var ExtensionCodec = (
   /** @class */
   function() {
@@ -3436,7 +3436,7 @@ var ExtensionCodec = (
   }()
 );
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/typedArrays.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/typedArrays.mjs
 function ensureUint8Array(buffer) {
   if (buffer instanceof Uint8Array) {
     return buffer;
@@ -3456,7 +3456,7 @@ function createDataView(buffer) {
   return new DataView(bufferView.buffer, bufferView.byteOffset, bufferView.byteLength);
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/Encoder.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/Encoder.mjs
 var DEFAULT_MAX_DEPTH = 100;
 var DEFAULT_INITIAL_BUFFER_SIZE = 2048;
 var Encoder = (
@@ -3802,12 +3802,12 @@ var Encoder = (
   }()
 );
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/prettyByte.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/prettyByte.mjs
 function prettyByte(byte) {
   return "".concat(byte < 0 ? "-" : "", "0x").concat(Math.abs(byte).toString(16).padStart(2, "0"));
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/CachedKeyDecoder.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/CachedKeyDecoder.mjs
 var DEFAULT_MAX_KEY_LENGTH = 16;
 var DEFAULT_MAX_LENGTH_PER_KEY = 16;
 var CachedKeyDecoder = (
@@ -3872,7 +3872,7 @@ var CachedKeyDecoder = (
   }()
 );
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/Decoder.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/Decoder.mjs
 var __awaiter = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -4668,10 +4668,10 @@ var Decoder = (
   }()
 );
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/decode.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/decode.mjs
 var defaultDecodeOptions = {};
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/stream.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/utils/stream.mjs
 var __generator2 = function(thisArg, body) {
   var _ = { label: 0, sent: function() {
     if (t[0] & 1)
@@ -4850,7 +4850,7 @@ function ensureAsyncIterable(streamLike) {
   }
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/decodeAsync.mjs
+// E:/代码/new/zk_uniapp/node_modules/@msgpack/msgpack/dist.es5+esm/decodeAsync.mjs
 function decodeMultiStream(streamLike, options) {
   if (options === void 0) {
     options = defaultDecodeOptions;
@@ -4860,7 +4860,7 @@ function decodeMultiStream(streamLike, options) {
   return decoder.decodeStream(stream);
 }
 
-// C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/node_modules/peerjs/dist/bundler.mjs
+// E:/代码/new/zk_uniapp/node_modules/peerjs/dist/bundler.mjs
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, { get: v, set: s, enumerable: true, configurable: true });
 }

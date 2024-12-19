@@ -1,4 +1,4 @@
-<!-- chat.vue - 聊天页面主组件 -->
+<!-- chat.vue - 聊天页面组件 -->
 <template>
   <view class="chat-page">
     <!-- 聊天头部 -->
@@ -6,7 +6,7 @@
 
     <!-- 消息列表 -->
     <MessageList
-      ref="messageList"
+      ref="messageListRef"
       :messages="list"
       @load-more="loadMoreMessages"
       @scroll="onScroll"
@@ -24,7 +24,8 @@
       @toggle-burn-after-reading="toggleBurnAfterReadingMode"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
-      :missionId="chatInfo.missionId.toString()"
+      :missionId="chatInfo.missionId"
+      :initial-burn-after-reading-mode="chatInfo.isBurnAfterReadingMode"
       ref="chatInputAreaRef"
     />
 
@@ -65,6 +66,7 @@
 </template>
 
 <script>
+import { ref, onMounted, nextTick } from 'vue'
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue'
@@ -74,6 +76,11 @@ import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser, readSelfDes
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
 import { useUserStore } from '@/store/userStore'
+import { useChatInitialization } from './composables/useChatInitialization'
+import { useMessageHandling } from './composables/useMessageHandling'
+import { useUiInteractions } from './composables/useUiInteractions'
+import { useVideoCallHandling } from './composables/useVideoCallHandling'
+import { useSelfDestructMessageHandling } from './composables/useSelfDestructMessageHandling'
 
 export default {
   name: 'Chat',
@@ -84,499 +91,209 @@ export default {
     BurnAfterReading,
     ScrollToBottomButton
   },
-  data() {
-    return {
-      chatInfo: {
-        id: '',
-        name: '',
-        avatar: [],
-        type: 'single',
-        missionId: ''
-      },
-      list: [], // 消息列表
-      showAttachMenu: false,
-      burnAfterReadingDuration: 5,
-      currentBurnAfterReadingImage: '',
-      currentBurnAfterReadingMessage: null,
-      isScrolledToBottom: true,
-      showScrollToBottom: false,
-      showNewMessageTip: false,
-      hasNewMessages: false,
-      currentFrom: 0,
-      currentTo: 10,
-      hasMoreMessages: true,
-      isLoading: false,
-      peerStore: null,
-      friendStore: null,
-      isBurnAfterReadingMode: false, // 阅后即焚模式
-    };
-  },
-  onLoad() {
-    const eventChannel = this.getOpenerEventChannel();
-    this.peerStore = usePeerStore();
-    this.friendStore = useFriendStore();
-    eventChannel.on('chatInfo', (data) => {
-      this.chatInfo = data.chatInfo;
-      console.log('接收到的聊天信息:', this.chatInfo);
-      if (!this.chatInfo.missionId) {
-        const userStore = useUserStore();
-        this.chatInfo.missionId = userStore.missionId.toString();
-      } else if (Array.isArray(this.chatInfo.missionId)) {
-        this.chatInfo.missionId = this.chatInfo.missionId.join(',');
-      }
-      console.log('使用的 missionId:', this.chatInfo.missionId);
-      this.initializeChat();
-    });
-  },
-  mounted() {
-    console.log('聊天组件已挂载');
-    console.log('peerStore 初始状态:', this.peerStore);
-  },
-  methods: {
-    // 初始化聊天
-    async initializeChat() {
-      await this.loadHistoryMessages();
-      this.$nextTick(this.scrollToBottom);
-    },
-    // 返回上一页
-    goBack() {
-      uni.navigateBack({
-        success: () => {
-          uni.$emit('updateTabBarActiveTab', 1);
-        },
-        fail: (err) => {
-          console.error('返回失败:', err);
-          uni.reLaunch({
-            url: '/pages/tabBar/tabBar',
-            success: () => {
-              uni.$emit('updateTabBarActiveTab', 1);
-            }
-          });
-        }
-      });
-    },
-    // 发送消息
-    async sendMessage(message) {
-      console.log('[sendMessage] 发送消息:', message);
-      if (message.content && this.chatInfo.id) {
-        try {
-          const response = await sendMessageToUser({
-            message: typeof message.content === 'object' ? JSON.stringify(message.content) : message.content,
-            recipientId: this.chatInfo.id,
-            messageType: message.type || 'text',
-            missionId: this.chatInfo.missionId,
-            isPosition: message.type === 'location',
-            isSelfDestruct: this.isBurnAfterReadingMode
-          });
-          console.log('[sendMessage] 发送消息响应:', response);
-          if (response.code === 200) {
-            const sentMessage = {
-              ...response.data,
-              selfDestruct: response.data.selfDestruct
-            };
-            this.handleMessageSent(sentMessage);
-            await this.updateMessageList();
-          } else {
-            throw new Error(response.msg || '发送消息失败');
-          }
-        } catch (error) {
-          console.error('[sendMessage] 发送消息失败:', error);
-        }
-      } else {
-        console.error('[sendMessage] 消息内容为空或 recipientId 未设置', {
-          content: message.content,
-          recipientId: this.chatInfo.id
-        });
-      }
-    },
-    // 处理消息发送成功
-    handleMessageSent(sentMessage) {
-      console.log('[handleMessageSent] 消息已发送:', sentMessage);
-      // 可以在这里添加一些额外的处理逻辑，如更新UI等
-    },
-    // 处理消息发送失败
-    handleMessageFailed(failedMessage) {
-      console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
-      // 可以在这里添加一些失败后的处理逻辑，如显示错误提示等
-    },
-    // 处理附件
-    handleAttachment(type, data) {
-      console.log('[handleAttachment] 处理附件:', type, data);
-      if (type === 'location') {
-        this.handleLocationMessage(data);
-      } else {
-        const handlers = {
-          album: this.chooseImage,
-          file: () => this.handleFileTransfer(data),
-          'burn-after-reading': () => this.handleBurnAfterReading(data)
-        };
-        if (handlers[type]) {
-          handlers[type]();
-        }
-      }
-    },
-    // 处理位置消息
-    handleLocationMessage(locationData) {
-      console.log('[handleLocationMessage] 处理位置消息:', locationData);
-      this.sendMessage({
-        type: 'location',
-        content: locationData
-      });
-    },
-    // 查看阅后即焚图片
-    viewBurnAfterReadingImage(message) {
-      this.currentBurnAfterReadingImage = message.content.originalPath;
-      this.currentBurnAfterReadingMessage = message;
-      this.$nextTick(() => {
-        this.$refs.burnAfterReadingRef.open();
-      });
-    },
-    // 关闭阅后即焚预览
-    closeBurnAfterReadingPreview() {
-      this.currentBurnAfterReadingImage = '';
-      if (this.currentBurnAfterReadingMessage) {
-        const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
-        if (index > -1) {
-          this.list.splice(index, 1);
-        }
-        this.currentBurnAfterReadingMessage = null;
-      }
-      this.updateMessageList();
-    },
-    // 切换附件菜单
-    toggleAttachMenu(show) {
-      this.showAttachMenu = show;
-      console.log('附件菜单切换:', show);
-    },
-    // 处理遮罩层点击
-    handleOverlayClick() {
-      this.showAttachMenu = false;
-      console.log('附件菜单已关闭');
-    },
-    // 滚动到底部
-    scrollToBottom() {
-      this.$nextTick(() => {
-        this.$refs.messageList.scrollToBottom();
-        this.showScrollToBottom = false;
-        this.showNewMessageTip = false;
-        this.hasNewMessages = false;
-        this.isScrolledToBottom = true;
-        console.log('滚动到底部');
-      });
-    },
-    // 处理滚动事件
-    onScroll(event) {
-      const { scrollTop, scrollHeight } = event.detail;
-      const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
-      
-      this.isScrolledToBottom = isAtBottom;
-      this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
-      this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
-      if (isAtBottom) {
-        this.hasNewMessages = false;
-        this.showNewMessageTip = false;
-      }
-    },
-    // 加载更多消息
-    async loadMoreMessages() {
-      console.log('[loadMoreMessages] 开始加载更多消息');
-      if (this.hasMoreMessages && !this.isLoading) {
-        this.isLoading = true;
-        
-        const oldContentHeight = await this.$refs.messageList.getContentHeight();
-        console.log('[loadMoreMessages] 旧内容高度:', oldContentHeight);
+  setup() {
+    // 聊天信息
+    const chatInfo = ref({
+      id: '',
+      name: '',
+      avatar: [],
+      type: 'single',
+      missionId: '',
+      isBurnAfterReadingMode: false
+    })
+    
+    // 消息列表
+    const list = ref([])
+    
+    // UI 状态
+    const showAttachMenu = ref(false)
+    const burnAfterReadingDuration = ref(5)
+    const currentBurnAfterReadingImage = ref('')
+    const currentBurnAfterReadingMessage = ref(null)
+    const isScrolledToBottom = ref(true)
+    const showScrollToBottom = ref(false)
+    const showNewMessageTip = ref(false)
+    const hasNewMessages = ref(false)
+    
+    // 分页加载相关
+    const currentFrom = ref(0)
+    const currentTo = ref(10)
+    const hasMoreMessages = ref(true) 
+    const isLoading = ref(false)
+    
+    // 存储
+    const peerStore = usePeerStore()
+    const friendStore = useFriendStore()
+    
+    // 阅后即焚模式
+    const isBurnAfterReadingMode = ref(false)
+    
+    // 消息列表引用
+    const messageListRef = ref(null)
 
-        this.currentFrom = this.currentTo + 1;
-        this.currentTo = this.currentTo + 10;
-        await this.loadHistoryMessages(true);
-        
-        this.$nextTick(async () => {
-          const newContentHeight = await this.$refs.messageList.getContentHeight();
-          console.log('[loadMoreMessages] 新内容高度:', newContentHeight);
+    // 使用聊天初始化钩子
+    const {
+      goBack,
+      setupChatInfo
+    } = useChatInitialization()
 
-          const heightDifference = newContentHeight - oldContentHeight;
-          console.log('[loadMoreMessages] 高度差:', heightDifference);
-          
-          this.$refs.messageList.setScrollTop(heightDifference);
+    // 使用消息处理钩子
+    const {
+      sendMessage,
+      handleMessageFailed,
+      loadHistoryMessages: loadHistoryMessagesFromComposable,
+      updateMessageList,
+      handleFileSelected
+    } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages)
 
-          this.isLoading = false;
-          console.log('[loadMoreMessages] 加载完成');
-        });
-      } else {
-        console.log('[loadMoreMessages] 没有更多消息或正在加载中');
-      }
-    },
-    // 打开视频通话页面
-    openVideoPage(action) {
-      uni.navigateTo({
-        url: `/pages/message/video-call?calleePeerId=${this.chatInfo.id}`
-      });
-    },
-    // 拒绝视频通话
-    rejectVideoCall() {
-      console.log('拒绝视频通话，peerStore 状态:', this.peerStore);
-      this.peerStore.dataConnection.send({
-        instruction: this.peerStore.instruction.reject
-      });
-      this.peerStore.dataConnection = undefined;
-      this.peerStore.activateNotification = false;
-    },
-    // 接受视频通话
-    acceptVideoCall() {
-      console.log('接受视频通话，peerStore 状态:', this.peerStore);
-      this.peerStore.activateNotification = false;
-      
-      uni.showLoading({
-        title: "等待对方连接...",
-        mask: true
-      });
-      
-      let cancel = watch(() => this.peerStore.mediaConnection, newValue => {
-        if (newValue) {
-          uni.hideLoading();
-          cancel();
-          uni.navigateTo({
-            url: "/pages/message/video-answer"
-          });
-        }
-      }, {immediate: true});
-      
-      this.peerStore.dataConnection.send({
-        instruction: this.peerStore.instruction.accept
-      });
-    },
+    // 使用 UI 交互钩子
+    const {
+      handleAttachment,
+      viewBurnAfterReadingImage,
+      closeBurnAfterReadingPreview,
+      toggleAttachMenu,
+      handleOverlayClick,
+      scrollToBottom,
+      onScroll,
+      loadMoreMessages,
+      toggleBurnAfterReadingMode
+    } = useUiInteractions({
+      messageListRef,
+      isScrolledToBottom,
+      showScrollToBottom,
+      showNewMessageTip,
+      hasNewMessages,
+      isLoading,
+      currentFrom,
+      currentTo,
+      loadHistoryMessages: loadHistoryMessagesFromComposable,
+      showAttachMenu,
+      hasMoreMessages
+    })
+
+    // 使用视频通话处理钩子
+    const {
+      openVideoPage,
+      acceptVideoCall,
+      rejectVideoCall
+    } = useVideoCallHandling()
+
+    // 使用自毁消息处理钩子
+    const {
+      handleSelfDestructMessage
+    } = useSelfDestructMessageHandling()
+
     // 加载历史消息
-    async loadHistoryMessages(isLoadingMore = false) {
-      console.log('[loadHistoryMessages] 开始加载历史消息', { 
-        isLoadingMore, 
-        from: this.currentFrom, 
-        to: this.currentTo,
-        missionId: this.chatInfo.missionId 
-      });
-
+    const loadHistoryMessages = async (isLoadingMore = false) => {
       try {
-        const response = await getHistoryChatMessages({
-          opponentId: this.chatInfo.id,
-          from: this.currentFrom,
-          to: this.currentTo,
-          missionId: this.chatInfo.missionId
-        });
-
-        console.log('[loadHistoryMessages] 历史消息响应:', response);
-
-        if (response.code === 200 && Array.isArray(response.data)) {
-          const newMessages = response.data.reverse().map(msg => {
-            let content = msg.message;
-            let type = msg.messageType.toLowerCase();
-
-            if (type === 'position') {
-              try {
-                content = JSON.parse(msg.message);
-                type = 'location';
-              } catch (e) {
-                console.error('解析位置数据失败:', e);
-              }
-            } else if (type === 'image') {
-              content = msg.previewUrl || msg.message;
-            } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-              type = 'file';
-            } else if (type === 'audio' || type === 'voice_message') {
-              content = msg.previewUrl || msg.message;
-            }
-
-            const mappedMessage = {
-              id: msg.id,
-              content: content,
-              userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
-              avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
-              timestamp: new Date(msg.sendTime),
-              type: type,
-              isRead: msg.isRead,
-              messageType: msg.messageType,
-              selfDestruct: msg.selfDestruct
-            };
-
-            // 处理自毁消息
-            this.handleSelfDestructMessage(mappedMessage);
-
-            return mappedMessage;
-          });
-
-          console.log('[loadHistoryMessages] 新消息数量:', newMessages.length);
-
-          if (isLoadingMore) {
-            this.list = [...newMessages, ...this.list];
-            console.log('[loadHistoryMessages] 在列表前端添加新消息');
-          } else {
-            this.list = newMessages;
-            console.log('[loadHistoryMessages] 替换整个消息列表');
-          }
-          
-          this.hasMoreMessages = newMessages.length === (this.currentTo - this.currentFrom + 1);
-
-          console.log('[loadHistoryMessages] 更新后的消息列表长度:', this.list.length);
-          console.log('[loadHistoryMessages] 是否有更多消息:', this.hasMoreMessages);
-
-          this.$nextTick(() => {
-            if (!isLoadingMore) {
-              console.log('[loadHistoryMessages] 加载初始消息后滚动到底部');
-              this.scrollToBottom();
-            }
-          });
-        } else {
-          console.error('[loadHistoryMessages] 加载历史消息失败:', response.msg);
-          uni.showToast({
-            title: '加载历史消息失败',
-            icon: 'none'
+        await loadHistoryMessagesFromComposable(isLoadingMore);
+        if (!isLoadingMore) {
+          nextTick(() => {
+            console.log('[loadHistoryMessages] 加载初始消息后滚动到底部');
+            scrollToBottom();
           });
         }
       } catch (error) {
         console.error('[loadHistoryMessages] 加载历史消息出错:', error);
-        uni.showToast({
-          title: '网络错误，请稍后重试',
-          icon: 'none'
-        });
       }
-    },
-    // 更新消息列表
-    async updateMessageList() {
-      console.log('[updateMessageList] 开始更新消息列表');
-      try {
-        const response = await getHistoryChatMessages({
-          opponentId: this.chatInfo.id,
-          from: 0,
-          to: 10,
-          missionId: this.chatInfo.missionId
+    };
+
+    // 初始化聊天
+    const initializeChat = async () => {
+      console.log('[initializeChat] 开始初始化聊天');
+      if (chatInfo.value && chatInfo.value.id) {
+        await loadHistoryMessages();
+        nextTick(() => {
+          console.log('[initializeChat] 初始化完成，滚动到底部');
+          scrollToBottom();
         });
-
-        if (response.code === 200 && Array.isArray(response.data)) {
-          const newMessages = response.data.reverse().map(msg => {
-            let content = msg.message;
-            let type = msg.messageType.toLowerCase();
-
-            if (type === 'position') {
-              try {
-                content = JSON.parse(msg.message);
-                type = 'location';
-              } catch (e) {
-                console.error('解析位置数据失败:', e);
-              }
-            } else if (type === 'image') {
-              content = msg.previewUrl || msg.message;
-            } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-              type = 'file';
-            } else if (type === 'audio' || type === 'voice_message') {
-              content = msg.previewUrl || msg.message;
-            }
-
-            return {
-              id: msg.id,
-              content: content,
-              userType: msg.senderId === this.chatInfo.id ? 'other' : 'self',
-              avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
-              timestamp: new Date(msg.sendTime),
-              type: type,
-              isRead: msg.isRead,
-              messageType: msg.messageType,
-              selfDestruct: msg.selfDestruct
-            };
-          });
-
-          // 直接替换整个消息列表
-          this.list = newMessages;
-
-          console.log('[updateMessageList] 消息列表已更新，新长度:', this.list.length);
-
-          this.$nextTick(() => {
-            this.scrollToBottom();
-          });
-        } else {
-          console.error('[updateMessageList] 获取新消息失败:', response.msg);
-        }
-      } catch (error) {
-        console.error('[updateMessageList] 更新消息列表出错:', error);
+      } else {
+        console.log('[initializeChat] 聊天信息尚未准备好，等待设置');
       }
-    },
-    // 处理文件选择
-    async handleFileSelected(fileInfo) {
-      console.log('文件被选择，完整的 fileInfo:', JSON.stringify(fileInfo));
+    };
+
+    // 组件挂载时的处理
+    onMounted(() => {
+      console.log('[Chat] mounted 生命周期钩子被调用');
+      const pages = getCurrentPages();
+      const currentPage = pages[pages.length - 1];
+      if (currentPage && currentPage.$page && currentPage.$page.fullPath) {
+        console.log('[Chat] 当前页面路径:', currentPage.$page.fullPath);
+      }
       
-      if (!fileInfo || typeof fileInfo !== 'object') {
-        console.error('文件信息无效:', fileInfo);
-        uni.showToast({
-          title: '文件信息无效，请重试',
-          icon: 'none'
-        });
-        return;
+      // 尝试多种方式获取 eventChannel
+      let eventChannel;
+      if (currentPage && currentPage.$getAppWebview) {
+        eventChannel = currentPage.$getAppWebview().eventChannel;
+      } else if (currentPage && currentPage.getOpenerEventChannel) {
+        eventChannel = currentPage.getOpenerEventChannel();
+      } else if (uni && uni.getEnterOptionsSync) {
+        const enterOptions = uni.getEnterOptionsSync();
+        eventChannel = enterOptions.eventChannel;
       }
 
-      if (!fileInfo.path) {
-        console.error('文件路径缺失:', fileInfo);
-        uni.showToast({
-          title: '文件路径缺失，请重试',
-          icon: 'none'
+      if (eventChannel) {
+        console.log('[Chat] 成功获取 eventChannel');
+        setupChatInfo(eventChannel, {
+          chatInfo,
+          loadHistoryMessages: () => loadHistoryMessages()
         });
-        return;
-      }
-
-      try {
-        const response = await sendFilesToUser({
-          files: [fileInfo.path],
-          isGroup: false,
-          isSelfDestruct: this.isBurnAfterReadingMode,
-          latitude: '0',
-          longitude: '0',
-          missionId: this.chatInfo.missionId,
-          receptionId: this.chatInfo.id,
-          voiceMessage: fileInfo.fromVoiceInput || false
-        });
-
-        console.log('文件上传响应:', response);
-
-        if (response.code === 200) {
-          await this.updateMessageList();
+      } else {
+        console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法');
+        // 这里可以添加备用的初始化逻辑，例如从 URL 参数或全局状态获取聊天信息
+        const query = uni.getStorageSync('chatQuery');
+        if (query) {
+          console.log('[Chat] 从存储中获取聊天信息:', query);
+          chatInfo.value = JSON.parse(query);
+          initializeChat();  // 调用 initializeChat
         } else {
-          throw new Error(response.msg || '发送文件消息失败');
+          console.error('[Chat] 无法初始化聊天，缺少必要信息');
+          // 可以在这里添加错误处理逻辑，例如显示错误消息或重定向到其他页面
         }
-      } catch (error) {
-        console.error('发送文件消息出错:', error);
-        uni.showToast({
-          title: '发送失败，请重试',
-          icon: 'none'
-        });
       }
-    },
-    // 切换阅后即焚模式
-    toggleBurnAfterReadingMode(isActive) {
-      this.isBurnAfterReadingMode = isActive;
-    },
-    // 删除消息
-    deleteMessage(messageId) {
-      const index = this.list.findIndex(msg => msg.id === messageId);
-      if (index !== -1) {
-        this.list.splice(index, 1);
-      }
-    },
-    // 处理自毁消息
-    handleSelfDestructMessage(message) {
-      if (message.userType === 'other' && message.selfDestruct) {
-        readSelfDestructMessage({
-          isGroup: this.chatInfo.type === 'group',
-          messageId: message.id,
-          messageType: message.messageType
-        }).then(() => {
-          console.log('自毁消息已成功阅读');
-          
-          // 启动 10 秒计时器
-          setTimeout(() => {
-            // 10 秒后删除该消息
-            this.deleteMessage(message.id);
-          }, 10000);
-        }).catch((error) => {
-          console.error('阅读自毁消息时出错:', error);
-        });
-      }
-    },
+    })
+
+
+    return {
+      chatInfo,
+      list,
+      showAttachMenu,
+      burnAfterReadingDuration,
+      currentBurnAfterReadingImage,
+      currentBurnAfterReadingMessage,
+      isScrolledToBottom,
+      showScrollToBottom,
+      showNewMessageTip,
+      hasNewMessages,
+      currentFrom,
+      currentTo,
+      hasMoreMessages, 
+      isLoading,
+      peerStore,
+      friendStore,
+      isBurnAfterReadingMode,
+      messageListRef,
+      goBack,
+      sendMessage,
+      handleMessageFailed,
+      loadHistoryMessages,
+      updateMessageList,
+      handleFileSelected,
+      handleAttachment,
+      viewBurnAfterReadingImage,
+      closeBurnAfterReadingPreview,
+      toggleAttachMenu,
+      handleOverlayClick,
+      scrollToBottom,
+      onScroll,
+      loadMoreMessages,
+      toggleBurnAfterReadingMode,
+      openVideoPage,
+      acceptVideoCall,
+      rejectVideoCall,
+      handleSelfDestructMessage,
+      initializeChat
+    }
   }
 }
 </script>

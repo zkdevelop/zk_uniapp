@@ -1,31 +1,37 @@
 {
-  "hash": "165cc996",
-  "configHash": "545752da",
+  "hash": "b04e5f45",
+  "configHash": "46d06baf",
   "lockfileHash": "a04af5d2",
-  "browserHash": "172cae4d",
+  "browserHash": "ab8efdeb",
   "optimized": {
     "peerjs": {
       "src": "../../../../../node_modules/peerjs/dist/bundler.mjs",
       "file": "peerjs.js",
-      "fileHash": "f5e99ecd",
+      "fileHash": "7c8beb19",
       "needsInterop": false
     },
     "pinia-plugin-persistedstate": {
       "src": "../../../../../node_modules/pinia-plugin-persistedstate/dist/index.js",
       "file": "pinia-plugin-persistedstate.js",
-      "fileHash": "2c6229e5",
+      "fileHash": "2abcef6b",
       "needsInterop": false
     },
     "reconnecting-websocket": {
       "src": "../../../../../node_modules/reconnecting-websocket/dist/reconnecting-websocket-mjs.js",
       "file": "reconnecting-websocket.js",
-      "fileHash": "b80fe749",
+      "fileHash": "d4d44b91",
       "needsInterop": false
+    },
+    "crypto-js": {
+      "src": "../../../../../node_modules/crypto-js/index.js",
+      "file": "crypto-js.js",
+      "fileHash": "7136e2b2",
+      "needsInterop": true
     }
   },
   "chunks": {
-    "chunk-7PP4VGQN": {
-      "file": "chunk-7PP4VGQN.js"
+    "chunk-WMW6TFF4": {
+      "file": "chunk-WMW6TFF4.js"
     }
   }
 }
