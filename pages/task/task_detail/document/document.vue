@@ -6,7 +6,7 @@
 					<!-- 图片 -->
 					<uni-grid-item v-if="file_index === 0" v-for="(item, index) in imgPath" :key="index">
 						<view style="border-radius: 3px; width: 83px; height: 83px; display: flex; align-items: center; justify-content: center;">
-							<image :src="item" @click="preview(item)" style="width: 83px; height: 83px;"></image>
+							<image :src="item" @click="preview(item, index)" style="width: 83px; height: 83px;"></image>
 						</view>
 					</uni-grid-item>
 					<!-- 视频 -->
@@ -174,15 +174,15 @@
 				const nameWithoutExtension = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
 				return nameWithoutExtension;
 			},
-			preview(url) {
+			preview(url, index) {
 				// #ifdef MP-WEIXIN
 				this.$nextTick(()=>{
-					 this.$refs.previewImage.open(url); // 传入当前选中的图片地址(小程序必须添加$nextTick，解决组件首次加载无图)
+					 this.$refs.previewImage.open(url, index); // 传入当前选中的图片地址(小程序必须添加$nextTick，解决组件首次加载无图)
 				})
 				// #endif
 	
 				// #ifndef MP-WEIXIN
-				this.$refs.previewImage.open(url); // 传入当前选中的图片地址
+				this.$refs.previewImage.open(url, index); // 传入当前选中的图片地址
 				// #endif
 			},
 			screenChange(e) {
