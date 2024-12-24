@@ -64,7 +64,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$_ = {
+  const _sfc_main$$ = {
     data() {
       return {
         statusBarHeight: 0
@@ -92,7 +92,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$Z(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$_(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "camouflagePage" }, [
       vue.createElementVNode("view", { class: "statusBar" }),
       vue.createElementVNode("view", { class: "camouflageLayout" }, [
@@ -131,7 +131,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$_, [["render", _sfc_render$Z], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
+  const PagesLoginCamouflageLoginCamouflageLogin = /* @__PURE__ */ _export_sfc(_sfc_main$$, [["render", _sfc_render$_], ["__file", "E:/代码/new/zk_uniapp/pages/login/camouflageLogin/camouflageLogin.vue"]]);
   const ON_SHOW = "onShow";
   function requireNativePlugin(name) {
     return weex.requireModule(name);
@@ -417,8 +417,8 @@ if (uni.restoreGlobal) {
       hook.emit(HOOK_SETUP, pluginDescriptor, setupFn);
     } else {
       const proxy = enableProxy ? new ApiProxy(descriptor, hook) : null;
-      const list = target.__VUE_DEVTOOLS_PLUGINS__ = target.__VUE_DEVTOOLS_PLUGINS__ || [];
-      list.push({
+      const list2 = target.__VUE_DEVTOOLS_PLUGINS__ = target.__VUE_DEVTOOLS_PLUGINS__ || [];
+      list2.push({
         pluginDescriptor: descriptor,
         setupFn,
         proxy
@@ -1834,7 +1834,7 @@ This will fail in production.`);
         });
       }
     };
-    const sendMessage = (message) => {
+    const sendMessage2 = (message) => {
       if (isConnected.value) {
         uni.sendSocketMessage({
           data: JSON.stringify(message),
@@ -1850,7 +1850,7 @@ This will fail in production.`);
       }
     };
     const ping = () => {
-      sendMessage({ type: "ping" });
+      sendMessage2({ type: "ping" });
     };
     let pingInterval;
     const startPingInterval = () => {
@@ -1867,11 +1867,11 @@ This will fail in production.`);
       isConnected,
       connect,
       disconnect,
-      sendMessage
+      sendMessage: sendMessage2
     };
   };
-  const _imports_0$a = "/static/icon/login.png";
-  const _sfc_main$Z = {
+  const _imports_0$9 = "/static/icon/login.png";
+  const _sfc_main$_ = {
     __name: "login",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -1967,11 +1967,11 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$Z(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", { class: "iconView" }, [
         vue.createElementVNode("image", {
-          src: _imports_0$a,
+          src: _imports_0$9,
           class: "icon"
         })
       ]),
@@ -2052,7 +2052,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$Z, [["render", _sfc_render$Y], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/login.vue"]]);
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$_, [["render", _sfc_render$Z], ["__file", "E:/代码/new/zk_uniapp/pages/login/login.vue"]]);
   const isObject$1 = (val) => val !== null && typeof val === "object";
   const defaultDelimiters = ["{", "}"];
   class BaseFormatter {
@@ -2366,7 +2366,7 @@ This will fail in production.`);
   const {
     t: t$1
   } = initVueI18n(messages);
-  const _sfc_main$Y = {
+  const _sfc_main$Z = {
     name: "UniLoadMore",
     emits: ["clickLoadMore"],
     props: {
@@ -2448,7 +2448,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: "uni-load-more",
       onClick: _cache[0] || (_cache[0] = (...args) => $options.onClick && $options.onClick(...args))
@@ -2523,7 +2523,7 @@ This will fail in production.`);
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$6 = /* @__PURE__ */ _export_sfc(_sfc_main$Y, [["render", _sfc_render$X], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const __easycom_0$6 = /* @__PURE__ */ _export_sfc(_sfc_main$Z, [["render", _sfc_render$Y], ["__scopeId", "data-v-9245e42c"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -3174,7 +3174,7 @@ This will fail in production.`);
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$X = {
+  const _sfc_main$Y = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -3228,7 +3228,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -3243,7 +3243,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$X, [["render", _sfc_render$W], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$Y, [["render", _sfc_render$X], ["__scopeId", "data-v-d31e1c47"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   const pages = [
     {
       path: "pages/login/camouflageLogin/camouflageLogin",
@@ -6714,7 +6714,7 @@ ${i3}
       }
     }
   };
-  const _sfc_main$W = {
+  const _sfc_main$X = {
     name: "UniDataPickerView",
     emits: ["nodeclick", "change", "datachange", "update:modelValue"],
     mixins: [dataPicker],
@@ -6818,7 +6818,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$V(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$6);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-data-pickerview" }, [
       !_ctx.isCloudDataList ? (vue.openBlock(), vue.createElementBlock("scroll-view", {
@@ -6908,8 +6908,8 @@ ${i3}
       ])
     ]);
   }
-  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$W, [["render", _sfc_render$V], ["__scopeId", "data-v-91ec6a82"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
-  const _sfc_main$V = {
+  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$X, [["render", _sfc_render$W], ["__scopeId", "data-v-91ec6a82"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
+  const _sfc_main$W = {
     name: "UniDataPicker",
     emits: ["popupopened", "popupclosed", "nodeclick", "input", "change", "update:modelValue", "inputclick"],
     mixins: [dataPicker],
@@ -7113,7 +7113,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$U(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$V(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$6);
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     const _component_data_picker_view = vue.resolveComponent("data-picker-view");
@@ -7279,8 +7279,8 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$V, [["render", _sfc_render$U], ["__scopeId", "data-v-2653531e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
-  const _sfc_main$U = {
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$W, [["render", _sfc_render$V], ["__scopeId", "data-v-2653531e"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
+  const _sfc_main$V = {
     data() {
       return {
         account: "test-app",
@@ -7362,7 +7362,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$T(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$U(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_picker = resolveEasycom(vue.resolveDynamicComponent("uni-data-picker"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", { class: "text" }, [
@@ -7481,19 +7481,19 @@ ${i3}
       ])
     ]);
   }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$U, [["render", _sfc_render$T], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/register/register.vue"]]);
-  const _sfc_main$T = {
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$V, [["render", _sfc_render$U], ["__file", "E:/代码/new/zk_uniapp/pages/register/register.vue"]]);
+  const _sfc_main$U = {
     data() {
       return {};
     },
     methods: {}
   };
-  function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$T(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$T, [["render", _sfc_render$S], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
-  const _imports_0$9 = "/static/icon/finger.png";
-  const _sfc_main$S = {
+  const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$U, [["render", _sfc_render$T], ["__file", "E:/代码/new/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
+  const _imports_0$8 = "/static/icon/finger.png";
+  const _sfc_main$T = {
     data() {
       return {
         result: "",
@@ -7575,7 +7575,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$R(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", {
         class: "fingerView",
@@ -7583,7 +7583,7 @@ ${i3}
         disabled: $data.disabled
       }, [
         vue.createElementVNode("image", {
-          src: _imports_0$9,
+          src: _imports_0$8,
           class: "fingerIcon"
         })
       ], 8, ["disabled"]),
@@ -7611,7 +7611,7 @@ ${i3}
       )
     ]);
   }
-  const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$S, [["render", _sfc_render$R], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
+  const PagesFingerLoginFingerLogin = /* @__PURE__ */ _export_sfc(_sfc_main$T, [["render", _sfc_render$S], ["__file", "E:/代码/new/zk_uniapp/pages/fingerLogin/fingerLogin.vue"]]);
   const searchMission = (query) => {
     return request({
       url: `/mission/search`,
@@ -7638,9 +7638,9 @@ ${i3}
       data: params
     });
   };
-  const _imports_0$8 = "/static/icon/location_grey.png";
+  const _imports_0$7 = "/static/icon/location_grey.png";
   const _imports_1$4 = "/static/icon/time_grey.png";
-  const _sfc_main$R = {
+  const _sfc_main$S = {
     name: "TaskPage",
     data() {
       return {
@@ -7769,7 +7769,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$R(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createCommentVNode(" 顶部Tab菜单 "),
       vue.createElementVNode("view", { class: "topTabBar" }, [
@@ -7848,7 +7848,7 @@ ${i3}
                           vue.createElementVNode("view", { class: "item_bottom" }, [
                             vue.createElementVNode("view", null, [
                               vue.createElementVNode("image", {
-                                src: _imports_0$8,
+                                src: _imports_0$7,
                                 style: { "width": "15px", "height": "15px" }
                               })
                             ]),
@@ -7898,8 +7898,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesTaskTask = /* @__PURE__ */ _export_sfc(_sfc_main$R, [["render", _sfc_render$Q], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task.vue"]]);
-  const _sfc_main$Q = {
+  const PagesTaskTask = /* @__PURE__ */ _export_sfc(_sfc_main$S, [["render", _sfc_render$R], ["__file", "E:/代码/new/zk_uniapp/pages/task/task.vue"]]);
+  const _sfc_main$R = {
     name: "UniStatusBar",
     data() {
       return {
@@ -7907,7 +7907,7 @@ ${i3}
       };
     }
   };
-  function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -7921,9 +7921,9 @@ ${i3}
       /* STYLE */
     );
   }
-  const statusBar = /* @__PURE__ */ _export_sfc(_sfc_main$Q, [["render", _sfc_render$P], ["__scopeId", "data-v-7920e3e0"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar.vue"]]);
+  const statusBar = /* @__PURE__ */ _export_sfc(_sfc_main$R, [["render", _sfc_render$Q], ["__scopeId", "data-v-7920e3e0"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar.vue"]]);
   const getVal = (val) => typeof val === "number" ? val + "px" : val;
-  const _sfc_main$P = {
+  const _sfc_main$Q = {
     name: "UniNavBar",
     components: {
       statusBar
@@ -8043,7 +8043,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$O(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_status_bar = vue.resolveComponent("status-bar");
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock(
@@ -8198,8 +8198,8 @@ ${i3}
       /* CLASS */
     );
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__scopeId", "data-v-26544265"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-nav-bar.vue"]]);
-  const _sfc_main$O = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$Q, [["render", _sfc_render$P], ["__scopeId", "data-v-26544265"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-nav-bar.vue"]]);
+  const _sfc_main$P = {
     name: "uni-data-select",
     mixins: [Ys.mixinDatacom || {}],
     props: {
@@ -8451,7 +8451,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$O(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-stat__select" }, [
       $props.label ? (vue.openBlock(), vue.createElementBlock(
@@ -8591,7 +8591,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -8704,7 +8704,7 @@ ${i3}
     clearTimeout(_this.timer);
     return new MPAnimation(option, _this);
   }
-  const _sfc_main$N = {
+  const _sfc_main$O = {
     name: "uniTransition",
     emits: ["click", "change"],
     props: {
@@ -8955,7 +8955,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.withDirectives((vue.openBlock(), vue.createElementBlock("view", {
       ref: "ani",
       animation: $data.animationData,
@@ -8968,8 +8968,8 @@ ${i3}
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
-  const _sfc_main$M = {
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$N = {
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -9319,7 +9319,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$2);
     return $data.showPopup ? (vue.openBlock(), vue.createElementBlock(
       "view",
@@ -9379,8 +9379,8 @@ ${i3}
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-4dd3c44b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
-  const _sfc_main$L = {
+  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-4dd3c44b"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const _sfc_main$M = {
     name: "uniCollapseItem",
     props: {
       // 列表标题
@@ -9550,7 +9550,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-collapse-item" }, [
       vue.createCommentVNode(" onClick(!isOpen) "),
@@ -9627,8 +9627,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-3d2dde9f"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse-item/uni-collapse-item.vue"]]);
-  const _sfc_main$K = {
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-3d2dde9f"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse-item/uni-collapse-item.vue"]]);
+  const _sfc_main$L = {
     name: "uniCollapse",
     emits: ["change", "activeItem", "input", "update:modelValue"],
     props: {
@@ -9739,13 +9739,13 @@ ${i3}
       }
     }
   };
-  function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-collapse" }, [
       vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
     ]);
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-3f050360"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse/uni-collapse.vue"]]);
-  const _sfc_main$J = {
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-3f050360"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-collapse/components/uni-collapse/uni-collapse.vue"]]);
+  const _sfc_main$K = {
     name: "uniDataChecklist",
     mixins: [Ys.mixinDatacom || {}],
     emits: ["input", "update:modelValue", "change"],
@@ -9943,7 +9943,7 @@ ${i3}
        */
       getDataList(value) {
         let dataList = JSON.parse(JSON.stringify(this.range));
-        let list = [];
+        let list2 = [];
         if (this.multiple) {
           if (!Array.isArray(value)) {
             value = [];
@@ -9961,19 +9961,19 @@ ${i3}
           } else {
             item.selected = value === item[this.map.value];
           }
-          list.push(item);
+          list2.push(item);
         });
-        return this.setRange(list);
+        return this.setRange(list2);
       },
       /**
        * 处理最大最小值
        * @param {Object} list
        */
-      setRange(list) {
-        let selectList = list.filter((item) => item.selected);
+      setRange(list2) {
+        let selectList = list2.filter((item) => item.selected);
         let min = Number(this.min) || 0;
         let max = Number(this.max) || "";
-        list.forEach((item, index) => {
+        list2.forEach((item, index) => {
           if (this.multiple) {
             if (selectList.length <= min) {
               let have = selectList.find((val) => val[this.map.value] === item[this.map.value]);
@@ -9989,9 +9989,9 @@ ${i3}
             }
           }
           this.setStyles(item, index);
-          list[index] = item;
+          list2[index] = item;
         });
-        return list;
+        return list2;
       },
       /**
        * 设置 class
@@ -10088,7 +10088,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$6);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -10301,8 +10301,8 @@ ${i3}
       /* STYLE */
     );
   }
-  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
-  const _sfc_main$I = {
+  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-2f788efd"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
+  const _sfc_main$J = {
     name: "uniFormsItem",
     options: {
       virtualHost: true
@@ -10634,7 +10634,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$H(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -10690,7 +10690,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const __easycom_6$1 = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+  const __easycom_6$1 = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__scopeId", "data-v-462874dd"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -10709,7 +10709,7 @@ ${i3}
     }
     return style;
   }
-  const _sfc_main$H = {
+  const _sfc_main$I = {
     name: "uni-easyinput",
     emits: [
       "click",
@@ -11058,7 +11058,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$G(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$H(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -11183,7 +11183,7 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__scopeId", "data-v-09fd5285"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -11401,20 +11401,20 @@ ${i3}
         range,
         errorMessage
       } = rule;
-      let list = new Array(range.length);
+      let list2 = new Array(range.length);
       for (let i2 = 0; i2 < range.length; i2++) {
         const item = range[i2];
         if (types.object(item) && item.value !== void 0) {
-          list[i2] = item.value;
+          list2[i2] = item.value;
         } else {
-          list[i2] = item;
+          list2[i2] = item;
         }
       }
       let result = false;
       if (Array.isArray(value)) {
-        result = new Set(value.concat(list)).size === list.length;
+        result = new Set(value.concat(list2)).size === list2.length;
       } else {
-        if (list.indexOf(value) > -1) {
+        if (list2.indexOf(value) > -1) {
           result = true;
         }
       }
@@ -11747,7 +11747,7 @@ ${i3}
       return false;
     }
   };
-  const _sfc_main$G = {
+  const _sfc_main$H = {
     name: "uniForms",
     emits: ["validate", "submit"],
     options: {
@@ -12044,14 +12044,14 @@ ${i3}
       _isEqual: isEqual
     }
   };
-  function _sfc_render$F(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$G(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-forms" }, [
       vue.createElementVNode("form", null, [
         vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
       ])
     ]);
   }
-  const __easycom_8 = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+  const __easycom_8 = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__scopeId", "data-v-9a1e3c32"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const getOrderList = (params) => {
     return request({
       url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
@@ -12071,7 +12071,7 @@ ${i3}
       data
     });
   };
-  const _imports_0$7 = "/static/icon/alert.png";
+  const _imports_0$6 = "/static/icon/alert.png";
   const _imports_1$3 = "/static/icon/flag.png";
   const _imports_2$2 = "/static/icon/document.png";
   const _imports_3$1 = "/static/icon/tuceng.png";
@@ -12088,7 +12088,7 @@ ${i3}
   const recorderManager = uni.getRecorderManager();
   const innerAudioContext = uni.createInnerAudioContext();
   innerAudioContext.autoplay = true;
-  const _sfc_main$F = {
+  const _sfc_main$G = {
     data() {
       return {
         selectedMap: "gaode",
@@ -12648,7 +12648,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$E(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$F(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_nav_bar = resolveEasycom(vue.resolveDynamicComponent("uni-nav-bar"), __easycom_0$3);
     const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_1$1);
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_4$1);
@@ -12719,7 +12719,7 @@ ${i3}
                   style: { "text-align": "center", "padding-top": "5px" }
                 }, [
                   vue.createElementVNode("image", {
-                    src: _imports_0$7,
+                    src: _imports_0$6,
                     style: { "width": "22px", "height": "22px" }
                   })
                 ]),
@@ -13487,9 +13487,9 @@ ${i3}
     );
   }
   if (typeof block0 === "function")
-    block0(_sfc_main$F);
-  const PagesTaskTaskDetailTaskDetail = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/task_detail.vue"]]);
-  const _sfc_main$E = {
+    block0(_sfc_main$G);
+  const PagesTaskTaskDetailTaskDetail = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/task_detail.vue"]]);
+  const _sfc_main$F = {
     name: "UniGridItem",
     inject: ["grid"],
     props: {
@@ -13539,7 +13539,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$E(_ctx, _cache, $props, $setup, $data, $options) {
     return $data.width ? (vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -13566,8 +13566,8 @@ ${i3}
       /* STYLE */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__scopeId", "data-v-7a807eb7"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue"]]);
-  const _sfc_main$D = {
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__scopeId", "data-v-7a807eb7"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue"]]);
+  const _sfc_main$E = {
     name: "UniGrid",
     emits: ["change"],
     props: {
@@ -13637,7 +13637,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-grid-wrap" }, [
       vue.createElementVNode("view", {
         id: $data.elId,
@@ -13649,8 +13649,8 @@ ${i3}
       ], 14, ["id"])
     ]);
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-07acefee"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-grid/components/uni-grid/uni-grid.vue"]]);
-  const _sfc_main$C = {
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__scopeId", "data-v-07acefee"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-grid/components/uni-grid/uni-grid.vue"]]);
+  const _sfc_main$D = {
     name: "UniSection",
     emits: ["click"],
     props: {
@@ -13709,7 +13709,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-section" }, [
       vue.createElementVNode("view", {
         class: "uni-section-header",
@@ -13766,8 +13766,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
-  const _sfc_main$B = {
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-637fd36b"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
+  const _sfc_main$C = {
     props: {
       urls: {
         type: Array,
@@ -13823,7 +13823,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
     return $data.show ? (vue.openBlock(), vue.createElementBlock("view", {
       key: 0,
       class: "previewImage",
@@ -13902,8 +13902,8 @@ ${i3}
       ], 40, ["current"])
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-fdd21252"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/q-previewImage/components/q-previewImage/q-previewImage.vue"]]);
-  const _sfc_main$A = {
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-fdd21252"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/q-previewImage/components/q-previewImage/q-previewImage.vue"]]);
+  const _sfc_main$B = {
     name: "ysh-file-manager",
     props: {},
     data() {
@@ -14075,12 +14075,12 @@ ${i3}
       }
     }
   };
-  function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/components/ysh-file-manager/ysh-file-manager.vue"]]);
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__file", "E:/代码/new/zk_uniapp/components/ysh-file-manager/ysh-file-manager.vue"]]);
   let platform = "other";
-  const _sfc_main$z = {
+  const _sfc_main$A = {
     name: "UniFab",
     emits: ["fabClick", "trigger"],
     props: {
@@ -14237,7 +14237,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$5);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-cursor-point" }, [
       $props.popMenu && ($options.leftBottom || $options.rightBottom || $options.leftTop || $options.rightTop) && $props.content.length > 0 ? (vue.openBlock(), vue.createElementBlock(
@@ -14341,8 +14341,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-85f34dfc"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/uni_modules/uni-fab/components/uni-fab/uni-fab.vue"]]);
-  const _sfc_main$y = {
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-85f34dfc"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-fab/components/uni-fab/uni-fab.vue"]]);
+  const _sfc_main$z = {
     data() {
       return {
         context: null,
@@ -14435,7 +14435,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       vue.Fragment,
       null,
@@ -14485,10 +14485,10 @@ ${i3}
       /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
     );
   }
-  const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-615c0603"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
-  const _imports_0$6 = "/static/icon/take_video.png";
+  const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-615c0603"], ["__file", "E:/代码/new/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
+  const _imports_0$5 = "/static/icon/take_video.png";
   const _imports_1$2 = "/static/icon/audio.png";
-  const _sfc_main$x = {
+  const _sfc_main$y = {
     components: { freeAudio, yshFileManager: __easycom_5 },
     data() {
       return {
@@ -14738,7 +14738,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_grid_item = resolveEasycom(vue.resolveDynamicComponent("uni-grid-item"), __easycom_0);
     const _component_uni_grid = resolveEasycom(vue.resolveDynamicComponent("uni-grid"), __easycom_1);
     const _component_uni_section = resolveEasycom(vue.resolveDynamicComponent("uni-section"), __easycom_2);
@@ -14809,7 +14809,7 @@ ${i3}
                                   vue.createElementVNode("image", {
                                     onTouchstart: _cache[0] || (_cache[0] = ($event) => $options.openVideo()),
                                     onClick: ($event) => $options.videoShow(item),
-                                    src: _imports_0$6,
+                                    src: _imports_0$5,
                                     style: { "width": "50px", "height": "50px" }
                                   }, null, 40, ["onClick"])
                                 ])
@@ -14953,8 +14953,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesTaskTaskDetailDocumentDocument = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/document/document.vue"]]);
-  const _sfc_main$w = {
+  const PagesTaskTaskDetailDocumentDocument = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/document/document.vue"]]);
+  const _sfc_main$x = {
     data() {
       return {
         id: 0,
@@ -14991,7 +14991,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createElementVNode("view", { class: "page-body" }, [
         vue.createElementVNode("view", {
@@ -15015,8 +15015,8 @@ ${i3}
       ])
     ]);
   }
-  const PagesTaskTaskDetailMapTestMapTest = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/map_test/map_test.vue"]]);
-  const _sfc_main$v = {
+  const PagesTaskTaskDetailMapTestMapTest = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/map_test/map_test.vue"]]);
+  const _sfc_main$w = {
     data() {
       return {};
     },
@@ -15036,13 +15036,13 @@ ${i3}
     },
     methods: {}
   };
-  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "map-container" }, [
       vue.createElementVNode("web-view", { src: "/static/html/map_baidu.html" })
     ]);
   }
-  const PagesTaskTaskDetailBaiduMapBaiduMap = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/task/task_detail/baidu_map/baidu_map.vue"]]);
-  const _sfc_main$u = {
+  const PagesTaskTaskDetailBaiduMapBaiduMap = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__file", "E:/代码/new/zk_uniapp/pages/task/task_detail/baidu_map/baidu_map.vue"]]);
+  const _sfc_main$v = {
     name: "OptionPicker",
     props: {
       title: String,
@@ -15055,7 +15055,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "picker-wrapper" }, [
       vue.createElementVNode("view", {
         class: "picker-overlay",
@@ -15112,10 +15112,10 @@ ${i3}
       ])
     ]);
   }
-  const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-2798e3c8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/profile/OptionPicker.vue"]]);
-  const _imports_0$5 = "/static/my/编辑.svg";
+  const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-2798e3c8"], ["__file", "E:/代码/new/zk_uniapp/pages/profile/OptionPicker.vue"]]);
+  const _imports_0$4 = "/static/my/编辑.svg";
   const _imports_1$1 = "/static/my/展开.svg";
-  const _sfc_main$t = {
+  const _sfc_main$u = {
     __name: "profile",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -15246,7 +15246,7 @@ ${i3}
       return __returned__;
     }
   };
-  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_nav_bar = resolveEasycom(vue.resolveDynamicComponent("uni-nav-bar"), __easycom_0$3);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("view", null, [
@@ -15273,7 +15273,7 @@ ${i3}
             ),
             vue.createElementVNode("image", {
               class: "edit-icon",
-              src: _imports_0$5
+              src: _imports_0$4
             })
           ]),
           vue.createElementVNode("view", { class: "info-item" }, [
@@ -15418,16 +15418,17 @@ ${i3}
       }, null, 8, ["title", "options", "selectedValue"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/profile/profile.vue"]]);
+  const PagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__file", "E:/代码/new/zk_uniapp/pages/profile/profile.vue"]]);
   const getChatList = (missionId) => {
-    missionId = "1b2fdd7d0d4d4f91855602e687be632a";
+    missionId = "d3629439f69f47b8810422c7e8c6d877";
     if (!missionId) {
       formatAppLog("error", "at utils/api/message.js:9", "getChatList 需要 missionId 参数");
       return Promise.reject(new Error("getChatList 需要 missionId 参数"));
     }
     return request({
-      url: `/message/chatList/${missionId}`,
-      method: "get"
+      url: `/message/chatList`,
+      method: "get",
+      data: { missionId }
     });
   };
   const sendMessageToUser = (data) => {
@@ -15467,7 +15468,7 @@ ${i3}
           voiceMessage: data.voiceMessage !== void 0 ? data.voiceMessage : false
         },
         success: (uploadFileRes) => {
-          formatAppLog("log", "at utils/api/message.js:60", "服务器原始响应:", uploadFileRes);
+          formatAppLog("log", "at utils/api/message.js:61", "服务器原始响应:", uploadFileRes);
           if (uploadFileRes.statusCode === 404) {
             reject(new Error("服务器端点未找到 (404)"));
             return;
@@ -15485,22 +15486,22 @@ ${i3}
             } else {
               throw new Error("服务器返回了空响应或无效的JSON");
             }
-            formatAppLog("log", "at utils/api/message.js:78", "解析后的响应:", response);
+            formatAppLog("log", "at utils/api/message.js:79", "解析后的响应:", response);
             resolve(response);
           } catch (error) {
-            formatAppLog("error", "at utils/api/message.js:81", "解析服务器响应失败:", error);
+            formatAppLog("error", "at utils/api/message.js:82", "解析服务器响应失败:", error);
             reject(new Error("解析服务器响应失败"));
           }
         },
         fail: (error) => {
-          formatAppLog("error", "at utils/api/message.js:86", "上传失败:", error);
+          formatAppLog("error", "at utils/api/message.js:87", "上传失败:", error);
           reject(error);
         }
       });
       uploadTask.onProgressUpdate((res) => {
-        formatAppLog("log", "at utils/api/message.js:92", "上传进度", res.progress);
-        formatAppLog("log", "at utils/api/message.js:93", "已经上传的数据长度", res.totalBytesSent);
-        formatAppLog("log", "at utils/api/message.js:94", "预期需要上传的数据总长度", res.totalBytesExpectedToSend);
+        formatAppLog("log", "at utils/api/message.js:93", "上传进度", res.progress);
+        formatAppLog("log", "at utils/api/message.js:94", "已经上传的数据长度", res.totalBytesSent);
+        formatAppLog("log", "at utils/api/message.js:95", "预期需要上传的数据总长度", res.totalBytesExpectedToSend);
       });
     });
   };
@@ -15515,7 +15516,18 @@ ${i3}
       }
     });
   };
-  const _sfc_main$s = {
+  const readSelfDestructMessage = (data) => {
+    return request({
+      url: "/message/read/selfDestruct/message",
+      method: "post",
+      data: {
+        isGroup: data.isGroup,
+        messageId: data.messageId,
+        messageType: data.messageType
+      }
+    });
+  };
+  const _sfc_main$t = {
     name: "GroupAvatar",
     props: {
       avatar: {
@@ -15541,7 +15553,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", { class: "avatar-wrap" }, [
       $options.processedAvatar.length === 1 ? (vue.openBlock(), vue.createElementBlock("image", {
         key: 0,
@@ -15574,8 +15586,8 @@ ${i3}
       ))
     ]);
   }
-  const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-afb5909c"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
-  const _sfc_main$r = {
+  const GroupAvatar = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-afb5909c"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/GroupAvatar.vue"]]);
+  const _sfc_main$s = {
     name: "Messages",
     components: {
       GroupAvatar
@@ -15647,13 +15659,24 @@ ${i3}
           type: message.group ? "group" : "single",
           missionId: missionId.value
         };
+        formatAppLog("log", "at pages/message/main.vue:136", "[openChat] 准备导航到聊天页面，chatInfo:", chatInfo);
+        uni.setStorageSync("chatQuery", JSON.stringify(chatInfo));
         uni.navigateTo({
           url: "/pages/message/chat",
           success: (res) => {
-            res.eventChannel.emit("chatInfo", { chatInfo });
+            if (res.eventChannel && res.eventChannel.emit) {
+              res.eventChannel.emit("chatInfo", { chatInfo });
+              formatAppLog("log", "at pages/message/main.vue:147", "[openChat] 通过 eventChannel 发送 chatInfo");
+            } else {
+              formatAppLog("warn", "at pages/message/main.vue:149", "[openChat] eventChannel 不可用，将使用本地存储的数据");
+            }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/message/main.vue:142", "导航到聊天页面失败:", err);
+            formatAppLog("error", "at pages/message/main.vue:153", "[openChat] 导航到聊天页面失败:", err);
+            uni.showToast({
+              title: "打开聊天失败，请重试",
+              icon: "none"
+            });
           }
         });
       };
@@ -15696,12 +15719,12 @@ ${i3}
       };
       vue.onMounted(() => {
         missionId.value = userStore.state.missionId;
-        formatAppLog("log", "at pages/message/main.vue:193", "从 store 获取的 missionId:", missionId.value);
+        formatAppLog("log", "at pages/message/main.vue:208", "从 store 获取的 missionId:", missionId.value);
         fetchChatList();
         calculateScrollViewHeight();
       });
       vue.onActivated(() => {
-        formatAppLog("log", "at pages/message/main.vue:200", "Messages 组件被激活");
+        formatAppLog("log", "at pages/message/main.vue:215", "Messages 组件被激活");
         fetchChatList();
       });
       return {
@@ -15715,7 +15738,7 @@ ${i3}
       };
     }
   };
-  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_nav_bar = resolveEasycom(vue.resolveDynamicComponent("uni-nav-bar"), __easycom_0$3);
     const _component_group_avatar = vue.resolveComponent("group-avatar");
     return vue.openBlock(), vue.createElementBlock("view", { class: "messages-container" }, [
@@ -15738,7 +15761,7 @@ ${i3}
             1
             /* TEXT */
           ),
-          vue.createCommentVNode(' <view class="search-icon">\r\n          <image src="/static/message/搜索.png" mode="aspectFit" class="search-image"></image>\r\n        </view> ')
+          vue.createCommentVNode(' <view class="search-icon">\n          <image src="/static/message/搜索.png" mode="aspectFit" class="search-image"></image>\n        </view> ')
         ]),
         vue.createElementVNode(
           "scroll-view",
@@ -15852,9 +15875,9 @@ ${i3}
       ])
     ]);
   }
-  const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/main.vue"]]);
-  const _imports_0$4 = "/static/message/返回.png";
-  const _sfc_main$q = {
+  const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__file", "E:/代码/new/zk_uniapp/pages/message/main.vue"]]);
+  const _imports_0$3 = "/static/message/返回.png";
+  const _sfc_main$r = {
     name: "ChatHeader",
     components: {},
     props: {
@@ -15864,7 +15887,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-header" }, [
       vue.createElementVNode("div", {
         class: "uni-page-head-hd",
@@ -15872,7 +15895,7 @@ ${i3}
       }, [
         vue.createElementVNode("div", { class: "uni-page-head-btn" }, [
           vue.createElementVNode("image", {
-            src: _imports_0$4,
+            src: _imports_0$3,
             class: "back-icon",
             mode: "aspectFit"
           })
@@ -15890,12 +15913,12 @@ ${i3}
       vue.createElementVNode("text", { class: "menu-button" }, "...")
     ]);
   }
-  const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-120ff10e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
+  const ChatHeader = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-120ff10e"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatHeader.vue"]]);
   const gaodeApiKey = "fc598a079d7d9cf5f54ecec04b17e414";
   const gaodeSecurityKey = "93849873dba769e7b6235a79330ae7f7";
   const AMAP_KEY = gaodeApiKey;
   const AMAP_API_URL = "https://restapi.amap.com/v3/staticmap?";
-  const _sfc_main$p = {
+  const _sfc_main$q = {
     name: "LocationMessage",
     props: {
       content: {
@@ -15927,7 +15950,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: "location-bubble",
       onClick: _cache[0] || (_cache[0] = ($event) => $options.openMap($props.content))
@@ -15955,8 +15978,8 @@ ${i3}
       ])
     ]);
   }
-  const LocationMessage = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-820a3722"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageComponent/LocationMessage.vue"]]);
-  const _sfc_main$o = {
+  const LocationMessage = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-820a3722"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/LocationMessage.vue"]]);
+  const _sfc_main$p = {
     name: "ImageMessage",
     props: {
       content: {
@@ -15973,7 +15996,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("image", {
       src: $props.content,
       mode: "widthFix",
@@ -15981,14 +16004,14 @@ ${i3}
       onClick: _cache[0] || (_cache[0] = ($event) => $options.previewImage($props.content))
     }, null, 8, ["src"]);
   }
-  const ImageMessage = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-2115df62"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageComponent/ImageMessage.vue"]]);
-  const _imports_0$3 = "/assets/text.bd3c6783.png";
+  const ImageMessage = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-2115df62"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/ImageMessage.vue"]]);
+  const _imports_0$2 = "/assets/text.bd3c6783.png";
   const _imports_1 = "/assets/docx.b7b68f84.png";
   const _imports_2 = "/assets/jpg.3e4bf7f6.png";
   const _imports_3 = "/assets/png.ea62ff77.png";
   const _imports_4 = "/assets/pptx.feb4199f.png";
   const _imports_5 = "/assets/xlsx.ceae1396.png";
-  const _sfc_main$n = {
+  const _sfc_main$o = {
     name: "FileMessage",
     props: {
       content: {
@@ -16001,7 +16024,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "file-bubble" }, [
       vue.createElementVNode(
         "view",
@@ -16012,7 +16035,7 @@ ${i3}
       ),
       $props.messageType.toUpperCase() === "TEXT" ? (vue.openBlock(), vue.createElementBlock("image", {
         key: 0,
-        src: _imports_0$3,
+        src: _imports_0$2,
         class: "file-type-icon",
         mode: "aspectFit"
       })) : $props.messageType.toUpperCase() === "DOCX" ? (vue.openBlock(), vue.createElementBlock("image", {
@@ -16043,15 +16066,262 @@ ${i3}
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const FileMessage = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-ba23d37a"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageComponent/FileMessage.vue"]]);
-  const _sfc_main$m = {
+  const FileMessage = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-ba23d37a"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/FileMessage.vue"]]);
+  const _sfc_main$n = {
     __name: "VoiceMessageBubble",
     props: {
       content: {
         type: Object,
-        required: true
+        required: true,
+        default: () => ({
+          url: "",
+          duration: 0,
+          isSelf: false
+        })
+      }
+    },
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const props = __props;
+      const isPlaying = vue.ref(false);
+      const audioDuration = vue.ref(0);
+      let audioContext = null;
+      const formatDuration = (duration) => {
+        return Math.round(duration || 0);
+      };
+      const beforeAudioRecordOrPlay2 = (type) => {
+        const globalData = getApp().globalData;
+        const audioPlaying = globalData.audioPlaying;
+        const audioRecording = globalData.audioRecording;
+        if (audioPlaying || audioRecording) {
+          uni.showToast({
+            title: audioPlaying ? "请先暂停其他音频播放" : "请先结束其他录音",
+            icon: "none"
+          });
+          return false;
+        } else {
+          if (type === "play") {
+            globalData.audioPlaying = true;
+          } else if (type === "record") {
+            globalData.audioRecording = true;
+          } else {
+            formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:64", `无效的类型: ${type}`);
+            return false;
+          }
+          return true;
+        }
+      };
+      const afterAudioPlay = () => {
+        getApp().globalData.audioPlaying = false;
+      };
+      const checkAudioFileExists = (url) => {
+        return new Promise((resolve, reject) => {
+          uni.downloadFile({
+            url,
+            success: (res) => {
+              if (res.statusCode === 200) {
+                resolve(true);
+              } else {
+                reject(new Error(`音频文件下载失败，状态码：${res.statusCode}`));
+              }
+            },
+            fail: (err) => {
+              reject(new Error(`音频文件检查失败：${err.errMsg}`));
+            }
+          });
+        });
+      };
+      const createAudioContext = async () => {
+        if (audioContext) {
+          audioContext.destroy();
+        }
+        if (!props.content.url) {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:101", "音频 URL 未定义");
+          uni.showToast({
+            title: "音频文件不存在",
+            icon: "none"
+          });
+          return null;
+        }
+        try {
+          await checkAudioFileExists(props.content.url);
+        } catch (error) {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:112", "音频文件检查失败:", error);
+          uni.showToast({
+            title: "音频文件不可用",
+            icon: "none"
+          });
+          return null;
+        }
+        audioContext = uni.createInnerAudioContext();
+        audioContext.src = props.content.url;
+        audioContext.onCanplay(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:124", "音频可以播放");
+          audioDuration.value = audioContext.duration || props.content.duration || 0;
+        });
+        audioContext.onPlay(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:129", "音频开始播放");
+          isPlaying.value = true;
+        });
+        audioContext.onEnded(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:134", "音频播放结束");
+          isPlaying.value = false;
+          afterAudioPlay();
+        });
+        audioContext.onError((res) => {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:140", "音频播放错误:", res.errMsg, res.errCode);
+          uni.showToast({
+            title: "播放失败: " + res.errMsg,
+            icon: "none"
+          });
+          isPlaying.value = false;
+          afterAudioPlay();
+        });
+        audioContext.onWaiting(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:150", "音频加载中...");
+        });
+        return audioContext;
+      };
+      const bubbleStyle = vue.computed(() => {
+        const minWidth = 120;
+        const maxWidth = 300;
+        const widthPerSecond = 10;
+        const duration = audioDuration.value || 0;
+        let width = minWidth + duration * widthPerSecond;
+        width = Math.min(width, maxWidth);
+        return {
+          width: `${width}rpx`
+        };
+      });
+      const togglePlay = async () => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:173", "togglePlay 被调用");
+        if (!audioContext) {
+          audioContext = await createAudioContext();
+        }
+        if (!audioContext) {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:178", "无法创建音频上下文");
+          return;
+        }
+        if (isPlaying.value) {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:183", "停止播放");
+          audioContext.stop();
+          isPlaying.value = false;
+          afterAudioPlay();
+        } else {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:188", "开始播放");
+          if (beforeAudioRecordOrPlay2("play")) {
+            try {
+              await audioContext.play();
+            } catch (error) {
+              formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:193", "播放音频失败:", error);
+              uni.showToast({
+                title: "播放失败，请重试",
+                icon: "none"
+              });
+              isPlaying.value = false;
+              afterAudioPlay();
+            }
+          }
+        }
+      };
+      vue.onMounted(async () => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:206", "VoiceMessageBubble 组件已挂载");
+        audioContext = await createAudioContext();
+      });
+      vue.onUnmounted(() => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue:211", "VoiceMessageBubble 组件即将卸载");
+        if (audioContext) {
+          audioContext.destroy();
+        }
+      });
+      vue.watch(() => props.content, async (newContent) => {
+        if (newContent.url !== (audioContext == null ? void 0 : audioContext.src)) {
+          audioContext = await createAudioContext();
+        }
+        audioDuration.value = newContent.duration || 0;
+      }, { deep: true });
+      const __returned__ = { props, isPlaying, audioDuration, get audioContext() {
+        return audioContext;
+      }, set audioContext(v2) {
+        audioContext = v2;
+      }, formatDuration, beforeAudioRecordOrPlay: beforeAudioRecordOrPlay2, afterAudioPlay, checkAudioFileExists, createAudioContext, bubbleStyle, togglePlay, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, watch: vue.watch, computed: vue.computed };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["voice-message-bubble", [
+          $props.content.isSelf ? "self" : "friend",
+          $setup.isPlaying ? "playing" : ""
+        ]]),
+        style: vue.normalizeStyle($setup.bubbleStyle),
+        onClick: $setup.togglePlay
       },
-      previewUrl: {
+      [
+        vue.createElementVNode("view", { class: "audio-icon" }, [
+          vue.createElementVNode("view", { class: "speaker-waves" }, [
+            (vue.openBlock(), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList(3, (i2) => {
+                return vue.createElementVNode("view", {
+                  class: "wave",
+                  key: i2
+                });
+              }),
+              64
+              /* STABLE_FRAGMENT */
+            ))
+          ])
+        ]),
+        vue.createElementVNode(
+          "text",
+          { class: "duration" },
+          vue.toDisplayString($setup.formatDuration($setup.audioDuration)) + '"',
+          1
+          /* TEXT */
+        )
+      ],
+      6
+      /* CLASS, STYLE */
+    );
+  }
+  const VoiceMessageBubble = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-021f7c82"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/VoiceMessageBubble.vue"]]);
+  const _sfc_main$m = {
+    name: "BurnAfterReadingMessage",
+    props: {
+      content: {
+        type: Object,
+        required: true
+      }
+    },
+    methods: {
+      viewBurnAfterReading(message) {
+        this.$emit("view-burn-after-reading", message);
+      }
+    }
+  };
+  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", {
+      class: "burn-after-reading",
+      onClick: _cache[0] || (_cache[0] = ($event) => $options.viewBurnAfterReading($props.content))
+    }, [
+      vue.createElementVNode("image", {
+        src: $props.content.mosaicPath,
+        mode: "widthFix",
+        class: "message-image"
+      }, null, 8, ["src"]),
+      vue.createElementVNode("text", { class: "burn-after-reading-text" }, "阅后即焚")
+    ]);
+  }
+  const BurnAfterReadingMessage = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-6349b1a8"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/BurnAfterReadingMessage.vue"]]);
+  const _sfc_main$l = {
+    name: "AudioMessage",
+    props: {
+      content: {
         type: String,
         required: true
       },
@@ -16060,188 +16330,123 @@ ${i3}
         required: true
       }
     },
-    setup(props) {
-      const audioContext = vue.ref(null);
-      const isPlaying = vue.ref(false);
-      const currentTime = vue.ref(0);
-      const duration = vue.ref(0);
-      const updateInterval = vue.ref(null);
-      const isLoading = vue.ref(false);
-      const isMuted = vue.ref(false);
-      const previousVolume = vue.ref(1);
-      const isAudioFile = vue.computed(() => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:79", "检查是否为音频文件:", props.messageType);
-        return props.messageType === "AUDIO";
-      });
-      const progress = vue.computed(() => duration.value > 0 ? currentTime.value / duration.value * 100 : 0);
-      const formatDuration = (seconds) => {
+    data() {
+      return {
+        isPlaying: false,
+        duration: 0,
+        currentTime: 0,
+        audioContext: null,
+        updateInterval: null,
+        isMuted: false,
+        previousVolume: 1
+      };
+    },
+    computed: {
+      isAudioFile() {
+        return this.messageType === "AUDIO";
+      },
+      progress() {
+        return this.duration > 0 ? this.currentTime / this.duration * 100 : 0;
+      }
+    },
+    mounted() {
+      if (this.isAudioFile) {
+        this.initAudioContext();
+      }
+    },
+    methods: {
+      formatDuration(seconds) {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
         return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-      };
-      const initAudioContext = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:92", "初始化音频上下文");
-        isLoading.value = true;
-        audioContext.value = uni.createInnerAudioContext();
-        if (props.previewUrl) {
-          audioContext.value.src = props.previewUrl;
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:98", "设置音频源:", audioContext.value.src);
+      },
+      togglePlay() {
+        if (this.isPlaying) {
+          this.audioContext.pause();
+          clearInterval(this.updateInterval);
         } else {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:100", "音频源 URL 未定义");
-          isLoading.value = false;
-          return;
+          this.audioContext.play();
+          this.updateInterval = setInterval(this.updateProgress, 1e3);
         }
-        audioContext.value.autoplay = false;
-        audioContext.value.onCanplay(() => {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:108", "音频可以播放");
-          duration.value = audioContext.value.duration || 0;
-          isLoading.value = false;
+        this.isPlaying = !this.isPlaying;
+      },
+      initAudioContext() {
+        this.audioContext = uni.createInnerAudioContext();
+        this.audioContext.src = this.content;
+        this.audioContext.playbackRate = 1;
+        this.audioContext.onCanplay(() => {
+          this.getDuration();
         });
-        audioContext.value.onTimeUpdate(() => {
-          currentTime.value = audioContext.value.currentTime || 0;
+        this.audioContext.onEnded(() => {
+          this.isPlaying = false;
+          this.currentTime = 0;
+          clearInterval(this.updateInterval);
         });
-        audioContext.value.onEnded(() => {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:118", "音频播放结束");
-          isPlaying.value = false;
-          currentTime.value = 0;
-          clearInterval(updateInterval.value);
-        });
-        audioContext.value.onError((res) => {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:125", "音频错误:", res.errMsg);
+        this.audioContext.onError((res) => {
+          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:112", "音频错误:", res.errMsg);
           uni.showToast({
-            title: "音频播放错误: " + res.errMsg,
+            title: "音频播放错误",
             icon: "none"
           });
-          isLoading.value = false;
-          isPlaying.value = false;
         });
-      };
-      const togglePlay = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:136", "切换播放/暂停");
-        if (!audioContext.value) {
-          initAudioContext();
-        }
-        if (audioContext.value && audioContext.value.src) {
-          if (isPlaying.value) {
-            audioContext.value.pause();
-            clearInterval(updateInterval.value);
+      },
+      getDuration() {
+        const checkDuration = () => {
+          if (this.audioContext.duration > 0) {
+            this.duration = this.audioContext.duration;
           } else {
-            audioContext.value.play();
-            updateInterval.value = setInterval(updateProgress, 100);
+            setTimeout(checkDuration, 100);
           }
-          isPlaying.value = !isPlaying.value;
-        } else {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:151", "音频源未设置，无法播放");
-          uni.showToast({
-            title: "无法播放音频",
-            icon: "none"
-          });
+        };
+        checkDuration();
+      },
+      updateProgress() {
+        if (this.audioContext) {
+          this.currentTime = this.audioContext.currentTime;
         }
-      };
-      const updateProgress = () => {
-        if (audioContext.value) {
-          currentTime.value = audioContext.value.currentTime || 0;
-          duration.value = audioContext.value.duration || 0;
-        }
-      };
-      const seekAudio = (event) => {
-        if (!audioContext.value)
+      },
+      seekAudio(event) {
+        if (!this.audioContext)
           return;
         const rect = event.target.getBoundingClientRect();
         const clickPosition = event.clientX - rect.left;
         const percentage = clickPosition / rect.width * 100;
-        const newTime = percentage / 100 * duration.value;
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:174", "跳转到音频位置:", newTime);
-        audioContext.value.seek(newTime);
-        currentTime.value = newTime;
-      };
-      const toggleMute = () => {
-        if (!audioContext.value)
+        const newTime = percentage / 100 * this.duration;
+        this.audioContext.seek(newTime);
+        this.currentTime = newTime;
+      },
+      toggleMute() {
+        if (!this.audioContext)
           return;
-        if (isMuted.value) {
-          audioContext.value.volume = previousVolume.value;
+        if (this.isMuted) {
+          this.audioContext.volume = this.previousVolume;
         } else {
-          previousVolume.value = audioContext.value.volume;
-          audioContext.value.volume = 0;
+          this.previousVolume = this.audioContext.volume;
+          this.audioContext.volume = 0;
         }
-        isMuted.value = !isMuted.value;
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:189", "切换静音:", isMuted.value);
-      };
-      const checkAudioFileAccess = async () => {
-        if (!props.previewUrl) {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:194", "音频文件 URL 未定义");
-          return false;
-        }
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:198", "检查音频文件访问，URL:", props.previewUrl);
-        try {
-          const response = await uni.request({
-            url: props.previewUrl,
-            method: "HEAD"
-          });
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:204", "音频文件访问检查响应:", response);
-          if (response.statusCode === 200) {
-            formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:206", "音频文件可访问");
-            return true;
-          } else {
-            formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:209", "音频文件不可访问:", response.statusCode);
-            return false;
-          }
-        } catch (error) {
-          formatAppLog("error", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:213", "检查音频文件访问时出错:", error);
-          return false;
-        }
-      };
-      vue.onMounted(() => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:220", "AudioMessage 组件挂载，content:", props.content, "previewUrl:", props.previewUrl);
-        checkAudioFileAccess().then((isAccessible) => {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:222", "音频文件是否可访问:", isAccessible);
-          if (!isAccessible) {
-            uni.showToast({
-              title: "音频文件不可用",
-              icon: "none"
-            });
-          }
-        });
-      });
-      vue.onBeforeUnmount(() => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageComponent/AudioMessage.vue:233", "AudioMessage 组件即将卸载");
-        if (audioContext.value) {
-          audioContext.value.destroy();
-        }
-        clearInterval(updateInterval.value);
-      });
-      return {
-        isPlaying,
-        currentTime,
-        duration,
-        isLoading,
-        isMuted,
-        isAudioFile,
-        progress,
-        formatDuration,
-        togglePlay,
-        seekAudio,
-        toggleMute
-      };
+        this.isMuted = !this.isMuted;
+      }
+    },
+    beforeDestroy() {
+      if (this.audioContext) {
+        this.audioContext.destroy();
+      }
+      clearInterval(this.updateInterval);
     }
   };
-  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "audio-message" }, [
-      $setup.isAudioFile ? (vue.openBlock(), vue.createElementBlock("view", {
+      $options.isAudioFile ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
         class: "audio-player"
       }, [
         vue.createElementVNode("view", { class: "player-container" }, [
-          vue.createCommentVNode(" 播放/暂停按钮 "),
           vue.createElementVNode("view", {
             class: "play-pause-button",
-            onClick: _cache[0] || (_cache[0] = (...args) => $setup.togglePlay && $setup.togglePlay(...args))
+            onClick: _cache[0] || (_cache[0] = (...args) => $options.togglePlay && $options.togglePlay(...args))
           }, [
-            $setup.isLoading ? (vue.openBlock(), vue.createElementBlock("view", {
+            !$data.isPlaying ? (vue.openBlock(), vue.createElementBlock("svg", {
               key: 0,
-              class: "loading-icon"
-            })) : !$setup.isPlaying ? (vue.openBlock(), vue.createElementBlock("svg", {
-              key: 1,
               class: "play-icon",
               viewBox: "0 0 24 24",
               fill: "none",
@@ -16252,7 +16457,7 @@ ${i3}
                 fill: "currentColor"
               })
             ])) : (vue.openBlock(), vue.createElementBlock("svg", {
-              key: 2,
+              key: 1,
               class: "pause-icon",
               viewBox: "0 0 24 24",
               fill: "none",
@@ -16264,13 +16469,12 @@ ${i3}
               })
             ]))
           ]),
-          vue.createCommentVNode(" 时间进度显示 "),
           vue.createElementVNode("view", { class: "time-progress" }, [
             vue.createElementVNode("view", { class: "time-display" }, [
               vue.createElementVNode(
                 "text",
                 null,
-                vue.toDisplayString($setup.formatDuration($setup.currentTime)),
+                vue.toDisplayString($options.formatDuration($data.currentTime)),
                 1
                 /* TEXT */
               ),
@@ -16278,20 +16482,20 @@ ${i3}
               vue.createElementVNode(
                 "text",
                 null,
-                vue.toDisplayString($setup.formatDuration($setup.duration)),
+                vue.toDisplayString($options.formatDuration($data.duration)),
                 1
                 /* TEXT */
               )
             ]),
             vue.createElementVNode("view", {
               class: "progress-bar",
-              onClick: _cache[1] || (_cache[1] = (...args) => $setup.seekAudio && $setup.seekAudio(...args))
+              onClick: _cache[1] || (_cache[1] = (...args) => $options.seekAudio && $options.seekAudio(...args))
             }, [
               vue.createElementVNode(
                 "view",
                 {
                   class: "progress",
-                  style: vue.normalizeStyle({ width: `${$setup.progress}%` })
+                  style: vue.normalizeStyle({ width: `${$options.progress}%` })
                 },
                 null,
                 4
@@ -16299,13 +16503,12 @@ ${i3}
               )
             ])
           ]),
-          vue.createCommentVNode(" 音量控制 "),
           vue.createElementVNode("view", { class: "controls" }, [
             vue.createElementVNode("view", {
               class: "volume-control",
-              onClick: _cache[2] || (_cache[2] = (...args) => $setup.toggleMute && $setup.toggleMute(...args))
+              onClick: _cache[2] || (_cache[2] = (...args) => $options.toggleMute && $options.toggleMute(...args))
             }, [
-              !$setup.isMuted ? (vue.openBlock(), vue.createElementBlock("svg", {
+              !$data.isMuted ? (vue.openBlock(), vue.createElementBlock("svg", {
                 key: 0,
                 class: "volume-icon",
                 viewBox: "0 0 24 24",
@@ -16346,35 +16549,7 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const AudioMessage = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-3578ca20"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/AudioMessage.vue"]]);
-  const _sfc_main$l = {
-    name: "BurnAfterReadingMessage",
-    props: {
-      content: {
-        type: Object,
-        required: true
-      }
-    },
-    methods: {
-      viewBurnAfterReading(message) {
-        this.$emit("view-burn-after-reading", message);
-      }
-    }
-  };
-  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", {
-      class: "burn-after-reading",
-      onClick: _cache[0] || (_cache[0] = ($event) => $options.viewBurnAfterReading($props.content))
-    }, [
-      vue.createElementVNode("image", {
-        src: $props.content.mosaicPath,
-        mode: "widthFix",
-        class: "message-image"
-      }, null, 8, ["src"]),
-      vue.createElementVNode("text", { class: "burn-after-reading-text" }, "阅后即焚")
-    ]);
-  }
-  const BurnAfterReadingMessage = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-6349b1a8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageComponent/BurnAfterReadingMessage.vue"]]);
+  const AudioMessage = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-3578ca20"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/AudioMessage.vue"]]);
   const _sfc_main$k = {
     name: "Message",
     components: {
@@ -16382,7 +16557,8 @@ ${i3}
       ImageMessage,
       FileMessage,
       VoiceMessageBubble,
-      BurnAfterReadingMessage
+      BurnAfterReadingMessage,
+      AudioMessage
     },
     props: {
       message: {
@@ -16402,7 +16578,7 @@ ${i3}
         return `${month}-${day} ${hours}:${minutes}`;
       };
       const viewBurnAfterReading = (message) => {
-        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:78", "查看阅后即焚消息:", message);
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:88", "查看阅后即焚消息:", message);
       };
       return {
         formatTime,
@@ -16415,6 +16591,7 @@ ${i3}
     const _component_ImageMessage = vue.resolveComponent("ImageMessage");
     const _component_FileMessage = vue.resolveComponent("FileMessage");
     const _component_VoiceMessageBubble = vue.resolveComponent("VoiceMessageBubble");
+    const _component_AudioMessage = vue.resolveComponent("AudioMessage");
     const _component_BurnAfterReadingMessage = vue.resolveComponent("BurnAfterReadingMessage");
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -16458,10 +16635,12 @@ ${i3}
                     "location-content": $props.message.type === "location",
                     "file-message": $props.message.type === "file",
                     "message-image": $props.message.type === "image",
-                    "voice-message": $props.message.type === "voice_message"
+                    "voice-message": $props.message.type === "voice_message",
+                    "audio-message": $props.message.type === "audio"
                   }])
                 },
                 [
+                  vue.createCommentVNode(" 根据消息类型渲染不同的组件 "),
                   $props.message.type === "location" ? (vue.openBlock(), vue.createBlock(_component_LocationMessage, {
                     key: 0,
                     content: $props.message.content
@@ -16479,13 +16658,17 @@ ${i3}
                       duration: $props.message.duration,
                       isSelf: $props.message.userType === "self"
                     }
-                  }, null, 8, ["content"])) : $props.message.type === "burn-after-reading" ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReadingMessage, {
+                  }, null, 8, ["content"])) : $props.message.type === "audio" ? (vue.openBlock(), vue.createBlock(_component_AudioMessage, {
                     key: 4,
+                    content: $props.message.content,
+                    messageType: $props.message.messageType
+                  }, null, 8, ["content", "messageType"])) : $props.message.type === "burn-after-reading" ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReadingMessage, {
+                    key: 5,
                     content: $props.message.content,
                     onViewBurnAfterReading: $setup.viewBurnAfterReading
                   }, null, 8, ["content", "onViewBurnAfterReading"])) : (vue.openBlock(), vue.createElementBlock(
                     vue.Fragment,
-                    { key: 5 },
+                    { key: 6 },
                     [
                       vue.createTextVNode(
                         vue.toDisplayString($props.message.content),
@@ -16501,6 +16684,7 @@ ${i3}
                 /* CLASS */
               )
             ]),
+            vue.createCommentVNode(" 消息状态（仅对自己发送的消息显示） "),
             $props.message.userType === "self" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 0,
               class: "message-status"
@@ -16522,7 +16706,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const Message = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-1cea873d"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/Message.vue"]]);
+  const Message = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-1cea873d"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/Message.vue"]]);
   const _sfc_main$j = {
     name: "MessageList",
     components: {
@@ -16660,7 +16844,7 @@ ${i3}
       ], 44, ["scroll-top"])
     ]);
   }
-  const MessageList = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-dee4eb4b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/MessageList.vue"]]);
+  const MessageList = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-dee4eb4b"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageList.vue"]]);
   const _sfc_main$i = {
     name: "AttachmentMenu",
     data() {
@@ -16747,7 +16931,7 @@ ${i3}
       ])
     ]);
   }
-  const AttachmentMenu = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-00ea5aaf"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachmentMenu.vue"]]);
+  const AttachmentMenu = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-00ea5aaf"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachmentMenu.vue"]]);
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -23522,7 +23706,7 @@ ${i3}
     const sign = CryptoJS.MD5(signStr).toString();
     return `${sortedParams}&sig=${sign}`;
   }
-  const _imports_0$2 = "/static/icons/check.png";
+  const _imports_0$1 = "/static/icons/check.png";
   const AMAP_API = "https://restapi.amap.com/v3";
   const _sfc_main$h = {
     name: "LocationSharing",
@@ -23794,7 +23978,7 @@ ${i3}
                   class: "location-check"
                 }, [
                   vue.createElementVNode("image", {
-                    src: _imports_0$2,
+                    src: _imports_0$1,
                     class: "check-icon"
                   })
                 ])) : vue.createCommentVNode("v-if", true)
@@ -23807,25 +23991,38 @@ ${i3}
       ])
     ]);
   }
-  const LocationSharing = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-5719cec1"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue"]]);
+  const LocationSharing = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-5719cec1"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/LocationSharing.vue"]]);
   const _sfc_main$g = {
     name: "ToggleVoiceButton",
     props: {
       isVoiceInputActive: {
         type: Boolean,
         required: true
+      },
+      isBurnAfterReadingMode: {
+        type: Boolean,
+        default: false
       }
     },
-    emits: ["toggle-voice-input"]
+    emits: ["toggle-voice-input"],
+    methods: {
+      getButtonImage() {
+        if (this.isBurnAfterReadingMode) {
+          return this.isVoiceInputActive ? "/static/message/fire-键盘.png" : "/static/message/fire-语音.png";
+        } else {
+          return this.isVoiceInputActive ? "/static/message/键盘.png" : "/static/message/语音.png";
+        }
+      }
+    }
   };
   function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("image", {
       onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("toggle-voice-input")),
-      src: $props.isVoiceInputActive ? "/static/message/键盘.png" : "/static/message/语音.png",
+      src: $options.getButtonImage(),
       class: "toggle-button"
     }, null, 8, ["src"]);
   }
-  const ToggleVoiceButton = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-4e00339e"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/ToggleVoiceButton.vue"]]);
+  const ToggleVoiceButton = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-4e00339e"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/ToggleVoiceButton.vue"]]);
   const _sfc_main$f = {
     name: "VoiceRecordButton",
     props: {
@@ -23897,7 +24094,7 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const VoiceRecordButton = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-e82c7418"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/VoiceRecordButton.vue"]]);
+  const VoiceInputButton = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-595166a0"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/VoiceInputButton.vue"]]);
   const _sfc_main$e = {
     name: "TextInput",
     props: {
@@ -23930,11 +24127,16 @@ ${i3}
       onConfirm: _cache[1] || (_cache[1] = (...args) => $options.sendMessage && $options.sendMessage(...args))
     }, null, 40, ["value"]);
   }
-  const TextInput = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-c73de84a"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/TextInput.vue"]]);
-  const _imports_0$1 = "/static/message/展开对话工具.png";
+  const TextInput = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-c73de84a"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/TextInput.vue"]]);
   const _sfc_main$d = {
     name: "AttachButton",
-    emits: ["click"]
+    emits: ["click"],
+    props: {
+      isBurnAfterReadingMode: {
+        type: Boolean,
+        default: false
+      }
+    }
   };
   function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
@@ -23942,12 +24144,12 @@ ${i3}
       onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click"))
     }, [
       vue.createElementVNode("image", {
-        src: _imports_0$1,
+        src: $props.isBurnAfterReadingMode ? "/static/message/fire-展开对话工具.png" : "/static/message/展开对话工具.png",
         class: "attach-icon"
-      })
+      }, null, 8, ["src"])
     ]);
   }
-  const AttachButton = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-a6f5c486"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachButton.vue"]]);
+  const AttachButton = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-a6f5c486"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/AttachButton.vue"]]);
   const _sfc_main$c = {
     name: "SendButton",
     emits: ["click"],
@@ -23965,7 +24167,7 @@ ${i3}
       vue.createElementVNode("text", { class: "send-text" }, "发送")
     ]);
   }
-  const SendButton = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-ab1b8027"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/SendButton.vue"]]);
+  const SendButton = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-ab1b8027"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/SendButton.vue"]]);
   function afterAudioRecord() {
     getApp().globalData.audioRecording = false;
   }
@@ -24019,16 +24221,16 @@ ${i3}
     });
     function initRecorderManager() {
       if (typeof uni !== "undefined" && uni.getRecorderManager) {
-        recorderManager = uni.getRecorderManager();
-        if (recorderManager) {
-          recorderManager.onStart((e2) => onStart(e2));
-          recorderManager.onPause((e2) => onPause(e2));
-          recorderManager.onResume((e2) => onResume(e2));
-          recorderManager.onInterruptionBegin((e2) => onInterruptionBegin(e2));
-          recorderManager.onInterruptionEnd((e2) => onInterruptionEnd(e2));
-          recorderManager.onError((e2) => onError(e2));
-          recorderManager.onStop((e2) => onStop(e2));
-          formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:74", "RecorderManager initialized successfully");
+        recorderManager2 = uni.getRecorderManager();
+        if (recorderManager2) {
+          recorderManager2.onStart((e2) => onStart(e2));
+          recorderManager2.onPause((e2) => onPause(e2));
+          recorderManager2.onResume((e2) => onResume(e2));
+          recorderManager2.onInterruptionBegin((e2) => onInterruptionBegin(e2));
+          recorderManager2.onInterruptionEnd((e2) => onInterruptionEnd(e2));
+          recorderManager2.onError((e2) => onError(e2));
+          recorderManager2.onStop((e2) => onStop(e2));
+          formatAppLog("log", "at pages/message/ChatComponent/composables/useVoiceInput.js:80", "录音管理器初始化成功");
         } else {
           formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:82", "获取录音管理器实例失败");
         }
@@ -24037,8 +24239,8 @@ ${i3}
       }
     }
     function startVoiceRecord() {
-      if (!recorderManager) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:85", "RecorderManager is not initialized");
+      if (!recorderManager2) {
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:92", "录音管理器未初始化");
         uni.showToast({
           title: "录音功能初始化失败",
           icon: "none"
@@ -24057,8 +24259,8 @@ ${i3}
       }
     }
     function stopVoiceRecord() {
-      if (!recorderManager) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:108", "RecorderManager is not initialized");
+      if (!recorderManager2) {
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useVoiceInput.js:116", "录音管理器未初始化");
         return;
       }
       recorderManager2.stop();
@@ -24164,8 +24366,9 @@ ${i3}
   }
   function useAttachmentHandling(emit, props) {
     const showLocationSharing = vue.ref(false);
+    const isBurnAfterReadingMode2 = vue.ref(false);
     const attachItem = (action, data) => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:10", "附件项被选择:", action);
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:12", "附件项被选择:", action);
       switch (action) {
         case "file":
           chooseAndSendFile();
@@ -24174,7 +24377,7 @@ ${i3}
           chooseAndSendPhoto();
           break;
         case "burn-after-reading":
-          formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:21", "阅后即焚功能尚未实现");
+          toggleBurnAfterReadingMode();
           break;
         case "camera":
           takePhoto();
@@ -24188,39 +24391,40 @@ ${i3}
         default:
           emit("attach", action);
       }
-      if (action !== "location" && action !== "file") {
+      if (action !== "location" && action !== "file" && action !== "burn-after-reading") {
         emit("toggle-attach-menu", false);
       }
     };
     const chooseAndSendPhoto = async () => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:44", "chooseAndSendPhoto 方法被调用");
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:45", "chooseAndSendPhoto 方法被调用");
       try {
         const imageRes = await new Promise((resolve, reject) => {
           uni.chooseImage({
             count: 1,
             success: (res) => {
-              formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:50", "图片选择成功:", JSON.stringify(res));
+              formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:51", "图片选择成功:", JSON.stringify(res));
               resolve(res);
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:54", "图片选择失败:", err);
+              formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:55", "图片选择失败:", err);
               reject(err);
             }
           });
         });
         const tempFilePath = imageRes.tempFilePaths[0];
         const fileName = tempFilePath.split("/").pop();
-        formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:62", "选择的图片名:", fileName);
+        formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:63", "选择的图片名:", fileName);
         emit("file-selected", {
           type: "image",
           path: tempFilePath,
           name: fileName,
           recipientId: props.recipientId,
-          missionId: props.missionId
+          missionId: props.missionId,
+          isBurnAfterReading: isBurnAfterReadingMode2.value
         });
         emit("toggle-attach-menu", false);
       } catch (error) {
-        formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:73", "选择图片时出错:", error);
+        formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:75", "选择图片时出错:", error);
         uni.showToast({
           title: "选择失败，请重试",
           icon: "none"
@@ -24228,7 +24432,7 @@ ${i3}
       }
     };
     const takePhoto = () => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:83", "拍摄照片");
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:85", "拍摄照片");
       uni.chooseImage({
         count: 1,
         sourceType: ["camera"],
@@ -24239,11 +24443,12 @@ ${i3}
             path: tempFilePath,
             name: "camera_photo.jpg",
             recipientId: props.recipientId,
-            missionId: props.missionId
+            missionId: props.missionId,
+            isBurnAfterReading: isBurnAfterReadingMode2.value
           });
         },
         fail: (err) => {
-          formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:98", "拍照失败:", err);
+          formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:101", "拍照失败:", err);
           uni.showToast({
             title: "拍照失败",
             icon: "none"
@@ -24252,25 +24457,26 @@ ${i3}
       });
     };
     const openLocationSharing = () => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:109", "打开位置分享");
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:112", "打开位置分享");
       showLocationSharing.value = true;
       emit("toggle-attach-menu", false);
     };
     const closeLocationSharing = () => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:116", "关闭位置分享");
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:119", "关闭位置分享");
       showLocationSharing.value = false;
     };
     const handleLocationSelected = (location2) => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:122", "位置被选择:", JSON.stringify(location2));
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:125", "位置被选择:", JSON.stringify(location2));
       emit("send-message", {
         type: "location",
         content: location2,
-        missionId: props.missionId
+        missionId: props.missionId,
+        isBurnAfterReading: isBurnAfterReadingMode2.value
       });
       closeLocationSharing();
     };
     const chooseAndSendFile = () => {
-      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:133", "选择文件");
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:137", "选择文件");
       uni.chooseFile({
         count: 1,
         success: (res) => {
@@ -24281,18 +24487,24 @@ ${i3}
             path: tempFilePath,
             name: fileName,
             recipientId: props.recipientId,
-            missionId: props.missionId
+            missionId: props.missionId,
+            isBurnAfterReading: isBurnAfterReadingMode2.value
           });
           emit("toggle-attach-menu", false);
         },
         fail: (err) => {
-          formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:149", "文件选择失败:", err);
+          formatAppLog("error", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:154", "文件选择失败:", err);
           uni.showToast({
             title: "文件选择失败",
             icon: "none"
           });
         }
       });
+    };
+    const toggleBurnAfterReadingMode = () => {
+      isBurnAfterReadingMode2.value = !isBurnAfterReadingMode2.value;
+      formatAppLog("log", "at pages/message/ChatComponent/composables/useAttachmentHandling.js:166", "阅后即焚模式已切换:", isBurnAfterReadingMode2.value);
+      emit("toggle-burn-after-reading", isBurnAfterReadingMode2.value);
     };
     return {
       showLocationSharing,
@@ -24301,11 +24513,13 @@ ${i3}
       chooseAndSendFile,
       openLocationSharing,
       closeLocationSharing,
-      handleLocationSelected
+      handleLocationSelected,
+      isBurnAfterReadingMode: isBurnAfterReadingMode2,
+      toggleBurnAfterReadingMode
     };
   }
   function useMessageSending(newMessage, emit, props) {
-    const sendMessage = () => {
+    const sendMessage2 = () => {
       formatAppLog("log", "at pages/message/ChatComponent/composables/useMessageSending.js:5", "sendMessage 方法被调用");
       if (typeof newMessage.value !== "string" || !newMessage.value.trim()) {
         formatAppLog("log", "at pages/message/ChatComponent/composables/useMessageSending.js:8", "消息为空或不是字符串，不发送");
@@ -24322,7 +24536,7 @@ ${i3}
       newMessage.value = "";
     };
     return {
-      sendMessage
+      sendMessage: sendMessage2
     };
   }
   const _sfc_main$b = {
@@ -24349,18 +24563,23 @@ ${i3}
         type: String,
         required: true,
         default: ""
+      },
+      initialBurnAfterReadingMode: {
+        type: Boolean,
+        default: false
       }
     },
-    emits: ["send-message", "toggle-attach-menu", "attach", "video-call", "file-selected"],
+    emits: ["send-message", "toggle-attach-menu", "attach", "video-call", "file-selected", "toggle-burn-after-reading"],
     setup(props, { emit }) {
       const newMessage = vue.ref("");
       const showLocationSharing = vue.ref(false);
       const isVoiceInputActive = vue.ref(false);
+      const isBurnAfterReadingMode2 = vue.ref(props.initialBurnAfterReadingMode || false);
       const handleVoiceFileSelected = (fileInfo) => {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:107", "useVoiceInput 回调被触发，完整的文件信息:", JSON.stringify(fileInfo));
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:118", "useVoiceInput 回调被触发，完整的文件信息:", JSON.stringify(fileInfo));
         if (fileInfo && typeof fileInfo === "object" && fileInfo.fromVoiceInput) {
           if (!fileInfo.path) {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:111", "语音文件路径缺失:", fileInfo);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:122", "语音文件路径缺失:", fileInfo);
             uni.showToast({
               title: "语音文件保存失败，请重试",
               icon: "none"
@@ -24369,7 +24588,7 @@ ${i3}
           }
           emit("file-selected", fileInfo);
         } else {
-          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:121", "无效的文件信息:", fileInfo);
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:132", "无效的文件信息:", fileInfo);
         }
       };
       const {
@@ -24386,9 +24605,11 @@ ${i3}
         openLocationSharing,
         closeLocationSharing,
         handleLocationSelected,
-        showLocationSharing: locationSharingState
+        showLocationSharing: locationSharingState,
+        isBurnAfterReadingMode: burnMode,
+        toggleBurnAfterReadingMode
       } = useAttachmentHandling(emit, props);
-      const { sendMessage } = useMessageSending(newMessage, emit, props);
+      const { sendMessage: sendMessage2 } = useMessageSending(newMessage, emit, props);
       const toggleVoiceInput = () => {
         isVoiceInputActive.value = !isVoiceInputActive.value;
       };
@@ -24406,6 +24627,13 @@ ${i3}
       vue.watch(locationSharingState, (newVal) => {
         showLocationSharing.value = newVal;
       });
+      vue.watch(burnMode, (newVal) => {
+        isBurnAfterReadingMode2.value = newVal;
+        emit("toggle-burn-after-reading", newVal);
+      });
+      vue.watch(() => props.initialBurnAfterReadingMode, (newVal) => {
+        isBurnAfterReadingMode2.value = newVal;
+      });
       return {
         newMessage,
         showLocationSharing,
@@ -24417,14 +24645,16 @@ ${i3}
         toggleVoiceInput,
         startVoiceRecord,
         stopVoiceRecord,
-        sendMessage,
+        sendMessage: sendMessage2,
         toggleAttachMenu,
         closeAttachMenu,
         attachItem,
         handleFileSelected,
         openLocationSharing,
         closeLocationSharing,
-        handleLocationSelected
+        handleLocationSelected,
+        isBurnAfterReadingMode: isBurnAfterReadingMode2,
+        toggleBurnAfterReadingMode
       };
     }
   };
@@ -24446,8 +24676,9 @@ ${i3}
           vue.createCommentVNode(" 语音/键盘切换按钮 "),
           vue.createVNode(_component_toggle_voice_button, {
             "is-voice-input-active": $setup.isVoiceInputActive,
+            "is-burn-after-reading-mode": $setup.isBurnAfterReadingMode,
             onToggleVoiceInput: $setup.toggleVoiceInput
-          }, null, 8, ["is-voice-input-active", "onToggleVoiceInput"]),
+          }, null, 8, ["is-voice-input-active", "is-burn-after-reading-mode", "onToggleVoiceInput"]),
           vue.createCommentVNode(" 语音录音按钮 "),
           $setup.isVoiceInputActive ? (vue.openBlock(), vue.createBlock(_component_voice_input_button, {
             key: 0,
@@ -24474,8 +24705,9 @@ ${i3}
           vue.createCommentVNode(" 附件按钮 "),
           !$props.showAttachMenu ? (vue.openBlock(), vue.createBlock(_component_attach_button, {
             key: 2,
-            onClick: $setup.toggleAttachMenu
-          }, null, 8, ["onClick"])) : vue.createCommentVNode("v-if", true),
+            onClick: $setup.toggleAttachMenu,
+            "is-burn-after-reading-mode": $setup.isBurnAfterReadingMode
+          }, null, 8, ["onClick", "is-burn-after-reading-mode"])) : vue.createCommentVNode("v-if", true),
           vue.createCommentVNode(" 发送按钮 "),
           !$setup.isVoiceInputActive && ($props.showAttachMenu || $setup.newMessage.trim().length > 0) ? (vue.openBlock(), vue.createBlock(_component_send_button, {
             key: 3,
@@ -24501,7 +24733,7 @@ ${i3}
       }, null, 8, ["recipient-id", "mission-id", "onLocationSelected", "onClose"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const ChatInputArea = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-e8a570ad"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputArea.vue"]]);
+  const ChatInputArea = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-e8a570ad"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputArea.vue"]]);
   const _sfc_main$a = {
     name: "BurnAfterReading",
     props: {
@@ -24585,7 +24817,7 @@ ${i3}
       )
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const BurnAfterReading = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-dfdab274"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue.vue"]]);
+  const BurnAfterReading = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-dfdab274"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue.vue"]]);
   const _sfc_main$9 = {
     name: "ScrollToBottomButton",
     props: {
@@ -24604,7 +24836,7 @@ ${i3}
       vue.createElementVNode("text", { class: "scroll-to-bottom-icon" }, "↓")
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-92969997"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
+  const ScrollToBottomButton = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-92969997"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/ScrollToBottomButton.vue"]]);
   const usePeerStore = defineStore("peerStore", {
     state() {
       return {
@@ -24663,6 +24895,534 @@ ${i3}
       };
     }
   });
+  function useChatInitialization() {
+    formatAppLog("log", "at pages/message/composables/useChatInitialization.js:5", "[useChatInitialization] 被调用");
+    return {
+      // 返回上一页
+      goBack() {
+        formatAppLog("log", "at pages/message/composables/useChatInitialization.js:10", "[useChatInitialization] goBack 被调用");
+        uni.navigateBack({
+          success: () => {
+            formatAppLog("log", "at pages/message/composables/useChatInitialization.js:13", "[useChatInitialization] 导航返回成功");
+            uni.$emit("updateTabBarActiveTab", 1);
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/message/composables/useChatInitialization.js:17", "[useChatInitialization] 返回失败:", err);
+            uni.reLaunch({
+              url: "/pages/tabBar/tabBar",
+              success: () => {
+                formatAppLog("log", "at pages/message/composables/useChatInitialization.js:21", "[useChatInitialization] 重新启动到 tabBar 页面成功");
+                uni.$emit("updateTabBarActiveTab", 1);
+              }
+            });
+          }
+        });
+      },
+      // 设置聊天信息
+      setupChatInfo(eventChannel, vm) {
+        formatAppLog("log", "at pages/message/composables/useChatInitialization.js:31", "[useChatInitialization] setupChatInfo 被调用，eventChannel:", eventChannel);
+        formatAppLog("log", "at pages/message/composables/useChatInitialization.js:32", "[useChatInitialization] vm 对象:", vm);
+        if (!eventChannel) {
+          formatAppLog("error", "at pages/message/composables/useChatInitialization.js:34", "[useChatInitialization] 事件通道未定义");
+          return;
+        }
+        eventChannel.on("chatInfo", (data) => {
+          formatAppLog("log", "at pages/message/composables/useChatInitialization.js:39", "[useChatInitialization] 接收到 chatInfo 事件:", JSON.stringify(data));
+          if (!data || !data.chatInfo) {
+            formatAppLog("error", "at pages/message/composables/useChatInitialization.js:41", "[useChatInitialization] 接收到的聊天信息无效:", JSON.stringify(data));
+            return;
+          }
+          try {
+            vm.chatInfo.value = {
+              ...vm.chatInfo.value,
+              ...data.chatInfo
+            };
+            formatAppLog("log", "at pages/message/composables/useChatInitialization.js:51", "[useChatInitialization] 更新后的聊天信息:", JSON.stringify(vm.chatInfo.value));
+            if (!vm.chatInfo.value.missionId) {
+              const userStore = useUserStore();
+              vm.chatInfo.value.missionId = userStore.missionId.toString();
+            } else if (Array.isArray(vm.chatInfo.value.missionId)) {
+              vm.chatInfo.value.missionId = vm.chatInfo.value.missionId.join(",");
+            }
+            formatAppLog("log", "at pages/message/composables/useChatInitialization.js:61", "[useChatInitialization] 使用的 missionId:", vm.chatInfo.value.missionId);
+            uni.setStorageSync("chatQuery", JSON.stringify(vm.chatInfo.value));
+            if (vm.loadHistoryMessages) {
+              vm.loadHistoryMessages();
+            } else {
+              formatAppLog("error", "at pages/message/composables/useChatInitialization.js:70", "[useChatInitialization] loadHistoryMessages 方法未定义");
+            }
+          } catch (error) {
+            formatAppLog("error", "at pages/message/composables/useChatInitialization.js:73", "[useChatInitialization] 处理 chatInfo 时发生错误:", error);
+          }
+        });
+      }
+    };
+  }
+  function useMessageHandling(chatInfo, list2, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
+    const sendMessage2 = async (message) => {
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:8", "[sendMessage] 发送消息:", message);
+      if (message.content && chatInfo.value && chatInfo.value.id) {
+        try {
+          const response = await sendMessageToUser({
+            message: typeof message.content === "object" ? JSON.stringify(message.content) : message.content,
+            recipientId: chatInfo.value.id,
+            messageType: message.type || "text",
+            missionId: chatInfo.value.missionId,
+            isPosition: message.type === "location",
+            isSelfDestruct: chatInfo.value.isBurnAfterReadingMode
+          });
+          formatAppLog("log", "at pages/message/composables/useMessageHandling.js:19", "[sendMessage] 发送消息响应:", response);
+          if (response.code === 200) {
+            const sentMessage = {
+              ...response.data,
+              selfDestruct: response.data.selfDestruct
+            };
+            handleMessageSent(sentMessage);
+            await updateMessageList2();
+            vue.nextTick(() => {
+              scrollToBottom();
+            });
+          } else {
+            throw new Error(response.msg || "发送消息失败");
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/message/composables/useMessageHandling.js:35", "[sendMessage] 发送消息失败:", error);
+        }
+      } else {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:38", "[sendMessage] 消息内容为空或 chatInfo 未正确初始化", {
+          content: message.content,
+          chatInfo: chatInfo.value
+        });
+      }
+    };
+    const handleMessageSent = (sentMessage) => {
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:47", "[handleMessageSent] 消息已发送:", sentMessage);
+    };
+    const handleMessageFailed = (failedMessage) => {
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:52", "[handleMessageFailed] 消息发送失败:", failedMessage);
+    };
+    const loadHistoryMessages = async (isLoadingMore = false, newFrom = null, newTo = null) => {
+      if (!chatInfo.value || !chatInfo.value.id || !chatInfo.value.missionId) {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:58", "[loadHistoryMessages] chatInfo 未正确初始化");
+        hasMoreMessages.value = false;
+        return false;
+      }
+      const from = newFrom !== null ? newFrom : currentFrom.value;
+      const to = newTo !== null ? newTo : currentTo.value;
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:66", "[loadHistoryMessages] 开始加载历史消息", {
+        isLoadingMore,
+        from,
+        to,
+        missionId: chatInfo.value.missionId
+      });
+      try {
+        const response = await getHistoryChatMessages({
+          opponentId: chatInfo.value.id,
+          from,
+          to,
+          missionId: chatInfo.value.missionId
+        });
+        formatAppLog("log", "at pages/message/composables/useMessageHandling.js:81", "[loadHistoryMessages] 历史消息响应:", response);
+        if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
+          const newMessages = response.data.messageVOList.reverse().map((msg) => {
+            let content = msg.message;
+            let type = msg.messageType.toLowerCase();
+            if (type === "position") {
+              try {
+                content = JSON.parse(msg.message);
+                type = "location";
+              } catch (e2) {
+                formatAppLog("error", "at pages/message/composables/useMessageHandling.js:93", "解析位置数据失败:", e2);
+              }
+            } else if (type === "image") {
+              content = msg.previewUrl || msg.message;
+            } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+              type = "file";
+            } else if (type === "audio" || type === "voice_message") {
+              content = msg.previewUrl || msg.message;
+            }
+            const mappedMessage = {
+              id: msg.id,
+              content,
+              userType: msg.senderId === chatInfo.value.id ? "other" : "self",
+              avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
+              timestamp: new Date(msg.sendTime),
+              type,
+              isRead: msg.isRead,
+              messageType: msg.messageType,
+              selfDestruct: msg.selfDestruct
+            };
+            handleSelfDestructMessage(mappedMessage);
+            return mappedMessage;
+          });
+          formatAppLog("log", "at pages/message/composables/useMessageHandling.js:120", "[loadHistoryMessages] 新消息数量:", newMessages.length);
+          if (isLoadingMore) {
+            list2.value = [...newMessages, ...list2.value];
+            formatAppLog("log", "at pages/message/composables/useMessageHandling.js:124", "[loadHistoryMessages] 在列表前端添加新消息");
+          } else {
+            list2.value = newMessages;
+            formatAppLog("log", "at pages/message/composables/useMessageHandling.js:127", "[loadHistoryMessages] 替换整个消息列表");
+          }
+          hasMoreMessages.value = newMessages.length === to - from + 1;
+          formatAppLog("log", "at pages/message/composables/useMessageHandling.js:131", "[loadHistoryMessages] 是否有更多消息:", hasMoreMessages.value);
+          currentFrom.value = from;
+          currentTo.value = to;
+          formatAppLog("log", "at pages/message/composables/useMessageHandling.js:136", "[loadHistoryMessages] 更新后的消息列表长度:", list2.value.length);
+          if (!isLoadingMore) {
+            vue.nextTick(() => {
+              scrollToBottom();
+            });
+          }
+          return true;
+        } else {
+          formatAppLog("error", "at pages/message/composables/useMessageHandling.js:146", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+          hasMoreMessages.value = false;
+          uni.showToast({
+            title: "加载历史消息失败",
+            icon: "none"
+          });
+          return false;
+        }
+      } catch (error) {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:155", "[loadHistoryMessages] 加载历史消息出错:", error);
+        hasMoreMessages.value = false;
+        uni.showToast({
+          title: "网络错误，请稍后重试",
+          icon: "none"
+        });
+        return false;
+      }
+    };
+    const updateMessageList2 = async () => {
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:167", "[updateMessageList] 开始更新消息列表");
+      try {
+        const response = await getHistoryChatMessages({
+          opponentId: chatInfo.value.id,
+          from: 0,
+          to: 10,
+          missionId: chatInfo.value.missionId
+        });
+        formatAppLog("log", "at pages/message/composables/useMessageHandling.js:176", "[updateMessageList] 接收到的响应:", response);
+        if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
+          const newMessages = response.data.messageVOList.reverse().map((msg) => {
+            let content = msg.message;
+            let type = msg.messageType.toLowerCase();
+            if (type === "position") {
+              try {
+                content = JSON.parse(msg.message);
+                type = "location";
+              } catch (e2) {
+                formatAppLog("error", "at pages/message/composables/useMessageHandling.js:188", "解析位置数据失败:", e2);
+              }
+            } else if (type === "image") {
+              content = msg.previewUrl || msg.message;
+            } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+              type = "file";
+            } else if (type === "audio" || type === "voice_message") {
+              content = msg.previewUrl || msg.message;
+            }
+            return {
+              id: msg.id,
+              content,
+              userType: msg.senderId === chatInfo.value.id ? "other" : "self",
+              avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
+              timestamp: new Date(msg.sendTime),
+              type,
+              isRead: msg.isRead,
+              messageType: msg.messageType,
+              selfDestruct: msg.selfDestruct
+            };
+          });
+          list2.value = newMessages;
+          formatAppLog("log", "at pages/message/composables/useMessageHandling.js:213", "[updateMessageList] 消息列表已更新，新长度:", list2.value.length);
+          vue.nextTick(() => {
+            scrollToBottom();
+          });
+        } else {
+          formatAppLog("error", "at pages/message/composables/useMessageHandling.js:219", "[updateMessageList] 获取新消息失败:", response.msg);
+          throw new Error(response.msg || "获取新消息失败");
+        }
+      } catch (error) {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:223", "[updateMessageList] 更新消息列表出错:", error);
+        uni.showToast({
+          title: "更新消息列表失败，请重试",
+          icon: "none"
+        });
+      }
+    };
+    const handleFileSelected = async (fileInfo) => {
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:233", "文件被选择，完整的 fileInfo:", JSON.stringify(fileInfo));
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:234", "当前 isBurnAfterReadingMode 状态:", chatInfo.value.isBurnAfterReadingMode);
+      if (!fileInfo || typeof fileInfo !== "object") {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:236", "文件信息无效:", fileInfo);
+        uni.showToast({
+          title: "文件信息无效，请重试",
+          icon: "none"
+        });
+        return;
+      }
+      if (!fileInfo.path) {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:245", "文件路径缺失:", fileInfo);
+        uni.showToast({
+          title: "文件路径缺失，请重试",
+          icon: "none"
+        });
+        return;
+      }
+      try {
+        const response = await sendFilesToUser({
+          files: [fileInfo.path],
+          isGroup: false,
+          isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
+          // 确保始终有一个布尔值
+          latitude: "0",
+          longitude: "0",
+          missionId: chatInfo.value.missionId,
+          receptionId: chatInfo.value.id,
+          voiceMessage: fileInfo.fromVoiceInput || false
+        });
+        formatAppLog("log", "at pages/message/composables/useMessageHandling.js:265", "文件上传响应:", response);
+        if (response.code === 200) {
+          await updateMessageList2();
+          vue.nextTick(() => {
+            scrollToBottom();
+          });
+        } else {
+          throw new Error(response.msg || "发送文件消息失败");
+        }
+      } catch (error) {
+        formatAppLog("error", "at pages/message/composables/useMessageHandling.js:277", "发送文件消息出错:", error);
+        uni.showToast({
+          title: "发送失败，请重试",
+          icon: "none"
+        });
+      }
+    };
+    const handleSelfDestructMessage = (message) => {
+      formatAppLog("log", "at pages/message/composables/useMessageHandling.js:287", "处理自毁消息:", message);
+    };
+    return {
+      sendMessage: sendMessage2,
+      handleMessageFailed,
+      loadHistoryMessages,
+      updateMessageList: updateMessageList2,
+      handleFileSelected
+    };
+  }
+  function useUiInteractions({
+    messageListRef,
+    isScrolledToBottom,
+    showScrollToBottom,
+    showNewMessageTip,
+    hasNewMessages,
+    isLoading,
+    currentFrom,
+    currentTo,
+    loadHistoryMessages,
+    showAttachMenu,
+    hasMoreMessages
+  }) {
+    const handleAttachment = (type, data) => {
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:19", "[handleAttachment] 处理附件:", type, data);
+      if (type === "location") {
+        handleLocationMessage(data);
+      } else {
+        const handlers = {
+          album: chooseImage,
+          file: () => handleFileTransfer(data),
+          "burn-after-reading": () => handleBurnAfterReading(data)
+        };
+        if (handlers[type]) {
+          handlers[type]();
+        }
+      }
+    };
+    const handleLocationMessage = (locationData) => {
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:36", "[handleLocationMessage] 处理位置消息:", locationData);
+      sendMessage({
+        type: "location",
+        content: locationData
+      });
+    };
+    const viewBurnAfterReadingImage = (message) => {
+      currentBurnAfterReadingImage.value = message.content.originalPath;
+      currentBurnAfterReadingMessage.value = message;
+      vue.nextTick(() => {
+        if (burnAfterReadingRef.value) {
+          burnAfterReadingRef.value.open();
+        }
+      });
+    };
+    const closeBurnAfterReadingPreview = () => {
+      currentBurnAfterReadingImage.value = "";
+      if (currentBurnAfterReadingMessage.value) {
+        const index = list.value.indexOf(currentBurnAfterReadingMessage.value);
+        if (index > -1) {
+          list.value.splice(index, 1);
+        }
+        currentBurnAfterReadingMessage.value = null;
+      }
+      updateMessageList();
+    };
+    const toggleAttachMenu = (show) => {
+      showAttachMenu.value = show;
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:70", "附件菜单切换:", show);
+    };
+    const handleOverlayClick = () => {
+      showAttachMenu.value = false;
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:76", "附件菜单已关闭");
+    };
+    const scrollToBottom = () => {
+      vue.nextTick(() => {
+        if (messageListRef.value && messageListRef.value.scrollToBottom) {
+          messageListRef.value.scrollToBottom();
+          showScrollToBottom.value = false;
+          showNewMessageTip.value = false;
+          hasNewMessages.value = false;
+          isScrolledToBottom.value = true;
+          formatAppLog("log", "at pages/message/composables/useUiInteractions.js:88", "滚动到底部");
+        }
+      });
+    };
+    const onScroll = (event) => {
+      if (messageListRef.value && messageListRef.value.scrollViewHeight) {
+        const { scrollTop, scrollHeight } = event.detail;
+        const isAtBottom = scrollHeight - (scrollTop + messageListRef.value.scrollViewHeight) < 10;
+        isScrolledToBottom.value = isAtBottom;
+        showScrollToBottom.value = !isAtBottom && hasNewMessages.value;
+        showNewMessageTip.value = !isAtBottom && hasNewMessages.value;
+        if (isAtBottom) {
+          hasNewMessages.value = false;
+          showNewMessageTip.value = false;
+        }
+      }
+    };
+    const loadMoreMessages = async () => {
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:111", "[loadMoreMessages] 开始加载更多消息");
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:112", "[loadMoreMessages] hasMoreMessages:", hasMoreMessages.value);
+      formatAppLog("log", "at pages/message/composables/useUiInteractions.js:113", "[loadMoreMessages] messageListRef:", messageListRef.value);
+      if (!hasMoreMessages || !hasMoreMessages.value || !messageListRef.value) {
+        formatAppLog("log", "at pages/message/composables/useUiInteractions.js:117", "[loadMoreMessages] 没有更多消息或 messageListRef 为 null");
+        formatAppLog("log", "at pages/message/composables/useUiInteractions.js:118", "[loadMoreMessages] hasMoreMessages:", hasMoreMessages);
+        formatAppLog("log", "at pages/message/composables/useUiInteractions.js:119", "[loadMoreMessages] messageListRef:", messageListRef.value);
+        return;
+      }
+      if (!isLoading.value) {
+        isLoading.value = true;
+        try {
+          const oldContentHeight = await messageListRef.value.getContentHeight();
+          formatAppLog("log", "at pages/message/composables/useUiInteractions.js:128", "[loadMoreMessages] 旧内容高度:", oldContentHeight);
+          const newFrom = currentTo.value + 1;
+          const newTo = currentTo.value + 10;
+          const loadResult = await loadHistoryMessages(true, newFrom, newTo);
+          if (loadResult) {
+            vue.nextTick(async () => {
+              if (messageListRef.value) {
+                const newContentHeight = await messageListRef.value.getContentHeight();
+                formatAppLog("log", "at pages/message/composables/useUiInteractions.js:139", "[loadMoreMessages] 新内容高度:", newContentHeight);
+                const heightDifference = newContentHeight - oldContentHeight;
+                formatAppLog("log", "at pages/message/composables/useUiInteractions.js:142", "[loadMoreMessages] 高度差:", heightDifference);
+                if (messageListRef.value.setScrollTop) {
+                  messageListRef.value.setScrollTop(heightDifference);
+                }
+              }
+              isLoading.value = false;
+              formatAppLog("log", "at pages/message/composables/useUiInteractions.js:150", "[loadMoreMessages] 加载完成");
+            });
+          } else {
+            isLoading.value = false;
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/message/composables/useUiInteractions.js:156", "[loadMoreMessages] 加载更多消息时出错:", error);
+          isLoading.value = false;
+        }
+      } else {
+        formatAppLog("log", "at pages/message/composables/useUiInteractions.js:160", "[loadMoreMessages] 正在加载中");
+      }
+    };
+    const toggleBurnAfterReadingMode = (isActive) => {
+      isBurnAfterReadingMode.value = isActive;
+    };
+    return {
+      handleAttachment,
+      viewBurnAfterReadingImage,
+      closeBurnAfterReadingPreview,
+      toggleAttachMenu,
+      handleOverlayClick,
+      scrollToBottom,
+      onScroll,
+      loadMoreMessages,
+      toggleBurnAfterReadingMode
+    };
+  }
+  function useVideoCallHandling(vm) {
+    return {
+      // 打开视频通话页面
+      openVideoPage(action) {
+        uni.navigateTo({
+          url: `/pages/message/video-call?calleePeerId=${vm.chatInfo.id}`
+        });
+      },
+      // 拒绝视频通话
+      rejectVideoCall() {
+        formatAppLog("log", "at pages/message/composables/useVideoCallHandling.js:13", "拒绝视频通话，peerStore 状态:", vm.peerStore);
+        vm.peerStore.dataConnection.send({
+          instruction: vm.peerStore.instruction.reject
+        });
+        vm.peerStore.dataConnection = void 0;
+        vm.peerStore.activateNotification = false;
+      },
+      // 接受视频通话
+      acceptVideoCall() {
+        formatAppLog("log", "at pages/message/composables/useVideoCallHandling.js:23", "接受视频通话，peerStore 状态:", vm.peerStore);
+        vm.peerStore.activateNotification = false;
+        uni.showLoading({
+          title: "等待对方连接...",
+          mask: true
+        });
+        let cancel = watch(() => vm.peerStore.mediaConnection, (newValue) => {
+          if (newValue) {
+            uni.hideLoading();
+            cancel();
+            uni.navigateTo({
+              url: "/pages/message/video-answer"
+            });
+          }
+        }, { immediate: true });
+        vm.peerStore.dataConnection.send({
+          instruction: vm.peerStore.instruction.accept
+        });
+      }
+    };
+  }
+  function useSelfDestructMessageHandling(vm) {
+    return {
+      // 删除消息
+      deleteMessage(messageId) {
+        const index = vm.list.findIndex((msg) => msg.id === messageId);
+        if (index !== -1) {
+          vm.list.splice(index, 1);
+        }
+      },
+      // 处理自毁消息
+      handleSelfDestructMessage(message) {
+        if (message.userType === "other" && message.selfDestruct) {
+          readSelfDestructMessage({
+            isGroup: vm.chatInfo.type === "group",
+            messageId: message.id,
+            messageType: message.messageType
+          }).then(() => {
+            formatAppLog("log", "at pages/message/composables/useSelfDestructMessageHandling.js:22", "自毁消息已成功阅读");
+            setTimeout(() => {
+              vm.deleteMessage(message.id);
+            }, 1e4);
+          }).catch((error) => {
+            formatAppLog("error", "at pages/message/composables/useSelfDestructMessageHandling.js:30", "阅读自毁消息时出错:", error);
+          });
+        }
+      }
+    };
+  }
   const _sfc_main$8 = {
     name: "Chat",
     components: {
@@ -24672,400 +25432,190 @@ ${i3}
       BurnAfterReading,
       ScrollToBottomButton
     },
-    data() {
-      return {
-        chatInfo: {
-          id: "",
-          name: "",
-          avatar: [],
-          type: "single",
-          missionId: ""
-        },
-        list: [],
-        // 消息列表
-        showAttachMenu: false,
-        burnAfterReadingDuration: 5,
-        currentBurnAfterReadingImage: "",
-        currentBurnAfterReadingMessage: null,
-        isScrolledToBottom: true,
-        showScrollToBottom: false,
-        showNewMessageTip: false,
-        hasNewMessages: false,
-        currentFrom: 0,
-        currentTo: 10,
-        hasMoreMessages: true,
-        isLoading: false,
-        peerStore: null,
-        friendStore: null
-      };
-    },
-    onLoad() {
-      const eventChannel = this.getOpenerEventChannel();
-      this.peerStore = usePeerStore();
-      this.friendStore = useFriendStore$1();
-      eventChannel.on("chatInfo", (data) => {
-        this.chatInfo = data.chatInfo;
-        formatAppLog("log", "at pages/message/chat.vue:118", "接收到的聊天信息:", this.chatInfo);
-        if (!this.chatInfo.missionId) {
-          const userStore = useUserStore();
-          this.chatInfo.missionId = userStore.missionId.toString();
-        } else if (Array.isArray(this.chatInfo.missionId)) {
-          this.chatInfo.missionId = this.chatInfo.missionId.join(",");
-        }
-        formatAppLog("log", "at pages/message/chat.vue:125", "使用的 missionId:", this.chatInfo.missionId);
-        this.initializeChat();
+    setup() {
+      const chatInfo = vue.ref({
+        id: "",
+        name: "",
+        avatar: [],
+        type: "single",
+        missionId: "",
+        isBurnAfterReadingMode: false
       });
-    },
-    mounted() {
-      formatAppLog("log", "at pages/message/chat.vue:130", "聊天组件已挂载");
-      formatAppLog("log", "at pages/message/chat.vue:131", "peerStore 初始状态:", this.peerStore);
-    },
-    methods: {
-      // 初始化聊天
-      async initializeChat() {
-        await this.loadHistoryMessages();
-        this.$nextTick(this.scrollToBottom);
-      },
-      // 返回上一页
-      goBack() {
-        uni.navigateBack({
-          success: () => {
-            uni.$emit("updateTabBarActiveTab", 1);
-          },
-          fail: (err) => {
-            formatAppLog("error", "at pages/message/chat.vue:146", "返回失败:", err);
-            uni.reLaunch({
-              url: "/pages/tabBar/tabBar",
-              success: () => {
-                uni.$emit("updateTabBarActiveTab", 1);
-              }
-            });
-          }
-        });
-      },
-      // 发送消息
-      async sendMessage(message) {
-        formatAppLog("log", "at pages/message/chat.vue:158", "[sendMessage] 发送消息:", message);
-        if (message.content && this.chatInfo.id) {
-          try {
-            const response = await sendMessageToUser({
-              message: typeof message.content === "object" ? JSON.stringify(message.content) : message.content,
-              recipientId: this.chatInfo.id,
-              messageType: message.type || "text",
-              missionId: this.chatInfo.missionId,
-              isPosition: message.type === "location"
-            });
-            formatAppLog("log", "at pages/message/chat.vue:168", "[sendMessage] 发送消息响应:", response);
-            if (response.code === 200) {
-              this.handleMessageSent(response.data);
-              await this.updateMessageList();
-            } else {
-              throw new Error(response.msg || "发送消息失败");
-            }
-          } catch (error) {
-            formatAppLog("error", "at pages/message/chat.vue:176", "[sendMessage] 发送消息失败:", error);
-          }
-        } else {
-          formatAppLog("error", "at pages/message/chat.vue:180", "[sendMessage] 消息内容为空或 recipientId 未设置", {
-            content: message.content,
-            recipientId: this.chatInfo.id
-          });
-        }
-      },
-      // 处理消息发送成功
-      handleMessageSent(sentMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:188", "[handleMessageSent] 消息已发送:", sentMessage);
-      },
-      // 处理消息发送失败
-      handleMessageFailed(failedMessage) {
-        formatAppLog("log", "at pages/message/chat.vue:193", "[handleMessageFailed] 消息发送失败:", failedMessage);
-      },
-      // 处理附件
-      handleAttachment(type, data) {
-        formatAppLog("log", "at pages/message/chat.vue:198", "[handleAttachment] 处理附件:", type, data);
-        if (type === "location") {
-          this.handleLocationMessage(data);
-        } else {
-          const handlers = {
-            album: this.chooseImage,
-            file: () => this.handleFileTransfer(data),
-            "burn-after-reading": () => this.handleBurnAfterReading(data)
-          };
-          if (handlers[type]) {
-            handlers[type]();
-          }
-        }
-      },
-      // 处理位置消息
-      handleLocationMessage(locationData) {
-        formatAppLog("log", "at pages/message/chat.vue:214", "[handleLocationMessage] 处理位置消息:", locationData);
-        this.sendMessage({
-          type: "location",
-          content: locationData
-        });
-      },
-      // 查看阅后即焚图片
-      viewBurnAfterReadingImage(message) {
-        this.currentBurnAfterReadingImage = message.content.originalPath;
-        this.currentBurnAfterReadingMessage = message;
-        this.$nextTick(() => {
-          this.$refs.burnAfterReadingRef.open();
-        });
-      },
-      // 关闭阅后即焚预览
-      closeBurnAfterReadingPreview() {
-        this.currentBurnAfterReadingImage = "";
-        if (this.currentBurnAfterReadingMessage) {
-          const index = this.list.indexOf(this.currentBurnAfterReadingMessage);
-          if (index > -1) {
-            this.list.splice(index, 1);
-          }
-          this.currentBurnAfterReadingMessage = null;
-        }
-        this.updateMessageList();
-      },
-      // 切换附件菜单
-      toggleAttachMenu(show) {
-        this.showAttachMenu = show;
-        formatAppLog("log", "at pages/message/chat.vue:243", "附件菜单切换:", show);
-      },
-      // 处理遮罩层点击
-      handleOverlayClick() {
-        this.showAttachMenu = false;
-        formatAppLog("log", "at pages/message/chat.vue:248", "附件菜单已关闭");
-      },
-      // 滚动到底部
-      scrollToBottom() {
-        this.$nextTick(() => {
-          this.$refs.messageList.scrollToBottom();
-          this.showScrollToBottom = false;
-          this.showNewMessageTip = false;
-          this.hasNewMessages = false;
-          this.isScrolledToBottom = true;
-          formatAppLog("log", "at pages/message/chat.vue:258", "滚动到底部");
-        });
-      },
-      // 处理滚动事件
-      onScroll(event) {
-        const { scrollTop, scrollHeight } = event.detail;
-        const isAtBottom = scrollHeight - (scrollTop + this.$refs.messageList.scrollViewHeight) < 10;
-        this.isScrolledToBottom = isAtBottom;
-        this.showScrollToBottom = !isAtBottom && this.hasNewMessages;
-        this.showNewMessageTip = !isAtBottom && this.hasNewMessages;
-        if (isAtBottom) {
-          this.hasNewMessages = false;
-          this.showNewMessageTip = false;
-        }
-      },
-      // 加载更多消息
-      async loadMoreMessages() {
-        formatAppLog("log", "at pages/message/chat.vue:276", "[loadMoreMessages] 开始加载更多消息");
-        if (this.hasMoreMessages && !this.isLoading) {
-          this.isLoading = true;
-          const oldContentHeight = await this.$refs.messageList.getContentHeight();
-          formatAppLog("log", "at pages/message/chat.vue:281", "[loadMoreMessages] 旧内容高度:", oldContentHeight);
-          this.currentFrom = this.currentTo + 1;
-          this.currentTo = this.currentTo + 10;
-          await this.loadHistoryMessages(true);
-          this.$nextTick(async () => {
-            const newContentHeight = await this.$refs.messageList.getContentHeight();
-            formatAppLog("log", "at pages/message/chat.vue:289", "[loadMoreMessages] 新内容高度:", newContentHeight);
-            const heightDifference = newContentHeight - oldContentHeight;
-            formatAppLog("log", "at pages/message/chat.vue:292", "[loadMoreMessages] 高度差:", heightDifference);
-            this.$refs.messageList.setScrollTop(heightDifference);
-            this.isLoading = false;
-            formatAppLog("log", "at pages/message/chat.vue:297", "[loadMoreMessages] 加载完成");
-          });
-        } else {
-          formatAppLog("log", "at pages/message/chat.vue:300", "[loadMoreMessages] 没有更多消息或正在加载中");
-        }
-      },
-      // 打开视频通话页面
-      openVideoPage(action) {
-        uni.navigateTo({
-          url: `/pages/message/video-call?calleePeerId=${this.chatInfo.id}`
-        });
-      },
-      // 拒绝视频通话
-      rejectVideoCall() {
-        formatAppLog("log", "at pages/message/chat.vue:311", "拒绝视频通话，peerStore 状态:", this.peerStore);
-        this.peerStore.dataConnection.send({
-          instruction: this.peerStore.instruction.reject
-        });
-        this.peerStore.dataConnection = void 0;
-        this.peerStore.activateNotification = false;
-      },
-      // 接受视频通话
-      acceptVideoCall() {
-        formatAppLog("log", "at pages/message/chat.vue:320", "接受视频通话，peerStore 状态:", this.peerStore);
-        this.peerStore.activateNotification = false;
-        uni.showLoading({
-          title: "等待对方连接...",
-          mask: true
-        });
-        let cancel = watch(() => this.peerStore.mediaConnection, (newValue) => {
-          if (newValue) {
-            uni.hideLoading();
-            cancel();
-            uni.navigateTo({
-              url: "/pages/message/video-answer"
-            });
-          }
-        }, { immediate: true });
-        this.peerStore.dataConnection.send({
-          instruction: this.peerStore.instruction.accept
-        });
-      },
-      // 加载历史消息
-      async loadHistoryMessages(isLoadingMore = false) {
-        formatAppLog("log", "at pages/message/chat.vue:344", "[loadHistoryMessages] 开始加载历史消息", {
-          isLoadingMore,
-          from: this.currentFrom,
-          to: this.currentTo,
-          missionId: this.chatInfo.missionId
-        });
+      const list2 = vue.ref([]);
+      const showAttachMenu = vue.ref(false);
+      const burnAfterReadingDuration = vue.ref(5);
+      const currentBurnAfterReadingImage2 = vue.ref("");
+      const currentBurnAfterReadingMessage2 = vue.ref(null);
+      const isScrolledToBottom = vue.ref(true);
+      const showScrollToBottom = vue.ref(false);
+      const showNewMessageTip = vue.ref(false);
+      const hasNewMessages = vue.ref(false);
+      const currentFrom = vue.ref(0);
+      const currentTo = vue.ref(10);
+      const hasMoreMessages = vue.ref(true);
+      const isLoading = vue.ref(false);
+      const peerStore = usePeerStore();
+      const friendStore = useFriendStore$1();
+      const isBurnAfterReadingMode2 = vue.ref(false);
+      const messageListRef = vue.ref(null);
+      const {
+        goBack,
+        setupChatInfo
+      } = useChatInitialization();
+      const {
+        sendMessage: sendMessage2,
+        handleMessageFailed,
+        loadHistoryMessages: loadHistoryMessagesFromComposable,
+        updateMessageList: updateMessageList2,
+        handleFileSelected
+      } = useMessageHandling(chatInfo, list2, currentFrom, currentTo, hasMoreMessages);
+      const {
+        handleAttachment,
+        viewBurnAfterReadingImage,
+        closeBurnAfterReadingPreview,
+        toggleAttachMenu,
+        handleOverlayClick,
+        scrollToBottom,
+        onScroll,
+        loadMoreMessages,
+        toggleBurnAfterReadingMode
+      } = useUiInteractions({
+        messageListRef,
+        isScrolledToBottom,
+        showScrollToBottom,
+        showNewMessageTip,
+        hasNewMessages,
+        isLoading,
+        currentFrom,
+        currentTo,
+        loadHistoryMessages: loadHistoryMessagesFromComposable,
+        showAttachMenu,
+        hasMoreMessages
+      });
+      const {
+        openVideoPage,
+        acceptVideoCall,
+        rejectVideoCall
+      } = useVideoCallHandling();
+      const {
+        handleSelfDestructMessage
+      } = useSelfDestructMessageHandling();
+      const loadHistoryMessages = async (isLoadingMore = false) => {
         try {
-          const response = await getHistoryChatMessages({
-            opponentId: this.chatInfo.id,
-            from: this.currentFrom,
-            to: this.currentTo,
-            missionId: this.chatInfo.missionId
+          await loadHistoryMessagesFromComposable(isLoadingMore);
+          if (!isLoadingMore) {
+            vue.nextTick(() => {
+              formatAppLog("log", "at pages/message/chat.vue:192", "[loadHistoryMessages] 加载初始消息后滚动到底部");
+              scrollToBottom();
+            });
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/message/chat.vue:197", "[loadHistoryMessages] 加载历史消息出错:", error);
+        }
+      };
+      const initializeChat = async (chatInfoData) => {
+        formatAppLog("log", "at pages/message/chat.vue:203", "[initializeChat] 开始初始化聊天", chatInfoData);
+        if (chatInfoData && chatInfoData.id) {
+          chatInfo.value = chatInfoData;
+          await loadHistoryMessages();
+          vue.nextTick(() => {
+            formatAppLog("log", "at pages/message/chat.vue:208", "[initializeChat] 初始化完成，滚动到底部");
+            scrollToBottom();
           });
-          formatAppLog("log", "at pages/message/chat.vue:359", "[loadHistoryMessages] 历史消息响应:", response);
-          if (response.code === 200 && Array.isArray(response.data)) {
-            const newMessages = response.data.reverse().map((msg) => {
-              let content = msg.message;
-              let type = msg.messageType.toLowerCase();
-              if (type === "position") {
-                try {
-                  content = JSON.parse(msg.message);
-                  type = "location";
-                } catch (e2) {
-                  formatAppLog("error", "at pages/message/chat.vue:371", "解析位置数据失败:", e2);
-                }
-              } else if (type === "image") {
-                content = msg.previewUrl || msg.message;
-              } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
-                type = "file";
-              }
-              return {
-                id: msg.id,
-                content,
-                userType: msg.senderId === this.chatInfo.id ? "other" : "self",
-                avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
-                timestamp: new Date(msg.sendTime),
-                type,
-                isRead: msg.isRead,
-                messageType: msg.messageType
-              };
+        } else {
+          formatAppLog("error", "at pages/message/chat.vue:212", "[initializeChat] 聊天信息无效", chatInfoData);
+          uni.showToast({
+            title: "初始化聊天失败，请重试",
+            icon: "none"
+          });
+        }
+      };
+      vue.onMounted(() => {
+        formatAppLog("log", "at pages/message/chat.vue:222", "[Chat] mounted 生命周期钩子被调用");
+        const getChatInfo = () => {
+          const eventChannel = getEventChannel();
+          if (eventChannel) {
+            formatAppLog("log", "at pages/message/chat.vue:229", "[Chat] 成功获取 eventChannel");
+            return new Promise((resolve) => {
+              eventChannel.on("chatInfo", (data) => {
+                formatAppLog("log", "at pages/message/chat.vue:232", "[Chat] 从 eventChannel 接收到的数据:", data);
+                resolve(data.chatInfo);
+              });
             });
-            formatAppLog("log", "at pages/message/chat.vue:394", "[loadHistoryMessages] 新消息数量:", newMessages.length);
-            if (isLoadingMore) {
-              this.list = [...newMessages, ...this.list];
-              formatAppLog("log", "at pages/message/chat.vue:398", "[loadHistoryMessages] 在列表前端添加新消息");
-            } else {
-              this.list = newMessages;
-              formatAppLog("log", "at pages/message/chat.vue:401", "[loadHistoryMessages] 替换整个消息列表");
-            }
-            this.hasMoreMessages = newMessages.length === this.currentTo - this.currentFrom + 1;
-            formatAppLog("log", "at pages/message/chat.vue:406", "[loadHistoryMessages] 更新后的消息列表长度:", this.list.length);
-            formatAppLog("log", "at pages/message/chat.vue:407", "[loadHistoryMessages] 是否有更多消息:", this.hasMoreMessages);
-            this.$nextTick(() => {
-              if (!isLoadingMore) {
-                formatAppLog("log", "at pages/message/chat.vue:411", "[loadHistoryMessages] 加载初始消息后滚动到底部");
-                this.scrollToBottom();
-              }
-            });
+          }
+          const query = uni.getStorageSync("chatQuery");
+          if (query) {
+            formatAppLog("log", "at pages/message/chat.vue:241", "[Chat] 从存储中获取聊天信息:", query);
+            return Promise.resolve(JSON.parse(query));
+          }
+          return Promise.resolve(null);
+        };
+        getChatInfo().then((chatInfoData) => {
+          if (chatInfoData) {
+            initializeChat(chatInfoData);
           } else {
-            formatAppLog("error", "at pages/message/chat.vue:416", "[loadHistoryMessages] 加载历史消息失败:", response.msg);
+            formatAppLog("error", "at pages/message/chat.vue:253", "[Chat] 无法获取聊天信息");
             uni.showToast({
-              title: "加载历史消息失败",
+              title: "无法获取聊天信息，请返回重试",
               icon: "none"
             });
           }
-        } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:423", "[loadHistoryMessages] 加载历史消息出错:", error);
-          uni.showToast({
-            title: "网络错误，请稍后重试",
-            icon: "none"
-          });
+        });
+      });
+      const getEventChannel = () => {
+        const pages2 = getCurrentPages();
+        const currentPage = pages2[pages2.length - 1];
+        let eventChannel;
+        if (currentPage && currentPage.$getAppWebview) {
+          eventChannel = currentPage.$getAppWebview().eventChannel;
+        } else if (currentPage && currentPage.getOpenerEventChannel) {
+          eventChannel = currentPage.getOpenerEventChannel();
+        } else if (uni && uni.getEnterOptionsSync) {
+          const enterOptions = uni.getEnterOptionsSync();
+          eventChannel = enterOptions.eventChannel;
         }
-      },
-      // 更新消息列表
-      async updateMessageList() {
-        formatAppLog("log", "at pages/message/chat.vue:432", "[updateMessageList] 开始更新消息列表");
-        try {
-          const response = await getHistoryChatMessages({
-            opponentId: this.chatInfo.id,
-            from: 0,
-            to: 10,
-            missionId: this.chatInfo.missionId
-          });
-          if (response.code === 200 && Array.isArray(response.data)) {
-            const newMessages = response.data.reverse().map((msg) => {
-              let content = msg.message;
-              let type = msg.messageType.toLowerCase();
-              if (type === "position") {
-                try {
-                  content = JSON.parse(msg.message);
-                  type = "location";
-                } catch (e2) {
-                  formatAppLog("error", "at pages/message/chat.vue:451", "解析位置数据失败:", e2);
-                }
-              } else if (type === "image") {
-                content = msg.previewUrl || msg.message;
-              } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
-                type = "file";
-              }
-              return {
-                id: msg.id,
-                content,
-                userType: msg.senderId === this.chatInfo.id ? "other" : "self",
-                avatar: msg.senderId === this.chatInfo.id ? this.chatInfo.avatar[0] : this._selfAvatar,
-                timestamp: new Date(msg.sendTime),
-                type,
-                isRead: msg.isRead,
-                messageType: msg.messageType
-              };
-            });
-            this.list = newMessages;
-            formatAppLog("log", "at pages/message/chat.vue:477", "[updateMessageList] 消息列表已更新，新长度:", this.list.length);
-            this.$nextTick(() => {
-              this.scrollToBottom();
-            });
-          } else {
-            formatAppLog("error", "at pages/message/chat.vue:483", "[updateMessageList] 获取新消息失败:", response.msg);
-          }
-        } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:486", "[updateMessageList] 更新消息列表出错:", error);
-        }
+        return eventChannel;
       };
-      const handleFileSelected = async (fileInfo) => {
-        formatAppLog("log", "at pages/message/chat.vue:481", "文件被选择:", fileInfo);
-        try {
-          const response = await sendFilesToUser({
-            files: [fileInfo.path],
-            isGroup: false,
-            isSelfDestruct: false,
-            latitude: "0",
-            longitude: "0",
-            missionId: chatInfo.value.missionId,
-            receptionId: chatInfo.value.id
-          });
-          formatAppLog("log", "at pages/message/chat.vue:493", "文件上传响应:", response);
-          if (response.code === 200) {
-            await this.updateMessageList();
-          } else {
-            throw new Error(response.msg || "发送文件消息失败");
-          }
-        } catch (error) {
-          formatAppLog("error", "at pages/message/chat.vue:501", "发送文件消息出错:", error);
-          uni.showToast({
-            title: "发送失败，请重试",
-            icon: "none"
-          });
-        }
-      }
+      return {
+        chatInfo,
+        list: list2,
+        showAttachMenu,
+        burnAfterReadingDuration,
+        currentBurnAfterReadingImage: currentBurnAfterReadingImage2,
+        currentBurnAfterReadingMessage: currentBurnAfterReadingMessage2,
+        isScrolledToBottom,
+        showScrollToBottom,
+        showNewMessageTip,
+        hasNewMessages,
+        currentFrom,
+        currentTo,
+        hasMoreMessages,
+        isLoading,
+        peerStore,
+        friendStore,
+        isBurnAfterReadingMode: isBurnAfterReadingMode2,
+        messageListRef,
+        goBack,
+        sendMessage: sendMessage2,
+        handleMessageFailed,
+        loadHistoryMessages,
+        updateMessageList: updateMessageList2,
+        handleFileSelected,
+        handleAttachment,
+        viewBurnAfterReadingImage,
+        closeBurnAfterReadingPreview,
+        toggleAttachMenu,
+        handleOverlayClick,
+        scrollToBottom,
+        onScroll,
+        loadMoreMessages,
+        toggleBurnAfterReadingMode,
+        openVideoPage,
+        acceptVideoCall,
+        rejectVideoCall,
+        handleSelfDestructMessage,
+        initializeChat
+      };
     }
   };
   function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
@@ -25078,51 +25628,53 @@ ${i3}
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-page" }, [
       vue.createCommentVNode(" 聊天头部 "),
       vue.createVNode(_component_ChatHeader, {
-        "chat-info": $data.chatInfo,
-        onGoBack: $options.goBack
+        "chat-info": $setup.chatInfo,
+        onGoBack: $setup.goBack
       }, null, 8, ["chat-info", "onGoBack"]),
       vue.createCommentVNode(" 消息列表 "),
       vue.createVNode(_component_MessageList, {
-        ref: "messageList",
-        messages: $data.list,
-        onLoadMore: $options.loadMoreMessages,
-        onScroll: $options.onScroll,
-        onViewBurnAfterReading: $options.viewBurnAfterReadingImage
+        ref: "messageListRef",
+        messages: $setup.list,
+        onLoadMore: $setup.loadMoreMessages,
+        onScroll: $setup.onScroll,
+        onViewBurnAfterReading: $setup.viewBurnAfterReadingImage
       }, null, 8, ["messages", "onLoadMore", "onScroll", "onViewBurnAfterReading"]),
       vue.createCommentVNode(" 聊天输入区域 "),
       vue.createVNode(_component_ChatInputArea, {
-        onSendMessage: $options.sendMessage,
-        onMessageFailed: $options.handleMessageFailed,
-        onAttach: $options.handleAttachment,
-        onVideoCall: $options.openVideoPage,
-        onToggleAttachMenu: $options.toggleAttachMenu,
-        onFileSelected: $options.handleFileSelected,
-        "show-attach-menu": $data.showAttachMenu,
-        recipientId: $data.chatInfo.id,
-        missionId: $data.chatInfo.missionId.toString(),
+        onSendMessage: $setup.sendMessage,
+        onMessageFailed: $setup.handleMessageFailed,
+        onAttach: $setup.handleAttachment,
+        onVideoCall: $setup.openVideoPage,
+        onToggleAttachMenu: $setup.toggleAttachMenu,
+        onFileSelected: $setup.handleFileSelected,
+        onToggleBurnAfterReading: $setup.toggleBurnAfterReadingMode,
+        "show-attach-menu": $setup.showAttachMenu,
+        recipientId: $setup.chatInfo.id,
+        missionId: $setup.chatInfo.missionId,
+        "initial-burn-after-reading-mode": $setup.chatInfo.isBurnAfterReadingMode,
         ref: "chatInputAreaRef"
-      }, null, 8, ["onSendMessage", "onMessageFailed", "onAttach", "onVideoCall", "onToggleAttachMenu", "onFileSelected", "show-attach-menu", "recipientId", "missionId"]),
+      }, null, 8, ["onSendMessage", "onMessageFailed", "onAttach", "onVideoCall", "onToggleAttachMenu", "onFileSelected", "onToggleBurnAfterReading", "show-attach-menu", "recipientId", "missionId", "initial-burn-after-reading-mode"]),
       vue.createCommentVNode(" 阅后即焚组件 "),
-      $data.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
+      $setup.currentBurnAfterReadingImage ? (vue.openBlock(), vue.createBlock(_component_BurnAfterReading, {
         key: 0,
-        imageSrc: $data.currentBurnAfterReadingImage,
-        duration: $data.burnAfterReadingDuration,
-        onClose: $options.closeBurnAfterReadingPreview,
+        imageSrc: $setup.currentBurnAfterReadingImage,
+        duration: $setup.burnAfterReadingDuration,
+        onClose: $setup.closeBurnAfterReadingPreview,
         ref: "burnAfterReadingRef"
       }, null, 8, ["imageSrc", "duration", "onClose"])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 滚动到底部按钮 "),
       vue.createVNode(_component_ScrollToBottomButton, {
-        show: $data.showScrollToBottom,
-        onClick: vue.withModifiers($options.scrollToBottom, ["stop"])
+        show: $setup.showScrollToBottom,
+        onClick: vue.withModifiers($setup.scrollToBottom, ["stop"])
       }, null, 8, ["show", "onClick"]),
       vue.createCommentVNode(" 新消息提示 "),
-      $data.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
+      $setup.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
         class: "new-message-tip",
-        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.scrollToBottom && $options.scrollToBottom(...args), ["stop"]))
+        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $setup.scrollToBottom && $setup.scrollToBottom(...args), ["stop"]))
       }, " 新消息 ")) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 来电提醒 "),
-      $data.peerStore.activateNotification ? (vue.openBlock(), vue.createElementBlock("view", {
+      $setup.peerStore.activateNotification ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 2,
         class: "modal"
       }, [
@@ -25130,31 +25682,31 @@ ${i3}
           vue.createElementVNode(
             "text",
             null,
-            vue.toDisplayString((_a = $data.peerStore.dataConnection) == null ? void 0 : _a.peer) + " 邀请你视频通话",
+            vue.toDisplayString((_a = $setup.peerStore.dataConnection) == null ? void 0 : _a.peer) + " 邀请你视频通话",
             1
             /* TEXT */
           )
         ]),
         vue.createElementVNode("view", { class: "modal-content" }, [
           vue.createElementVNode("button", {
-            onClick: _cache[1] || (_cache[1] = (...args) => $options.acceptVideoCall && $options.acceptVideoCall(...args)),
+            onClick: _cache[1] || (_cache[1] = (...args) => $setup.acceptVideoCall && $setup.acceptVideoCall(...args)),
             type: "default"
           }, "接听"),
           vue.createElementVNode("button", {
-            onClick: _cache[2] || (_cache[2] = (...args) => $options.rejectVideoCall && $options.rejectVideoCall(...args)),
+            onClick: _cache[2] || (_cache[2] = (...args) => $setup.rejectVideoCall && $setup.rejectVideoCall(...args)),
             type: "warn"
           }, "拒绝")
         ])
       ])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 附件菜单遮罩层 "),
-      $data.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
+      $setup.showAttachMenu ? (vue.openBlock(), vue.createElementBlock("div", {
         key: 3,
         class: "overlay",
-        onClick: _cache[3] || (_cache[3] = (...args) => $options.handleOverlayClick && $options.handleOverlayClick(...args))
+        onClick: _cache[3] || (_cache[3] = (...args) => $setup.handleOverlayClick && $setup.handleOverlayClick(...args))
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesMessageChat = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-013fa921"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/chat.vue"]]);
+  const PagesMessageChat = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-013fa921"], ["__file", "E:/代码/new/zk_uniapp/pages/message/chat.vue"]]);
   const _sfc_main$7 = {
     name: "ContactDetail",
     props: {
@@ -25171,58 +25723,68 @@ ${i3}
       };
     },
     methods: {
+      // 处理关闭
       handleClose() {
         this.$emit("close");
       },
+      // 处理备注
       handleRemark() {
-        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:96", "处理备注");
+        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:104", "处理备注");
       },
+      // 处理发送消息
       handleMessage() {
         this.navigateToChat();
       },
+      // 处理清空聊天记录
       handleClearHistory() {
         this.showConfirmDialog("您确认要删除所有聊天记录吗？", () => {
-          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:105", "清空聊天记录");
+          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:115", "清空聊天记录");
         });
       },
+      // 处理删除联系人
       handleDelete() {
         this.showConfirmDialog("您确认要删除此联系人吗？", () => {
-          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:111", "删除联系人");
+          formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:122", "删除联系人");
           this.$emit("close");
         });
       },
+      // 显示确认对话框
       showConfirmDialog(content, callback) {
         this.modalContent = content;
         this.modalCallback = callback;
         this.showModal = true;
       },
+      // 处理模态框取消
       handleModalCancel() {
         this.showModal = false;
       },
+      // 处理模态框确认
       handleModalConfirm() {
         this.showModal = false;
         if (this.modalCallback) {
           this.modalCallback();
         }
       },
+      // 导航到聊天页面
       navigateToChat() {
+        const userStore = useUserStore();
         const chatInfo = {
           id: this.contact.id,
           name: this.contact.name,
           avatar: this.contact.avatar ? [this.contact.avatar] : [],
           type: "single",
-          recipientId: this.contact.id
-          // 确保使用正确的 id
+          recipientId: this.contact.id,
+          missionId: userStore.missionId ? userStore.missionId.toString() : ""
         };
-        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:142", "准备导航到聊天页面，chatInfo:", chatInfo);
+        formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:159", "准备导航到聊天页面，chatInfo:", chatInfo);
         uni.navigateTo({
           url: "/pages/message/chat",
           success: (res) => {
             res.eventChannel.emit("chatInfo", { chatInfo });
-            formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:148", "成功导航到聊天页面并发送 chatInfo");
+            formatAppLog("log", "at pages/tabBar/contacts/ContactDetail.vue:166", "成功导航到聊天页面并发送 chatInfo");
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/tabBar/contacts/ContactDetail.vue:151", "导航到聊天页面失败:", err);
+            formatAppLog("error", "at pages/tabBar/contacts/ContactDetail.vue:169", "导航到聊天页面失败:", err);
           }
         });
       }
@@ -25244,10 +25806,12 @@ ${i3}
         }, null, 8, ["onClickLeft"])
       ]),
       vue.createCommentVNode(' <view class="header">\r\n      <view class="back-button" @click="handleClose">\r\n        <text class="icon">←</text>\r\n      </view>\r\n      <text class="header-title">通讯录</text>\r\n      <view class="more-options">\r\n        <text class="icon">⋯</text>\r\n      </view>\r\n    </view> '),
+      vue.createCommentVNode(" 内容区域 "),
       vue.createElementVNode("scroll-view", {
         class: "content",
         "scroll-y": ""
       }, [
+        vue.createCommentVNode(" 主要信息 "),
         vue.createElementVNode("view", { class: "main-info" }, [
           vue.createElementVNode("view", { class: "profile-section" }, [
             vue.createElementVNode("image", {
@@ -25299,6 +25863,7 @@ ${i3}
             ])
           ])
         ]),
+        vue.createCommentVNode(" 备注部分 "),
         vue.createElementVNode("view", { class: "remark-section" }, [
           vue.createElementVNode("view", {
             class: "action-item",
@@ -25308,6 +25873,7 @@ ${i3}
             vue.createElementVNode("text", { class: "icon" }, "›")
           ])
         ]),
+        vue.createCommentVNode(" 操作按钮 "),
         vue.createElementVNode("view", {
           class: "message-button",
           onClick: _cache[2] || (_cache[2] = (...args) => $options.handleMessage && $options.handleMessage(...args))
@@ -25354,7 +25920,7 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-8c0c75e8"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
+  const ContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-8c0c75e8"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/ContactDetail.vue"]]);
   const searchUsers = (params) => {
     return request({
       url: "/user/searchUsers",
@@ -25578,7 +26144,7 @@ ${i3}
       }, null, 8, ["contact", "onClose"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const Contacts = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-3d3ef74b"], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/contacts/contacts.vue"]]);
+  const Contacts = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-3d3ef74b"], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/contacts/contacts.vue"]]);
   const _sfc_main$5 = {
     name: "TabBar",
     components: {
@@ -25693,7 +26259,7 @@ ${i3}
       )
     ]);
   }
-  const PagesTabBarTabBar = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/tabBar/tabBar.vue"]]);
+  const PagesTabBarTabBar = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "E:/代码/new/zk_uniapp/pages/tabBar/tabBar.vue"]]);
   const poster = "/static/icon/poster.gif";
   const _sfc_main$4 = {
     __name: "video-call",
@@ -25868,7 +26434,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesMessageVideoCall = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-call.vue"]]);
+  const PagesMessageVideoCall = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "E:/代码/new/zk_uniapp/pages/message/video-call.vue"]]);
   const _sfc_main$3 = {
     data() {
       return {};
@@ -25878,7 +26444,7 @@ ${i3}
   function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesMessageChatComponentCallReminder = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/ChatComponent/CallReminder.vue"]]);
+  const PagesMessageChatComponentCallReminder = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/CallReminder.vue"]]);
   const _sfc_main$2 = {
     __name: "video-answer",
     setup(__props, { expose: __expose }) {
@@ -26019,7 +26585,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesMessageVideoAnswer = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/message/video-answer.vue"]]);
+  const PagesMessageVideoAnswer = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "E:/代码/new/zk_uniapp/pages/message/video-answer.vue"]]);
   const _imports_0 = "/static/icon/关闭.png";
   const _sfc_main$1 = {
     __name: "inputAccount",
@@ -26158,7 +26724,7 @@ ${i3}
       ])
     ]);
   }
-  const PagesLoginCamouflageLoginInputAccountInputAccount = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/pages/login/camouflageLogin/inputAccount/inputAccount.vue"]]);
+  const PagesLoginCamouflageLoginInputAccountInputAccount = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "E:/代码/new/zk_uniapp/pages/login/camouflageLogin/inputAccount/inputAccount.vue"]]);
   __definePage("pages/login/camouflageLogin/camouflageLogin", PagesLoginCamouflageLoginCamouflageLogin);
   __definePage("pages/login/login", PagesLoginLogin);
   __definePage("pages/register/register", PagesRegisterRegister);
@@ -31852,7 +32418,7 @@ ${i3}
       formatAppLog("log", "at App.vue:12", "App Hide");
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "C:/Users/qyl23/Documents/HBuilderProjects/zk_uniapp/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "E:/代码/new/zk_uniapp/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     const pinia = createPinia();

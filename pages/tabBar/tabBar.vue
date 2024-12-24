@@ -25,7 +25,7 @@
 	import TaskDetail from '../task/task_detail/task_detail.vue'
 	import Messages from '../message/main.vue'
 	import MainPage from '../profile/profile.vue'
-	import Contacts from './contacts/contacts.vue'
+	import Contacts from '../contacts/contacts.vue'
 
 	export default {
 		name: 'TabBar',

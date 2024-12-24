@@ -76,11 +76,11 @@ import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser, readSelfDes
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
 import { useUserStore } from '@/store/userStore'
-import { useChatInitialization } from './composables/useChatInitialization'
-import { useMessageHandling } from './composables/useMessageHandling'
-import { useUiInteractions } from './composables/useUiInteractions'
-import { useVideoCallHandling } from './composables/useVideoCallHandling'
-import { useSelfDestructMessageHandling } from './composables/useSelfDestructMessageHandling'
+import { useChatInitialization } from './ChatComposables/useChatInitialization'
+import { useMessageHandling } from './ChatComposables/useMessageHandling'
+import { useUiInteractions } from './ChatComposables/useUiInteractions'
+import { useVideoCallHandling } from './ChatComposables/useVideoCallHandling'
+import { useSelfDestructMessageHandling } from './ChatComposables/useSelfDestructMessageHandling'
 
 export default {
   name: 'Chat',
@@ -239,16 +239,14 @@ export default {
           loadHistoryMessages: () => loadHistoryMessages()
         });
       } else {
-        console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法');
-        // 这里可以添加备用的初始化逻辑，例如从 URL 参数或全局状态获取聊天信息
+        console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法'); 
         const query = uni.getStorageSync('chatQuery');
         if (query) {
           console.log('[Chat] 从存储中获取聊天信息:', query);
           chatInfo.value = JSON.parse(query);
           initializeChat();  // 调用 initializeChat
         } else {
-          console.error('[Chat] 无法初始化聊天，缺少必要信息');
-          // 可以在这里添加错误处理逻辑，例如显示错误消息或重定向到其他页面
+          console.error('[Chat] 无法初始化聊天，缺少必要信息'); 
         }
       }
     })

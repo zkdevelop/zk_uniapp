@@ -58,7 +58,7 @@ const checkLogin = () => {
       uni.setStorageSync('username', username.value)
       uni.setStorageSync('password', password.value)
       uni.setStorageSync('token', res.data.token)
-      
+      console.log(res.data.missionId,'res.data.missionId')
       // 设置用户数据到 store
       const userData = {
         id: res.data.id,

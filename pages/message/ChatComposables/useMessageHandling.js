@@ -1,6 +1,6 @@
 // useMessageHandling.js - 负责消息处理相关的功能
-import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser } from '@/utils/api/message.js'
-import { nextTick } from 'vue'
+import { ref, nextTick } from 'vue';
+import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser } from '@/utils/api/message.js';
 
 export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
   // 发送消息
@@ -112,8 +112,6 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
             selfDestruct: msg.selfDestruct
           };
 
-          handleSelfDestructMessage(mappedMessage);
-
           return mappedMessage;
         });
 
@@ -173,8 +171,8 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         missionId: chatInfo.value.missionId
       });
 
-      if (response.code === 200 && Array.isArray(response.data)) {
-        const newMessages = response.data.reverse().map(msg => {
+      if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
+        const newMessages = response.data.messageVOList.reverse().map(msg => {
           let content = msg.message;
           let type = msg.messageType.toLowerCase();
 
@@ -215,9 +213,14 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         });
       } else {
         console.error('[updateMessageList] 获取新消息失败:', response.msg);
+        throw new Error(response.msg || '获取新消息失败');
       }
     } catch (error) {
       console.error('[updateMessageList] 更新消息列表出错:', error);
+      uni.showToast({
+        title: '更新消息列表失败，请重试',
+        icon: 'none'
+      });
     }
   };
 
@@ -247,7 +250,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       const response = await sendFilesToUser({
         files: [fileInfo.path],
         isGroup: false,
-        isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false, // 确保始终有一个布尔值
+        isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
         latitude: '0',
         longitude: '0',
         missionId: chatInfo.value.missionId,
@@ -273,12 +276,6 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         icon: 'none'
       });
     }
-  };
-
-  // 处理自毁消息
-  const handleSelfDestructMessage = (message) => {
-    console.log('处理自毁消息:', message);
-    // 在这里添加处理自毁消息的逻辑（如果需要）
   };
 
   return {

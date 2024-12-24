@@ -1,4 +1,4 @@
-<!-- Message.vue -->
+<!-- Message.vue - 消息组件，用于显示各种类型的消息 -->
 <template> 
   <view class="message" :class="[message.userType]">
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
@@ -10,8 +10,10 @@
           'location-content': message.type === 'location', 
           'file-message': message.type === 'file', 
           'message-image': message.type === 'image', 
-          'voice-message': message.type === 'voice_message' 
+          'voice-message': message.type === 'voice_message',
+          'audio-message': message.type === 'audio'
         }">
+          <!-- 根据消息类型渲染不同的组件 -->
           <LocationMessage v-if="message.type === 'location'" :content="message.content" />
           <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
           <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
@@ -23,12 +25,18 @@
               isSelf: message.userType === 'self' 
             }" 
           />
+          <AudioMessage
+            v-else-if="message.type === 'audio'"
+            :content="message.content"
+            :messageType="message.messageType"
+          />
           <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
           <template v-else>
             {{ message.content }}
           </template>
         </view>
       </view>
+      <!-- 消息状态（仅对自己发送的消息显示） -->
       <view v-if="message.userType === 'self'" class="message-status">
         <view v-if="message.status === 'sending'" class="loading-icon"></view>
         <view v-else-if="message.status === 'failed'" class="failed-icon">!</view>
@@ -44,6 +52,7 @@ import ImageMessage from './MessageComponent/ImageMessage.vue';
 import FileMessage from './MessageComponent/FileMessage.vue';
 import VoiceMessageBubble from './MessageComponent/VoiceMessageBubble.vue';
 import BurnAfterReadingMessage from './MessageComponent/BurnAfterReadingMessage.vue';
+import AudioMessage from './MessageComponent/AudioMessage.vue';
 
 export default {
   name: 'Message',
@@ -52,7 +61,8 @@ export default {
     ImageMessage,
     FileMessage,
     VoiceMessageBubble,
-    BurnAfterReadingMessage
+    BurnAfterReadingMessage,
+    AudioMessage
   },
   props: {
     message: {
@@ -127,11 +137,13 @@ export default {
     white-space: normal;
   }
 
-  .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
+  // 为不同类型的消息设置样式
+  .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
     padding: 20rpx;
     background: #fff;
   }
 
+  // 自己发送的消息样式
   &.self {
     align-items: flex-end;
 
@@ -145,12 +157,13 @@ export default {
       margin-left: 20rpx;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
       background: #4e8cff;
       color: #fff;
     }
   }
 
+  // 好友发送的消息样式
   &.friend {
     align-items: flex-start;
 
@@ -158,13 +171,14 @@ export default {
       flex-direction: row;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
 }
 
+// 消息状态样式
 .message-status {
   display: flex;
   align-items: center;
@@ -173,6 +187,7 @@ export default {
   padding: 0 5rpx;
 }
 
+// 加载中图标样式
 .loading-icon {
   width: 30rpx;
   height: 30rpx;
@@ -188,6 +203,7 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
+// 发送失败图标样式
 .failed-icon {
   width: 30rpx;
   height: 30rpx;
@@ -213,13 +229,8 @@ export default {
   margin-bottom: 5rpx;
 }
 
-.message-image {
-  background: transparent !important;
-  padding: 0 !important;
-  overflow: hidden;
-}
-
-.voice-message {
+// 特殊消息类型的样式
+.message-image, .voice-message, .audio-message {
   background: transparent !important;
   padding: 0 !important;
   overflow: hidden;
