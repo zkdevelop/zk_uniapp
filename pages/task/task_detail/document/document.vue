@@ -40,7 +40,7 @@
 				</view>
 				<view class="divider"></view>
 				<!-- 支持mp3、ogg等 -->
-				<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="audioUrl"></free-audio>
+				<free-audio startPic="../../../../static/icon/take_video.png" endPic="../../../../static/icon/pause.png" audioId="audio1" :url="audioUrl" v-if="audioUrl"></free-audio>
 			</view>
 		</uni-popup>
 		<!-- 文件上传 -->
@@ -61,7 +61,7 @@
 <script>
 	import freeAudio from '@/components/chengpeng-audio/free-audio.vue'
 	import yshFileManager from "@/components/ysh-file-manager/ysh-file-manager.vue"
-	import { getMissionFileById, generateUrl } from '../../../../utils/api/mission'
+	import { getMissionFileById, generateUrl, getFileUrl } from '../../../../utils/api/mission'
 	export default {
 		components: {freeAudio ,yshFileManager},
 		data() {
@@ -83,37 +83,32 @@
 				videoUrl: '',
 				audioUrl: '',
 				imgPath: [
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
-					'../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
+					// '../../../../static/images/taiwan_map.jpg',
 				],
 				videoPath: [
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
-					'../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
+					// '../../../../static/videos/VID20241104093724.mp4',
 				],
 				audioPath: [
-					'../../../../static/file_source/许嵩 - 玫瑰花的葬礼 [mqms2].mp3',
-					'../../../../static/file_source/林俊杰 - 修炼爱情 [mqms2].ogg',
-					'../../../../static/file_source/刘至佳&韩瞳 - 时光背面的我 [mqms2].mp3',
-					'../../../../static/file_source/周杰伦 - 半岛铁盒 [mqms2].mgg1.flac',
-					'../../../../static/file_source/周杰伦 - 稻香 [mqms2].qmc0.flac',
 				],
 				content: [{
 						iconPath: '../../../../static/icon/图片-选中.png',
@@ -162,9 +157,29 @@
 				})
 				getMissionFileById(this.missionId, 1, 50).then(res => {
 					this.fileInfo = res.data.missionFiles.records;
-					console.log('fileInfo', this.fileInfo)
 					uni.hideLoading()
+					if(this.fileInfo != null && this.fileInfo != "") {
+						this.fileInfo.forEach((item, index) => {
+							getFileUrl(item.id).then(res=>{
+								switch(item.fileType) {
+									case "mp3":
+										this.audioPath.push(res.data);
+										break;
+									case "png":
+										this.imgPath.push(res.data);
+										break;
+									case "jpg":
+										this.imgPath.push(res.data);
+										break;
+									case "mp4":
+										this.videoPath.push(res.data);
+										break;
+								}
+							})
+						})
+					}
 				})
+				
 			},
 			uploadFile(){
 				this.$refs.filemanager._openFile()
@@ -207,6 +222,7 @@
 			openAudioPopup(index){
 				this.$refs.audioPopup.open()
 				this.audioUrl = this.audioPath[index];
+				console.log("url", this.audioPath)
 			},
 			clickMask(){
 				this.$refs.audioPopup.close()
@@ -222,7 +238,40 @@
 				}
 			},
 			handleResult(fileInfo) {
-				console.log(fileInfo)
+				uni.uploadFile({
+					url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
+					filePath: fileInfo.path,
+					name: 'files',
+					formData: {
+						"latitude": "12",
+						"longitude": "123",
+						"missionId": this.missionId,
+					},
+					header: {
+						'Content-Type': 'multipart/form-data;', 
+						'Authorization': 'Bearer '+ uni.getStorageSync('token'),
+					},
+					success: (uploadFileRes) => {
+						const res = JSON.parse(uploadFileRes.data);
+						if (res.code === 200) {
+							uni.showToast({
+								title: '文件上传成功！',
+								//将值设置为 success 或者直接不用写icon这个参数
+								icon: 'success',
+								//显示持续时间为 2秒
+								duration: 2000
+							});
+						} else{
+							uni.showToast({
+								title: '文件上传失败！',
+								icon: 'none',
+								//显示持续时间为 2秒
+								duration: 2000
+							});
+						}
+						console.log(uploadFileRes.data);
+					}
+				});
 			},
 			uploadVideo: function () {
 				var self = this;
@@ -230,14 +279,15 @@
 					sourceType: ['camera', 'album'],
 					success: function (res) {
 						const tempFilePath = res.tempFilePath;
+						console.log("tempFilePath", tempFilePath)
 						uni.uploadFile({
-							url: `http://139.196.11.210:8500/communicate/minio/upload`,
+							url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
 							filePath: tempFilePath,
 							name: 'files',
 							formData: {
-								"isGroup": false,
-								"missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
-								"receptionId": "f7c6e52d7aae493db0b9593202885062"
+								"latitude": "12",
+								"longitude": "123",
+								"missionId": this.missionId,
 							},
 							header: {
 								'Content-Type': 'multipart/form-data;', 
@@ -279,13 +329,13 @@
 						const length = res.tempFilePaths.length;
 						for(const tempFilePath of res.tempFilePaths){
 							uni.uploadFile({
-								url: `http://139.196.11.210:8500/communicate/minio/upload`,
+								url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
 								filePath: tempFilePath,
 								name: 'files',
 								formData: {
-									"isGroup": false,
-									"missionId": "d56f22fe8f3c40bdba6c0ad609e2f3e6",
-									"receptionId": "f7c6e52d7aae493db0b9593202885062"
+									"latitude": "12",
+									"longitude": "123",
+									"missionId": this.missionId,
 								},
 								header: {
 									'Content-Type': 'multipart/form-data;', 

@@ -790,6 +790,40 @@
 			this.recorderManager.onStop(function(res) {
 				// console.log('recorder stop' + JSON.stringify(res));
 				self.filePaths.voicePath = res.tempFilePath;
+				uni.uploadFile({
+					url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
+					filePath: res.tempFilePath,
+					name: 'file',
+					formData: {
+						"latitude": "12",
+						"longitude": "123",
+						"missionId": this.taskItem.id,
+					},
+					header: {
+						'Content-Type': 'multipart/form-data;', 
+						'Authorization': 'Bearer '+ uni.getStorageSync('token'),
+					},
+					success: (uploadFileRes) => {
+						const res = JSON.parse(uploadFileRes.data);
+						if (res.code === 200) {
+							uni.showToast({
+								title: '音频上传成功！',
+								//将值设置为 success 或者直接不用写icon这个参数
+								icon: 'success',
+								//显示持续时间为 2秒
+								duration: 2000
+							});
+						} else{
+							uni.showToast({
+								title: '音频上传失败！',
+								icon: 'none',
+								//显示持续时间为 2秒
+								duration: 2000
+							});
+						}
+						console.log(uploadFileRes.data);
+					}
+				});
 			});
 		},
 		methods: {
@@ -809,15 +843,20 @@
 						});
 						// 文件上传
 						uni.uploadFile({
-							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							url: 'http://139.196.11.210:8500/communicate/mission/upload/file',
 							filePath: tempFilePath,
 							name: 'file',
+							formData: {
+								"latitude": "12",
+								"longitude": "123",
+								"missionId": this.taskItem.id,
+							},
 							header: {
-								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
+								'Content-Type': 'multipart/form-data;', 
+								'Authorization': 'Bearer '+ uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
-								var res = JSON.parse(uploadFileRes.data);
+								const res = JSON.parse(uploadFileRes.data);
 								if (res.code === 200) {
 									uni.showToast({
 										title: '图片上传成功！',
@@ -826,7 +865,7 @@
 										//显示持续时间为 2秒
 										duration: 2000
 									});
-								} else {
+								} else{
 									uni.showToast({
 										title: '图片上传失败！',
 										icon: 'none',
@@ -834,8 +873,7 @@
 										duration: 2000
 									});
 								}
-
-								// console.log(uploadFileRes.data);
+								console.log(uploadFileRes.data);
 							}
 						});
 					},
@@ -858,32 +896,37 @@
 						console.log('录像成功，文件路径：', tempFilePath);
 						// 文件上传
 						uni.uploadFile({
-							url: `${backendHost}/minio/upload?isGroup=${false}&missionId=${'d56f22fe8f3c40bdba6c0ad609e2f3e6'}&receptionId=${'69fc9284fc5d4dd7b05092af4715ab9d'}`,
+							url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
 							filePath: tempFilePath,
 							name: 'file',
+							formData: {
+								"latitude": "12",
+								"longitude": "123",
+								"missionId": this.taskItem.id,
+							},
 							header: {
-								'Content-Type': 'application/form-data;charset=UTF-8',
-								'Authorization': 'Bearer ' + uni.getStorageSync('token'),
+								'Content-Type': 'multipart/form-data;', 
+								'Authorization': 'Bearer '+ uni.getStorageSync('token'),
 							},
 							success: (uploadFileRes) => {
-								var res = JSON.parse(uploadFileRes.data);
+								const res = JSON.parse(uploadFileRes.data);
 								if (res.code === 200) {
 									uni.showToast({
 										title: '视频上传成功！',
 										//将值设置为 success 或者直接不用写icon这个参数
 										icon: 'success',
-										//显示持续时间为 1秒
+										//显示持续时间为 2秒
 										duration: 2000
 									});
-								} else {
+								} else{
 									uni.showToast({
 										title: '视频上传失败！',
 										icon: 'none',
-										//显示持续时间为 1秒
+										//显示持续时间为 2秒
 										duration: 2000
 									});
 								}
-								// console.log(uploadFileRes.data);
+								console.log(uploadFileRes.data);
 							}
 						});
 					},

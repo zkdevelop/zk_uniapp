@@ -96,13 +96,6 @@
 		}
 	},
 	{
-		"path" : "pages/task/task_detail/map_test/map_test",
-		"style" : 
-		{
-			"navigationBarTitleText" : "高德地图测试界面"
-		}
-	},
-	{
 		"path": "pages/task/task_detail/baidu_map/baidu_map",
 		"style": {
 			"navigationBarTitleText": "百度地图测试"
