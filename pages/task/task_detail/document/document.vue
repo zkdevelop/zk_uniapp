@@ -155,7 +155,8 @@
 					title: '正在加载文件',
 					mask: true
 				})
-				getMissionFileById(this.missionId, 1, 50).then(res => {
+				getMissionFileById(this.missionId, 1, 100).then(res => {
+					console.log("res", res)
 					this.fileInfo = res.data.missionFiles.records;
 					uni.hideLoading()
 					if(this.fileInfo != null && this.fileInfo != "") {
@@ -238,6 +239,7 @@
 				}
 			},
 			handleResult(fileInfo) {
+				console.log("fileInfoPath", fileInfo.path)
 				uni.uploadFile({
 					url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
 					filePath: fileInfo.path,
@@ -280,6 +282,8 @@
 					success: function (res) {
 						const tempFilePath = res.tempFilePath;
 						console.log("tempFilePath", tempFilePath)
+						console.log("id", self.missionId)
+						
 						uni.uploadFile({
 							url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
 							filePath: tempFilePath,
@@ -287,7 +291,7 @@
 							formData: {
 								"latitude": "12",
 								"longitude": "123",
-								"missionId": this.missionId,
+								"missionId": self.missionId,
 							},
 							header: {
 								'Content-Type': 'multipart/form-data;', 
@@ -329,22 +333,21 @@
 						const length = res.tempFilePaths.length;
 						for(const tempFilePath of res.tempFilePaths){
 							uni.uploadFile({
-								url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
+								url: 'http://139.196.11.210:8500/communicate/mission/upload/file',
 								filePath: tempFilePath,
 								name: 'files',
 								formData: {
 									"latitude": "12",
 									"longitude": "123",
-									"missionId": this.missionId,
+									"missionId": self.missionId,
 								},
 								header: {
 									'Content-Type': 'multipart/form-data;', 
 									'Authorization': 'Bearer '+ uni.getStorageSync('token'),
 								},
 								success: (uploadFileRes) => {
-									const res = JSON.parse(uploadFileRes.data);
 									index = index + 1;
-									if(res.code === 200) {
+									if(uploadFileRes.statusCode === 200) {
 										ok = ok + 1; 
 									}
 									if(ok === length){

@@ -12302,6 +12302,7 @@ ${i3}
     },
     methods: {
       take_picture() {
+        var self2 = this;
         uni.chooseImage({
           count: 1,
           // 默认选择一张图片
@@ -12309,18 +12310,18 @@ ${i3}
           // 只允许从相机拍照
           success: function(res) {
             const tempFilePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:838", "拍照成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:839", "拍照成功，文件路径：", tempFilePath);
             uni.previewImage({
               urls: [tempFilePath]
             });
             uni.uploadFile({
               url: "http://139.196.11.210:8500/communicate/mission/upload/file",
               filePath: tempFilePath,
-              name: "file",
+              name: "files",
               formData: {
                 "latitude": "12",
                 "longitude": "123",
-                "missionId": this.taskItem.id
+                "missionId": self2.taskItem.id
               },
               header: {
                 "Content-Type": "multipart/form-data;",
@@ -12344,12 +12345,12 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:876", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:877", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:881", "拍照失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:882", "拍照失败：", err);
           }
         });
       },
@@ -12365,7 +12366,7 @@ ${i3}
           success: function(res) {
             const tempFilePath = res.tempFilePath;
             self2.filePaths.videoPath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:896", "录像成功，文件路径：", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/task_detail.vue:897", "录像成功，文件路径：", tempFilePath);
             uni.uploadFile({
               url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
               filePath: tempFilePath,
@@ -12373,7 +12374,7 @@ ${i3}
               formData: {
                 "latitude": "12",
                 "longitude": "123",
-                "missionId": this.taskItem.id
+                "missionId": self2.taskItem.id
               },
               header: {
                 "Content-Type": "multipart/form-data;",
@@ -12397,30 +12398,30 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:929", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/task_detail.vue:930", uploadFileRes.data);
               }
             });
           },
           fail: function(err) {
-            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:934", "录像失败：", err);
+            formatAppLog("error", "at pages/task/task_detail/task_detail.vue:935", "录像失败：", err);
           }
         });
       },
       startRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:939", "开始录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:940", "开始录音");
         recorderManager.start();
         uni.showLoading({
           title: "正在录音"
         });
       },
       stopRecording() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:948", "录音结束");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:949", "录音结束");
         recorderManager.stop();
         uni.hideLoading();
       },
       playVoice() {
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:953", "播放录音");
-        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:954", "this.voicePath", this.filePaths.voicePath);
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:954", "播放录音");
+        formatAppLog("log", "at pages/task/task_detail/task_detail.vue:955", "this.voicePath", this.filePaths.voicePath);
         if (this.filePaths.voicePath) {
           this.innerAudioContext.src = this.filePaths.voicePath;
           this.innerAudioContext.play();
@@ -12530,11 +12531,11 @@ ${i3}
       // setPoint() {
       // 	this.position.latitude = this.taskItem.latitude;
       // 	this.position.longitude = this.taskItem.longitude;
-      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1070',this.position,'position')
+      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1071',this.position,'position')
       // },
       // setGeoJson() {
       // 	this.geoJson = this.taskItem.geoJson;
-      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1074',this.geoJson, 'owner-setGeoJson')
+      // 	__f__('log','at pages/task/task_detail/task_detail.vue:1075',this.geoJson, 'owner-setGeoJson')
       // },
       // 删除任务
       deleteMisson() {
@@ -14597,7 +14598,8 @@ ${i3}
           title: "正在加载文件",
           mask: true
         });
-        getMissionFileById(this.missionId, 1, 50).then((res) => {
+        getMissionFileById(this.missionId, 1, 100).then((res) => {
+          formatAppLog("log", "at pages/task/task_detail/document/document.vue:159", "res", res);
           this.fileInfo = res.data.missionFiles.records;
           uni.hideLoading();
           if (this.fileInfo != null && this.fileInfo != "") {
@@ -14653,7 +14655,7 @@ ${i3}
       openAudioPopup(index) {
         this.$refs.audioPopup.open();
         this.audioUrl = this.audioPath[index];
-        formatAppLog("log", "at pages/task/task_detail/document/document.vue:225", "url", this.audioPath);
+        formatAppLog("log", "at pages/task/task_detail/document/document.vue:226", "url", this.audioPath);
       },
       clickMask() {
         this.$refs.audioPopup.close();
@@ -14669,6 +14671,7 @@ ${i3}
         }
       },
       handleResult(fileInfo) {
+        formatAppLog("log", "at pages/task/task_detail/document/document.vue:242", "fileInfoPath", fileInfo.path);
         uni.uploadFile({
           url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
           filePath: fileInfo.path,
@@ -14700,16 +14703,18 @@ ${i3}
                 duration: 2e3
               });
             }
-            formatAppLog("log", "at pages/task/task_detail/document/document.vue:272", uploadFileRes.data);
+            formatAppLog("log", "at pages/task/task_detail/document/document.vue:274", uploadFileRes.data);
           }
         });
       },
       uploadVideo: function() {
+        var self2 = this;
         uni.chooseVideo({
           sourceType: ["camera", "album"],
           success: function(res) {
             const tempFilePath = res.tempFilePath;
-            formatAppLog("log", "at pages/task/task_detail/document/document.vue:282", "tempFilePath", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/document/document.vue:284", "tempFilePath", tempFilePath);
+            formatAppLog("log", "at pages/task/task_detail/document/document.vue:285", "id", self2.missionId);
             uni.uploadFile({
               url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
               filePath: tempFilePath,
@@ -14717,7 +14722,7 @@ ${i3}
               formData: {
                 "latitude": "12",
                 "longitude": "123",
-                "missionId": this.missionId
+                "missionId": self2.missionId
               },
               header: {
                 "Content-Type": "multipart/form-data;",
@@ -14741,13 +14746,14 @@ ${i3}
                     duration: 2e3
                   });
                 }
-                formatAppLog("log", "at pages/task/task_detail/document/document.vue:314", uploadFileRes.data);
+                formatAppLog("log", "at pages/task/task_detail/document/document.vue:318", uploadFileRes.data);
               }
             });
           }
         });
       },
       uploadImage: function() {
+        var self2 = this;
         uni.chooseImage({
           count: 6,
           //默认9
@@ -14760,22 +14766,21 @@ ${i3}
             const length = res.tempFilePaths.length;
             for (const tempFilePath of res.tempFilePaths) {
               uni.uploadFile({
-                url: `http://139.196.11.210:8500/communicate/mission/upload/file`,
+                url: "http://139.196.11.210:8500/communicate/mission/upload/file",
                 filePath: tempFilePath,
                 name: "files",
                 formData: {
                   "latitude": "12",
                   "longitude": "123",
-                  "missionId": this.missionId
+                  "missionId": self2.missionId
                 },
                 header: {
                   "Content-Type": "multipart/form-data;",
                   "Authorization": "Bearer " + uni.getStorageSync("token")
                 },
                 success: (uploadFileRes) => {
-                  const res2 = JSON.parse(uploadFileRes.data);
                   index = index + 1;
-                  if (res2.code === 200) {
+                  if (uploadFileRes.statusCode === 200) {
                     ok = ok + 1;
                   }
                   if (ok === length) {

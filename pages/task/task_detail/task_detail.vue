@@ -828,6 +828,7 @@
 		},
 		methods: {
 			take_picture() {
+				var self = this;
 				// 拍照并选择图片
 				uni.chooseImage({
 					count: 1, // 默认选择一张图片
@@ -845,11 +846,11 @@
 						uni.uploadFile({
 							url: 'http://139.196.11.210:8500/communicate/mission/upload/file',
 							filePath: tempFilePath,
-							name: 'file',
+							name: 'files',
 							formData: {
 								"latitude": "12",
 								"longitude": "123",
-								"missionId": this.taskItem.id,
+								"missionId": self.taskItem.id,
 							},
 							header: {
 								'Content-Type': 'multipart/form-data;', 
@@ -902,7 +903,7 @@
 							formData: {
 								"latitude": "12",
 								"longitude": "123",
-								"missionId": this.taskItem.id,
+								"missionId": self.taskItem.id,
 							},
 							header: {
 								'Content-Type': 'multipart/form-data;', 
