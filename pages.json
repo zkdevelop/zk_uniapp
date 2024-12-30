@@ -1,185 +1,204 @@
 {
-  "pages": [
-    {
-      "path": "pages/login/camouflageLogin/camouflageLogin",
-      "style": {
-        "navigationBarTitleText": "",
-        "navigationStyle": "custom",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/login/login",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/register/register",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/forgetPassword/forgetPassword",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/fingerLogin/fingerLogin",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/task/task",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/task/task_detail/task_detail",
-      "style": {
-        "navigationBarTitleText": "任务列表",
-        "app-plus": {
-          "scrollIndicator": "none",
-          "titleNView": {
-            "buttons": [
-              {
-                "type": "menu"
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "path": "pages/task/task_detail/document/document",
-      "style": {
-        "navigationBarTitleText": "文件",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/task/task_detail/map_test/map_test",
-      "style": {
-        "navigationBarTitleText": "高德地图测试界面"
-      }
-    },
-    {
-      "path": "pages/task/task_detail/baidu_map/baidu_map",
-      "style": {
-        "navigationBarTitleText": "百度地图测试"
-      }
-    },
-    {
-      "path": "pages/profile/profile",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/message/main",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/message/chat",
-      "style": {
-        "navigationBarTitleText": "",
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/tabBar/tabBar",
-      "style": {
-        "navigationBarTitleText": "首页",
-        "navigationStyle": "custom",
-        "titleNView": {
-          "autoBackButton": false
-        },
-        "app-plus": {
-          "scrollIndicator": "none"
-        }
-      }
-    },
-    {
-      "path": "pages/message/video-call",
-      "style": {
-        "navigationBarTitleText": "视频通话"
-      }
-    },
-    {
-      "path": "pages/message/ChatComponent/CallReminder",
-      "style": {
-        "navigationBarTitleText": ""
-      }
-    },
-    {
-      "path": "pages/message/video-answer",
-      "style": {
-        "navigationBarTitleText": ""
-      }
-    },
-    {
-      "path": "pages/login/camouflageLogin/inputAccount/inputAccount",
-      "style": {
-        "navigationBarTitleText": "",
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/contacts/pages/contacts",
-      "style": {
-        "navigationBarTitleText": "通讯录"
-      }
-    },
-    {
-      "path": "pages/contacts/pages/contacts/create-group-chat/index",
-      "style": {
-        "navigationBarTitleText": "发起群聊",
-        "navigationStyle": "custom"
-      }
-    }
-  ],
-  "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8",
-    "app-plus": {
-      "background": "#efeff4",
-      "bounce": "none"
-    }
-  }
+	"pages": [
+	{
+		"path" : "pages/login/camouflageLogin/camouflageLogin",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"navigationStyle": "custom",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path" : "pages/login/login",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+			// "navigationStyle": "custom"
+		}
+	},
+	{
+		"path" : "pages/register/register",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path": "pages/forgetPassword/forgetPassword",
+		"style": {
+			"navigationBarTitleText": "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path": "pages/fingerLogin/fingerLogin",
+		"style": {
+			"navigationBarTitleText": "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path" : "pages/task/task",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path" : "pages/task/task_detail/task_detail",
+		"style" : 
+		{
+			"navigationBarTitleText" : "任务列表",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none",
+				"titleNView": {
+					"buttons": [
+						{
+							"type": "menu"
+						}
+					]
+				}
+			}
+		}
+	},
+	{
+		"path" : "pages/task/task_detail/document/document",
+		"style" : 
+		{
+			"navigationBarTitleText" : "文件",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path": "pages/task/task_detail/baidu_map/baidu_map",
+		"style": {
+			"navigationBarTitleText": "百度地图测试"
+		}
+	},
+	{
+		"path" : "pages/profile/profile",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path" : "pages/message/main",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},{
+		"path" : "pages/message/chat",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	}, 
+	{
+		"path" : "pages/tabBar/tabBar",
+		"style" : 
+		{
+			"navigationBarTitleText" : "首页",
+			"navigationStyle": "custom",
+			"titleNView": {
+				"autoBackButton": false
+			},
+			"app-plus": {
+				//app页面不显示滚动条
+				"scrollIndicator": "none"
+			}
+		}
+	},
+	{
+		"path" : "pages/message/video-call",
+		"style" : 
+		{
+			"navigationBarTitleText" : "视频通话"
+		}
+	},
+	{
+		"path" : "pages/message/ChatComponent/CallReminder",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path" : "pages/message/video-answer",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	},
+	{
+		"path": "pages/login/camouflageLogin/inputAccount/inputAccount",
+		"style": {
+		  "navigationBarTitleText": "",
+		  "navigationStyle": "custom"
+		}
+	  },
+	  {
+		"path": "pages/contacts/pages/contacts",
+		"style": {
+		  "navigationBarTitleText": "通讯录"
+		}
+	  },
+	  {
+		"path": "pages/contacts/pages/contacts/create-group-chat/index",
+		"style": {
+		  "navigationBarTitleText": "发起群聊",
+		  "navigationStyle": "custom"
+		}
+	  }
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"app-plus": {
+			"background": "#efeff4",
+			"bounce": "none"
+		}
+	}
 }
 

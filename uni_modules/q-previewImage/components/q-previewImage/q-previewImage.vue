@@ -4,6 +4,7 @@
 			<view>
 				<text class="text">{{ current + 1 }} / {{ urls.length }}</text>
 			</view>
+			<view style="height: 10px;"></view>
 			<view>
 				<text class="text">{{ getFileName(urls[current]) }}</text>
 			</view>
@@ -48,8 +49,8 @@ export default {
 			return nameWithoutExtension;
 		},
 		//打开
-		open(current) {
-			this.current = this.urls.findIndex(item => item === current);
+		open(current, index) {
+			this.current = index;
 			this.show = true;
 			this.$emit('open');
 		},

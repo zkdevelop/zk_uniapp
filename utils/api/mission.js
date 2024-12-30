@@ -30,8 +30,13 @@ export const deleteMission = (missionId) => {
 // 查询文件信息
 export const getMissionFileById = (missionId, curPage, pageSize) => {
 	return request({
-		url: `/missionFile/get/${missionId}/${curPage}/${pageSize}`,
-		method: 'get'
+		url: '/missionFile/get/files',
+		method: 'get',
+		data: {
+			missionId: missionId,
+			curPage: curPage,
+			pageSize: pageSize
+		}
 	})
 }
 export const getMissionFile = (curPage, pageSize) => {
@@ -42,11 +47,13 @@ export const getMissionFile = (curPage, pageSize) => {
 }
 
 // 获取文件Url
-export const generateUrl = (query) => {
+export const generateUrl = (objectName) => {
 	return request({
 		url: `/minio/generateUrl`,
 		method: 'get',
-		data: query
+		data: {
+			objectName: objectName
+		}
 	})
 }
 
@@ -56,5 +63,15 @@ export const getMissionDetails = (params) => {
 		url: `/mission/details`,
 		method: 'post',
 		data: params
+	})
+}
+
+export const getFileUrl = (id) => {
+	return request({
+		url: '/missionFile/get/file/mission',
+		method: 'get',
+		data: {
+			missionFileId: id
+		}
 	})
 }
