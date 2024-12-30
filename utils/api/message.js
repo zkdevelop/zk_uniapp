@@ -1,9 +1,10 @@
 import request from '/utils/request.js'
 import {backendHost} from '/config.js';
+import { useUserStore } from '../../store/userStore'
 
 // 获取聊天列表
 export const getChatList = (missionId) => {
-   missionId='d3629439f69f47b8810422c7e8c6d877'
+   missionId='b2279088b13a4828b56420e9ed79965e'
   // 检查missionId是否存在
   if (!missionId) {
     console.error('getChatList 需要 missionId 参数');
@@ -123,5 +124,24 @@ export const readSelfDestructMessage = (data) => {
       messageType: data.messageType
     }
   })
+}
+
+// 获取任务通讯录
+export const getMissionAddressBook = () => {
+  const userStore = useUserStore()
+  return request({
+    // url: `/mission/address/book?missionId=${userStore.missionId}`,
+    url: `/mission/address/book?missionId=b2279088b13a4828b56420e9ed79965e`,
+    method: 'get'
+  })
+}
+
+export default {
+  getChatList,
+  sendMessageToUser,
+  sendFilesToUser,
+  getHistoryChatMessages,
+  readSelfDestructMessage,
+  getMissionAddressBook
 }
 

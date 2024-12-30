@@ -9,4 +9,13 @@ export const searchUsers = (params) => {
     data: params
   })
 }
- 
+
+// 创建群组
+export const createGroup = (params) => {
+  return request({
+    url: '/group/create',
+    method: 'post',
+    data: params
+  })
+}
+
