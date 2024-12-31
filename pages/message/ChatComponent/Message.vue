@@ -1,6 +1,7 @@
 <!-- Message.vue - 消息组件，用于显示各种类型的消息 -->
 <template> 
   <view class="message" :class="[message.userType]">
+	  {{message}}
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>

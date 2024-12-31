@@ -84,19 +84,23 @@ export default {
     SendButton
   },
   props: {
+    // 是否显示附件菜单
     showAttachMenu: {
       type: Boolean,
       default: false
     },
+    // 接收者ID
     recipientId: {
       type: String,
       required: true
     },
+    // 任务ID
     missionId: {
       type: String,
       required: true,
       default: ''
     },
+    // 初始阅后即焚模式状态
     initialBurnAfterReadingMode: {
       type: Boolean,
       default: false
@@ -110,8 +114,8 @@ export default {
     const showLocationSharing = ref(false)
     // 是否激活语音输入
     const isVoiceInputActive = ref(false)
-    // 阅后即焚模式
-    const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode || false)
+    // 是否启用阅后即焚模式
+    const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode)
 
     // 处理语音文件选择
     const handleVoiceFileSelected = (fileInfo) => {
@@ -156,7 +160,12 @@ export default {
     } = useAttachmentHandling(emit, props)
 
     // 使用消息发送钩子
-    const { sendMessage } = useMessageSending(newMessage, emit, props, burnMode)
+    const { sendMessage: sendMessageHandler } = useMessageSending(newMessage, emit, props, isBurnAfterReadingMode)
+
+    const sendMessage = () => {
+      console.log('[ChatInputArea] 发送消息')
+      sendMessageHandler()
+    }
 
     // 切换语音输入模式
     const toggleVoiceInput = () => {
@@ -185,9 +194,13 @@ export default {
       showLocationSharing.value = newVal
     })
 
-    // 监听阅后即焚模式的变化
     watch(burnMode, (newVal) => {
       isBurnAfterReadingMode.value = newVal
+      emit('toggle-burn-after-reading', newVal)
+    })
+
+    watch(isBurnAfterReadingMode, (newVal) => {
+      console.log('[ChatInputArea] isBurnAfterReadingMode changed:', newVal)
       emit('toggle-burn-after-reading', newVal)
     })
 

@@ -21,7 +21,7 @@
       @video-call="openVideoPage"
       @toggle-attach-menu="toggleAttachMenu"
       @file-selected="handleFileSelected"
-      @toggle-burn-after-reading="toggleBurnAfterReadingMode"
+      @toggle-burn-after-reading="handleBurnAfterReadingToggle"
       :show-attach-menu="showAttachMenu"
       :recipientId="chatInfo.id"
       :missionId="chatInfo.missionId"
@@ -29,14 +29,7 @@
       ref="chatInputAreaRef"
     />
 
-    <!-- 阅后即焚组件 -->
-    <BurnAfterReading
-      v-if="currentBurnAfterReadingImage"
-      :imageSrc="currentBurnAfterReadingImage"
-      :duration="burnAfterReadingDuration"
-      @close="closeBurnAfterReadingPreview"
-      ref="burnAfterReadingRef"
-    />
+   
 
     <!-- 滚动到底部按钮 -->
     <ScrollToBottomButton
@@ -69,8 +62,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
-import ChatInputArea from './ChatComponent/ChatInputArea.vue'
-import BurnAfterReading from './ChatComponent/ChatInputAreaComponent/BurnAfterReading.vue'
+import ChatInputArea from './ChatComponent/ChatInputArea.vue' 
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser, readSelfDestructMessage } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
@@ -87,8 +79,7 @@ export default {
   components: {
     ChatHeader,
     MessageList,
-    ChatInputArea,
-    BurnAfterReading,
+    ChatInputArea, 
     ScrollToBottomButton
   },
   setup() {
@@ -212,6 +203,11 @@ export default {
       }
     };
 
+    const handleBurnAfterReadingToggle = (isActive) => {
+      console.log('[handleBurnAfterReadingToggle] 阅后即焚模式切换:', isActive)
+      chatInfo.value.isBurnAfterReadingMode = isActive
+    }
+
     // 组件挂载时的处理
     onMounted(() => {
       console.log('[Chat] mounted 生命周期钩子被调用');
@@ -239,14 +235,16 @@ export default {
           loadHistoryMessages: () => loadHistoryMessages()
         });
       } else {
-        console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法'); 
+        console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法');
+        // 这里可以添加备用的初始化逻辑，例如从 URL 参数或全局状态获取聊天信息
         const query = uni.getStorageSync('chatQuery');
         if (query) {
           console.log('[Chat] 从存储中获取聊天信息:', query);
           chatInfo.value = JSON.parse(query);
           initializeChat();  // 调用 initializeChat
         } else {
-          console.error('[Chat] 无法初始化聊天，缺少必要信息'); 
+          console.error('[Chat] 无法初始化聊天，缺少必要信息');
+          // 可以在这里添加错误处理逻辑，例如显示错误消息或重定向到其他页面
         }
       }
     })
@@ -290,7 +288,8 @@ export default {
       acceptVideoCall,
       rejectVideoCall,
       handleSelfDestructMessage,
-      initializeChat
+      initializeChat,
+      handleBurnAfterReadingToggle
     }
   }
 }
