@@ -1,4 +1,3 @@
-<!-- ContactDetailView.vue - 联系人详情视图组件 -->
 <template>
   <view class="contact-detail">
     <uni-nav-bar
@@ -8,7 +7,7 @@
       right-icon="more-filled"
       @clickLeft="handleClose"
       @clickRight="handleMoreOptions"
-      title="通讯录"
+      :title="contact.name"
     />
     <scroll-view class="content" scroll-y>
       <contact-info :contact="contact" />
@@ -30,7 +29,6 @@
 
 <script>
 import { ref } from 'vue'
-import { useContactDetail } from '../../composables/useContactDetail'
 import ContactInfo from './ContactInfo.vue'
 import ContactActions from './ContactActions.vue'
 import ConfirmModal from '../shared/ConfirmModal.vue'
@@ -50,18 +48,47 @@ export default {
   },
   emits: ['close'],
   setup(props, { emit }) {
-    const {
-      showModal,
-      modalContent,
-      handleClose,
-      handleMoreOptions,
-      handleRemark,
-      handleMessage,
-      handleClearHistory,
-      handleDelete,
-      handleModalConfirm,
-      handleModalCancel
-    } = useContactDetail(props.contact, emit)
+    const showModal = ref(false)
+    const modalContent = ref('')
+
+    const handleClose = () => {
+      emit('close')
+    }
+
+    const handleMoreOptions = () => {
+      console.log('More options clicked')
+    }
+
+    const handleRemark = () => {
+      console.log('Set remark clicked')
+    }
+
+    const handleMessage = () => {
+      console.log('Send message clicked')
+    }
+
+    const handleClearHistory = () => {
+      showModal.value = true
+      modalContent.value = '确定要清空与该联系人的聊天记录吗？'
+    }
+
+    const handleDelete = () => {
+      showModal.value = true
+      modalContent.value = '确定要删除该联系人吗？'
+    }
+
+    const handleModalConfirm = () => {
+      if (modalContent.value.includes('清空')) {
+        console.log('Clearing chat history')
+      } else if (modalContent.value.includes('删除')) {
+        console.log('Deleting contact')
+      }
+      showModal.value = false
+    }
+
+    const handleModalCancel = () => {
+      showModal.value = false
+    }
 
     return {
       showModal,
