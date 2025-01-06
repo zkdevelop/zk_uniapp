@@ -64,16 +64,12 @@ export default {
   setup() {
     console.log('Contacts setup 函数被调用')
     const contactsStore = useContactsStore()
-    const { loadContacts } = useContacts()
+    const { initContacts, loading } = useContacts()
     const showDropdown = ref(false)
 
     onMounted(() => {
       console.log('Contacts onMounted 钩子被调用')
-      loadContacts().then(() => {
-        console.log('loadContacts 完成')
-      }).catch((error) => {
-        console.error('loadContacts 出错:', error)
-      })
+      initContacts()
     })
 
     const selectedContact = computed(() => contactsStore.selectedContact)

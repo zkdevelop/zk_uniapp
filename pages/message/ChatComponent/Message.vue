@@ -1,7 +1,6 @@
 <!-- Message.vue - 消息组件，用于显示各种类型的消息 -->
 <template> 
   <view class="message" :class="[message.userType]">
-	  {{message}}
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
@@ -32,8 +31,14 @@
             :messageType="message.messageType"
           />
           <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
+          <BurnAfterReadingTextMessage
+            v-else-if="message.selfDestruct && message.messageType === 'MESSAGE'"
+            :messageId="message.id"
+            :isGroup="isGroup"
+            @message-deleted="handleMessageDeleted"
+          />
           <template v-else>
-            {{ message.content }}
+            {{ message.content || '' }}
           </template>
         </view>
       </view>
@@ -54,6 +59,7 @@ import FileMessage from './MessageComponent/FileMessage.vue';
 import VoiceMessageBubble from './MessageComponent/VoiceMessageBubble.vue';
 import BurnAfterReadingMessage from './MessageComponent/BurnAfterReadingMessage.vue';
 import AudioMessage from './MessageComponent/AudioMessage.vue';
+import BurnAfterReadingTextMessage from './MessageComponent/BurnAfterReadingTextMessage.vue';
 
 export default {
   name: 'Message',
@@ -63,15 +69,21 @@ export default {
     FileMessage,
     VoiceMessageBubble,
     BurnAfterReadingMessage,
-    AudioMessage
+    AudioMessage,
+    BurnAfterReadingTextMessage
   },
   props: {
     message: {
       type: Object,
       required: true
+    },
+    isGroup: {
+      type: Boolean,
+      default: false
     }
   },
-  setup() {
+  emits: ['view-burn-after-reading', 'message-deleted'],
+  setup(props, { emit }) {
     // 格式化时间显示
     const formatTime = (timestamp) => {
       if (!timestamp) return 'Invalid Date';
@@ -85,17 +97,26 @@ export default {
 
     // 查看阅后即焚消息
     const viewBurnAfterReading = (message) => {
-      // 实现查看阅后即焚消息的逻辑
-      console.log('查看阅后即焚消息:', message);
+      emit('view-burn-after-reading', message);
+    };
+
+    // 处理消息删除
+    const handleMessageDeleted = (messageId) => {
+      emit('message-deleted', messageId);
     };
 
     return {
       formatTime,
-      viewBurnAfterReading
+      viewBurnAfterReading,
+      handleMessageDeleted
     };
   }
 };
-</script>
+</script> 
+
+
+
+
 
 <style lang="scss" scoped>
 .message {

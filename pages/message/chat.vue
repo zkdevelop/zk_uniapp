@@ -8,9 +8,11 @@
     <MessageList
       ref="messageListRef"
       :messages="list"
+      :is-group="chatInfo.type === 'group'"
       @load-more="loadMoreMessages"
       @scroll="onScroll"
       @view-burn-after-reading="viewBurnAfterReadingImage"
+      @message-deleted="handleMessageDeleted"
     />
 
     <!-- 聊天输入区域 -->
@@ -29,7 +31,14 @@
       ref="chatInputAreaRef"
     />
 
-   
+    <!-- 阅后即焚组件 -->
+    <BurnAfterReading
+      v-if="currentBurnAfterReadingImage"
+      :imageSrc="currentBurnAfterReadingImage"
+      :duration="burnAfterReadingDuration"
+      @close="closeBurnAfterReadingPreview"
+      ref="burnAfterReadingRef"
+    />
 
     <!-- 滚动到底部按钮 -->
     <ScrollToBottomButton
@@ -134,7 +143,8 @@ export default {
       handleMessageFailed,
       loadHistoryMessages: loadHistoryMessagesFromComposable,
       updateMessageList,
-      handleFileSelected
+      handleFileSelected,
+      handleMessageDeleted
     } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages)
 
     // 使用 UI 交互钩子
@@ -289,7 +299,8 @@ export default {
       rejectVideoCall,
       handleSelfDestructMessage,
       initializeChat,
-      handleBurnAfterReadingToggle
+      handleBurnAfterReadingToggle,
+      handleMessageDeleted,
     }
   }
 }

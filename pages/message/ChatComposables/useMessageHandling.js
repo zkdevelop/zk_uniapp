@@ -14,13 +14,18 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           messageType: message.type || 'text',
           missionId: chatInfo.value.missionId,
           isPosition: message.type === 'location',
-          isSelfDestruct: message.isBurnAfterReading || chatInfo.value.isBurnAfterReadingMode
+          isSelfDestruct: chatInfo.value.isBurnAfterReadingMode
         });
         console.log('[sendMessage] 发送消息响应:', response);
         if (response.code === 200) {
           const sentMessage = {
             ...response.data,
-            selfDestruct: response.data.selfDestruct
+            selfDestruct: response.data.selfDestruct,
+            content: message.content,
+            userType: 'self',
+            timestamp: new Date(),
+            type: message.type || 'text',
+            messageType: message.type === 'text' ? 'MESSAGE' : message.type.toUpperCase()
           };
           handleMessageSent(sentMessage);
           await updateMessageList();
@@ -45,6 +50,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
   // 处理消息发送成功
   const handleMessageSent = (sentMessage) => {
     console.log('[handleMessageSent] 消息已发送:', sentMessage);
+    list.value.push(sentMessage);
   };
 
   // 处理消息发送失败
@@ -288,12 +294,21 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     // 在这里添加处理自毁消息的逻辑（如果需要）
   };
 
+  // 处理消息删除
+  const handleMessageDeleted = (messageId) => {
+    const index = list.value.findIndex(msg => msg.id === messageId);
+    if (index !== -1) {
+      list.value.splice(index, 1);
+    }
+  };
+
   return {
     sendMessage,
     handleMessageFailed,
     loadHistoryMessages,
     updateMessageList,
-    handleFileSelected
+    handleFileSelected,
+    handleMessageDeleted
   };
 }
 

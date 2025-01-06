@@ -17,7 +17,7 @@ export function useContacts() {
 
   async function loadContacts() {
     console.log('loadContacts function called')
-    if (loading.value) return
+    if (loading.value || groups.value.length > 0) return
     loading.value = true
     try {
       await contactsStore.loadContacts()
