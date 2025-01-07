@@ -1,71 +1,69 @@
-<!-- Contacts.vue - 通讯录主页面组件 -->
 <template>
-  <view class="contacts-container" @click="handleContainerClick">
-    <!-- 顶部导航栏 -->
-    <uni-nav-bar 
-      :fixed="true" 
-      status-bar 
-      right-icon="search" 
-      @clickRight="handleSearch" 
-      title="通讯录"
-    >
-      <template #right>
-        <view class="nav-right">
-          <image 
-            class="nav-icon" 
-            src="/static/message/搜索.png" 
-            mode="aspectFit"
-            @click.stop="handleSearch"
-          ></image>
-          <image 
-            class="nav-icon" 
-            src="/static/message/展开对话工具.png" 
-            mode="aspectFit"
-            @click.stop="toggleDropdown"
-          ></image>
-        </view>
-      </template>
-    </uni-nav-bar>
+<view class="contacts-container" @click="handleContainerClick">
+  <!-- 顶部导航栏 -->
+  <uni-nav-bar 
+    :fixed="true" 
+    status-bar 
+    right-icon="search" 
+    @clickRight="handleSearch" 
+    title="通讯录"
+  >
+    <template #right>
+      <view class="nav-right">
+        <image 
+          class="nav-icon" 
+          src="/static/message/搜索.png" 
+          mode="aspectFit"
+          @click.stop="handleSearch"
+        ></image>
+        <image 
+          class="nav-icon" 
+          src="/static/message/展开对话工具.png" 
+          mode="aspectFit"
+          @click.stop="toggleDropdown"
+        ></image>
+      </view>
+    </template>
+  </uni-nav-bar>
 
-    <!-- 下拉菜单 -->
-    <dropdown-menu 
-      :visible="showDropdown"
-      @group-chat="handleGroupChat"
-      @add-friend="handleAddFriend"
-    />
+  <!-- 下拉菜单 -->
+  <dropdown-menu 
+    :visible="showDropdown"
+    @group-chat="handleGroupChat"
+    @add-friend="handleAddFriend"
+  />
 
-    <scroll-view scroll-y class="contacts-scroll-view">
-      <!-- 群聊列表组件 -->
-      <group-chat-list
-        v-if="groupVOList && groupVOList.length > 0"
-        :groupVOList="groupVOList"
-        @enter-group-chat="enterGroupChat"
-      />
-      <view v-else-if="!loading" class="empty-state">暂无群聊</view>
+  <!-- 群聊列表组件 -->
+  <group-chat-list
+    v-if="groupVOList.length > 0"
+    :groupVOList="groupVOList"
+    @enter-group-chat="enterGroupChat"
+    @enter-private-chat="enterPrivateChat"
+  />
+  <view v-else-if="!loading" class="empty-state">暂无群聊</view>
 
-      <!-- 用户列表组件 -->
-      <user-list
-        v-if="userInformationVOList && userInformationVOList.length > 0"
-        :userInformationVOList="userInformationVOList"
-        @select-user="selectUser"
-      />
-      <view v-else-if="!loading" class="empty-state">暂无联系人</view>
-    </scroll-view>
+  <!-- 用户列表组件 -->
+  <user-list
+    v-if="userInformationVOList.length > 0"
+    :userInformationVOList="userInformationVOList"
+    @select-user="selectUser"
+  />
+  <view v-else-if="!loading" class="empty-state">暂无联系人</view>
 
-    <!-- 加载中提示 -->
-    <view v-if="loading" class="loading-state">加载中...</view>
+  <!-- 加载中提示 -->
+  <view v-if="loading" class="loading-state">加载中...</view>
 
-    <!-- 联系人详情组件 -->
-    <contact-detail-view
-      v-if="selectedContact"
-      :contact="selectedContact"
-      @close="closeContactDetail"
-    />
-  </view>
+  <!-- 联系人详情组件 -->
+  <contact-detail-view
+    v-if="selectedContact"
+    :contact="selectedContact"
+    @close="closeContactDetail"
+  />
+</view>
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useContactsStore } from '../store/contactsStore'
 import { useUserStore } from '@/store/userStore'
 import GroupChatList from '../components/Contacts/GroupChatList.vue'
@@ -83,47 +81,46 @@ export default {
     DropdownMenu
   },
   setup() {
-    // 控制台输出
     console.log('联系人组件设置函数被调用')
-    
     const contactsStore = useContactsStore()
     const userStore = useUserStore()
-    const { initContacts, loading, missionId } = useContacts()
-    
+    const { initContacts, loading } = useContacts()
     const showDropdown = ref(false)
-    const groupVOList = ref([])
-    const userInformationVOList = ref([])
+
+    // Use computed properties for reactive data
+    const groupVOList = computed(() => contactsStore.groupVOList)
+    const userInformationVOList = computed(() => contactsStore.userInformationVOList)
+
+    // 选中的联系人
     const selectedContact = ref(null)
-
-    // 监听 store 中的数据变化
-    watch(() => contactsStore.groupVOList, (newValue) => {
-      console.log('存储中的群组列表已更新:', newValue)
-      groupVOList.value = newValue
-    }, { immediate: true })
-
-    watch(() => contactsStore.userInformationVOList, (newValue) => {
-      console.log('存储中的用户信息列表已更新:', newValue)
-      userInformationVOList.value = newValue
-    }, { immediate: true })
 
     // 加载联系人数据
     const loadContacts = async () => {
-      console.log('加载联系人被调用，任务ID:', missionId.value)
-      if (missionId.value) {
-        console.log('正在调用初始化联系人')
-        await initContacts()
-        console.log('初始化联系人完成，更新本地引用')
-        // 直接从 store 更新本地数据
-        groupVOList.value = contactsStore.groupVOList
-        userInformationVOList.value = contactsStore.userInformationVOList
+      console.log('Loading contacts...')
+      if (userStore.missionId) {
+        await contactsStore.fetchContacts(userStore.missionId)
+        console.log('Contacts loaded. Groups:', groupVOList.value.length, 'Users:', userInformationVOList.value.length)
       } else {
-        console.log('任务ID不可用，跳过初始化联系人')
+        console.log('No missionId available')
       }
     }
 
-    // 组件挂载时的处理
     onMounted(() => {
       console.log('联系人组件挂载钩子被调用')
+      loadContacts()
+    })
+
+    // 监听missionId的变化
+    watch(() => userStore.missionId, (newMissionId) => {
+      if (newMissionId) {
+        console.log('任务ID已更改，重新加载联系人')
+        loadContacts()
+      }
+    })
+
+    // 监听contactsUpdateCounter的变化
+    watch(() => contactsStore.contactsUpdateCounter, () => {
+      console.log('联系人数据已更新，重新加载联系人')
       loadContacts()
     })
 
@@ -175,6 +172,12 @@ export default {
       // 实现进入群聊功能
     }
 
+    // 进入私聊
+    const enterPrivateChat = (user) => {
+      console.log('进入私聊:', user)
+      // 实现进入私聊功能
+    }
+
     // 选择用户
     const selectUser = (user) => {
       console.log('选择用户:', user)
@@ -187,7 +190,6 @@ export default {
       selectedContact,
       showDropdown,
       loading,
-      missionId,
       closeContactDetail,
       handleSearch,
       toggleDropdown,
@@ -195,6 +197,7 @@ export default {
       handleGroupChat,
       handleAddFriend,
       enterGroupChat,
+      enterPrivateChat,
       selectUser
     }
   }
@@ -222,14 +225,13 @@ export default {
   margin-left: 16px;
 }
 
-.contacts-scroll-view {
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 60px; /* 添加底部填充以适应tabBar高度 */
-}
-
 :deep(.uni-navbar__header-btns.uni-navbar__header-btns-right) {
   width: 70px;
+}
+
+:deep(.uni-scroll-view) {
+  flex: 1;
+  overflow-y: auto;
 }
 
 :deep(.uni-navbar) {

@@ -54,7 +54,7 @@
             />
             <image 
               class="avatar" 
-              :src="contact.avatar || '/static/message/默认头像.png'" 
+              :src="contact.avatarUrl || '/static/message/默认头像.png'" 
               mode="aspectFill"
             ></image>
             <text class="contact-name">{{ contact.name }}</text>
@@ -100,9 +100,10 @@ const isLoading = ref(true)
 
 // 在组件挂载时加载联系人数据
 onMounted(async () => {
-  console.log('CreateGroupChat mounted')
+  console.log('创建群聊组件已挂载')
   if (contactsStore.userInformationVOList.length === 0) {
-    await contactsStore.loadContacts()
+    // 注意：这里假设userStore中有fetchContacts方法
+    await userStore.fetchContacts(userStore.missionId)
   }
   isLoading.value = false
   nextTick(() => {
@@ -165,7 +166,7 @@ const toggleSelect = (contact) => {
   } else {
     selectedContacts.value.splice(index, 1)
   }
-  console.log('Selected contacts:', selectedContacts.value)
+  console.log('已选择的联系人:', selectedContacts.value)
 }
 
 // 检查联系人是否被选中
@@ -206,7 +207,9 @@ const confirmGroupName = (name) => {
         title: '群聊创建成功',
         icon: 'success'
       })
-      // 创建成功后返回上一页
+      // 增加联系人更新计数器
+      contactsStore.incrementContactsUpdateCounter()
+      // 返回上一页
       uni.navigateBack()
     })
     .catch(error => {
@@ -332,3 +335,4 @@ const closePopup = () => {
   border-bottom: 1px solid #eee;
 }
 </style>
+
