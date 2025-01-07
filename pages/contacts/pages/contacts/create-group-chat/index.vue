@@ -1,4 +1,3 @@
-<!-- CreateGroupChat.vue - 发起群聊页面组件 -->
 <template>
   <view class="group-chat-container">
     <!-- 顶部导航栏 -->
@@ -38,7 +37,7 @@
     </view>
 
     <!-- 联系人列表 -->
-    <scroll-view class="contacts-list" scroll-y>
+    <scroll-view v-if="!isLoading" class="contacts-list" scroll-y>
       <template v-if="filteredContacts.length > 0">
         <view v-for="letter in sortedLetters" :key="letter">
           <view class="letter-index">{{ letter }}</view>
@@ -66,6 +65,7 @@
         <text>无搜索结果</text>
       </view>
     </scroll-view>
+    <view v-else class="loading">加载中...</view>
 
     <!-- 群聊名称输入弹窗 -->
     <uni-popup ref="popup" type="dialog">
@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useContactsStore } from '../../../store/contactsStore'
 import { useUserStore } from '@/store/userStore'
 import { pinyin } from 'pinyin-pro'
@@ -93,22 +93,30 @@ const contactsStore = useContactsStore()
 const userStore = useUserStore()
 
 // 响应式状态
-const searchKeyword = ref('') // 搜索关键词
-const selectedContacts = ref([]) // 已选择的联系人
+const searchKeyword = ref('')
+const selectedContacts = ref([])
 const popup = ref(null)
+const isLoading = ref(true)
 
 // 在组件挂载时加载联系人数据
-onMounted(() => {
+onMounted(async () => {
   console.log('CreateGroupChat mounted')
-  if (contactsStore.groups.length === 0) {
-    contactsStore.loadContacts()
+  if (contactsStore.userInformationVOList.length === 0) {
+    await contactsStore.loadContacts()
   }
+  isLoading.value = false
+  nextTick(() => {
+    // 在下一个 tick 中设置 scrollTop，确保 DOM 已更新
+    const scrollView = document.querySelector('.contacts-list')
+    if (scrollView) {
+      scrollView.scrollTop = 0
+    }
+  })
 })
 
 // 过滤并计算联系人列表
 const filteredContacts = computed(() => {
-  if (!contactsStore.groups[0]) return []
-  const contacts = contactsStore.groups[0].members
+  const contacts = contactsStore.userInformationVOList || []
   if (!searchKeyword.value) return contacts
   return contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
@@ -314,7 +322,7 @@ const closePopup = () => {
   color: #333;
 }
 
-.no-results {
+.no-results, .loading {
   padding: 20px;
   text-align: center;
   color: #999;
@@ -324,4 +332,3 @@ const closePopup = () => {
   border-bottom: 1px solid #eee;
 }
 </style>
-
