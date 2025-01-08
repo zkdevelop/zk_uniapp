@@ -1,22 +1,35 @@
 // useMessageHandling.js - 负责消息处理相关的功能
-import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser } from '@/utils/api/message.js'
+import { getHistoryChatMessages, sendMessageToUser, sendGroupMessage, sendFilesToUser } from '@/utils/api/message.js'
 import { nextTick } from 'vue'
 
 export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
   // 发送消息
   const sendMessage = async (message) => {
-    console.log('[sendMessage] 发送消息:', message);
+    console.log('发送消息:', message);
     if (message.content && chatInfo.value && chatInfo.value.id) {
       try {
-        const response = await sendMessageToUser({
+        let response;
+        const messageData = {
           message: typeof message.content === 'object' ? JSON.stringify(message.content) : message.content,
           recipientId: chatInfo.value.id,
           messageType: message.type || 'text',
           missionId: chatInfo.value.missionId,
           isPosition: message.type === 'location',
           isSelfDestruct: chatInfo.value.isBurnAfterReadingMode
-        });
-        console.log('[sendMessage] 发送消息响应:', response);
+        };
+
+        if (chatInfo.value.type === 'group') {
+          // 群聊消息
+          response = await sendGroupMessage({
+            ...messageData,
+            isGroupAnnouncement: false
+          });
+        } else {
+          // 私聊消息
+          response = await sendMessageToUser(messageData);
+        }
+
+        console.log('发送消息响应:', response);
         if (response.code === 200) {
           const sentMessage = {
             ...response.data,
@@ -31,16 +44,16 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           await updateMessageList();
           // 发送消息后滚动到底部
           nextTick(() => {
-            // scrollToBottom();
+            scrollToBottom();
           });
         } else {
           throw new Error(response.msg || '发送消息失败');
         }
       } catch (error) {
-        console.error('[sendMessage] 发送消息失败:', error);
+        console.log('发送消息失败:', error);
       }
     } else {
-      console.error('[sendMessage] 消息内容为空或 chatInfo 未正确初始化', {
+      console.log('消息内容为空或 chatInfo 未正确初始化', {
         content: message.content,
         chatInfo: chatInfo.value
       });
@@ -49,19 +62,19 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
   // 处理消息发送成功
   const handleMessageSent = (sentMessage) => {
-    console.log('[handleMessageSent] 消息已发送:', sentMessage);
+    console.log('消息已发送:', sentMessage);
     list.value.push(sentMessage);
   };
 
   // 处理消息发送失败
   const handleMessageFailed = (failedMessage) => {
-    console.log('[handleMessageFailed] 消息发送失败:', failedMessage);
+    console.log('消息发送失败:', failedMessage);
   };
 
   // 加载历史消息
   const loadHistoryMessages = async (isLoadingMore = false, newFrom = null, newTo = null) => {
     if (!chatInfo.value || !chatInfo.value.id || !chatInfo.value.missionId) {
-      console.error('[loadHistoryMessages] chatInfo 未正确初始化');
+      console.log('chatInfo 未正确初始化');
       hasMoreMessages.value = false;
       return false;
     }
@@ -69,7 +82,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     const from = newFrom !== null ? newFrom : currentFrom.value;
     const to = newTo !== null ? newTo : currentTo.value;
     
-    console.log('[loadHistoryMessages] 开始加载历史消息', { 
+    console.log('开始加载历史消息', { 
       isLoadingMore, 
       from,
       to,
@@ -84,7 +97,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         missionId: chatInfo.value.missionId
       });
 
-      console.log('[loadHistoryMessages] 历史消息响应:', response);
+      console.log('历史消息响应:', response);
 
       if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
         const newMessages = response.data.messageVOList.reverse().map(msg => {
@@ -96,7 +109,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
               content = JSON.parse(msg.message);
               type = 'location';
             } catch (e) {
-              console.error('解析位置数据失败:', e);
+              console.log('解析位置数据失败:', e);
             }
           } else if (type === 'image') {
             content = msg.previewUrl || msg.message;
@@ -123,23 +136,23 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           return mappedMessage;
         });
 
-        console.log('[loadHistoryMessages] 新消息数量:', newMessages.length);
+        console.log('新消息数量:', newMessages.length);
 
         if (isLoadingMore) {
           list.value = [...newMessages, ...list.value];
-          console.log('[loadHistoryMessages] 在列表前端添加新消息');
+          console.log('在列表前端添加新消息');
         } else {
           list.value = newMessages;
-          console.log('[loadHistoryMessages] 替换整个消息列表');
+          console.log('替换整个消息列表');
         }
         
         hasMoreMessages.value = newMessages.length === (to - from + 1);
-        console.log('[loadHistoryMessages] 是否有更多消息:', hasMoreMessages.value);
+        console.log('是否有更多消息:', hasMoreMessages.value);
 
         currentFrom.value = from;
         currentTo.value = to;
 
-        console.log('[loadHistoryMessages] 更新后的消息列表长度:', list.value.length);
+        console.log('更新后的消息列表长度:', list.value.length);
 
         if (!isLoadingMore) {
           nextTick(() => {
@@ -149,7 +162,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
         return true;
       } else {
-        console.error('[loadHistoryMessages] 加载历史消息失败:', response.msg);
+        console.log('加载历史消息失败:', response.msg);
         hasMoreMessages.value = false;
         uni.showToast({
           title: '加载历史消息失败',
@@ -158,7 +171,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         return false;
       }
     } catch (error) {
-      console.error('[loadHistoryMessages] 加载历史消息出错:', error);
+      console.log('加载历史消息出错:', error);
       hasMoreMessages.value = false;
       uni.showToast({
         title: '网络错误，请稍后重试',
@@ -170,7 +183,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
   // 更新消息列表
   const updateMessageList = async () => {
-    console.log('[updateMessageList] 开始更新消息列表');
+    console.log('开始更新消息列表');
     try {
       const response = await getHistoryChatMessages({
         opponentId: chatInfo.value.id,
@@ -179,7 +192,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         missionId: chatInfo.value.missionId
       });
 
-      console.log('[updateMessageList] 接收到的响应:', response);
+      console.log('接收到的响应:', response);
 
       if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
         const newMessages = response.data.messageVOList.reverse().map(msg => {
@@ -191,7 +204,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
               content = JSON.parse(msg.message);
               type = 'location';
             } catch (e) {
-              console.error('解析位置数据失败:', e);
+              console.log('解析位置数据失败:', e);
             }
           } else if (type === 'image') {
             content = msg.previewUrl || msg.message;
@@ -216,17 +229,17 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
         list.value = newMessages;
 
-        console.log('[updateMessageList] 消息列表已更新，新长度:', list.value.length);
+        console.log('消息列表已更新，新长度:', list.value.length);
 
         nextTick(() => {
           scrollToBottom();
         });
       } else {
-        console.error('[updateMessageList] 获取新消息失败:', response.msg);
+        console.log('获取新消息失败:', response.msg);
         throw new Error(response.msg || '获取新消息失败');
       }
     } catch (error) {
-      console.error('[updateMessageList] 更新消息列表出错:', error);
+      console.log('更新消息列表出错:', error);
       uni.showToast({
         title: '更新消息列表失败，请重试',
         icon: 'none'
@@ -239,7 +252,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     console.log('文件被选择，完整的 fileInfo:', JSON.stringify(fileInfo));
     console.log('当前 isBurnAfterReadingMode 状态:', chatInfo.value.isBurnAfterReadingMode);
     if (!fileInfo || typeof fileInfo !== 'object') {
-      console.error('文件信息无效:', fileInfo);
+      console.log('文件信息无效:', fileInfo);
       uni.showToast({
         title: '文件信息无效，请重试',
         icon: 'none'
@@ -248,7 +261,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     }
 
     if (!fileInfo.path) {
-      console.error('文件路径缺失:', fileInfo);
+      console.log('文件路径缺失:', fileInfo);
       uni.showToast({
         title: '文件路径缺失，请重试',
         icon: 'none'
@@ -259,8 +272,8 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     try {
       const response = await sendFilesToUser({
         files: [fileInfo.path],
-        isGroup: false,
-        isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false, // 确保始终有一个布尔值
+        isGroup: chatInfo.value.type === 'group',
+        isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
         latitude: '0',
         longitude: '0',
         missionId: chatInfo.value.missionId,
@@ -280,7 +293,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         throw new Error(response.msg || '发送文件消息失败');
       }
     } catch (error) {
-      console.error('发送文件消息出错:', error);
+      console.log('发送文件消息出错:', error);
       uni.showToast({
         title: '发送失败，请重试',
         icon: 'none'

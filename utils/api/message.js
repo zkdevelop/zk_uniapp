@@ -152,6 +152,32 @@ export const sendGroupMessage = (data) => {
   })
 }
 
+// 获取群聊消息
+export const getGroupChatMessages = (data) => {
+  // 发送POST请求获取群聊消息
+  return request({
+    url: '/message/read/group',
+    method: 'post',
+    data: {
+      from: data.from,
+      opponentId: data.opponentId,
+      to: data.to
+    }
+  })
+}
+
+// 获取群组基本信息
+export const getGroupBasicInfo = (groupId) => {
+  if (!groupId) {
+    console.log('getGroupBasicInfo 需要 groupId 参数');
+    return Promise.reject(new Error('getGroupBasicInfo 需要 groupId 参数'));
+  }
+  return request({
+    url: `/group/get/basicInf?groupId=${groupId}`,
+    method: 'get'
+  })
+}
+
 export default {
   getChatList,
   sendMessageToUser,
@@ -159,6 +185,8 @@ export default {
   getHistoryChatMessages,
   readSelfDestructMessage,
   getMissionAddressBook,
-  sendGroupMessage
+  sendGroupMessage,
+  getGroupChatMessages,
+  getGroupBasicInfo
 }
 

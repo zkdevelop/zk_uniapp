@@ -43,23 +43,21 @@ export function useContacts() {
       loading.value = false
     }
   }
-
-  // 新增：跳转到聊天界面的方法
-  function navigateToChat(chatInfo) {
-    // 使用路由导航到聊天页面，并传递必要的参数
-    router.push({
-      path: '/pages/message/chat',  // 聊天页面的路径，请根据实际路由配置调整
-      query: {
-        id: chatInfo.id,  // 聊天对象的ID
-        name: chatInfo.name,  // 聊天对象的名称
-        avatar: JSON.stringify(chatInfo.avatar),  // 头像数组，需要序列化
-        type: chatInfo.type,  // 聊天类型（如单聊、群聊）
-        missionId: chatInfo.missionId,  // 任务ID
-        isBurnAfterReadingMode: chatInfo.isBurnAfterReadingMode  // 是否为阅后即焚模式
-      }
-    })
-  }
-
+ // 新增：跳转到聊天界面的方法
+ function navigateToChat(chatInfo) {
+  // 使用路由导航到聊天页面，并传递必要的参数
+  router.push({
+    path: '/pages/message/chat',  // 聊天页面的路径，请根据实际路由配置调整
+    query: {
+      id: chatInfo.id,  // 聊天对象的ID
+      name: chatInfo.name,  // 聊天对象的名称
+      avatar: JSON.stringify(chatInfo.avatar),  // 头像数组，需要序列化
+      type: chatInfo.type,  // 聊天类型（如单聊、群聊）
+      missionId: chatInfo.missionId,  // 任务ID
+      isBurnAfterReadingMode: chatInfo.isBurnAfterReadingMode  // 是否为阅后即焚模式
+    }
+  })
+}
   // 返回组合式函数的公开方法和属性
   return {
     loading,  // 加载状态

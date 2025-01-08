@@ -1,8 +1,31 @@
 // useChatInitialization.js - 负责聊天初始化相关的功能
 import { useUserStore } from '@/store/userStore'
+import { getGroupBasicInfo } from '@/utils/api/message.js'
 
 export function useChatInitialization() {
   console.log('[useChatInitialization] 被调用');
+
+  const userStore = useUserStore();
+
+  // 获取并存储群组基本信息
+  const fetchAndStoreGroupInfo = async (groupId) => {
+    try {
+      const response = await getGroupBasicInfo(groupId);
+      if (response.code === 200) {
+        const groupInfo = response.data;
+        userStore.setGroupInfo({
+          id: groupInfo.id,
+          groupName: groupInfo.groupName,
+          groupMembers: groupInfo.groupMembers
+        });
+        console.log('[useChatInitialization] 群组信息已存储');
+      } else {
+        console.error('[useChatInitialization] 获取群组信息失败:', response.msg);
+      }
+    } catch (error) {
+      console.error('[useChatInitialization] 获取群组信息时发生错误:', error);
+    }
+  };
 
   // 返回上一页
   const goBack = () => {
@@ -26,14 +49,14 @@ export function useChatInitialization() {
   };
 
   // 设置聊天信息
-  const setupChatInfo = (eventChannel, vm) => {
+  const setupChatInfo = async (eventChannel, vm) => {
     console.log('[useChatInitialization] setupChatInfo 被调用，eventChannel:', eventChannel);
     if (!eventChannel) {
       console.error('[useChatInitialization] 事件通道未定义');
       return;
     }
 
-    eventChannel.on('chatInfo', (data) => {
+    eventChannel.on('chatInfo', async (data) => {
       console.log('[useChatInitialization] 接收到 chatInfo 事件:', JSON.stringify(data));
       if (!data || !data.chatInfo) {
         console.error('[useChatInitialization] 接收到的聊天信息无效:', JSON.stringify(data));
@@ -50,13 +73,17 @@ export function useChatInitialization() {
 
         // 处理missionId
         if (!vm.chatInfo.value.missionId) {
-          const userStore = useUserStore();
-          vm.chatInfo.value.missionId = userStore.missionId.toString();
+          vm.chatInfo.value.missionId = userStore.state.missionId.toString();
         } else if (Array.isArray(vm.chatInfo.value.missionId)) {
           vm.chatInfo.value.missionId = vm.chatInfo.value.missionId.join(',');
         }
 
         console.log('[useChatInitialization] 使用的 missionId:', vm.chatInfo.value.missionId);
+
+        // 如果是群聊，获取并存储群组信息
+        if (vm.chatInfo.value.type === 'group') {
+          await fetchAndStoreGroupInfo(vm.chatInfo.value.id);
+        }
 
         // 保存聊天信息到本地存储，以备后用
         uni.setStorageSync('chatQuery', JSON.stringify(vm.chatInfo.value));
@@ -75,7 +102,6 @@ export function useChatInitialization() {
     if (chatInfoData && chatInfoData.id) {
       vm.chatInfo.value = chatInfoData;
       if (!vm.chatInfo.value.missionId) {
-        const userStore = useUserStore();
         const storedMissionId = uni.getStorageSync('currentMissionId');
         vm.chatInfo.value.missionId = storedMissionId || (Array.isArray(userStore.state.missionId) ? userStore.state.missionId.join(',') : userStore.state.missionId) || '';
         if (!vm.chatInfo.value.missionId) {

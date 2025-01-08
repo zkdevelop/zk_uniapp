@@ -2,22 +2,22 @@
 <template>
   <view 
     class="message-item"
-    :class="{ 'personal-chat': !message.group }"
+    :class="{ 'personal-chat': !message.group, 'group-chat': message.group }"
     @click="$emit('click', message)"
   >
     <view class="avatar-container">
       <!-- 根据消息类型显示群组头像或个人头像 -->
-      <group-avatar v-if="message.group" :avatar="message.avatar" class="avatar" />
-      <image v-else :src="getAvatarSrc(message.avatar)" class="avatar" mode="aspectFill"></image>
+      <group-avatar v-if="message.group" :avatar="[message.avatarUrl]" class="avatar" />
+      <image v-else :src="getAvatarSrc(message.avatarUrl)" class="avatar" mode="aspectFill"></image>
       <!-- 显示未读消息数量 -->
       <view v-if="message.unreadCount > 0" class="avatar-badge">{{ message.unreadCount }}</view>
     </view>
     <view class="message-content-wrapper">
       <view class="message-content">
-        <view class="message-title">{{ message.name || message.userName }}</view>
-        <view class="message-preview">{{ message.preview || message.latestMessage }}</view>
+        <view class="message-title">{{ message.group ? message.groupName : (message.userName || message.name) }}</view>
+        <view class="message-preview">{{ message.latestMessage || message.preview }}</view>
       </view>
-      <view class="message-date">{{ formatDate(message.date || message.sendTime) }}</view>
+      <view class="message-date">{{ formatDate(message.sendTime || message.date) }}</view>
     </view>
   </view>
 </template>
@@ -146,6 +146,28 @@ export default {
 }
 
 .personal-chat .message-date {
+  font-size: 10px;
+}
+
+.group-chat {
+  padding: 12px 15px;
+}
+
+.group-chat .avatar-container,
+.group-chat .avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.group-chat .message-title {
+  font-size: 13px;
+}
+
+.group-chat .message-preview {
+  font-size: 11px;
+}
+
+.group-chat .message-date {
   font-size: 10px;
 }
 </style>

@@ -6,7 +6,7 @@
     </view>
     <view class="messages-view">
       <view class="messages-header">
-        <text class="header-title">消息({{ totalMessageCount }})</text>
+        <text class="header-title">消息({{ totalMessageCount }})</text>  
       </view>
       
       <scroll-view class="messages-list" scroll-y enable-flex :style="{ height: scrollViewHeight + 'px' }">
@@ -19,7 +19,7 @@
         </template>
 
         <!-- 消息列表 -->
-        <transition-group name="fade" tag="view">
+        <transition-group name="fade" tag="view"> 
           <MessageItem
             v-for="(message, index) in combinedMessages"
             :key="message.id || index"
@@ -69,14 +69,14 @@ export default defineComponent({
     // 打开聊天页面的函数
     const openChat = (message) => {
       const chatInfo = {
-        id: message.id || message.userId,
-        name: message.name || message.userName,
-        avatar: message.avatar || '/static/message/默认头像.png',
+        id: message.group ? message.groupId : (message.id || message.userId),
+        name: message.group ? message.groupName : (message.name || message.userName),
+        avatar: message.avatarUrl || '/static/message/默认头像.png',
         type: message.group ? 'group' : 'single',
         missionId: missionId.value
       };
 
-      console.log('[openChat] 准备导航到聊天页面，chatInfo:', chatInfo);
+      console.log('准备导航到聊天页面，chatInfo:', chatInfo);
 
       // 导航到聊天页面
       uni.navigateTo({
@@ -84,18 +84,18 @@ export default defineComponent({
         success: (res) => {
           if (res.eventChannel && res.eventChannel.emit) {
             res.eventChannel.emit('chatInfo', { chatInfo });
-            console.log('[openChat] 通过 eventChannel 发送 chatInfo');
+            console.log('通过 eventChannel 发送 chatInfo');
           } else {
-            console.warn('[openChat] eventChannel 不可用，将使用本地存储的数据');
+            console.log('eventChannel 不可用，将使用本地存储的数据');
             uni.setStorageSync('chatQuery', JSON.stringify(chatInfo));
           }
         },
         fail: (err) => {
-          console.error('[openChat] 导航到聊天页面失败:', err);
-          // uni.showToast({
-          //   title: '打开聊天失败，请重试',
-          //   icon: 'none'
-          // });
+          console.log('导航到聊天页面失败:', err);
+          uni.showToast({
+            title: '打开聊天失败，请重试',
+            icon: 'none'
+          });
         }
       });
     };
@@ -104,7 +104,7 @@ export default defineComponent({
       if (newMissionId) {
         const missionIdString = Array.isArray(newMissionId) ? newMissionId.join(',') : newMissionId;
         uni.setStorageSync('currentMissionId', missionIdString);
-        console.log('[main] 更新了本地存储中的 missionId:', missionIdString);
+        console.log('更新了本地存储中的 missionId:', missionIdString);
       }
     });
 

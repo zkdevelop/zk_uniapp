@@ -15,17 +15,24 @@ export const useUserStore = defineStore('user', () => {
     avatarUrl: '',
     token: '',
     status: '',
-    missionId: ''  
+    missionId: '',
+    groupInfo: null  // 新增：用于存储群组信息
   })
 
   function setUserData(data) {
-    console.log('Setting user data:', data)
+    console.log('设置用户数据:', data)
     Object.keys(data).forEach(key => {
       if (key in state) {
         state[key] = data[key]
       }
     })
-    console.log('Updated state:', state)
+    console.log('更新后的状态:', state)
+  }
+
+  function setGroupInfo(groupData) {
+    console.log('设置群组信息:', groupData)
+    state.groupInfo = groupData
+    console.log('更新后的群组信息:', state.groupInfo)
   }
 
   function clearUserData() {
@@ -38,5 +45,6 @@ export const useUserStore = defineStore('user', () => {
     return { ...state }
   }
 
-  return { state, setUserData, clearUserData, getUserData }
+  return { state, setUserData, clearUserData, getUserData, setGroupInfo }
 })
+

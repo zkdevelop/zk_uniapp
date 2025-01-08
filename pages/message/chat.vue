@@ -213,6 +213,7 @@ export default {
       }
     };
 
+    // 处理阅后即焚模式切换
     const handleBurnAfterReadingToggle = (isActive) => {
       console.log('[handleBurnAfterReadingToggle] 阅后即焚模式切换:', isActive)
       chatInfo.value.isBurnAfterReadingMode = isActive
@@ -242,7 +243,9 @@ export default {
         console.log('[Chat] 成功获取 eventChannel');
         setupChatInfo(eventChannel, {
           chatInfo,
-          loadHistoryMessages: () => loadHistoryMessages()
+          loadHistoryMessages: () => loadHistoryMessages(),
+          $nextTick: nextTick,
+          scrollToBottom
         });
       } else {
         console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法');
@@ -258,7 +261,6 @@ export default {
         }
       }
     })
-
 
     return {
       chatInfo,
