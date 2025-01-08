@@ -31,7 +31,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           await updateMessageList();
           // 发送消息后滚动到底部
           nextTick(() => {
-            scrollToBottom();
+            // scrollToBottom();
           });
         } else {
           throw new Error(response.msg || '发送消息失败');

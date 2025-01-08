@@ -1,8 +1,8 @@
 <!-- ContactInfo.vue - 联系人信息展示组件 -->
 <template>
-  <view class="main-info">
+  <view class="main-info">  
     <view class="profile-section">
-      <avatar :src="contact.avatar" :size="65" />
+      <avatar :src="contact.avatarUrl" :size="65" />
       <view class="info-section">
         <view class="name-section">
           <text class="name">{{contact.name}}</text>

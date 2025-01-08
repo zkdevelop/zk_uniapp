@@ -188,7 +188,13 @@
 		  "navigationBarTitleText": "发起群聊",
 		  "navigationStyle": "custom"
 		}
-	  }
+	  },
+	  {
+	        "path": "pages/contacts/components/ContactDetail/ContactDetailView",
+	        "style": {
+	          "navigationBarTitleText": "联系人详情"
+	        }
+	      }
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -7,7 +7,7 @@ export const getChatList = (missionId) => {
    missionId='b2279088b13a4828b56420e9ed79965e'
   // 检查missionId是否存在
   if (!missionId) {
-    console.error('getChatList 需要 missionId 参数');
+    console.log('getChatList 需要 missionId 参数');
     return Promise.reject(new Error('getChatList 需要 missionId 参数'));
   }
   // 发送GET请求获取聊天列表
@@ -80,12 +80,12 @@ export const sendFilesToUser = (data) => {
           console.log('解析后的响应:', response);
           resolve(response);
         } catch (error) {
-          console.error('解析服务器响应失败:', error);
+          console.log('解析服务器响应失败:', error);
           reject(new Error('解析服务器响应失败'));
         }
       },
       fail: (error) => {
-        console.error('上传失败:', error);
+        console.log('上传失败:', error);
         reject(error);
       }
     });
@@ -136,12 +136,29 @@ export const getMissionAddressBook = () => {
   })
 }
 
+// 向群组发送消息
+export const sendGroupMessage = (data) => {
+  // 发送POST请求发送群组消息
+  return request({
+    url: '/message/send/group',
+    method: 'post',
+    data: {
+      isGroupAnnouncement: data.isGroupAnnouncement !== undefined ? data.isGroupAnnouncement : false,
+      isPosition: data.isPosition !== undefined ? data.isPosition : false,
+      isSelfDestruct: data.isSelfDestruct !== undefined ? data.isSelfDestruct : false,
+      message: data.message,
+      recipientId: data.recipientId
+    }
+  })
+}
+
 export default {
   getChatList,
   sendMessageToUser,
   sendFilesToUser,
   getHistoryChatMessages,
   readSelfDestructMessage,
-  getMissionAddressBook
+  getMissionAddressBook,
+  sendGroupMessage
 }
 

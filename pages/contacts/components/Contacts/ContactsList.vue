@@ -9,7 +9,7 @@
       </view>
       <!-- 群成员列表 -->
       <view v-if="group.expanded" class="group-members">
-        <view v-for="member in group.groupMembers" :key="member.userId" class="member-item" @click="enterPrivateChat(member)">
+        <view v-for="member in group.groupMembers" :key="member.userId" class="member-item" >
           <text class="member-name">{{ member.userName }}</text>
           <!-- 在线状态指示器 -->
           <view :class="['status-indicator', member.status ? 'online' : 'offline']"></view>
@@ -47,17 +47,12 @@ export default {
     const enterGroupChat = (group) => {
       emit('enter-group-chat', group)
     }
-
-    // 进入私聊
-    const enterPrivateChat = (member) => {
-      emit('enter-private-chat', member)
-    }
+ 
 
     return {
       groupList,
       toggleGroup,
-      enterGroupChat,
-      enterPrivateChat
+      enterGroupChat  
     }
   }
 }

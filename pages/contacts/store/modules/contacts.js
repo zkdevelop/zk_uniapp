@@ -56,8 +56,7 @@ const contactsSlice = createSlice({
 });
 
 // 检查缓存联系人的函数
-const checkForCachedContacts = () => {
-  // 这里应该实现实际的缓存检查逻辑
+const checkForCachedContacts = () => { 
   return null;
 };
 
