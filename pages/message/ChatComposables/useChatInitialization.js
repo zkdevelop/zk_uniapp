@@ -1,11 +1,13 @@
 // useChatInitialization.js - 负责聊天初始化相关的功能
 import { useUserStore } from '@/store/userStore'
+import { useGroupStore } from '@/pages/message/store/groupStore'
 import { getGroupBasicInfo } from '@/utils/api/message.js'
 
 export function useChatInitialization() {
   console.log('[useChatInitialization] 被调用');
 
   const userStore = useUserStore();
+  const groupStore = useGroupStore();
 
   // 获取并存储群组基本信息
   const fetchAndStoreGroupInfo = async (groupId) => {
@@ -13,7 +15,7 @@ export function useChatInitialization() {
       const response = await getGroupBasicInfo(groupId);
       if (response.code === 200) {
         const groupInfo = response.data;
-        userStore.setGroupInfo({
+        groupStore.setGroupInfo({
           id: groupInfo.id,
           groupName: groupInfo.groupName,
           groupMembers: groupInfo.groupMembers

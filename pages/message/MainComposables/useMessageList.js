@@ -47,10 +47,10 @@ export function useMessageList() {
       },
       fail: (err) => {
         console.error('[openChat] 导航到聊天页面失败:', err);
-        uni.showToast({
-          title: '打开聊天失败，请重试',
-          icon: 'none'
-        });
+        // uni.showToast({
+        //   title: '打开聊天失败，请重试',
+        //   icon: 'none'
+        // });
       }
     });
   }

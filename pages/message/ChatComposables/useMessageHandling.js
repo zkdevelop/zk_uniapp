@@ -2,9 +2,11 @@
 import { getHistoryChatMessages, sendMessageToUser, sendGroupMessage, sendFilesToUser, getGroupChatMessages } from '@/utils/api/message.js'
 import { nextTick } from 'vue'
 import { useUserStore } from '@/store/userStore'
+import { useGroupStore } from '@/pages/message/store/groupStore'
 
 export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
   const userStore = useUserStore();
+  const groupStore = useGroupStore();
 
   // 发送消息
   const sendMessage = async (message) => {
@@ -271,8 +273,8 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       content = msg.previewUrl || msg.message;
     }
 
-    // 从 userStore 中获取群组信息
-    const groupInfo = userStore.state.groupInfo;
+    // 从 groupStore 中获取群组信息
+    const groupInfo = groupStore.state.groupInfo;
     let avatar = chatInfo.value._selfAvatar; // 默认头像
 
     if (groupInfo && groupInfo.groupMembers) {
@@ -294,7 +296,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       selfDestruct: msg.selfDestruct,
       senderName: msg.groupMessageUserReadVO.find(user => user.userId === msg.senderId)?.userName || '未知用户'
     };
-	console.log(mappedMessage,'mappedMessage',msg.senderId,userStore.state.id)
+    console.log(mappedMessage,'mappedMessage',msg.senderId,userStore.state.id)
     handleSelfDestructMessage(mappedMessage);
 
     return mappedMessage;

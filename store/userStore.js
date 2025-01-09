@@ -15,8 +15,7 @@ export const useUserStore = defineStore('user', () => {
     avatarUrl: '',
     token: '',
     status: '',
-    missionId: '',
-    groupInfo: null  // 新增：用于存储群组信息
+    missionId: ''
   })
 
   function setUserData(data) {
@@ -29,12 +28,6 @@ export const useUserStore = defineStore('user', () => {
     console.log('更新后的状态:', state)
   }
 
-  function setGroupInfo(groupData) {
-    console.log('设置群组信息:', groupData)
-    state.groupInfo = groupData
-    console.log('更新后的群组信息:', state.groupInfo)
-  }
-
   function clearUserData() {
     Object.keys(state).forEach(key => {
       state[key] = state[key] instanceof Object ? null : ''
@@ -45,6 +38,6 @@ export const useUserStore = defineStore('user', () => {
     return { ...state }
   }
 
-  return { state, setUserData, clearUserData, getUserData, setGroupInfo }
+  return { state, setUserData, clearUserData, getUserData }
 })
 
