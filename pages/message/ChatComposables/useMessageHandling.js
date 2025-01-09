@@ -1,8 +1,11 @@
 // useMessageHandling.js - 负责消息处理相关的功能
-import { getHistoryChatMessages, sendMessageToUser, sendGroupMessage, sendFilesToUser } from '@/utils/api/message.js'
+import { getHistoryChatMessages, sendMessageToUser, sendGroupMessage, sendFilesToUser, getGroupChatMessages } from '@/utils/api/message.js'
 import { nextTick } from 'vue'
+import { useUserStore } from '@/store/userStore'
 
 export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
+  const userStore = useUserStore();
+
   // 发送消息
   const sendMessage = async (message) => {
     console.log('发送消息:', message);
@@ -90,51 +93,31 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     });
 
     try {
-      const response = await getHistoryChatMessages({
-        opponentId: chatInfo.value.id,
-        from,
-        to,
-        missionId: chatInfo.value.missionId
-      });
+      let response;
+      if (chatInfo.value.type === 'group') {
+        response = await getGroupChatMessages({
+          opponentId: chatInfo.value.id,
+          from,
+          to
+        });
+      } else {
+        response = await getHistoryChatMessages({
+          opponentId: chatInfo.value.id,
+          from,
+          to,
+          missionId: chatInfo.value.missionId
+        });
+      }
 
       console.log('历史消息响应:', response);
 
-      if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
-        const newMessages = response.data.messageVOList.reverse().map(msg => {
-          let content = msg.message;
-          let type = msg.messageType.toLowerCase();
-
-          if (type === 'position') {
-            try {
-              content = JSON.parse(msg.message);
-              type = 'location';
-            } catch (e) {
-              console.log('解析位置数据失败:', e);
-            }
-          } else if (type === 'image') {
-            content = msg.previewUrl || msg.message;
-          } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-            type = 'file';
-          } else if (type === 'audio' || type === 'voice_message') {
-            content = msg.previewUrl || msg.message;
-          }
-
-          const mappedMessage = {
-            id: msg.id,
-            content: content,
-            userType: msg.senderId === chatInfo.value.id ? 'other' : 'self',
-            avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
-            timestamp: new Date(msg.sendTime),
-            type: type,
-            isRead: msg.isRead,
-            messageType: msg.messageType,
-            selfDestruct: msg.selfDestruct
-          };
-
-          handleSelfDestructMessage(mappedMessage);
-
-          return mappedMessage;
-        });
+      if (response.code === 200) {
+        let newMessages;
+        if (chatInfo.value.type === 'group') {
+          newMessages = response.data.groupMessageVOS.reverse().map(msg => mapGroupMessage(msg));
+        } else {
+          newMessages = response.data.messageVOList.reverse().map(msg => mapPrivateMessage(msg));
+        }
 
         console.log('新消息数量:', newMessages.length);
 
@@ -185,47 +168,31 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
   const updateMessageList = async () => {
     console.log('开始更新消息列表');
     try {
-      const response = await getHistoryChatMessages({
-        opponentId: chatInfo.value.id,
-        from: 0,
-        to: 10,
-        missionId: chatInfo.value.missionId
-      });
+      let response;
+      if (chatInfo.value.type === 'group') {
+        response = await getGroupChatMessages({
+          opponentId: chatInfo.value.id,
+          from: 0,
+          to: 10
+        });
+      } else {
+        response = await getHistoryChatMessages({
+          opponentId: chatInfo.value.id,
+          from: 0,
+          to: 10,
+          missionId: chatInfo.value.missionId
+        });
+      }
 
       console.log('接收到的响应:', response);
 
-      if (response.code === 200 && response.data && Array.isArray(response.data.messageVOList)) {
-        const newMessages = response.data.messageVOList.reverse().map(msg => {
-          let content = msg.message;
-          let type = msg.messageType.toLowerCase();
-
-          if (type === 'position') {
-            try {
-              content = JSON.parse(msg.message);
-              type = 'location';
-            } catch (e) {
-              console.log('解析位置数据失败:', e);
-            }
-          } else if (type === 'image') {
-            content = msg.previewUrl || msg.message;
-          } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-            type = 'file';
-          } else if (type === 'audio' || type === 'voice_message') {
-            content = msg.previewUrl || msg.message;
-          }
-
-          return {
-            id: msg.id,
-            content: content,
-            userType: msg.senderId === chatInfo.value.id ? 'other' : 'self',
-            avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
-            timestamp: new Date(msg.sendTime),
-            type: type,
-            isRead: msg.isRead,
-            messageType: msg.messageType,
-            selfDestruct: msg.selfDestruct
-          };
-        });
+      if (response.code === 200) {
+        let newMessages;
+        if (chatInfo.value.type === 'group') {
+          newMessages = response.data.groupMessageVOS.reverse().map(msg => mapGroupMessage(msg));
+        } else {
+          newMessages = response.data.messageVOList.reverse().map(msg => mapPrivateMessage(msg));
+        }
 
         list.value = newMessages;
 
@@ -245,6 +212,92 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         icon: 'none'
       });
     }
+  };
+
+  // 映射私聊消息
+  const mapPrivateMessage = (msg) => {
+    let content = msg.message;
+    let type = msg.messageType.toLowerCase();
+
+    if (type === 'position') {
+      try {
+        content = JSON.parse(msg.message);
+        type = 'location';
+      } catch (e) {
+        console.log('解析位置数据失败:', e);
+      }
+    } else if (type === 'image') {
+      content = msg.previewUrl || msg.message;
+    } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
+      type = 'file';
+    } else if (type === 'audio' || type === 'voice_message') {
+      content = msg.previewUrl || msg.message;
+    }
+
+    const mappedMessage = {
+      id: msg.id,
+      content: content,
+      userType: msg.senderId === chatInfo.value.id ? 'other' : 'self',
+      avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
+      timestamp: new Date(msg.sendTime),
+      type: type,
+      isRead: msg.isRead,
+      messageType: msg.messageType,
+      selfDestruct: msg.selfDestruct
+    };
+
+    handleSelfDestructMessage(mappedMessage);
+
+    return mappedMessage;
+  };
+
+  // 映射群聊消息
+  const mapGroupMessage = (msg) => {
+    let content = msg.message;
+    let type = msg.messageType.toLowerCase();
+
+    if (type === 'position') {
+      try {
+        content = JSON.parse(msg.message);
+        type = 'location';
+      } catch (e) {
+        console.log('解析位置数据失败:', e);
+      }
+    } else if (type === 'image') {
+      content = msg.previewUrl || msg.message;
+    } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
+      type = 'file';
+    } else if (type === 'audio' || type === 'voice_message') {
+      content = msg.previewUrl || msg.message;
+    }
+
+    // 从 userStore 中获取群组信息
+    const groupInfo = userStore.state.groupInfo;
+    let avatar = chatInfo.value._selfAvatar; // 默认头像
+
+    if (groupInfo && groupInfo.groupMembers) {
+      const sender = groupInfo.groupMembers.find(member => member.userId === msg.senderId);
+      if (sender) {
+        avatar = sender.avatarUrl;
+      }
+    }
+
+    const mappedMessage = {
+      id: msg.id,
+      content: content,
+      userType: userStore.state.id === msg.senderId ? 'self' : 'other',
+      avatar: avatar,
+      timestamp: new Date(msg.sendTime),
+      type: type,
+      isRead: msg.groupMessageUserReadVO.some(user => user.userId === chatInfo.value.id && user.isRead),
+      messageType: msg.messageType,
+      selfDestruct: msg.selfDestruct,
+      senderName: msg.groupMessageUserReadVO.find(user => user.userId === msg.senderId)?.userName || '未知用户'
+    };
+	console.log(mappedMessage,'mappedMessage',msg.senderId,userStore.state.id)
+    handleSelfDestructMessage(mappedMessage);
+
+    return mappedMessage;
   };
 
   // 处理文件选择
