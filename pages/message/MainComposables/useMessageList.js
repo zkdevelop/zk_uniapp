@@ -1,26 +1,24 @@
-// useMessageList.js - 消息列表相关的组合式函数
 import { ref, computed, onMounted, onActivated } from 'vue'
 import { useUserStore } from '@/store/userStore'
+import { useMainInterfaceStore } from '../store/mainInterfaceStore'
 import { createDemoMessages, createCombinedMessages, createTotalMessageCount, createSystemMessage } from './messageUtils'
 import { calculateScrollViewHeight } from './uiUtils'
 import { fetchChatList } from './chatApi'
 
 export function useMessageList() {
-  // 使用用户存储
   const userStore = useUserStore()
-  // 定义响应式变量
-  const missionId = ref('') // 任务ID
-  const realMessages = ref([]) // 实际消息列表
-  const scrollViewHeight = ref(0) // 滚动视图高度
-  const isLoading = ref(true) // 加载ref(true) // 加载状态
+  const mainInterfaceStore = useMainInterfaceStore()
 
-  // 使用工具函数创建响应式数据
+  const missionId = ref('')
+  const realMessages = ref([])
+  const scrollViewHeight = ref(0)
+  const isLoading = ref(false)
+
   const demoMessages = createDemoMessages()
   const combinedMessages = createCombinedMessages(demoMessages, realMessages)
   const totalMessageCount = createTotalMessageCount(combinedMessages)
   const systemMessage = createSystemMessage()
 
-  // 打开聊天页面
   const openChat = (message) => {
     const chatInfo = {
       id: message.id || message.userId,
@@ -29,50 +27,77 @@ export function useMessageList() {
       type: message.group ? 'group' : 'single',
       missionId: missionId.value
     }
-    console.log('[openChat] 准备导航到聊天页面，chatInfo:', chatInfo);
+    console.log('准备导航到聊天页面，chatInfo:', chatInfo);
     
-    // 将聊天信息存储到本地，以备 eventChannel 失败时使用
     uni.setStorageSync('chatQuery', JSON.stringify(chatInfo));
     
     uni.navigateTo({
       url: '/pages/message/chat',
       success: (res) => {
-        // 尝试通过 eventChannel 传递数据
         if (res.eventChannel && res.eventChannel.emit) {
           res.eventChannel.emit('chatInfo', { chatInfo });
-          console.log('[openChat] 通过 eventChannel 发送 chatInfo');
+          console.log('通过 eventChannel 发送 chatInfo');
         } else {
-          console.warn('[openChat] eventChannel 不可用，将使用本地存储的数据');
+          console.log('eventChannel 不可用，将使用本地存储的数据');
         }
       },
       fail: (err) => {
-        console.error('[openChat] 导航到聊天页面失败:', err);
-        // uni.showToast({
-        //   title: '打开聊天失败，请重试',
-        //   icon: 'none'
-        // });
+        console.log('导航到聊天页面失败:', err);
       }
     });
   }
 
-  // 加载消息列表
-  const loadMessages = () => {
+  const loadMessages = async () => {
     missionId.value = userStore.state.missionId
     console.log('从 store 获取的 missionId:', missionId.value)
     scrollViewHeight.value = calculateScrollViewHeight()
-    fetchChatList(missionId.value, isLoading, realMessages)
+
+    // 直接加载缓存数据
+    if (mainInterfaceStore.isInitialized) {
+      realMessages.value = mainInterfaceStore.getCachedMessages()
+    }
+
+    // 发送获取初始化数据的路由
+    fetchAndUpdateMessages()
   }
 
-  // 组件挂载时加载消息
+  const fetchAndUpdateMessages = async () => {
+    try {
+      const newMessages = await fetchChatList(missionId.value)
+      if (newMessages) {
+        // 比较新数据和缓存数据
+        const hasChanges = compareMessages(newMessages, realMessages.value)
+        if (hasChanges) {
+          // 更新缓存和界面
+          mainInterfaceStore.setCachedMessages(newMessages)
+          realMessages.value = newMessages
+          console.log('消息列表已更新');
+        } else {
+          console.log('消息列表无变化');
+        }
+      }
+    } catch (error) {
+      console.log('获取聊天列表失败:', error)
+    }
+  }
+
+  const compareMessages = (newMessages, oldMessages) => {
+    if (newMessages.length !== oldMessages.length) return true
+    for (let i = 0; i < newMessages.length; i++) {
+      if (JSON.stringify(newMessages[i]) !== JSON.stringify(oldMessages[i])) {
+        return true
+      }
+    }
+    return false
+  }
+
   onMounted(loadMessages)
   
-  // 组件激活时重新加载消息
   onActivated(() => {
-    console.log('Messages 组件被激活')
+    console.log('消息组件被激活')
     loadMessages()
   })
 
-  // 返回需要在模板中使用的数据和方法
   return {
     combinedMessages,
     totalMessageCount,

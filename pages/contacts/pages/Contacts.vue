@@ -34,24 +34,28 @@
       @add-friend="handleAddFriend"
     />
 
-    <!-- 群聊列表组件 -->
-    <group-chat-list
-      v-if="groupVOList.length > 0"
-      :groupVOList="groupVOList"
-      @enter-group-chat="enterGroupChat"
-    />
-    <view v-else-if="!loading" class="empty-state">暂无群聊</view>
+    <view class="content-wrapper">
+      <!-- 加载动画 -->
+      <loading-animation v-if="loading" />
 
-    <!-- 用户列表组件 -->
-    <user-list
-      v-if="userInformationVOList.length > 0"
-      :userInformationVOList="userInformationVOList"
-      @select-user="selectUser"
-    />
-    <view v-else-if="!loading" class="empty-state">暂无联系人</view>
+      <template v-else>
+        <!-- 群聊列表组件 -->
+        <group-chat-list
+          v-if="groupVOList.length > 0"
+          :groupVOList="groupVOList"
+          @enter-group-chat="enterGroupChat"
+        />
+        <view v-else class="empty-state">暂无群聊</view>
 
-    <!-- 加载中提示 -->
-    <view v-if="loading" class="loading-state">加载中...</view>
+        <!-- 用户列表组件 -->
+        <user-list
+          v-if="userInformationVOList.length > 0"
+          :userInformationVOList="userInformationVOList"
+          @select-user="selectUser"
+        />
+        <view v-else class="empty-state">暂无联系人</view>
+      </template>
+    </view>
 
     <!-- 联系人详情组件 -->
     <contact-detail-view
@@ -70,6 +74,7 @@ import GroupChatList from '../components/Contacts/GroupChatList.vue'
 import UserList from '../components/Contacts/UserList.vue'
 import ContactDetailView from '../components/ContactDetail/ContactDetailView.vue'
 import DropdownMenu from '../components/shared/DropdownMenu.vue'
+import LoadingAnimation from '../components/shared/LoadingAnimation.vue'
 import { useContacts } from '../composables/useContacts'
 
 export default {
@@ -78,7 +83,8 @@ export default {
     GroupChatList,
     UserList,
     ContactDetailView,
-    DropdownMenu
+    DropdownMenu,
+    LoadingAnimation
   },
   setup() {
     console.log('联系人组件设置函数被调用')
@@ -247,15 +253,16 @@ export default {
   margin-left: 16px;
 }
 
-.empty-state, .loading-state {
+.content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty-state {
   text-align: center;
   padding: 20px;
   color: #999;
   font-size: 14px;
-}
-
-.loading-state {
-  font-weight: bold;
 }
 </style>
 
