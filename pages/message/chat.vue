@@ -25,7 +25,7 @@
       @file-selected="handleFileSelected"
       @toggle-burn-after-reading="handleBurnAfterReadingToggle"
       :show-attach-menu="showAttachMenu"
-      :recipientId="chatInfo.id"
+      :recipientId="chatInfo.id || ''"
       :missionId="chatInfo.missionId"
       :initial-burn-after-reading-mode="chatInfo.isBurnAfterReadingMode"
       ref="chatInputAreaRef"
@@ -96,7 +96,7 @@ export default {
     const chatInfo = ref({
       id: '',
       name: '',
-      avatar: [],
+      avatar: '',
       type: 'single',
       missionId: '',
       isBurnAfterReadingMode: false
@@ -190,42 +190,42 @@ export default {
         await loadHistoryMessagesFromComposable(isLoadingMore);
         if (!isLoadingMore) {
           nextTick(() => {
-            console.log('[loadHistoryMessages] 加载初始消息后滚动到底部');
+            console.log('加载初始消息后滚动到底部');
             scrollToBottom();
           });
         }
       } catch (error) {
-        console.error('[loadHistoryMessages] 加载历史消息出错:', error);
+        console.error('加载历史消息出错:', JSON.stringify(error));
       }
     };
 
     // 初始化聊天
     const initializeChat = async () => {
-      console.log('[initializeChat] 开始初始化聊天');
+      console.log('开始初始化聊天');
       if (chatInfo.value && chatInfo.value.id) {
         await loadHistoryMessages();
         nextTick(() => {
-          console.log('[initializeChat] 初始化完成，滚动到底部');
+          console.log('初始化完成，滚动到底部');
           scrollToBottom();
         });
       } else {
-        console.log('[initializeChat] 聊天信息尚未准备好，等待设置');
+        console.log('聊天信息尚未准备好，等待设置');
       }
     };
 
     // 处理阅后即焚模式切换
     const handleBurnAfterReadingToggle = (isActive) => {
-      console.log('[handleBurnAfterReadingToggle] 阅后即焚模式切换:', isActive)
+      console.log('阅后即焚模式切换:', isActive)
       chatInfo.value.isBurnAfterReadingMode = isActive
     }
 
     // 组件挂载时的处理
     onMounted(() => {
-      console.log('[Chat] mounted 生命周期钩子被调用');
+      console.log('mounted 生命周期钩子被调用');
       const pages = getCurrentPages();
       const currentPage = pages[pages.length - 1];
       if (currentPage && currentPage.$page && currentPage.$page.fullPath) {
-        console.log('[Chat] 当前页面路径:', currentPage.$page.fullPath);
+        console.log('当前页面路径:', currentPage.$page.fullPath);
       }
       
       // 尝试多种方式获取 eventChannel
@@ -240,7 +240,7 @@ export default {
       }
 
       if (eventChannel) {
-        console.log('[Chat] 成功获取 eventChannel');
+        console.log('成功获取 eventChannel');
         setupChatInfo(eventChannel, {
           chatInfo,
           loadHistoryMessages: () => loadHistoryMessages(),
@@ -248,16 +248,26 @@ export default {
           scrollToBottom
         });
       } else {
-        console.error('[Chat] 无法获取 eventChannel，尝试其他初始化方法');
-        // 这里可以添加备用的初始化逻辑，例如从 URL 参数或全局状态获取聊天信息
+        console.error('无法获取 eventChannel，尝试其他初始化方法');
         const query = uni.getStorageSync('chatQuery');
         if (query) {
-          console.log('[Chat] 从存储中获取聊天信息:', query);
-          chatInfo.value = JSON.parse(query);
-          initializeChat();  // 调用 initializeChat
+          console.log('从存储中获取聊天信息:', query);
+          const parsedQuery = JSON.parse(query);
+          chatInfo.value = {
+            ...chatInfo.value,
+            ...parsedQuery
+          };
+          console.log('更新后的聊天信息:', JSON.stringify(chatInfo.value));
+          initializeChat();
         } else {
-          console.error('[Chat] 无法初始化聊天，缺少必要信息');
-          // 可以在这里添加错误处理逻辑，例如显示错误消息或重定向到其他页面
+          console.error('无法初始化聊天，缺少必要信息');
+          uni.showToast({
+            title: '无法加载聊天信息',
+            icon: 'none'
+          });
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 2000);
         }
       }
     })

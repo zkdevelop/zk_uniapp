@@ -43,7 +43,7 @@
         <group-chat-list
           v-if="groupVOList.length > 0"
           :groupVOList="groupVOList"
-          @enter-group-chat="enterGroupChat"
+          @enter-group-chat="(group) => enterGroupChat(group, computedMissionId)"
         />
         <view v-else class="empty-state">暂无群聊</view>
 
@@ -51,7 +51,7 @@
         <user-list
           v-if="userInformationVOList.length > 0"
           :userInformationVOList="userInformationVOList"
-          @select-user="selectUser"
+          @select-user="(user) => selectUser(user, missionId)"
         />
         <view v-else class="empty-state">暂无联系人</view>
       </template>
@@ -67,15 +67,15 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useContactsStore } from '../store/contactsStore'
-import { useUserStore } from '@/store/userStore'
 import GroupChatList from '../components/Contacts/GroupChatList.vue'
 import UserList from '../components/Contacts/UserList.vue'
 import ContactDetailView from '../components/ContactDetail/ContactDetailView.vue'
 import DropdownMenu from '../components/shared/DropdownMenu.vue'
 import LoadingAnimation from '../components/shared/LoadingAnimation.vue'
 import { useContacts } from '../composables/useContacts'
+import { useContactNavigation } from '../composables/useContactNavigation'
 
 export default {
   name: 'Contacts',
@@ -89,23 +89,28 @@ export default {
   setup() {
     console.log('联系人组件设置函数被调用')
     const contactsStore = useContactsStore()
-    const userStore = useUserStore()
-    const { initContacts, loading, missionId } = useContacts()
-    const showDropdown = ref(false)
-
-    // 使用计算属性获取响应式数据
-    const groupVOList = computed(() => contactsStore.groupVOList)
-    const userInformationVOList = computed(() => contactsStore.userInformationVOList)
+    const { 
+      initContacts, 
+      loading, 
+      isUpdating, 
+      missionId, 
+      groupVOList, 
+      userInformationVOList, 
+      computedMissionId,
+      showDropdown,
+      toggleDropdown,
+      handleContainerClick
+    } = useContacts()
+    const { 
+      handleSearch, 
+      handleGroupChat, 
+      handleAddFriend, 
+      enterGroupChat, 
+      selectUser 
+    } = useContactNavigation()
 
     // 选中的联系人
     const selectedContact = ref(null)
-
-    // 计算 missionId
-    const computedMissionId = computed(() => {
-      return Array.isArray(userStore.state.missionId) 
-        ? userStore.state.missionId.join(',') 
-        : (userStore.state.missionId || '')
-    })
 
     onMounted(() => {
       console.log('联系人组件挂载钩子被调用')
@@ -131,94 +136,15 @@ export default {
       selectedContact.value = null
     }
 
-    // 处理搜索
-    const handleSearch = () => {
-      console.log('搜索按钮被点击')
-      // 实现搜索功能
-    }
-
-    // 切换下拉菜单
-    const toggleDropdown = () => {
-      showDropdown.value = !showDropdown.value
-    }
-
-    // 处理容器点击
-    const handleContainerClick = () => {
-      if (showDropdown.value) {
-        showDropdown.value = false
-      }
-    }
-
-    // 处理发起群聊
-    const handleGroupChat = () => {
-      console.log('发起群聊被点击')
-      showDropdown.value = false
-      uni.navigateTo({
-        url: '/pages/contacts/pages/contacts/create-group-chat/index',
-        fail: (err) => {
-          console.log('导航失败:', err)
-        }
-      })
-    }
-
-    // 处理添加朋友
-    const handleAddFriend = () => {
-      console.log('添加朋友被点击')
-      showDropdown.value = false
-      // 实现添加朋友功能
-    }
-
-    // 进入群聊
-    const enterGroupChat = (group) => {
-      console.log('正在跳转到群聊界面:', group)
-      const chatInfo = {
-        id: group.id,
-        name: group.groupName,
-        avatar: group.avatar || '/static/default-group-avatar.png',
-        type: 'group',
-        missionId: computedMissionId.value,
-        isBurnAfterReadingMode: false
-      }
-
-      uni.navigateTo({
-        url: '/pages/message/chat',
-        success: (res) => {
-          if (res.eventChannel && res.eventChannel.emit) {
-            res.eventChannel.emit('chatInfo', { chatInfo })
-            console.log('通过 eventChannel 发送群聊 chatInfo')
-          } else {
-            console.log('eventChannel 不可用，将使用本地存储的数据')
-            uni.setStorageSync('chatQuery', JSON.stringify(chatInfo))
-          }
-        },
-        fail: (error) => {
-          console.log('跳转到群聊界面失败:', error)
-        }
-      })
-    }
-
-    // 选择用户
-    const selectUser = (user) => {
-      console.log('选择用户:', user)
-      const currentMissionId = missionId.value
-      const userString = encodeURIComponent(JSON.stringify(user))
-      uni.navigateTo({
-        url: `/pages/contacts/components/ContactDetail/ContactDetailView?user=${userString}&missionId=${currentMissionId}`,
-        success: (res) => {
-          console.log('成功导航到联系人详情页')
-        },
-        fail: (err) => {
-          console.log('导航到联系人详情页失败:', err)
-        }
-      })
-    }
-
     return {
       groupVOList,
       userInformationVOList,
       selectedContact,
       showDropdown,
       loading,
+      isUpdating,
+      missionId,
+      computedMissionId,
       closeContactDetail,
       handleSearch,
       toggleDropdown,

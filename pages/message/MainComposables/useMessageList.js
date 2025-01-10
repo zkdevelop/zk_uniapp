@@ -19,15 +19,16 @@ export function useMessageList() {
   const totalMessageCount = createTotalMessageCount(combinedMessages)
   const systemMessage = createSystemMessage()
 
+  // 打开聊天页面的函数
   const openChat = (message) => {
     const chatInfo = {
-      id: message.id || message.userId,
-      name: message.name || message.userName,
-      avatar: message.avatar || '/static/message/默认头像.png',
+      id: message.group ? message.groupId : (message.id || message.userId),
+      name: message.group ? message.groupName : (message.name || message.userName),
+      avatar: message.avatarUrl || '/static/message/默认头像.png',
       type: message.group ? 'group' : 'single',
       missionId: missionId.value
     }
-    console.log('准备导航到聊天页面，chatInfo:', chatInfo);
+    console.log('准备导航到聊天页面，chatInfo:', JSON.stringify(chatInfo));
     
     uni.setStorageSync('chatQuery', JSON.stringify(chatInfo));
     
@@ -42,11 +43,12 @@ export function useMessageList() {
         }
       },
       fail: (err) => {
-        console.log('导航到聊天页面失败:', err);
+        console.log('导航到聊天页面失败:', JSON.stringify(err));
       }
     });
   }
 
+  // 加载消息列表
   const loadMessages = async () => {
     missionId.value = userStore.state.missionId
     console.log('从 store 获取的 missionId:', missionId.value)
@@ -61,6 +63,7 @@ export function useMessageList() {
     fetchAndUpdateMessages()
   }
 
+  // 获取并更新消息
   const fetchAndUpdateMessages = async () => {
     try {
       const newMessages = await fetchChatList(missionId.value)
@@ -77,10 +80,11 @@ export function useMessageList() {
         }
       }
     } catch (error) {
-      console.log('获取聊天列表失败:', error)
+      console.log('获取聊天列表失败:', JSON.stringify(error))
     }
   }
 
+  // 比较消息列表
   const compareMessages = (newMessages, oldMessages) => {
     if (newMessages.length !== oldMessages.length) return true
     for (let i = 0; i < newMessages.length; i++) {
