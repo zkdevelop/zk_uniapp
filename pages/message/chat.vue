@@ -1,4 +1,3 @@
-<!-- chat.vue - 聊天页面组件 -->
 <template>
   <view class="chat-page">
     <!-- 聊天头部 -->
@@ -8,10 +7,9 @@
     <MessageList
       ref="messageListRef"
       :messages="list"
-      :is-group="chatInfo.type === 'group'"
+      :is-group="chatInfo && chatInfo.type === 'group'"
       @load-more="loadMoreMessages"
       @scroll="onScroll"
-      @view-burn-after-reading="viewBurnAfterReadingImage"
       @message-deleted="handleMessageDeleted"
     />
 
@@ -25,19 +23,10 @@
       @file-selected="handleFileSelected"
       @toggle-burn-after-reading="handleBurnAfterReadingToggle"
       :show-attach-menu="showAttachMenu"
-      :recipientId="chatInfo.id || ''"
-      :missionId="chatInfo.missionId"
-      :initial-burn-after-reading-mode="chatInfo.isBurnAfterReadingMode"
+      :recipientId="chatInfo && chatInfo.id || ''"
+      :missionId="chatInfo && chatInfo.missionId"
+      :initial-burn-after-reading-mode="chatInfo && chatInfo.isBurnAfterReadingMode"
       ref="chatInputAreaRef"
-    />
-
-    <!-- 阅后即焚组件 -->
-    <BurnAfterReading
-      v-if="currentBurnAfterReadingImage"
-      :imageSrc="currentBurnAfterReadingImage"
-      :duration="burnAfterReadingDuration"
-      @close="closeBurnAfterReadingPreview"
-      ref="burnAfterReadingRef"
     />
 
     <!-- 滚动到底部按钮 -->
@@ -68,7 +57,7 @@
 </template>
 
 <script>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue' 
@@ -82,6 +71,7 @@ import { useMessageHandling } from './ChatComposables/useMessageHandling'
 import { useUiInteractions } from './ChatComposables/useUiInteractions'
 import { useVideoCallHandling } from './ChatComposables/useVideoCallHandling'
 import { useSelfDestructMessageHandling } from './ChatComposables/useSelfDestructMessageHandling'
+import { useChatDataManagement } from './ChatComposables/useChatDataManagement'
 
 export default {
   name: 'Chat',
@@ -92,7 +82,6 @@ export default {
     ScrollToBottomButton
   },
   setup() {
-    // 聊天信息
     const chatInfo = ref({
       id: '',
       name: '',
@@ -102,56 +91,40 @@ export default {
       isBurnAfterReadingMode: false
     })
     
-    // 消息列表
     const list = ref([])
-    
-    // UI 状态
     const showAttachMenu = ref(false)
-    const burnAfterReadingDuration = ref(5)
-    const currentBurnAfterReadingImage = ref('')
-    const currentBurnAfterReadingMessage = ref(null)
-    const isScrolledToBottom = ref(true)
     const showScrollToBottom = ref(false)
     const showNewMessageTip = ref(false)
     const hasNewMessages = ref(false)
-    
-    // 分页加载相关
+    const isScrolledToBottom = ref(true)
     const currentFrom = ref(0)
     const currentTo = ref(10)
     const hasMoreMessages = ref(true) 
     const isLoading = ref(false)
     
-    // 存储
     const peerStore = usePeerStore()
     const friendStore = useFriendStore()
+    const userStore = useUserStore()
     
-    // 阅后即焚模式
     const isBurnAfterReadingMode = ref(false)
-    
-    // 消息列表引用
     const messageListRef = ref(null)
 
-    // 使用聊天初始化钩子
     const {
       goBack,
       setupChatInfo
     } = useChatInitialization()
 
-    // 使用消息处理钩子
     const {
       sendMessage,
       handleMessageFailed,
-      loadHistoryMessages: loadHistoryMessagesFromComposable,
+      loadHistoryMessages,
       updateMessageList,
       handleFileSelected,
       handleMessageDeleted
-    } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages)
+    } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, () => scrollToBottom())
 
-    // 使用 UI 交互钩子
     const {
       handleAttachment,
-      viewBurnAfterReadingImage,
-      closeBurnAfterReadingPreview,
       toggleAttachMenu,
       handleOverlayClick,
       scrollToBottom,
@@ -167,107 +140,126 @@ export default {
       isLoading,
       currentFrom,
       currentTo,
-      loadHistoryMessages: loadHistoryMessagesFromComposable,
+      loadHistoryMessages,
       showAttachMenu,
       hasMoreMessages
     })
 
-    // 使用视频通话处理钩子
     const {
       openVideoPage,
       acceptVideoCall,
       rejectVideoCall
     } = useVideoCallHandling()
 
-    // 使用自毁消息处理钩子
     const {
       handleSelfDestructMessage
     } = useSelfDestructMessageHandling()
 
-    // 加载历史消息
-    const loadHistoryMessages = async (isLoadingMore = false) => {
-      try {
-        await loadHistoryMessagesFromComposable(isLoadingMore);
-        if (!isLoadingMore) {
-          nextTick(() => {
-            console.log('加载初始消息后滚动到底部');
-            scrollToBottom();
-          });
-        }
-      } catch (error) {
-        console.error('加载历史消息出错:', JSON.stringify(error));
-      }
-    };
+    const {
+      loadCachedData,
+      saveCachedData,
+      fetchAndUpdateData
+    } = useChatDataManagement(chatInfo, list)
 
-    // 初始化聊天
     const initializeChat = async () => {
-      console.log('开始初始化聊天');
+      console.log('开始初始化聊天')
       if (chatInfo.value && chatInfo.value.id) {
-        await loadHistoryMessages();
-        nextTick(() => {
-          console.log('初始化完成，滚动到底部');
-          scrollToBottom();
-        });
-      } else {
-        console.log('聊天信息尚未准备好，等待设置');
-      }
-    };
+        console.log('尝试从缓存加载数据')
+        const cachedData = await loadCachedData()
+        if (cachedData) {
+          console.log('成功从缓存加载数据，数据长度:', cachedData.length)
+          list.value = cachedData
+          nextTick(() => {
+            console.log('缓存数据加载完成，滚动到底部')
+            scrollToBottom()
+          })
+        } else {
+          console.log('缓存中没有数据')
+        }
 
-    // 处理阅后即焚模式切换
+        console.log('开始从服务器加载历史消息')
+        await loadHistoryMessages()
+        console.log('历史消息加载完成，消息数量:', list.value.length)
+        nextTick(() => {
+          console.log('历史消息渲染完成，滚动到底部')
+          scrollToBottom()
+        })
+
+        console.log('异步获取最新数据')
+        fetchAndUpdateData()
+      } else {
+        console.log('聊天信息尚未准备好，等待设置')
+      }
+    }
+
     const handleBurnAfterReadingToggle = (isActive) => {
       console.log('阅后即焚模式切换:', isActive)
       chatInfo.value.isBurnAfterReadingMode = isActive
     }
 
-    // 组件挂载时的处理
+    watch(chatInfo, async (newChatInfo) => {
+      console.log('聊天信息已更新:', newChatInfo)
+      if (newChatInfo && newChatInfo.id) {
+        console.log('检测到有效的聊天信息，开始初始化聊天')
+        await initializeChat()
+      }
+    }, { deep: true, immediate: true })
+
     onMounted(() => {
-      console.log('mounted 生命周期钩子被调用');
-      const pages = getCurrentPages();
-      const currentPage = pages[pages.length - 1];
+      console.log('聊天组件已挂载')
+      const pages = getCurrentPages()
+      const currentPage = pages[pages.length - 1]
       if (currentPage && currentPage.$page && currentPage.$page.fullPath) {
-        console.log('当前页面路径:', currentPage.$page.fullPath);
+        console.log('当前页面路径:', currentPage.$page.fullPath)
       }
       
-      // 尝试多种方式获取 eventChannel
-      let eventChannel;
+      let eventChannel
       if (currentPage && currentPage.$getAppWebview) {
-        eventChannel = currentPage.$getAppWebview().eventChannel;
+        eventChannel = currentPage.$getAppWebview().eventChannel
       } else if (currentPage && currentPage.getOpenerEventChannel) {
-        eventChannel = currentPage.getOpenerEventChannel();
+        eventChannel = currentPage.getOpenerEventChannel()
       } else if (uni && uni.getEnterOptionsSync) {
-        const enterOptions = uni.getEnterOptionsSync();
-        eventChannel = enterOptions.eventChannel;
+        const enterOptions = uni.getEnterOptionsSync()
+        eventChannel = enterOptions.eventChannel
       }
 
       if (eventChannel) {
-        console.log('成功获取 eventChannel');
+        console.log('成功获取 eventChannel，开始设置聊天信息')
         setupChatInfo(eventChannel, {
           chatInfo,
-          loadHistoryMessages: () => loadHistoryMessages(),
+          loadHistoryMessages: async () => {
+            console.log('开始加载历史消息')
+            await loadHistoryMessages()
+            console.log('历史消息加载完成')
+          },
           $nextTick: nextTick,
-          scrollToBottom
-        });
+          scrollToBottom: () => {
+            console.log('滚动到底部')
+            scrollToBottom()
+          }
+        })
       } else {
-        console.error('无法获取 eventChannel，尝试其他初始化方法');
-        const query = uni.getStorageSync('chatQuery');
+        console.log('无法获取 eventChannel，尝试其他初始化方法')
+        const query = uni.getStorageSync('chatQuery')
         if (query) {
-          console.log('从存储中获取聊天信息:', query);
-          const parsedQuery = JSON.parse(query);
+          console.log('从存储中获取聊天信息:', query)
+          const parsedQuery = JSON.parse(query)
           chatInfo.value = {
             ...chatInfo.value,
             ...parsedQuery
-          };
-          console.log('更新后的聊天信息:', JSON.stringify(chatInfo.value));
-          initializeChat();
+          }
+          console.log('更新后的聊天信息:', JSON.stringify(chatInfo.value))
+          initializeChat()
         } else {
-          console.error('无法初始化聊天，缺少必要信息');
+          console.log('无法初始化聊天，缺少必要信息')
           uni.showToast({
             title: '无法加载聊天信息',
             icon: 'none'
-          });
+          })
           setTimeout(() => {
-            uni.navigateBack();
-          }, 2000);
+            console.log('无法加载聊天信息，准备返回上一页')
+            uni.navigateBack()
+          }, 2000)
         }
       }
     })
@@ -276,13 +268,10 @@ export default {
       chatInfo,
       list,
       showAttachMenu,
-      burnAfterReadingDuration,
-      currentBurnAfterReadingImage,
-      currentBurnAfterReadingMessage,
-      isScrolledToBottom,
       showScrollToBottom,
       showNewMessageTip,
       hasNewMessages,
+      isScrolledToBottom,
       currentFrom,
       currentTo,
       hasMoreMessages, 
@@ -298,8 +287,6 @@ export default {
       updateMessageList,
       handleFileSelected,
       handleAttachment,
-      viewBurnAfterReadingImage,
-      closeBurnAfterReadingPreview,
       toggleAttachMenu,
       handleOverlayClick,
       scrollToBottom,
@@ -313,6 +300,9 @@ export default {
       initializeChat,
       handleBurnAfterReadingToggle,
       handleMessageDeleted,
+      loadCachedData,
+      saveCachedData,
+      fetchAndUpdateData,
     }
   }
 }
