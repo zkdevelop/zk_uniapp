@@ -1,6 +1,5 @@
-// useMessageHandling.js - 负责消息处理相关的功能
+import { ref, nextTick } from 'vue'
 import { getHistoryChatMessages, sendMessageToUser, sendGroupMessage, sendFilesToUser, getGroupChatMessages } from '@/utils/api/message.js'
-import { nextTick } from 'vue'
 import { useUserStore } from '@/store/userStore'
 import { useGroupStore } from '@/pages/message/store/groupStore'
 
@@ -8,9 +7,12 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
   const userStore = useUserStore();
   const groupStore = useGroupStore();
 
-  // 发送消息
+  let isLoadingHistory = false;
+  let lastLoadTime = 0;
+  const LOAD_COOLDOWN = 5000; // 5秒冷却时间
+
   const sendMessage = async (message) => {
-    console.log('发送消息:', message);
+    console.log('开始发送消息:', message)
     if (message.content && chatInfo.value && chatInfo.value.id) {
       try {
         let response;
@@ -23,18 +25,21 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           isSelfDestruct: chatInfo.value.isBurnAfterReadingMode
         };
 
+        console.log('准备发送消息数据:', messageData)
+
         if (chatInfo.value.type === 'group') {
-          // 群聊消息
+          console.log('发送群聊消息')
           response = await sendGroupMessage({
             ...messageData,
             isGroupAnnouncement: false
           });
         } else {
-          // 私聊消息
+          console.log('发送私聊消息')
           response = await sendMessageToUser(messageData);
         }
 
-        console.log('发送消息响应:', response);
+        console.log('消息发送响应:', response)
+
         if (response.code === 200) {
           const sentMessage = {
             ...response.data,
@@ -45,11 +50,13 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
             type: message.type || 'text',
             messageType: message.type === 'text' ? 'MESSAGE' : message.type.toUpperCase()
           };
+          console.log('消息发送成功，处理已发送消息:', sentMessage)
           handleMessageSent(sentMessage);
           await updateMessageList();
-          // 发送消息后滚动到底部
+          console.log('消息列表已更新')
           nextTick(() => {
             scrollToBottom();
+            console.log('已滚动到底部')
           });
         } else {
           throw new Error(response.msg || '发送消息失败');
@@ -58,51 +65,54 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         console.log('发送消息失败:', error);
       }
     } else {
-      console.log('消息内容为空或 chatInfo 未正确初始化', {
-        content: message.content,
-        chatInfo: chatInfo.value
-      });
+      console.log('消息内容为空或 chatInfo 未正确初始化');
     }
   };
 
-  // 处理消息发送成功
   const handleMessageSent = (sentMessage) => {
-    console.log('消息已发送:', sentMessage);
+    console.log('添加已发送消息到列表')
     list.value.push(sentMessage);
   };
 
-  // 处理消息发送失败
   const handleMessageFailed = (failedMessage) => {
-    console.log('消息发送失败:', failedMessage);
+    console.log('处理消息发送失败:', failedMessage)
+    // 这里可以添加处理消息发送失败的逻辑
   };
 
-  // 加载历史消息
   const loadHistoryMessages = async (isLoadingMore = false, newFrom = null, newTo = null) => {
+    console.log('开始加载历史消息')
+    const now = Date.now();
+    if (isLoadingHistory || now - lastLoadTime < LOAD_COOLDOWN) {
+      console.log('跳过加载历史消息：正在加载或冷却中');
+      return;
+    }
+
+    isLoadingHistory = true;
+    lastLoadTime = now;
+
     if (!chatInfo.value || !chatInfo.value.id || !chatInfo.value.missionId) {
-      console.log('chatInfo 未正确初始化');
+      console.log('聊天信息不完整，无法加载历史消息')
       hasMoreMessages.value = false;
+      isLoadingHistory = false;
       return false;
     }
     
     const from = newFrom !== null ? newFrom : currentFrom.value;
     const to = newTo !== null ? newTo : currentTo.value;
-    
-    console.log('开始加载历史消息', { 
-      isLoadingMore, 
-      from,
-      to,
-      missionId: chatInfo.value.missionId 
-    });
+
+    console.log('加载历史消息参数:', { from, to, isLoadingMore })
 
     try {
       let response;
       if (chatInfo.value.type === 'group') {
+        console.log('加载群聊历史消息')
         response = await getGroupChatMessages({
           opponentId: chatInfo.value.id,
           from,
           to
         });
       } else {
+        console.log('加载私聊历史消息')
         response = await getHistoryChatMessages({
           opponentId: chatInfo.value.id,
           from,
@@ -111,7 +121,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         });
       }
 
-      console.log('历史消息响应:', response);
+      console.log('历史消息加载响应:', response)
 
       if (response.code === 200) {
         let newMessages;
@@ -121,27 +131,28 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           newMessages = response.data.messageVOList.reverse().map(msg => mapPrivateMessage(msg));
         }
 
-        console.log('新消息数量:', newMessages.length);
+        console.log('新消息数量:', newMessages.length)
 
         if (isLoadingMore) {
+          console.log('添加新消息到列表前端')
           list.value = [...newMessages, ...list.value];
-          console.log('在列表前端添加新消息');
         } else {
+          console.log('替换整个消息列表')
           list.value = newMessages;
-          console.log('替换整个消息列表');
         }
         
         hasMoreMessages.value = newMessages.length === (to - from + 1);
-        console.log('是否有更多消息:', hasMoreMessages.value);
+        console.log('是否有更多消息:', hasMoreMessages.value)
 
         currentFrom.value = from;
         currentTo.value = to;
 
-        console.log('更新后的消息列表长度:', list.value.length);
+        console.log('更新后的消息列表长度:', list.value.length)
 
         if (!isLoadingMore) {
           nextTick(() => {
             scrollToBottom();
+            console.log('滚动到底部')
           });
         }
 
@@ -163,32 +174,47 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         icon: 'none'
       });
       return false;
+    } finally {
+      isLoadingHistory = false;
+      console.log('历史消息加载完成，消息列表:', list.value)
+      console.log('历史消息加载完成')
     }
   };
 
-  // 更新消息列表
   const updateMessageList = async () => {
-    console.log('开始更新消息列表');
+    console.log('开始更新消息列表')
+    if (isLoadingHistory) {
+      console.log('正在加载历史消息，跳过更新')
+      return;
+    }
+
     try {
+      const latestMessageId = list.value.length > 0 ? list.value[list.value.length - 1].id : null;
+      console.log('最新消息ID:', latestMessageId)
+
       let response;
       if (chatInfo.value.type === 'group') {
+        console.log('更新群聊消息列表')
         response = await getGroupChatMessages({
           opponentId: chatInfo.value.id,
           from: 0,
-          to: 10
+          to: 10,
+          lastMessageId: latestMessageId
         });
       } else {
+        console.log('更新私聊消息列表')
         response = await getHistoryChatMessages({
           opponentId: chatInfo.value.id,
           from: 0,
           to: 10,
-          missionId: chatInfo.value.missionId
+          missionId: chatInfo.value.missionId,
+          lastMessageId: latestMessageId
         });
       }
 
-      console.log('接收到的响应:', response);
+      console.log('更新消息列表响应:', response)
 
-      if (response.code === 200) {
+      if (response.code === 200 && response.data.hasNewMessages) {
         let newMessages;
         if (chatInfo.value.type === 'group') {
           newMessages = response.data.groupMessageVOS.reverse().map(msg => mapGroupMessage(msg));
@@ -196,30 +222,30 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
           newMessages = response.data.messageVOList.reverse().map(msg => mapPrivateMessage(msg));
         }
 
-        list.value = newMessages;
-
-        console.log('消息列表已更新，新长度:', list.value.length);
+        console.log('新消息数量:', newMessages.length)
+        list.value = [...list.value, ...newMessages];
 
         nextTick(() => {
           scrollToBottom();
+          console.log('滚动到底部')
         });
       } else {
-        console.log('获取新消息失败:', response.msg);
-        throw new Error(response.msg || '获取新消息失败');
+        console.log('没有新消息')
       }
     } catch (error) {
       console.log('更新消息列表出错:', error);
-      uni.showToast({
-        title: '更新消息列表失败，请重试',
-        icon: 'none'
-      });
     }
   };
 
-  // 映射私聊消息
   const mapPrivateMessage = (msg) => {
+    console.log('映射私聊消息:', msg)
     let content = msg.message;
     let type = msg.messageType.toLowerCase();
+
+    if (content === null) {
+      content = '';
+      console.log('警告: 消息内容为空', msg);
+    }
 
     if (type === 'position') {
       try {
@@ -240,7 +266,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       id: msg.id,
       content: content,
       userType: msg.senderId === chatInfo.value.id ? 'other' : 'self',
-      avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
+      avatar: msg.senderId === chatInfo.value.id ? (chatInfo.value.avatar && chatInfo.value.avatar[0] ? chatInfo.value.avatar[0] : '') : (chatInfo.value._selfAvatar || ''),
       timestamp: new Date(msg.sendTime),
       type: type,
       isRead: msg.isRead,
@@ -248,15 +274,19 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       selfDestruct: msg.selfDestruct
     };
 
-    handleSelfDestructMessage(mappedMessage);
-
+    console.log('映射后的私聊消息:', mappedMessage)
     return mappedMessage;
   };
 
-  // 映射群聊消息
   const mapGroupMessage = (msg) => {
+    console.log('映射群聊消息:', msg)
     let content = msg.message;
     let type = msg.messageType.toLowerCase();
+
+    if (content === null) {
+      content = '';
+      console.log('警告: 消息内容为空', msg);
+    }
 
     if (type === 'position') {
       try {
@@ -273,9 +303,8 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       content = msg.previewUrl || msg.message;
     }
 
-    // 从 groupStore 中获取群组信息
     const groupInfo = groupStore.state.groupInfo;
-    let avatar = chatInfo.value._selfAvatar; // 默认头像
+    let avatar = chatInfo.value._selfAvatar;
 
     if (groupInfo && groupInfo.groupMembers) {
       const sender = groupInfo.groupMembers.find(member => member.userId === msg.senderId);
@@ -296,18 +325,15 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       selfDestruct: msg.selfDestruct,
       senderName: msg.groupMessageUserReadVO.find(user => user.userId === msg.senderId)?.userName || '未知用户'
     };
-    console.log(mappedMessage,'mappedMessage',msg.senderId,userStore.state.id)
-    handleSelfDestructMessage(mappedMessage);
 
+    console.log('映射后的群聊消息:', mappedMessage)
     return mappedMessage;
   };
 
-  // 处理文件选择
   const handleFileSelected = async (fileInfo) => {
-    console.log('文件被选择，完整的 fileInfo:', JSON.stringify(fileInfo));
-    console.log('当前 isBurnAfterReadingMode 状态:', chatInfo.value.isBurnAfterReadingMode);
+    console.log('处理文件选择:', fileInfo)
     if (!fileInfo || typeof fileInfo !== 'object') {
-      console.log('文件信息无效:', fileInfo);
+      console.log('文件信息无效');
       uni.showToast({
         title: '文件信息无效，请重试',
         icon: 'none'
@@ -316,7 +342,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     }
 
     if (!fileInfo.path) {
-      console.log('文件路径缺失:', fileInfo);
+      console.log('文件路径缺失');
       uni.showToast({
         title: '文件路径缺失，请重试',
         icon: 'none'
@@ -325,6 +351,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     }
 
     try {
+      console.log('开始发送文件')
       const response = await sendFilesToUser({
         files: [fileInfo.path],
         isGroup: chatInfo.value.type === 'group',
@@ -336,13 +363,14 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         voiceMessage: fileInfo.fromVoiceInput || false
       });
 
-      console.log('文件上传响应:', response);
+      console.log('文件发送响应:', response)
 
       if (response.code === 200) {
         await updateMessageList();
-        // 发送文件后滚动到底部
+        console.log('消息列表已更新')
         nextTick(() => {
           scrollToBottom();
+          console.log('滚动到底部')
         });
       } else {
         throw new Error(response.msg || '发送文件消息失败');
@@ -356,19 +384,18 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     }
   };
 
-  // 处理自毁消息
-  const handleSelfDestructMessage = (message) => {
-    console.log('处理自毁消息:', message);
-    // 在这里添加处理自毁消息的逻辑（如果需要）
-  };
-
-  // 处理消息删除
   const handleMessageDeleted = (messageId) => {
+    console.log('处理消息删除:', messageId)
     const index = list.value.findIndex(msg => msg.id === messageId);
     if (index !== -1) {
       list.value.splice(index, 1);
+      console.log('消息已从列表中删除')
+    } else {
+      console.log('未找到要删除的消息')
     }
   };
+
+  console.log('消息处理模块初始化完成');
 
   return {
     sendMessage,

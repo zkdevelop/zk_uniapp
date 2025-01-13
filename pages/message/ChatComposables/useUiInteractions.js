@@ -1,5 +1,4 @@
-// useUiInteractions.js - 负责处理用户界面交互相关的功能
-import { nextTick } from 'vue'
+import { ref, onMounted, watch } from 'vue';
 
 export function useUiInteractions({
   messageListRef,
@@ -14,167 +13,119 @@ export function useUiInteractions({
   showAttachMenu,
   hasMoreMessages
 }) {
+  const messageList = ref([]);
+
+  // 加载更多消息
+  const loadMoreMessages = async () => {
+    if (!hasMoreMessages.value || !messageListRef.value) {
+      return;
+    }
+
+    try {
+      const oldContentHeight = messageListRef.value.scrollHeight;
+      // 模拟获取更多消息
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const newMessages = Array.from({ length: 10 }, (_, i) => `新消息 ${i + 1}`);
+      messageList.value = [...messageList.value, ...newMessages];
+      const newContentHeight = messageListRef.value.scrollHeight;
+      const heightDifference = newContentHeight - oldContentHeight;
+
+      if (heightDifference > 0) {
+        messageListRef.value.scrollTop = messageListRef.value.scrollHeight;
+      }
+
+    } catch (error) {
+      console.log("加载更多消息时出错:", error);
+    }
+  };
+
   // 处理附件
   const handleAttachment = (type, data) => {
-    console.log('[handleAttachment] 处理附件:', type, data);
-    if (type === 'location') {
-      handleLocationMessage(data);
-    } else {
-      const handlers = {
-        album: chooseImage,
-        file: () => handleFileTransfer(data),
-        'burn-after-reading': () => handleBurnAfterReading(data)
-      };
-      if (handlers[type]) {
-        handlers[type]();
-      }
-    }
+    console.log('UI交互:', {
+      操作: '附件',
+      附件类型: type,
+      是否滚动到底部: isScrolledToBottom.value,
+      是否有新消息: hasNewMessages.value
+    });
   };
 
   // 处理位置消息
   const handleLocationMessage = (locationData) => {
-    console.log('[handleLocationMessage] 处理位置消息:', locationData);
-    sendMessage({
-      type: 'location',
-      content: locationData
+    console.log('UI交互:', {
+      操作: '位置',
+      附件类型: null,
+      是否滚动到底部: isScrolledToBottom.value,
+      是否有新消息: hasNewMessages.value
     });
-  };
-
-  // 查看阅后即焚图片
-  const viewBurnAfterReadingImage = (message) => {
-    currentBurnAfterReadingImage.value = message.content.originalPath;
-    currentBurnAfterReadingMessage.value = message;
-    nextTick(() => {
-      if (burnAfterReadingRef.value) {
-        burnAfterReadingRef.value.open();
-      }
-    });
-  };
-
-  // 关闭阅后即焚预览
-  const closeBurnAfterReadingPreview = () => {
-    currentBurnAfterReadingImage.value = '';
-    if (currentBurnAfterReadingMessage.value) {
-      const index = list.value.indexOf(currentBurnAfterReadingMessage.value);
-      if (index > -1) {
-        list.value.splice(index, 1);
-      }
-      currentBurnAfterReadingMessage.value = null;
-    }
-    updateMessageList();
   };
 
   // 切换附件菜单
   const toggleAttachMenu = (show) => {
-    showAttachMenu.value = show;
-    console.log('附件菜单切换:', show);
+    console.log('UI交互:', {
+      操作: '切换附件菜单',
+      附件类型: null,
+      是否滚动到底部: isScrolledToBottom.value,
+      是否有新消息: hasNewMessages.value
+    });
   };
 
   // 处理遮罩层点击
   const handleOverlayClick = () => {
     showAttachMenu.value = false;
-    console.log('附件菜单已关闭');
   };
 
   // 滚动到底部
   const scrollToBottom = () => {
-    nextTick(() => {
-      if (messageListRef.value && messageListRef.value.scrollToBottom) {
-        messageListRef.value.scrollToBottom();
-        showScrollToBottom.value = false;
-        showNewMessageTip.value = false;
-        hasNewMessages.value = false;
-        isScrolledToBottom.value = true;
-        console.log('滚动到底部');
-      }
-    });
+    if (messageListRef.value && messageListRef.value.scrollToBottom) {
+      messageListRef.value.scrollToBottom();
+      showScrollToBottom.value = false;
+      showNewMessageTip.value = false;
+      hasNewMessages.value = false;
+      isScrolledToBottom.value = true;
+    }
   };
 
   // 处理滚动事件
-  const onScroll = (event) => {
-    if (messageListRef.value && messageListRef.value.scrollViewHeight) {
-      const { scrollTop, scrollHeight } = event.detail;
-      const isAtBottom = scrollHeight - (scrollTop + messageListRef.value.scrollViewHeight) < 10;
-      
-      isScrolledToBottom.value = isAtBottom;
-      showScrollToBottom.value = !isAtBottom && hasNewMessages.value;
-      showNewMessageTip.value = !isAtBottom && hasNewMessages.value;
-      if (isAtBottom) {
-        hasNewMessages.value = false;
-        showNewMessageTip.value = false;
-      }
-    }
-  };
-
-  // 加载更多消息
-  const loadMoreMessages = async () => {
-    console.log('[loadMoreMessages] 开始加载更多消息');
-    console.log('[loadMoreMessages] hasMoreMessages:', hasMoreMessages.value);
-    console.log('[loadMoreMessages] messageListRef:', messageListRef.value);
-    
-    // 安全检查：确保 hasMoreMessages 存在且为 true，且 messageListRef 不为 null
-    if (!hasMoreMessages || !hasMoreMessages.value || !messageListRef.value) {
-      console.log('[loadMoreMessages] 没有更多消息或 messageListRef 为 null');
-      console.log('[loadMoreMessages] hasMoreMessages:', hasMoreMessages);
-      console.log('[loadMoreMessages] messageListRef:', messageListRef.value);
-      return;
-    }
-
-    if (!isLoading.value) {
-      isLoading.value = true;
-    
-    try {
-      const oldContentHeight = await messageListRef.value.getContentHeight();
-      console.log('[loadMoreMessages] 旧内容高度:', oldContentHeight);
-
-      const newFrom = currentTo.value + 1;
-      const newTo = currentTo.value + 10;
-  
-      const loadResult = await loadHistoryMessages(true, newFrom, newTo);
-    
-      if (loadResult) {
-        nextTick(async () => {
-          if (messageListRef.value) {  // 再次检查 messageListRef 是否存在
-            const newContentHeight = await messageListRef.value.getContentHeight();
-            console.log('[loadMoreMessages] 新内容高度:', newContentHeight);
-
-            const heightDifference = newContentHeight - oldContentHeight;
-            console.log('[loadMoreMessages] 高度差:', heightDifference);
-        
-            if (messageListRef.value.setScrollTop) {
-              messageListRef.value.setScrollTop(heightDifference);
-            }
-          }
-
-          isLoading.value = false;
-          console.log('[loadMoreMessages] 加载完成');
-        });
-      } else {
-        isLoading.value = false;
-      }
-    } catch (error) {
-      console.error('[loadMoreMessages] 加载更多消息时出错:', error);
-      isLoading.value = false;
-    }
+  const onScroll = () => {
+    if (messageListRef.value.scrollTop + messageListRef.value.clientHeight >= messageListRef.value.scrollHeight) {
+      isScrolledToBottom.value = true;
+      loadMoreMessages();
     } else {
-      console.log('[loadMoreMessages] 正在加载中');
+      isScrolledToBottom.value = false;
     }
+    console.log('UI交互:', {
+      操作: '滚动',
+      附件类型: null,
+      是否滚动到底部: isScrolledToBottom.value,
+      是否有新消息: hasNewMessages.value
+    });
   };
 
   // 切换阅后即焚模式
   const toggleBurnAfterReadingMode = (isActive) => {
-    isBurnAfterReadingMode.value = isActive;
+    // 这里可以添加切换阅后即焚模式的逻辑
   };
 
+  onMounted(() => {
+    loadMoreMessages();
+  });
+
+  watch(hasNewMessages, (newValue) => {
+    if (newValue) {
+      // 当有新消息时滚动到底部
+      messageListRef.value.scrollTop = messageListRef.value.scrollHeight;
+    }
+  });
+
   return {
+    messageList,
+    loadMoreMessages,
     handleAttachment,
-    viewBurnAfterReadingImage,
-    closeBurnAfterReadingPreview,
+    handleLocationMessage,
     toggleAttachMenu,
     handleOverlayClick,
     scrollToBottom,
     onScroll,
-    loadMoreMessages,
     toggleBurnAfterReadingMode
   };
 }

@@ -5,6 +5,7 @@
 
     <!-- 消息列表 -->
     <MessageList
+      v-if="!isInitialLoading || hasCachedMessages"
       ref="messageListRef"
       :messages="list"
       :is-group="chatInfo && chatInfo.type === 'group'"
@@ -12,6 +13,9 @@
       @scroll="onScroll"
       @message-deleted="handleMessageDeleted"
     />
+
+    <!-- 加载动画 -->
+    <LoadingAnimation v-if="isInitialLoading && !hasCachedMessages" />
 
     <!-- 聊天输入区域 -->
     <ChatInputArea 
@@ -62,6 +66,7 @@ import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue' 
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
+import LoadingAnimation from './ChatComponent/LoadingAnimation.vue'
 import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser, readSelfDestructMessage } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
@@ -79,7 +84,8 @@ export default {
     ChatHeader,
     MessageList,
     ChatInputArea, 
-    ScrollToBottomButton
+    ScrollToBottomButton,
+    LoadingAnimation
   },
   setup() {
     const chatInfo = ref({
@@ -161,57 +167,77 @@ export default {
       fetchAndUpdateData
     } = useChatDataManagement(chatInfo, list)
 
+    const isInitialLoading = ref(true)
+    const hasCachedMessages = ref(false)
+
     const initializeChat = async () => {
       console.log('开始初始化聊天')
       if (chatInfo.value && chatInfo.value.id) {
-        console.log('尝试从缓存加载数据')
+        isInitialLoading.value = true
+        console.log('尝试加载缓存数据')
         const cachedData = await loadCachedData()
         if (cachedData) {
-          console.log('成功从缓存加载数据，数据长度:', cachedData.length)
+          console.log('找到缓存数据，长度:', cachedData.length)
+          hasCachedMessages.value = true
           list.value = cachedData
           nextTick(() => {
-            console.log('缓存数据加载完成，滚动到底部')
             scrollToBottom()
+            console.log('使用缓存数据后滚动到底部')
           })
         } else {
-          console.log('缓存中没有数据')
+          console.log('没有找到缓存数据')
+          hasCachedMessages.value = false
         }
 
-        console.log('开始从服务器加载历史消息')
-        await loadHistoryMessages()
-        console.log('历史消息加载完成，消息数量:', list.value.length)
+        console.log('开始加载历史消息')
+        try {
+          await loadHistoryMessages()
+        } catch (error) {
+          console.error('加载历史消息失败:', error)
+          uni.showToast({
+            title: '加载消息失败，请重试',
+            icon: 'none'
+          })
+        }
+        console.log('历史消息加载完成')
+        
+        isInitialLoading.value = false
+        console.log('初始加载完成，isInitialLoading 设置为 false')
+
         nextTick(() => {
-          console.log('历史消息渲染完成，滚动到底部')
           scrollToBottom()
+          console.log('加载历史消息后滚动到底部')
         })
 
-        console.log('异步获取最新数据')
+        console.log('开始异步更新数据')
         fetchAndUpdateData()
+
+        console.log('聊天初始化完成:', {
+          缓存数据: !!cachedData,
+          缓存数据长度: cachedData ? cachedData.length : 0,
+          历史消息长度: list.value.length
+        })
       } else {
-        console.log('聊天信息尚未准备好，等待设置')
+        console.log('聊天信息无效，无法初始化')
       }
     }
 
     const handleBurnAfterReadingToggle = (isActive) => {
-      console.log('阅后即焚模式切换:', isActive)
       chatInfo.value.isBurnAfterReadingMode = isActive
+      console.log('阅后即焚模式切换:', isActive)
     }
 
     watch(chatInfo, async (newChatInfo) => {
-      console.log('聊天信息已更新:', newChatInfo)
+      console.log('聊天信息变化:', newChatInfo)
       if (newChatInfo && newChatInfo.id) {
-        console.log('检测到有效的聊天信息，开始初始化聊天')
         await initializeChat()
       }
     }, { deep: true, immediate: true })
 
     onMounted(() => {
-      console.log('聊天组件已挂载')
+      console.log('聊天组件挂载')
       const pages = getCurrentPages()
       const currentPage = pages[pages.length - 1]
-      if (currentPage && currentPage.$page && currentPage.$page.fullPath) {
-        console.log('当前页面路径:', currentPage.$page.fullPath)
-      }
       
       let eventChannel
       if (currentPage && currentPage.$getAppWebview) {
@@ -224,44 +250,47 @@ export default {
       }
 
       if (eventChannel) {
-        console.log('成功获取 eventChannel，开始设置聊天信息')
+        console.log('找到事件通道，设置聊天信息')
         setupChatInfo(eventChannel, {
           chatInfo,
           loadHistoryMessages: async () => {
-            console.log('开始加载历史消息')
+            console.log('通过事件通道加载历史消息')
             await loadHistoryMessages()
-            console.log('历史消息加载完成')
           },
           $nextTick: nextTick,
           scrollToBottom: () => {
-            console.log('滚动到底部')
+            console.log('通过事件通道滚动到底部')
             scrollToBottom()
           }
         })
       } else {
-        console.log('无法获取 eventChannel，尝试其他初始化方法')
+        console.log('未找到事件通道，尝试从存储加载聊天信息')
         const query = uni.getStorageSync('chatQuery')
         if (query) {
-          console.log('从存储中获取聊天信息:', query)
+          console.log('从存储中找到聊天信息')
           const parsedQuery = JSON.parse(query)
           chatInfo.value = {
             ...chatInfo.value,
             ...parsedQuery
           }
-          console.log('更新后的聊天信息:', JSON.stringify(chatInfo.value))
+          console.log('使用存储的聊天信息初始化聊天')
           initializeChat()
         } else {
-          console.log('无法初始化聊天，缺少必要信息')
+          console.log('无法加载聊天信息')
           uni.showToast({
             title: '无法加载聊天信息',
             icon: 'none'
           })
           setTimeout(() => {
-            console.log('无法加载聊天信息，准备返回上一页')
+            console.log('无法加载聊天信息，返回上一页')
             uni.navigateBack()
           }, 2000)
         }
       }
+      console.log('聊天组件挂载完成:', {
+        有事件通道: !!eventChannel,
+        存储中有聊天信息: !!query
+      })
     })
 
     return {
@@ -303,6 +332,8 @@ export default {
       loadCachedData,
       saveCachedData,
       fetchAndUpdateData,
+      isInitialLoading,
+      hasCachedMessages,
     }
   }
 }

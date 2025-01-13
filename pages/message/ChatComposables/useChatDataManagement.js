@@ -6,6 +6,8 @@ import { useGroupStore } from '@/pages/message/store/groupStore'
 export function useChatDataManagement(chatInfo, list) {
   const userStore = useUserStore()
   const groupStore = useGroupStore()
+  const isLoading = ref(false)
+  const hasCachedMessages = ref(false)
 
   // 获取缓存键
   const getCacheKey = () => `chat_${chatInfo.value.type}_${chatInfo.value.id}`
@@ -25,13 +27,6 @@ export function useChatDataManagement(chatInfo, list) {
 
   // 获取并更新数据
   const fetchAndUpdateData = async () => {
-    // 立即加载缓存数据
-    const cachedData = loadCachedData()
-    if (cachedData) {
-      list.value = cachedData
-      console.log('已加载缓存数据')
-    }
-
     try {
       let response
       if (chatInfo.value.type === 'group') {
@@ -61,12 +56,12 @@ export function useChatDataManagement(chatInfo, list) {
         if (hasChanges) {
           list.value = newMessages
           saveCachedData(newMessages)
-          console.log('消息列表已更新并缓存')
-        } else {
-          console.log('消息列表无变化')
         }
-      } else {
-        console.log('获取新消息失败:', response.msg)
+        console.log('聊天数据更新:', {
+          消息数量: newMessages.length,
+          有变化: hasChanges,
+          聊天类型: chatInfo.value.type
+        });
       }
     } catch (error) {
       console.log('获取新消息出错:', error)
@@ -94,7 +89,7 @@ export function useChatDataManagement(chatInfo, list) {
         content = JSON.parse(msg.message)
         type = 'location'
       } catch (e) {
-        console.log('解析位置数据失败:', e)
+        // 解析位置数据失败
       }
     } else if (type === 'image') {
       content = msg.previewUrl || msg.message
@@ -129,7 +124,7 @@ export function useChatDataManagement(chatInfo, list) {
         content = JSON.parse(msg.message)
         type = 'location'
       } catch (e) {
-        console.log('解析位置数据失败:', e)
+        // 解析位置数据失败
       }
     } else if (type === 'image') {
       content = msg.previewUrl || msg.message
@@ -162,7 +157,6 @@ export function useChatDataManagement(chatInfo, list) {
       selfDestruct: msg.selfDestruct,
       senderName: msg.groupMessageUserReadVO.find(user => user.userId === msg.senderId)?.userName || '未知用户'
     }
-    console.log(mappedMessage, 'mappedMessage', msg.senderId, userStore.state.id)
 
     return mappedMessage
   }
