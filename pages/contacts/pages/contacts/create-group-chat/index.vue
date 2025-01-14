@@ -36,6 +36,9 @@
       </view>
     </view>
 
+    <!-- 加载状态 -->
+    <view v-if="isLoading" class="loading">加载中...</view>
+
     <!-- 联系人列表 -->
     <scroll-view v-if="!isLoading" class="contacts-list" scroll-y>
       <template v-if="filteredContacts.length > 0">
@@ -65,7 +68,6 @@
         <text>无搜索结果</text>
       </view>
     </scroll-view>
-    <view v-else class="loading">加载中...</view>
 
     <!-- 群聊名称输入弹窗 -->
     <uni-popup ref="popup" type="dialog">
@@ -87,6 +89,7 @@ import { useContactsStore } from '../../../store/contactsStore'
 import { useUserStore } from '@/store/userStore'
 import { pinyin } from 'pinyin-pro'
 import { createGroup } from '@/utils/api/contacts'
+import { getMissionAddressBook } from '@/utils/api/message.js'
 
 // 初始化store
 const contactsStore = useContactsStore()
@@ -101,10 +104,9 @@ const isLoading = ref(true)
 // 在组件挂载时加载联系人数据
 onMounted(async () => {
   console.log('创建群聊组件已挂载')
-  if (contactsStore.userInformationVOList.length === 0) {
-    // 注意：这里假设userStore中有fetchContacts方法
-    await userStore.fetchContacts(userStore.missionId)
-  }
+  isLoading.value = true
+  await loadCachedContacts()
+  await fetchContacts()
   isLoading.value = false
   nextTick(() => {
     // 在下一个 tick 中设置 scrollTop，确保 DOM 已更新
@@ -150,7 +152,8 @@ const sortedLetters = computed(() => {
 
 // 处理返回按钮点击
 const handleBack = () => {
-  uni.navigateBack()
+  console.log('返回按钮被点击')
+  navigateToContacts()
 }
 
 // 处理搜索输入
@@ -209,11 +212,13 @@ const confirmGroupName = (name) => {
       })
       // 增加联系人更新计数器
       contactsStore.incrementContactsUpdateCounter()
-      // 返回上一页
-      uni.navigateBack()
+      console.log('群聊创建成功，准备返回')
+      setTimeout(() => {
+        navigateToContacts()
+      }, 1500) // 延迟1.5秒后返回，确保Toast消息显示完毕
     })
     .catch(error => {
-      console.error('创建群聊失败:', error)
+      console.log('创建群聊失败:', error)
       uni.showToast({
         title: '创建群聊失败',
         icon: 'none'
@@ -224,6 +229,81 @@ const confirmGroupName = (name) => {
 // 关闭弹窗
 const closePopup = () => {
   popup.value.close()
+}
+
+// 加载缓存的联系人数据
+const loadCachedContacts = async () => {
+  const cachedContacts = uni.getStorageSync('cachedContacts')
+  if (cachedContacts) {
+    contactsStore.setUserInformationVOList(JSON.parse(cachedContacts))
+    console.log('已加载缓存的联系人数据')
+  }
+}
+
+// 获取联系人数据
+const fetchContacts = async () => {
+  try {
+    const response = await getMissionAddressBook(userStore.missionId)
+    if (response.code === 200) {
+      contactsStore.setUserInformationVOList(response.data.userInformationVOList)
+      uni.setStorageSync('cachedContacts', JSON.stringify(response.data.userInformationVOList))
+      console.log('已更新联系人数据')
+    } else {
+      throw new Error(response.msg || '获取联系人失败')
+    }
+  } catch (error) {
+    console.log('获取联系人出错:', error)
+    uni.showToast({
+      title: '获取联系人失败，请重试',
+      icon: 'none'
+    })
+  }
+}
+
+// 导航到联系人页面
+const navigateToContacts = () => {
+  console.log('准备导航到联系人页面')
+  const pages = getCurrentPages()
+  console.log('当前页面栈:', pages.map(page => page.route))
+  
+  if (pages.length > 1) {
+    uni.navigateBack({
+      delta: 1,
+      success: () => {
+        console.log('成功返回到联系人页面')
+      },
+      fail: (error) => {
+        console.log('返回失败:', error)
+        fallbackToRedirect()
+      }
+    })
+  } else {
+    fallbackToRedirect()
+  }
+}
+
+// 重定向到联系人页面的备选方案
+const fallbackToRedirect = () => {
+  console.log('尝试重定向到联系人页面')
+  uni.redirectTo({
+    url: '/pages/tabBar/tabBar',
+    success: () => {
+      console.log('成功重定向到联系人页面')
+    },
+    fail: (redirectError) => {
+      console.log('重定向失败:', redirectError)
+      console.log('尝试重新启动到联系人页面')
+      uni.reLaunch({
+        url: '/pages/tabBar/tabBar',
+        success: () => {
+          console.log('成功重新启动到联系人页面')
+        },
+        fail: (reLaunchError) => {
+          console.log('重新启动失败:', reLaunchError)
+        }
+      })
+    }
+  })
 }
 </script>
 
@@ -325,9 +405,15 @@ const closePopup = () => {
   color: #333;
 }
 
-.no-results, .loading {
+.no-results {
   padding: 20px;
   text-align: center;
+  color: #999;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
   color: #999;
 }
 

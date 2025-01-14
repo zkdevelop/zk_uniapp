@@ -88,6 +88,7 @@ export default {
     LoadingAnimation
   },
   setup() {
+    // 聊天信息
     const chatInfo = ref({
       id: '',
       name: '',
@@ -97,29 +98,37 @@ export default {
       isBurnAfterReadingMode: false
     })
     
+    // 消息列表
     const list = ref([])
+    // UI 状态
     const showAttachMenu = ref(false)
     const showScrollToBottom = ref(false)
     const showNewMessageTip = ref(false)
     const hasNewMessages = ref(false)
     const isScrolledToBottom = ref(true)
+    // 分页加载相关
     const currentFrom = ref(0)
     const currentTo = ref(10)
     const hasMoreMessages = ref(true) 
     const isLoading = ref(false)
     
+    // 存储
     const peerStore = usePeerStore()
     const friendStore = useFriendStore()
     const userStore = useUserStore()
     
+    // 阅后即焚模式
     const isBurnAfterReadingMode = ref(false)
+    // 消息列表引用
     const messageListRef = ref(null)
 
+    // 聊天初始化
     const {
       goBack,
       setupChatInfo
     } = useChatInitialization()
 
+    // 消息处理
     const {
       sendMessage,
       handleMessageFailed,
@@ -129,6 +138,7 @@ export default {
       handleMessageDeleted
     } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, () => scrollToBottom())
 
+    // UI 交互
     const {
       handleAttachment,
       toggleAttachMenu,
@@ -151,31 +161,41 @@ export default {
       hasMoreMessages
     })
 
+    // 视频通话处理
     const {
       openVideoPage,
       acceptVideoCall,
       rejectVideoCall
     } = useVideoCallHandling()
 
+    // 自毁消息处理
     const {
       handleSelfDestructMessage
     } = useSelfDestructMessageHandling()
 
+    // 聊天数据管理
     const {
       loadCachedData,
       saveCachedData,
       fetchAndUpdateData
     } = useChatDataManagement(chatInfo, list)
 
+    // 初始加载状态
     const isInitialLoading = ref(true)
     const hasCachedMessages = ref(false)
 
+    // 初始化聊天
     const initializeChat = async () => {
       console.log('开始初始化聊天')
       if (chatInfo.value && chatInfo.value.id) {
         isInitialLoading.value = true
         console.log('尝试加载缓存数据')
         const cachedData = await loadCachedData()
+        
+        if (chatInfo.value.type === 'group') {
+          await fetchAndUpdateData()
+        }
+        
         if (cachedData) {
           console.log('找到缓存数据，长度:', cachedData.length)
           hasCachedMessages.value = true
@@ -193,7 +213,7 @@ export default {
         try {
           await loadHistoryMessages()
         } catch (error) {
-          console.error('加载历史消息失败:', error)
+          console.log('加载历史消息失败:', error)
           uni.showToast({
             title: '加载消息失败，请重试',
             icon: 'none'
@@ -222,11 +242,13 @@ export default {
       }
     }
 
+    // 处理阅后即焚模式切换
     const handleBurnAfterReadingToggle = (isActive) => {
       chatInfo.value.isBurnAfterReadingMode = isActive
       console.log('阅后即焚模式切换:', isActive)
     }
 
+    // 监听聊天信息变化
     watch(chatInfo, async (newChatInfo) => {
       console.log('聊天信息变化:', newChatInfo)
       if (newChatInfo && newChatInfo.id) {
@@ -234,12 +256,15 @@ export default {
       }
     }, { deep: true, immediate: true })
 
+    // 组件挂载
     onMounted(() => {
       console.log('聊天组件挂载')
       const pages = getCurrentPages()
       const currentPage = pages[pages.length - 1]
       
       let eventChannel
+      const query = uni.getStorageSync('chatQuery')
+
       if (currentPage && currentPage.$getAppWebview) {
         eventChannel = currentPage.$getAppWebview().eventChannel
       } else if (currentPage && currentPage.getOpenerEventChannel) {
@@ -265,7 +290,6 @@ export default {
         })
       } else {
         console.log('未找到事件通道，尝试从存储加载聊天信息')
-        const query = uni.getStorageSync('chatQuery')
         if (query) {
           console.log('从存储中找到聊天信息')
           const parsedQuery = JSON.parse(query)

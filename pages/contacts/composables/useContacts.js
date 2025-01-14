@@ -71,7 +71,7 @@ export function useContacts() {
         const hasChanges = compareData(newData)
         if (hasChanges) {
           updateData(newData)
-          console.log('联系人���据已更新')
+          console.log('联系人数据已更新')
         } else {
           console.log('联系人数据无变化')
         }

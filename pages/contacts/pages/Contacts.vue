@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onActivated } from 'vue'
 import { useContactsStore } from '../store/contactsStore'
 import GroupChatList from '../components/Contacts/GroupChatList.vue'
 import UserList from '../components/Contacts/UserList.vue'
@@ -114,6 +114,11 @@ export default {
 
     onMounted(() => {
       console.log('联系人组件挂载钩子被调用')
+      initContacts()
+    })
+
+    onActivated(() => {
+      console.log('联系人页面被激活')
       initContacts()
     })
 
