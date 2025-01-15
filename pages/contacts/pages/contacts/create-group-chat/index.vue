@@ -197,7 +197,7 @@ const confirmGroupName = (name) => {
 
   // 准备创建群聊的参数
   const groupData = {
-    groupMemberIds: [userStore.state.id, ...selectedContacts.value.map(contact => contact.id)],
+    groupMemberIds: [...selectedContacts.value.map(contact => contact.id)],
     groupName: name,
     missionId: userStore.state.missionId[0]
   }

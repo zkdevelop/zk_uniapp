@@ -1,9 +1,13 @@
-<!-- Message.vue - 消息组件，用于显示各种类型的消息 -->
 <template> 
   <view class="message" :class="[message.userType]">
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
-      <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
+      <view class="avatar-container">
+        <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
+        <view v-if="isGroup && message.userType === 'other'" class="sender-name">
+          {{ message.senderName }}
+        </view>
+      </view>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
         <view class="content" :class="{ 
@@ -257,4 +261,23 @@ export default {
   padding: 0 !important;
   overflow: hidden;
 }
+
+.sender-name {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+  text-align: center;
+  max-width: 80rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+}
 </style>
+

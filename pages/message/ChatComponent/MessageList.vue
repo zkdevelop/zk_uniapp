@@ -19,6 +19,7 @@
           :key="item.id || index"
           :id="`message-${index}`"
           :message="item"
+          :is-group="isGroup"
           @view-burn-after-reading="$emit('view-burn-after-reading', $event)"
         />
       </view>
@@ -42,6 +43,10 @@ export default {
     scrollTop: {
       type: Number,
       default: 0
+    },
+    isGroup: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -86,7 +91,7 @@ export default {
       query.select('.message-list-container').boundingClientRect(data => {
         if (data) {
           this.scrollViewHeight = data.height;
-          console.log('[MessageList] 滚动视图高度:', this.scrollViewHeight);
+          console.log('滚动视图高度:', this.scrollViewHeight);
         }
       }).exec();
     },
@@ -96,7 +101,7 @@ export default {
       return new Promise((resolve) => {
         query.select('.message-list-content').boundingClientRect(data => {
           if (data) {
-            console.log('[MessageList] 内容高度:', data.height);
+            console.log('内容高度:', data.height);
             resolve(data.height);
           } else {
             resolve(0);
@@ -123,7 +128,7 @@ export default {
     },
     // 设置滚动位置
     setScrollTop(value) {
-      console.log('[MessageList] 设置滚动位置:', value);
+      console.log('设置滚动位置:', value);
       this.internalScrollTop = value;
     }
   }
@@ -152,9 +157,5 @@ export default {
   background: transparent;
 }
 
-.load-more-text {
-  color: #007AFF;
-  font-size: 28rpx;
-  line-height: 40rpx;
-}
 </style>
+
