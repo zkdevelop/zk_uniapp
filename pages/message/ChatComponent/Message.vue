@@ -1,5 +1,5 @@
 <template> 
-  <view class="message" :class="[message.userType]">
+  <view class="message" :class="[message.userType]"> 
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <view class="avatar-container">

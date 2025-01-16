@@ -1,8 +1,8 @@
-<template> 
+<template>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import { backendHost } from '@/config.js'
 
 export const useWebSocket = () => {
@@ -10,9 +10,10 @@ export const useWebSocket = () => {
   const reconnectAttempts = ref(0)
   const maxReconnectAttempts = 5
   const reconnectInterval = 5000 // 5 seconds
+  let socket = null
 
   const connect = (userId, token) => {
-    console.log(token,'tokentokentokentoken')
+    console.log(token, 'tokentokentokentoken')
     if (!userId || !token) {
       console.error('WebSocket 连接失败: userId 或 token 未提供', { userId, token })
       return
@@ -28,7 +29,7 @@ export const useWebSocket = () => {
     
     console.log('尝试连接 WebSocket:', wsUrl)
 
-    uni.connectSocket({
+    socket = uni.connectSocket({
       url: wsUrl,
       header: {
         'content-type': 'application/json'
@@ -42,49 +43,28 @@ export const useWebSocket = () => {
       }
     })
 
-    uni.onSocketOpen((res) => {
-      console.log('WebSocket 已连接', res)
+    socket.onOpen(() => {
+      console.log('WebSocket 已连接')
       isConnected.value = true
       reconnectAttempts.value = 0
       startPingInterval()
     })
 
-    uni.onSocketMessage((res) => {
+    socket.onMessage((res) => {
       console.log('收到消息:', res.data)
       try {
         const message = JSON.parse(res.data)
-        // 根据消息类型进行不同的处理
-        switch (message.type) {
-          case 'auth':
-            if (message.status === 'success') {
-              console.log('认证成功')
-            } else {
-              console.error('认证失败:', message.error)
-              disconnect()
-            }
-            break
-          case 'chat':
-            // 处理聊天消息
-            break
-          case 'notification':
-            // 处理通知消息
-            break
-          case 'pong':
-            console.log('收到服务器的 pong 响应')
-            break
-          default:
-            console.log('未知消息类型:', message.type)
-        }
+        handleMessage(message)
       } catch (error) {
         console.error('解析消息失败:', error)
       }
     })
 
-    uni.onSocketError((res) => {
+    socket.onError((res) => {
       console.error('WebSocket 错误:', res)
     })
 
-    uni.onSocketClose((res) => {
+    socket.onClose((res) => {
       console.log('WebSocket 已断开', res)
       isConnected.value = false
       stopPingInterval()
@@ -104,8 +84,8 @@ export const useWebSocket = () => {
   }
 
   const disconnect = () => {
-    if (isConnected.value) {
-      uni.closeSocket({
+    if (isConnected.value && socket) {
+      socket.close({
         success: () => {
           console.log('WebSocket 已关闭')
           isConnected.value = false
@@ -117,8 +97,8 @@ export const useWebSocket = () => {
   }
 
   const sendMessage = (message) => {
-    if (isConnected.value) {
-      uni.sendSocketMessage({
+    if (isConnected.value && socket) {
+      socket.send({
         data: JSON.stringify(message),
         success: () => {
           console.log('消息发送成功')
@@ -129,6 +109,32 @@ export const useWebSocket = () => {
       })
     } else {
       console.error('WebSocket 未连接，无法发送消息')
+    }
+  }
+
+  const handleMessage = (message) => {
+    switch (message.type) {
+      case 'auth':
+        if (message.status === 'success') {
+          console.log('认证成功')
+        } else {
+          console.error('认证失败:', message.error)
+          disconnect()
+        }
+        break
+      case 'chat':
+        // 处理聊天消息
+        uni.$emit('newChatMessage', message)
+        break
+      case 'notification':
+        // 处理通知消息
+        uni.$emit('newNotification', message)
+        break
+      case 'pong':
+        console.log('收到服务器的 pong 响应')
+        break
+      default:
+        console.log('未知消息类型:', message.type)
     }
   }
 
@@ -149,6 +155,10 @@ export const useWebSocket = () => {
     }
   }
 
+  onUnmounted(() => {
+    disconnect()
+  })
+
   return {
     isConnected,
     connect,
@@ -157,4 +167,3 @@ export const useWebSocket = () => {
   }
 }
 </script>
- 
