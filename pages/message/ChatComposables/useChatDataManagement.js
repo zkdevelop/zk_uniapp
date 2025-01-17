@@ -2,13 +2,15 @@ import { ref } from 'vue'
 import { getHistoryChatMessages, getGroupChatMessages, getGroupBasicInfo } from '@/utils/api/message.js'
 import { useUserStore } from '@/store/userStore'
 import { useGroupStore } from '@/pages/message/store/groupStore'
+import { useWebSocket } from '@/pages/WebSocket/WebSocketService.vue'
 
 export function useChatDataManagement(chatInfo, list) {
   const userStore = useUserStore()
   const groupStore = useGroupStore()
+  const { isConnected, connect, disconnect, sendMessage } = useWebSocket()
   const isLoading = ref(false)
   const hasCachedMessages = ref(false)
-  const isLoadingGroupInfo = ref(false) // Added: Track loading of group info
+  const isLoadingGroupInfo = ref(false)
 
   // 获取缓存键
   const getCacheKey = () => `chat_${chatInfo.value.type}_${chatInfo.value.id}`
@@ -99,7 +101,7 @@ export function useChatDataManagement(chatInfo, list) {
         content = JSON.parse(msg.message)
         type = 'location'
       } catch (e) {
-        // 解析位置数据失败
+        console.log('解析位置数据失败:', e)
       }
     } else if (type === 'image') {
       content = msg.previewUrl || msg.message
@@ -181,6 +183,7 @@ export function useChatDataManagement(chatInfo, list) {
     return mappedMessage
   }
 
+  // 加载并缓存群组成员信息
   const loadAndCacheGroupMembers = async (groupId) => {
     if (isLoadingGroupInfo.value) {
       console.log('正在获取群组信息，跳过重复请求')
@@ -220,13 +223,99 @@ export function useChatDataManagement(chatInfo, list) {
     }
   }
 
+  // 插入新消息并更新缓存
+  const insertNewMessage = (newMessage) => {
+    console.log('插入新消息:', newMessage)
+    list.value.push(newMessage)
+    saveCachedData(list.value)
+  }
+
+  // 处理WebSocket消息
+  const handleWebSocketMessage = (message) => {
+    console.log('收到WebSocket消息:', message)
+    if (message.sessionId === chatInfo.value.id) {
+      const isGroupMessage = message.senderId !== message.sessionId
+      const mappedMessage = mapWebSocketMessage(message, isGroupMessage)
+      insertNewMessage(mappedMessage)
+    } else {
+      console.log('收到的消息不属于当前对话')
+    }
+  }
+
+  // 映射WebSocket消息
+  const mapWebSocketMessage = (msg, isGroupMessage) => {
+    let type = msg.type.toLowerCase()
+    let content = msg.content
+
+    if (type === 'position') {
+      try {
+        content = JSON.parse(msg.content)
+        type = 'location'
+      } catch (e) {
+        console.log('解析位置数据失败:', e)
+      }
+    }
+
+    let avatar = ''
+    let senderName = ''
+
+    if (isGroupMessage) {
+      const groupInfo = groupStore.state.groupInfo
+      if (groupInfo && groupInfo.groupMembers) {
+        const sender = groupInfo.groupMembers.find(member => member.userId === msg.senderId)
+        if (sender) {
+          avatar = sender.avatarUrl
+          senderName = sender.userName
+        } else {
+          console.log('未找到发送者信息，使用默认值')
+          avatar = ''
+          senderName = '未知用户'
+        }
+      } else {
+        console.log('群组信息不完整，使用默认值')
+        avatar = ''
+        senderName = '未知用户'
+      }
+    } else {
+      avatar = chatInfo.value.avatar
+      senderName = msg.title
+    }
+
+    return {
+      id: msg.id,
+      content: content,
+      userType: msg.senderId === userStore.state.id ? 'self' : 'other',
+      avatar: avatar,
+      timestamp: new Date(msg.date),
+      type: type,
+      isRead: false,
+      messageType: msg.type,
+      selfDestruct: msg.isSelfDestruct,
+      senderName: senderName,
+      senderId: msg.senderId
+    }
+  }
+
+  // 初始化WebSocket监听
+  const initWebSocketListener = () => {
+    uni.$on('newChatMessage', handleWebSocketMessage)
+  }
+
+  // 清理WebSocket监听
+  const cleanupWebSocketListener = () => {
+    uni.$off('newChatMessage', handleWebSocketMessage)
+  }
 
   return {
     loadCachedData,
     saveCachedData,
     fetchAndUpdateData,
     loadAndCacheGroupMembers,
-    isLoadingGroupInfo  
+    isLoadingGroupInfo,
+    insertNewMessage,
+    handleWebSocketMessage,
+    initWebSocketListener,
+    cleanupWebSocketListener
   }
 }
 

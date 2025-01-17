@@ -134,7 +134,8 @@ export const useWebSocket = () => {
         console.log('收到服务器的 pong 响应')
         break
       default:
-        console.log('未知消息类型:', message.type)
+        console.log('未知消息类型:', message)
+		uni.$emit('newChatMessage', message)
     }
   }
 
