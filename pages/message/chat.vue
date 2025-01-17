@@ -1,63 +1,61 @@
 <template>
-<view class="chat-page">
-  <!-- 聊天头部 -->
-  <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
+  <view class="chat-page">
+    <!-- 聊天头部 -->
+    <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
-  <!-- 消息列表 -->
-  <MessageList
-    v-if="!isInitialLoading || hasCachedMessages"
-    ref="messageListRef"
-    :messages="list"
-    :is-group="chatInfo.type === 'group'"
-    @load-more="loadMoreMessages"
-    @scroll="onScroll"
-    @message-deleted="handleMessageDeleted"
-  />
+    <!-- 消息列表 - 添加点击处理 -->
+    <MessageList
+      v-if="!isInitialLoading || hasCachedMessages"
+      ref="messageListRef"
+      :messages="list"
+      :is-group="chatInfo.type === 'group'"
+      @load-more="loadMoreMessages"
+      @scroll="onScroll"
+      @message-deleted="handleMessageDeleted"
+      @click="handleMessageListClick"
+      class="message-list"
+    />
 
-  <!-- 加载动画 -->
-  <LoadingAnimation v-if="isInitialLoading && !hasCachedMessages" />
+    <!-- 加载动画 -->
+    <LoadingAnimation v-if="isInitialLoading && !hasCachedMessages" />
 
-  <!-- 聊天输入区域 -->
-  <ChatInputArea 
-    @send-message="sendMessage"
-    @message-failed="handleMessageFailed"
-    @attach="handleAttachment"
-    @video-call="openVideoPage"
-    @toggle-attach-menu="toggleAttachMenu"
-    @file-selected="handleFileSelected"
-    @toggle-burn-after-reading="handleBurnAfterReadingToggle"
-    :show-attach-menu="showAttachMenu"
-    :recipientId="chatInfo && chatInfo.id || ''"
-    :missionId="chatInfo && chatInfo.missionId"
-    :initial-burn-after-reading-mode="chatInfo && chatInfo.isBurnAfterReadingMode"
-    ref="chatInputAreaRef"
-  />
+    <!-- 聊天输入区域 -->
+    <ChatInputArea 
+      v-model="showAttachMenu"
+      @send-message="sendMessage"
+      @message-failed="handleMessageFailed"
+      @attach="handleAttachment"
+      @video-call="openVideoPage"
+      @file-selected="handleFileSelected"
+      @toggle-burn-after-reading="handleBurnAfterReadingToggle"
+      :recipientId="chatInfo && chatInfo.id || ''"
+      :missionId="chatInfo && chatInfo.missionId"
+      :initial-burn-after-reading-mode="chatInfo && chatInfo.isBurnAfterReadingMode"
+      ref="chatInputAreaRef"
+    />
 
-  <!-- 滚动到底部按钮 -->
-  <ScrollToBottomButton
-    :show="showScrollToBottom"
-    @click.stop="scrollToBottom"
-  />
+    <!-- 滚动到底部按钮 -->
+    <ScrollToBottomButton
+      :show="showScrollToBottom"
+      @click.stop="scrollToBottom"
+    />
 
-  <!-- 新消息提示 -->
-  <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
-    新消息
-  </view>
-
-  <!-- 来电提醒 -->
-  <view v-if="peerStore.activateNotification" class="modal">
-    <view>
-      <text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
+    <!-- 新消息提示 -->
+    <view v-if="showNewMessageTip" class="new-message-tip" @click.stop="scrollToBottom">
+      新消息
     </view>
-    <view class="modal-content">
-      <button @click="acceptVideoCall" type="default">接听</button>
-      <button @click="rejectVideoCall" type="warn">拒绝</button>
+
+    <!-- 来电提醒 -->
+    <view v-if="peerStore.activateNotification" class="modal">
+      <view>
+        <text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
+      </view>
+      <view class="modal-content">
+        <button @click="acceptVideoCall" type="default">接听</button>
+        <button @click="rejectVideoCall" type="warn">拒绝</button>
+      </view>
     </view>
   </view>
-
-  <!-- 附件菜单遮罩层 -->
-  <div v-if="showAttachMenu" class="overlay" @click="handleOverlayClick"></div>
-</view>
 </template>
 
 <script>
@@ -313,6 +311,15 @@ export default {
       cleanupWebSocketListener()
     })
 
+    // 新增：处理消息列表点击
+    const handleMessageListClick = (event) => {
+      console.log('消息列表被点击');
+      if (showAttachMenu.value) {
+        console.log('关闭附件菜单');
+        showAttachMenu.value = false;
+      }
+    }
+
     return {
       chatInfo,
       list,
@@ -355,6 +362,7 @@ export default {
       loadAndCacheGroupMembers,
       isInitialLoading,
       hasCachedMessages,
+      handleMessageListClick,
     }
   }
 }
@@ -362,67 +370,64 @@ export default {
 
 <style lang="scss" scoped>
 .chat-page {
-display: flex;
-flex-direction: column;
-height: 100vh;
-position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
 }
 
 .new-message-tip {
-position: fixed;
-bottom: 70px;
-left: 50%;
-transform: translateX(-50%);
-background-color: rgba(0, 0, 0, 0.7);
-color: white;
-padding: 5px 10px;
-border-radius: 15px;
-font-size: 14px;
-z-index: 1000;
-}
-
-.overlay {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: transparent;
-z-index: 999;
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  z-index: 1000;
 }
 
 .modal {
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-background-color: white;
-padding: 20px;
-border-radius: 10px;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-z-index: 1001;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1002;
 }
 
 .modal-content {
-display: flex;
-justify-content: space-around;
-margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
 }
 
 .modal button {
-padding: 10px 20px;
-border-radius: 5px;
-border: none;
-color: white;
-font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-weight: bold;
 }
 
 .modal button[type="default"] {
-background-color: #4CAF50;
+  background-color: #4CAF50;
 }
 
 .modal button[type="warn"] {
-background-color: #f44336;
+  background-color: #f44336;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: #F6F6F6;
 }
 </style>
 

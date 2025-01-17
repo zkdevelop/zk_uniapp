@@ -1,52 +1,60 @@
 <!-- ChatInputArea.vue - 聊天输入区域组件 -->
 <template>
-  <view class="chat-input-area">
-    <view class="chat-input" :class="{ 'elevated': showAttachMenu }">
-      <!-- 语音/键盘切换按钮 -->
-      <toggle-voice-button
-        :is-voice-input-active="isVoiceInputActive"
-        :is-burn-after-reading-mode="isBurnAfterReadingMode"
-        @toggle-voice-input="toggleVoiceInput"
-      />
-      
-      <!-- 语音录音按钮 -->
-      <voice-input-button
-        v-if="isVoiceInputActive"
-        :is-recording="isRecording"
-        :voice-status="voiceStatus"
-        :start-voice-record="startVoiceRecord"
-        :stop-voice-record="stopVoiceRecord"
-        class="input-item"
-      />
-      
-      <!-- 文本输入框 -->
-      <text-input
-        v-else
-        v-model="newMessage"
-        @send="sendMessage"
-        class="input-item"
-      />
-      
-      <!-- 附件按钮 -->
-      <attach-button
-        v-if="!showAttachMenu"
-        @click="toggleAttachMenu"
-        :is-burn-after-reading-mode="isBurnAfterReadingMode"
-      />
-      
-      <!-- 发送按钮 -->
-      <send-button
-        v-if="!isVoiceInputActive && (showAttachMenu || newMessage.trim().length > 0)"
-        @click="sendMessage"
-      />
-    </view>
+  <view class="chat-input-wrapper">
+    <view class="chat-content">
+      <!-- 附件菜单 -->
+      <transition name="slide-up">
+        <view v-if="modelValue" class="attachment-menu">
+          <attachment-menu
+            @attach="attachItem"
+            @close="closeAttachMenu"
+          />
+        </view>
+      </transition>
 
-    <!-- 附件菜单 -->
-    <attachment-menu
-      v-if="showAttachMenu"
-      @attach="attachItem"
-      @close="closeAttachMenu"
-    />
+      <!-- 输入区域 -->
+      <view class="input-container">
+        <view class="chat-input">
+          <!-- 语音/键盘切换按钮 -->
+          <toggle-voice-button
+            :is-voice-input-active="isVoiceInputActive"
+            :is-burn-after-reading-mode="isBurnAfterReadingMode"
+            @toggle-voice-input="toggleVoiceInput"
+          />
+          
+          <!-- 语音录音按钮 -->
+          <voice-input-button
+            v-if="isVoiceInputActive"
+            :is-recording="isRecording"
+            :voice-status="voiceStatus"
+            :start-voice-record="startVoiceRecord"
+            :stop-voice-record="stopVoiceRecord"
+            class="input-item"
+          />
+          
+          <!-- 文本输入框 -->
+          <text-input
+            v-else
+            v-model="newMessage"
+            @send="sendMessage"
+            class="input-item"
+          />
+          
+          <!-- 附件按钮 -->
+          <attach-button
+            v-if="!modelValue"
+            @click="toggleAttachMenu"
+            :is-burn-after-reading-mode="isBurnAfterReadingMode"
+          />
+          
+          <!-- 发送按钮 -->
+          <send-button
+            v-if="!isVoiceInputActive && (modelValue || newMessage.trim().length > 0)"
+            @click="sendMessage"
+          />
+        </view>
+      </view>
+    </view>
 
     <!-- 位置共享组件 -->
     <location-sharing
@@ -84,40 +92,31 @@ export default {
     SendButton
   },
   props: {
-    // 是否显示附件菜单
-    showAttachMenu: {
+    modelValue: {
       type: Boolean,
       default: false
     },
-    // 接收者ID
     recipientId: {
       type: String,
       required: true
     },
-    // 任务ID
     missionId: {
       type: String,
       required: true,
       default: ''
     },
-    // 初始阅后即焚模式状态
     initialBurnAfterReadingMode: {
       type: Boolean,
       default: false
     }
   },
-  emits: ['send-message', 'toggle-attach-menu', 'attach', 'video-call', 'file-selected', 'toggle-burn-after-reading'],
+  emits: ['send-message', 'update:modelValue', 'attach', 'video-call', 'file-selected', 'toggle-burn-after-reading'],
   setup(props, { emit }) {
-    // 新消息内容
     const newMessage = ref('')
-    // 是否显示位置共享
     const showLocationSharing = ref(false)
-    // 是否激活语音输入
     const isVoiceInputActive = ref(false)
-    // 是否启用阅后即焚模式
     const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode)
 
-    // 处理语音文件选择
     const handleVoiceFileSelected = (fileInfo) => {
       console.log('useVoiceInput 回调被触发，完整的文件信息:', JSON.stringify(fileInfo))
       
@@ -137,7 +136,6 @@ export default {
       }
     }
 
-    // 使用语音输入钩子
     const { 
       isRecording, 
       recordAuth, 
@@ -147,7 +145,6 @@ export default {
       stopVoiceRecord
     } = useVoiceInput(handleVoiceFileSelected)
     
-    // 使用附件处理钩子
     const { 
       attachItem, 
       handleFileSelected, 
@@ -159,7 +156,6 @@ export default {
       toggleBurnAfterReadingMode
     } = useAttachmentHandling(emit, props)
 
-    // 使用消息发送钩子
     const { sendMessage: sendMessageHandler } = useMessageSending(newMessage, emit, props, isBurnAfterReadingMode)
 
     const sendMessage = () => {
@@ -167,29 +163,33 @@ export default {
       sendMessageHandler()
     }
 
-    // 切换语音输入模式
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
     }
 
-    // 切换附件菜单
     const toggleAttachMenu = () => {
-      emit('toggle-attach-menu', !props.showAttachMenu)
+      console.log('切换附件菜单状态:', !props.modelValue);
+      emit('update:modelValue', !props.modelValue)
     }
 
-    // 关闭附件菜单
     const closeAttachMenu = () => {
-      emit('toggle-attach-menu', false)
+      console.log('关闭附件菜单');
+      emit('update:modelValue', false)
     }
 
-    // 监听接收者ID的变化
+    // 新增：处理空白处点击
+    const handleWrapperClick = (event) => {
+      if (props.modelValue) {
+        emit('update:modelValue', false);
+      }
+    }
+
     watch(() => props.recipientId, (newVal) => {
       if (!newVal) {
         showLocationSharing.value = false
       }
     })
 
-    // 监听位置共享状态的变化
     watch(locationSharingState, (newVal) => {
       showLocationSharing.value = newVal
     })
@@ -204,7 +204,6 @@ export default {
       emit('toggle-burn-after-reading', newVal)
     })
 
-    // 监听初始阅后即焚模式的变化
     watch(() => props.initialBurnAfterReadingMode, (newVal) => {
       isBurnAfterReadingMode.value = newVal
     })
@@ -229,42 +228,64 @@ export default {
       closeLocationSharing,
       handleLocationSelected,
       isBurnAfterReadingMode,
-      toggleBurnAfterReadingMode
+      toggleBurnAfterReadingMode,
+      handleWrapperClick // 新增：导出处理函数
     }
   }
 }
 </script>
 
 <style>
-.chat-input-area {
+.chat-input-wrapper {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 1000;
+}
+
+.chat-content {
   display: flex;
-  flex-direction: column;
-  background-color: #FFFFFF;
+  flex-direction: column-reverse;
+  width: 100%;
+}
+
+.input-container {
+  width: 100%;
+  background-color: #F3F3F3;
+  border-top: 1px solid #e0e0e0;
 }
 
 .chat-input {
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: #F3F3F3;
-  border-top: 1px solid #e0e0e0;
-  z-index: 1001;
   min-height: 56px;
 }
 
-.chat-input.elevated {
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+.attachment-menu {
+  width: 100%;
+  background-color: #F6F6F6;
 }
 
 .input-item {
   flex: 1;
   margin: 0 10px;
+}
+ 
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.15s ease-out;  
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  transform: translateY(0);
 }
 </style>
 
