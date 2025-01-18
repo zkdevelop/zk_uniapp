@@ -34,6 +34,7 @@ export default {
   name: 'AttachmentMenu',
   data() {
     return {
+      // 附件选项配置
       attachOptions: [
         { icon: '/static/message/相册.png', label: '相册', action: 'album' },
         { icon: '/static/message/拍摄.png', label: '拍摄', action: 'camera' },
@@ -45,8 +46,11 @@ export default {
     }
   },
   methods: {
+    // 处理附件项点击
     handleAttachItem(action) { 
-      this.$emit('attach', action);
+      this.$emit('attach', action)
+      // 发送关闭事件
+      this.$emit('close')
     }
   }
 }
@@ -115,3 +119,4 @@ export default {
   text-align: center;
 }
 </style>
+
