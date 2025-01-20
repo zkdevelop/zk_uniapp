@@ -217,12 +217,6 @@ if (uni.restoreGlobal) {
       method: "post"
     });
   };
-  const searchUser = (id) => {
-    return request({
-      url: `/user/search/${id}`,
-      method: "get"
-    });
-  };
   var isVue2 = false;
   function set$1(target, key, val) {
     if (Array.isArray(target)) {
@@ -12051,14 +12045,16 @@ ${i3}
   const __easycom_8 = /* @__PURE__ */ _export_sfc(_sfc_main$R, [["render", _sfc_render$Q], ["__scopeId", "data-v-9a1e3c32"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const getOrderList = (params) => {
     return request({
-      url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
-      method: "get"
+      url: `/instruction/search/received/orders`,
+      method: "get",
+      data: params
     });
   };
   const getWarningList = (params) => {
     return request({
-      url: `/instruction/search/warning/${params.missionId}/${params.curPage}/${params.pageSize}`,
-      method: "get"
+      url: `/instruction/search/received/warnings`,
+      method: "get",
+      data: params
     });
   };
   const sendWarning = (data) => {
@@ -12262,8 +12258,6 @@ ${i3}
     // 	this.$refs.popup.open('bottom')
     // },
     mounted() {
-      this.getOrder();
-      this.getWarning();
       uni.showLoading({
         title: "正在加载任务",
         mask: true
@@ -12286,6 +12280,8 @@ ${i3}
         this.position.latitude = this.taskItem.latitude;
         this.position.longitude = this.taskItem.longitude;
         this.geoJson = this.taskItem.geoJson;
+        this.getOrder();
+        this.getWarning();
         uni.hideLoading();
       });
     },
@@ -12606,7 +12602,7 @@ ${i3}
           if (res.code === 200) {
             this.task_instructions = res.data.records.map((item) => ({
               src: "../../../static/uni.png",
-              sender_name: item.senderId,
+              sender_name: item.user.name,
               detail: item.message,
               isConfirmed: item.isRead
             }));
@@ -12614,13 +12610,6 @@ ${i3}
               this.instruct_none = true;
             } else {
               this.instruct_none = false;
-            }
-            for (let order of this.task_instructions) {
-              searchUser(order.sender_name).then((res2) => {
-                if (res2.code === 200) {
-                  order.sender_name = res2.data.name;
-                }
-              });
             }
           } else {
             this.instruct_none = true;
@@ -12644,23 +12633,16 @@ ${i3}
           curPage: 1,
           pageSize: 20
         }).then((res) => {
+          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:1150", res.data.records, "res");
           if (res.code === 200) {
-            const userInfo = uni.getStorageSync("userInfo");
-            this.alert_data = res.data.records.filter((item) => item.receiverId === userInfo.id).map(
+            uni.getStorageSync("userInfo");
+            this.alert_data = res.data.records.map(
               (item) => ({
                 alert_grade: "严重告警",
                 alert_time: item.sendTime,
-                sender_name: item.senderId,
+                sender_name: item.user.name,
                 alert_content: item.message,
                 isConfirmed: item.isRead
-              })
-            );
-            this.alert_data_mine = res.data.records.filter((item) => item.senderId === userInfo.id).map(
-              (item) => ({
-                alert_grade: "严重告警",
-                alert_time: item.sendTime,
-                sender_name: item.senderId,
-                alert_content: item.message
               })
             );
             if (this.alert_data.length === 0) {
@@ -12672,20 +12654,6 @@ ${i3}
               this.alert_none2 = true;
             } else {
               this.alert_none2 = false;
-            }
-            for (let order of this.alert_data) {
-              searchUser(order.sender_name).then((res2) => {
-                if (res2.code === 200) {
-                  order.sender_name = res2.data.name;
-                }
-              });
-            }
-            for (let order of this.alert_data_mine) {
-              searchUser(order.sender_name).then((res2) => {
-                if (res2.code === 200) {
-                  order.sender_name = res2.data.name;
-                }
-              });
             }
           }
         });
@@ -26838,30 +26806,35 @@ ${i3}
         online: false,
         missionId: ""
       });
-      const missionId = vue.computed(() => {
-        return Array.isArray(userStore.state.missionId) ? userStore.state.missionId.join(",") : userStore.state.missionId || "";
-      });
       vue.onMounted(() => {
         const pages2 = getCurrentPages();
         const currentPage = pages2[pages2.length - 1];
-        const { user } = currentPage.$page.options;
+        const options = currentPage.$page ? currentPage.$page.options : currentPage.options;
+        const { user, missionId: pageMissionId } = options;
         if (user) {
-          const decodedUser = JSON.parse(decodeURIComponent(user));
-          contact.value = {
-            ...decodedUser,
-            missionId: missionId.value
-          };
+          try {
+            const decodedUser = JSON.parse(decodeURIComponent(user));
+            contact.value = {
+              ...decodedUser,
+              missionId: pageMissionId || userStore.state.missionId[0]
+            };
+            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:54", "联系人详情:", contact.value);
+          } catch (error) {
+            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:56", "解析用户数据失败:", error);
+          }
+        } else {
+          formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:59", "未接收到用户数据");
         }
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:61", "联系人详情页面已加载");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:62", "联系人详情页面已加载");
       });
       const handleMessage = () => {
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:66", "正在跳转到聊天界面");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:67", "正在跳转到聊天界面");
         const chatInfo = {
           id: contact.value.id,
           name: contact.value.name,
           avatar: contact.value.avatarUrl,
           type: "single",
-          missionId: contact.value.missionId || missionId.value,
+          missionId: contact.value.missionId,
           isBurnAfterReadingMode: false
         };
         uni.navigateTo({
@@ -26869,24 +26842,24 @@ ${i3}
           success: (res) => {
             if (res.eventChannel && res.eventChannel.emit) {
               res.eventChannel.emit("chatInfo", { chatInfo });
-              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:81", "通过 eventChannel 发送 chatInfo");
+              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:82", "通过 eventChannel 发送 chatInfo");
             } else {
-              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:83", "eventChannel 不可用，将使用本地存储的数据");
+              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:84", "eventChannel 不可用，将使用本地存储的数据");
               uni.setStorageSync("chatQuery", JSON.stringify(chatInfo));
             }
           },
           fail: (error) => {
-            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:88", "跳转到聊天界面失败:", error);
+            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:89", "跳转到聊天界面失败:", error);
           }
         });
       };
       const handleClearHistory = () => {
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:95", "正在处理清除历史");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:96", "正在处理清除历史");
       };
       const handleDelete = () => {
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:101", "正在处理删除联系人");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:102", "正在处理删除联系人");
       };
-      const __returned__ = { userStore, contact, missionId, handleMessage, handleClearHistory, handleDelete, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, ContactInfo, get useUserStore() {
+      const __returned__ = { userStore, contact, handleMessage, handleClearHistory, handleDelete, ref: vue.ref, onMounted: vue.onMounted, ContactInfo, get useUserStore() {
         return useUserStore;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -27080,41 +27053,16 @@ ${i3}
       handleContainerClick
     };
   }
-  /*!
-    * vue-router v4.3.0
-    * (c) 2024 Eduardo San Martin Morote
-    * @license MIT
-    */
-  var NavigationType;
-  (function(NavigationType2) {
-    NavigationType2["pop"] = "pop";
-    NavigationType2["push"] = "push";
-  })(NavigationType || (NavigationType = {}));
-  var NavigationDirection;
-  (function(NavigationDirection2) {
-    NavigationDirection2["back"] = "back";
-    NavigationDirection2["forward"] = "forward";
-    NavigationDirection2["unknown"] = "";
-  })(NavigationDirection || (NavigationDirection = {}));
-  var NavigationFailureType;
-  (function(NavigationFailureType2) {
-    NavigationFailureType2[NavigationFailureType2["aborted"] = 4] = "aborted";
-    NavigationFailureType2[NavigationFailureType2["cancelled"] = 8] = "cancelled";
-    NavigationFailureType2[NavigationFailureType2["duplicated"] = 16] = "duplicated";
-  })(NavigationFailureType || (NavigationFailureType = {}));
-  const routerKey = Symbol("router");
-  function useRouter$1() {
-    return vue.inject(routerKey);
-  }
   function useContactNavigation() {
-    const router = useRouter$1();
     useUserStore();
     const handleSearch = () => {
-      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:9", "搜索按钮被点击");
+      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:7", "搜索按钮被点击");
     };
     const handleGroupChat = () => {
-      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:13", "发起群聊被点击");
-      router.push("/pages/contacts/pages/contacts/create-group-chat/index");
+      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:11", "发起群聊被点击");
+      uni.navigateTo({
+        url: "/pages/contacts/pages/contacts/create-group-chat/index"
+      });
     };
     const handleAddFriend = () => {
       formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:18", "添加朋友被点击");
@@ -27141,14 +27089,19 @@ ${i3}
           }
         },
         fail: (err) => {
-          formatAppLog("error", "at pages/contacts/composables/useContactNavigation.js:44", "导航到聊天页面失败:", err);
+          formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:44", "导航到聊天页面失败:", err);
         }
       });
     };
     const selectUser = (user, missionId) => {
       formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:50", "选择用户:", user);
       const userString = encodeURIComponent(JSON.stringify(user));
-      router.push(`/pages/contacts/components/ContactDetail/ContactDetailView?user=${userString}&missionId=${missionId}`);
+      uni.navigateTo({
+        url: `/pages/contacts/components/ContactDetail/ContactDetailView?user=${userString}&missionId=${missionId}`,
+        fail: (error) => {
+          formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:55", "导航到联系人详情页面失败:", error);
+        }
+      });
     };
     return {
       handleSearch,

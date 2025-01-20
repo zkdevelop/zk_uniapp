@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="divport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+		<link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+		<title></title>
+		<style>
+			html,
+			body,
+			#container {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+		<!-- 加载安全密钥 -->
+		<script type="text/javascript">
+			window._AMapSecurityConfig = {
+				securityJsCode: "93849873dba769e7b6235a79330ae7f7",
+			};
+		</script>
+		<!-- 加载地图JSAPI脚本 -->
+		<script src="https://webapi.amap.com/maps?v=2.0&key=caa070a3ebda631bea2feff72972f28c"></script>
+	</head>
+
+	<body>
+		<div id="container">
+		</div>
+
+		<script>
+			var map = new AMap.Map('container', {
+				divMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 divMode: '3D'
+				zoom: 11, // 初始化地图层级
+				center: [116.397428, 39.90923] // 初始化地图中心点
+			});
+			map.add(new AMap.Marker({
+			    position: new AMap.LngLat(116.397428, 39.90923),
+			    icon: '../icon/location_grey.png',
+			    anchor: 'bottom-center',
+			}));
+		</script>
+
+		<style>
+			.condition_icons {
+				display: flex;
+				justify-content: space-between;
+				/* 两侧分开 */
+				padding: 15px;
+				z-index: 100;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			.condition_selector {
+				width: 70px;
+				height: 35px;
+				background: #f9f9f9;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.instructions_alert {
+				width: 50px;
+				height: 50px;
+				background: #f9f9f9;
+				box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+				/* 水平偏移、垂直偏移、模糊半径、颜色 */
+				border-radius: 3px;
+				margin-bottom: 10px;
+			}
+
+			.instructions_instruct {
+				width: 50px;
+				height: 50px;
+				background: #f9f9f9;
+				box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+				/* 水平偏移、垂直偏移、模糊半径、颜色 */
+				border-radius: 3px;
+				margin-bottom: 10px;
+			}
+
+			.instructions_document {
+				width: 50px;
+				height: 100px;
+				background: #f9f9f9;
+				box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+				/* 水平偏移、垂直偏移、模糊半径、颜色 */
+				border-radius: 3px;
+				margin-bottom: 10px;
+			}
+
+			.text_setting {
+				display: flex;
+				align-items: center;
+				/* 垂直居中 */
+				justify-content: center;
+			}
+
+			.divider {
+				height: 1px;
+				background-color: #ccc;
+				/* 分割线的颜色 */
+				margin: 10px 0;
+				/* 分割线的上下间距 */
+			}
+
+			.detail_top {
+				display: flex;
+				justify-content: space-between;
+				/* 两侧分开 */
+			}
+
+			.detail_info {
+				box-sizing: border-box;
+				/* 包括内边距和边框 */
+				width: 100%;
+				padding: 10px;
+				background: #edf2fa;
+			}
+
+			.infos {
+				margin-bottom: 5px;
+			}
+
+			.map_icons {
+				display: flex;
+				align-items: center;
+				/* 垂直居中 */
+				justify-content: center;
+			}
+
+			.selected {
+				border: 2px solid #288ff4;
+				/* 设置选中时的边框 */
+			}
+
+			.head-nav {
+				display: flex;
+				align-items: center;
+				color: #CCCCCC;
+				height: 40px;
+			}
+
+			.activite {
+				color: #04c9c3;
+			}
+
+			.head-nav>view {
+				padding-bottom: 10rpx;
+			}
+
+			.alert_content {
+				/* background: #008000; */
+				height: 100%;
+			}
+		</style>
+	</body>
+
+</html>
