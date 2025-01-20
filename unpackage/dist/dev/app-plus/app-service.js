@@ -217,12 +217,6 @@ if (uni.restoreGlobal) {
       method: "post"
     });
   };
-  const searchUser = (id) => {
-    return request({
-      url: `/user/search/${id}`,
-      method: "get"
-    });
-  };
   var isVue2 = false;
   function set$1(target, key, val) {
     if (Array.isArray(target)) {
@@ -12051,14 +12045,16 @@ ${i3}
   const __easycom_8 = /* @__PURE__ */ _export_sfc(_sfc_main$R, [["render", _sfc_render$Q], ["__scopeId", "data-v-9a1e3c32"], ["__file", "E:/代码/new/zk_uniapp/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const getOrderList = (params) => {
     return request({
-      url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
-      method: "get"
+      url: `/instruction/search/received/orders`,
+      method: "get",
+      data: params
     });
   };
   const getWarningList = (params) => {
     return request({
-      url: `/instruction/search/warning/${params.missionId}/${params.curPage}/${params.pageSize}`,
-      method: "get"
+      url: `/instruction/search/received/warnings`,
+      method: "get",
+      data: params
     });
   };
   const sendWarning = (data) => {
@@ -12262,8 +12258,6 @@ ${i3}
     // 	this.$refs.popup.open('bottom')
     // },
     mounted() {
-      this.getOrder();
-      this.getWarning();
       uni.showLoading({
         title: "正在加载任务",
         mask: true
@@ -12286,6 +12280,8 @@ ${i3}
         this.position.latitude = this.taskItem.latitude;
         this.position.longitude = this.taskItem.longitude;
         this.geoJson = this.taskItem.geoJson;
+        this.getOrder();
+        this.getWarning();
         uni.hideLoading();
       });
     },
@@ -12606,7 +12602,7 @@ ${i3}
           if (res.code === 200) {
             this.task_instructions = res.data.records.map((item) => ({
               src: "../../../static/uni.png",
-              sender_name: item.senderId,
+              sender_name: item.user.name,
               detail: item.message,
               isConfirmed: item.isRead
             }));
@@ -12614,13 +12610,6 @@ ${i3}
               this.instruct_none = true;
             } else {
               this.instruct_none = false;
-            }
-            for (let order of this.task_instructions) {
-              searchUser(order.sender_name).then((res2) => {
-                if (res2.code === 200) {
-                  order.sender_name = res2.data.name;
-                }
-              });
             }
           } else {
             this.instruct_none = true;
@@ -12644,23 +12633,16 @@ ${i3}
           curPage: 1,
           pageSize: 20
         }).then((res) => {
+          formatAppLog("log", "at pages/task/task_detail/task_detail.vue:1150", res.data.records, "res");
           if (res.code === 200) {
-            const userInfo = uni.getStorageSync("userInfo");
-            this.alert_data = res.data.records.filter((item) => item.receiverId === userInfo.id).map(
+            uni.getStorageSync("userInfo");
+            this.alert_data = res.data.records.map(
               (item) => ({
                 alert_grade: "严重告警",
                 alert_time: item.sendTime,
-                sender_name: item.senderId,
+                sender_name: item.user.name,
                 alert_content: item.message,
                 isConfirmed: item.isRead
-              })
-            );
-            this.alert_data_mine = res.data.records.filter((item) => item.senderId === userInfo.id).map(
-              (item) => ({
-                alert_grade: "严重告警",
-                alert_time: item.sendTime,
-                sender_name: item.senderId,
-                alert_content: item.message
               })
             );
             if (this.alert_data.length === 0) {
@@ -12672,20 +12654,6 @@ ${i3}
               this.alert_none2 = true;
             } else {
               this.alert_none2 = false;
-            }
-            for (let order of this.alert_data) {
-              searchUser(order.sender_name).then((res2) => {
-                if (res2.code === 200) {
-                  order.sender_name = res2.data.name;
-                }
-              });
-            }
-            for (let order of this.alert_data_mine) {
-              searchUser(order.sender_name).then((res2) => {
-                if (res2.code === 200) {
-                  order.sender_name = res2.data.name;
-                }
-              });
             }
           }
         });
