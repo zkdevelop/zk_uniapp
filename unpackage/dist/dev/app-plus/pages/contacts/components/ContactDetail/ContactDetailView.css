@@ -1,0 +1,77 @@
+
+.avatar[data-v-148945a0] {
+  border-radius: 4px;
+}
+
+
+.main-info[data-v-e72bb083] {
+  background-color: #fff;
+  margin-bottom: 8px;
+  padding: 20px 16px;
+}
+.profile-section[data-v-e72bb083] {
+  display: flex;
+  align-items: flex-start;
+}
+.info-section[data-v-e72bb083] {
+  flex: 1;
+  min-width: 0;
+  padding-left: 16px;
+}
+.name-section[data-v-e72bb083] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+.name[data-v-e72bb083] {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+.badge-section[data-v-e72bb083] {
+  margin-bottom: 16px;
+}
+.badge[data-v-e72bb083] {
+  display: inline-block;
+  background-color: #e6f0ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #007AFF;
+  font-size: 14px;
+}
+.details-section[data-v-e72bb083] {
+  margin-top: 8px;
+}
+.detail-item[data-v-e72bb083] {
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+}
+.detail-label[data-v-e72bb083] {
+  color: #666;
+  font-size: 15px;
+  margin-right: 8px;
+}
+.detail-value[data-v-e72bb083] {
+  color: #333;
+  font-size: 15px;
+}
+
+
+.contact-detail-view[data-v-e5781576] {
+  padding: 20px;
+}
+.action-buttons[data-v-e5781576] {
+  margin-top: 20px;
+}
+.action-buttons uni-button[data-v-e5781576] {
+  margin-bottom: 10px;
+}
+.delete-button[data-v-e5781576] {
+  background-color: #ff4d4f;
+  color: white;
+}
+.additional-info[data-v-e5781576] {
+  margin-top: 10px;
+}

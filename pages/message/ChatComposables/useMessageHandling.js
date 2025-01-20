@@ -1,401 +1,417 @@
-import { ref, nextTick } from 'vue'
-import { getHistoryChatMessages, sendMessageToUser, sendGroupMessage, sendFilesToUser, getGroupChatMessages } from '@/utils/api/message.js'
-import { useUserStore } from '@/store/userStore'
-import { useGroupStore } from '@/pages/message/store/groupStore'
+import { ref, nextTick } from "vue"
+import {
+  getHistoryChatMessages,
+  sendMessageToUser,
+  sendGroupMessage,
+  sendFilesToUser,
+  getGroupChatMessages,
+} from "@/utils/api/message.js"
+import { useUserStore } from "@/store/userStore"
+import { useGroupStore } from "@/pages/message/store/groupStore"
 
 export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
-  const userStore = useUserStore();
-  const groupStore = useGroupStore();
+  const userStore = useUserStore()
+  const groupStore = useGroupStore()
 
-  let isLoadingHistory = false;
-  let lastLoadTime = 0;
-  const LOAD_COOLDOWN = 5000; // 5秒冷却时间
+  let isLoadingHistory = false
+  let lastLoadTime = 0
+  const LOAD_COOLDOWN = 5000 // 5秒冷却时间
 
   const sendMessage = async (message) => {
-    console.log('开始发送消息:', message)
+    console.log("开始发送消息:", message)
     if (message.content && chatInfo.value && chatInfo.value.id) {
       try {
-        let response;
+        let response
         const messageData = {
-          message: typeof message.content === 'object' ? JSON.stringify(message.content) : message.content,
+          message: typeof message.content === "object" ? JSON.stringify(message.content) : message.content,
           recipientId: chatInfo.value.id,
-          messageType: message.type || 'text',
+          messageType: message.type || "text",
           missionId: chatInfo.value.missionId,
-          isPosition: message.type === 'location',
-          isSelfDestruct: chatInfo.value.isBurnAfterReadingMode
-        };
-
-        console.log('准备发送消息数据:', messageData)
-
-        if (chatInfo.value.type === 'group') {
-          console.log('发送群聊消息')
-          response = await sendGroupMessage({
-            ...messageData,
-            isGroupAnnouncement: false
-          });
-        } else {
-          console.log('发送私聊消息')
-          response = await sendMessageToUser(messageData);
+          isPosition: message.type === "location",
+          isSelfDestruct: chatInfo.value.isBurnAfterReadingMode,
         }
 
-        console.log('消息发送响应:', response)
+        console.log("准备发送消息数据:", messageData)
+
+        if (chatInfo.value.type === "group") {
+          console.log("发送群聊消息")
+          response = await sendGroupMessage({
+            ...messageData,
+            isGroupAnnouncement: false,
+          })
+        } else {
+          console.log("发送私聊消息")
+          response = await sendMessageToUser(messageData)
+        }
+
+        console.log("消息发送响应:", response)
 
         if (response.code === 200) {
           const sentMessage = {
             ...response.data,
             selfDestruct: response.data.selfDestruct,
             content: message.content,
-            userType: 'self',
+            userType: "self",
             timestamp: new Date(),
-            type: message.type || 'text',
-            messageType: message.type === 'text' ? 'MESSAGE' : message.type.toUpperCase()
-          };
-          console.log('消息发送成功，处理已发送消息:', sentMessage)
-          handleMessageSent(sentMessage);
-          await updateMessageList();
-          console.log('消息列表已更新')
+            type: message.type || "text",
+            messageType: message.type === "text" ? "MESSAGE" : message.type.toUpperCase(),
+          }
+          console.log("消息发送成功，处理已发送消息:", sentMessage)
+          handleMessageSent(sentMessage)
+          await updateMessageList()
+          console.log("消息列表已更新")
           nextTick(() => {
-            scrollToBottom();
-            console.log('已滚动到底部')
-          });
+            scrollToBottom()
+            console.log("已滚动到底部")
+          })
         } else {
-          throw new Error(response.msg || '发送消息失败');
+          throw new Error(response.msg || "发送消息失败")
         }
       } catch (error) {
-        console.log('发送消息失败:', error);
+        console.log("发送消息失败:", error)
       }
     } else {
-      console.log('消息内容为空或 chatInfo 未正确初始化');
+      console.log("消息内容为空或 chatInfo 未正确初始化")
     }
-  };
+  }
 
   const handleMessageSent = (sentMessage) => {
-    console.log('添加已发送消息到列表')
-    list.value.push(sentMessage);
-  };
+    console.log("添加已发送消息到列表")
+    list.value.push(sentMessage)
+  }
 
   const handleMessageFailed = (failedMessage) => {
-    console.log('处理消息发送失败:', failedMessage)
+    console.log("处理消息发送失败:", failedMessage)
     // 这里可以添加处理消息发送失败的逻辑
-  };
+  }
 
   const loadHistoryMessages = async (isLoadingMore = false, newFrom = null, newTo = null) => {
-    console.log('开始加载历史消息')
-    const now = Date.now();
+    console.log("开始加载历史消息")
+    const now = Date.now()
     if (isLoadingHistory || now - lastLoadTime < LOAD_COOLDOWN) {
-      console.log('跳过加载历史消息：正在加载或冷却中');
-      return;
+      console.log("跳过加载历史消息：正在加载或冷却中")
+      return
     }
 
-    isLoadingHistory = true;
-    lastLoadTime = now;
+    isLoadingHistory = true
+    lastLoadTime = now
 
     if (!chatInfo.value || !chatInfo.value.id || !chatInfo.value.missionId) {
-      console.log('聊天信息不完整，无法加载历史消息')
-      hasMoreMessages.value = false;
-      isLoadingHistory = false;
-      return false;
+      console.log("聊天信息不完整，无法加载历史消息")
+      hasMoreMessages.value = false
+      isLoadingHistory = false
+      return false
     }
-    
-    const from = newFrom !== null ? newFrom : currentFrom.value;
-    const to = newTo !== null ? newTo : currentTo.value;
 
-    console.log('加载历史消息参数:', { from, to, isLoadingMore })
+    const from = newFrom !== null ? newFrom : currentFrom.value
+    const to = newTo !== null ? newTo : currentTo.value
+
+    console.log("加载历史消息参数:", { from, to, isLoadingMore })
 
     try {
-      let response;
-      if (chatInfo.value.type === 'group') {
-        console.log('加载群聊历史消息')
+      let response
+      if (chatInfo.value.type === "group") {
+        console.log("加载群聊历史消息")
         response = await getGroupChatMessages({
           opponentId: chatInfo.value.id,
           from,
-          to
-        });
+          to,
+        })
       } else {
-        console.log('加载私聊历史消息')
+        console.log("加载私聊历史消息")
         response = await getHistoryChatMessages({
           opponentId: chatInfo.value.id,
           from,
           to,
-          missionId: chatInfo.value.missionId
-        });
+          missionId: chatInfo.value.missionId,
+        })
       }
 
-      console.log('历史消息加载响应:', response)
+      console.log("历史消息加载响应:", response)
 
       if (response.code === 200) {
-        let newMessages;
-        if (chatInfo.value.type === 'group') {
-          newMessages = response.data.groupMessageVOS.reverse().map(msg => mapGroupMessage(msg));
+        let newMessages
+        if (chatInfo.value.type === "group") {
+          newMessages = response.data.groupMessageVOS.reverse().map((msg) => mapGroupMessage(msg))
         } else {
-          newMessages = response.data.messageVOList.reverse().map(msg => mapPrivateMessage(msg));
+          newMessages = response.data.messageVOList.reverse().map((msg) => mapPrivateMessage(msg))
         }
 
-        console.log('新消息数量:', newMessages.length)
+        console.log("新消息数量:", newMessages.length)
 
         if (isLoadingMore) {
-          console.log('添加新消息到列表前端')
-          list.value = [...newMessages, ...list.value];
+          console.log("添加新消息到列表前端")
+          list.value = [...newMessages, ...list.value]
         } else {
-          console.log('替换整个消息列表')
-          list.value = newMessages;
+          console.log("替换整个消息列表")
+          list.value = newMessages
         }
-        
-        hasMoreMessages.value = newMessages.length === (to - from + 1);
-        console.log('是否有更多消息:', hasMoreMessages.value)
 
-        currentFrom.value = from;
-        currentTo.value = to;
+        hasMoreMessages.value = newMessages.length === to - from + 1
+        console.log("是否有更多消息:", hasMoreMessages.value)
 
-        console.log('更新后的消息列表长度:', list.value.length)
+        currentFrom.value = from
+        currentTo.value = to
+
+        console.log("更新后的消息列表长度:", list.value.length)
 
         if (!isLoadingMore) {
           nextTick(() => {
-            scrollToBottom();
-            console.log('滚动到底部')
-          });
+            scrollToBottom()
+            console.log("滚动到底部")
+          })
         }
 
-        return true;
+        return true
       } else {
-        console.log('加载历史消息失败:', response.msg);
-        hasMoreMessages.value = false;
+        console.log("加载历史消息失败:", response.msg)
+        hasMoreMessages.value = false
         uni.showToast({
-          title: '加载历史消息失败',
-          icon: 'none'
-        });
-        return false;
+          title: "加载历史消息失败",
+          icon: "none",
+        })
+        return false
       }
     } catch (error) {
-      console.log('加载历史消息出错:', error);
-      hasMoreMessages.value = false;
+      console.log("加载历史消息出错:", error)
+      hasMoreMessages.value = false
       uni.showToast({
-        title: '网络错误，请稍后重试',
-        icon: 'none'
-      });
-      return false;
+        title: "网络错误，请稍后重试",
+        icon: "none",
+      })
+      return false
     } finally {
-      isLoadingHistory = false;
-      console.log('历史消息加载完成，消息列表:', list.value)
-      console.log('历史消息加载完成')
+      isLoadingHistory = false
+      console.log("历史消息加载完成，消息列表:", list.value)
+      console.log("历史消息加载完成")
     }
-  };
+  }
 
   const updateMessageList = async () => {
-    console.log('开始更新消息列表')
+    console.log("开始更新消息列表")
     if (isLoadingHistory) {
-      console.log('正在加载历史消息，跳过更新')
-      return;
+      console.log("正在加载历史消息，跳过更新")
+      return
     }
 
     try {
-      const latestMessageId = list.value.length > 0 ? list.value[list.value.length - 1].id : null;
-      console.log('最新消息ID:', latestMessageId)
+      const latestMessageId = list.value.length > 0 ? list.value[list.value.length - 1].id : null
+      console.log("最新消息ID:", latestMessageId)
 
-      let response;
-      if (chatInfo.value.type === 'group') {
-        console.log('更新群聊消息列表')
+      let response
+      if (chatInfo.value.type === "group") {
+        console.log("更新群聊消息列表")
         response = await getGroupChatMessages({
           opponentId: chatInfo.value.id,
           from: 0,
-          to: 10,
-          lastMessageId: latestMessageId
-        });
+          to: 20, // 增加获取的消息数量
+          lastMessageId: latestMessageId,
+        })
       } else {
-        console.log('更新私聊消息列表')
+        console.log("更新私聊消息列表")
         response = await getHistoryChatMessages({
           opponentId: chatInfo.value.id,
           from: 0,
-          to: 10,
+          to: 20, // 增加获取的消息数量
           missionId: chatInfo.value.missionId,
-          lastMessageId: latestMessageId
-        });
+          lastMessageId: latestMessageId,
+        })
       }
 
-      console.log('更新消息列表响应:', response)
+      console.log("更新消息列表响应:", response)
 
-      if (response.code === 200 && response.data.hasNewMessages) {
-        let newMessages;
-        if (chatInfo.value.type === 'group') {
-          newMessages = response.data.groupMessageVOS.reverse().map(msg => mapGroupMessage(msg));
+      if (response.code === 200) {
+        let newMessages
+        if (chatInfo.value.type === "group") {
+          newMessages = response.data.groupMessageVOS.reverse().map((msg) => mapGroupMessage(msg))
         } else {
-          newMessages = response.data.messageVOList.reverse().map(msg => mapPrivateMessage(msg));
+          newMessages = response.data.messageVOList.reverse().map((msg) => mapPrivateMessage(msg))
         }
 
-        console.log('新消息数量:', newMessages.length)
-        list.value = [...list.value, ...newMessages];
+        console.log("新消息数量:", newMessages.length)
 
+        // 合并新消息和现有消息，去重
+        const mergedMessages = [...list.value, ...newMessages]
+        const uniqueMessages = Array.from(new Map(mergedMessages.map((item) => [item.id, item])).values())
+        list.value = uniqueMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+
+        console.log("更新后的消息列表长度:", list.value.length)
         nextTick(() => {
-          scrollToBottom();
-          console.log('滚动到底部')
-        });
+          scrollToBottom()
+          console.log("滚动到底部")
+        })
       } else {
-        console.log('没有新消息')
+        console.log("没有新消息或获取失败")
       }
     } catch (error) {
-      console.log('更新消息列表出错:', error);
+      console.log("更新消息列表出错:", error)
     }
-  };
+  }
 
   const mapPrivateMessage = (msg) => {
-    console.log('映射私聊消息:', msg)
-    let content = msg.message;
-    let type = msg.messageType.toLowerCase();
+    console.log("映射私聊消息:", msg)
+    let content = msg.message
+    let type = msg.messageType.toLowerCase()
 
     if (content === null) {
-      content = '';
-      console.log('警告: 消息内容为空', msg);
+      content = ""
+      console.log("警告: 消息内容为空", msg)
     }
 
-    if (type === 'position') {
+    if (type === "position") {
       try {
-        content = JSON.parse(msg.message);
-        type = 'location';
+        content = JSON.parse(msg.message)
+        type = "location"
       } catch (e) {
-        console.log('解析位置数据失败:', e);
+        console.log("解析位置数据失败:", e)
       }
-    } else if (type === 'image') {
-      content = msg.previewUrl || msg.message;
-    } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-      type = 'file';
-    } else if (type === 'audio' || type === 'voice_message') {
-      content = msg.previewUrl || msg.message;
+    } else if (type === "image") {
+      content = msg.previewUrl || msg.message
+    } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+      type = "file"
+    } else if (type === "audio" || type === "voice_message") {
+      content = msg.previewUrl || msg.message
     }
 
     const mappedMessage = {
       id: msg.id,
       content: content,
-      userType: msg.senderId === chatInfo.value.id ? 'other' : 'self',
-      avatar: msg.senderId === chatInfo.value.id ? (chatInfo.value.avatar && chatInfo.value.avatar[0] ? chatInfo.value.avatar[0] : '') : (chatInfo.value._selfAvatar || ''),
+      userType: msg.senderId === chatInfo.value.id ? "other" : "self",
+      avatar:
+        msg.senderId === chatInfo.value.id
+          ? chatInfo.value.avatar && chatInfo.value.avatar[0]
+            ? chatInfo.value.avatar[0]
+            : ""
+          : chatInfo.value._selfAvatar || "",
       timestamp: new Date(msg.sendTime),
       type: type,
       isRead: msg.isRead,
       messageType: msg.messageType,
-      selfDestruct: msg.selfDestruct
-    };
+      selfDestruct: msg.selfDestruct,
+    }
 
-    console.log('映射后的私聊消息:', mappedMessage)
-    return mappedMessage;
-  };
+    console.log("映射后的私聊消息:", mappedMessage)
+    return mappedMessage
+  }
 
   const mapGroupMessage = (msg) => {
-    console.log('映射群聊消息:', msg)
-    let content = msg.message;
-    let type = msg.messageType.toLowerCase();
+    console.log("映射群聊消息:", msg)
+    let content = msg.message
+    let type = msg.messageType.toLowerCase()
 
     if (content === null) {
-      content = '';
-      console.log('警告: 消息内容为空', msg);
+      content = ""
+      console.log("警告: 消息内容为空", msg)
     }
 
-    if (type === 'position') {
+    if (type === "position") {
       try {
-        content = JSON.parse(msg.message);
-        type = 'location';
+        content = JSON.parse(msg.message)
+        type = "location"
       } catch (e) {
-        console.log('解析位置数据失败:', e);
+        console.log("解析位置数据失败:", e)
       }
-    } else if (type === 'image') {
-      content = msg.previewUrl || msg.message;
-    } else if (type === 'text' && msg.message.toLowerCase().endsWith('.txt')) {
-      type = 'file';
-    } else if (type === 'audio' || type === 'voice_message') {
-      content = msg.previewUrl || msg.message;
+    } else if (type === "image") {
+      content = msg.previewUrl || msg.message
+    } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+      type = "file"
+    } else if (type === "audio" || type === "voice_message") {
+      content = msg.previewUrl || msg.message
     }
 
-    const groupInfo = groupStore.state.groupInfo;
-    let avatar = chatInfo.value._selfAvatar;
+    const groupInfo = groupStore.state.groupInfo
+    let avatar = chatInfo.value._selfAvatar
 
     if (groupInfo && groupInfo.groupMembers) {
-      const sender = groupInfo.groupMembers.find(member => member.userId === msg.senderId);
+      const sender = groupInfo.groupMembers.find((member) => member.userId === msg.senderId)
       if (sender) {
-        avatar = sender.avatarUrl;
+        avatar = sender.avatarUrl
       }
     }
 
     const mappedMessage = {
       id: msg.id,
       content: content,
-      userType: userStore.state.id === msg.senderId ? 'self' : 'other',
+      userType: userStore.state.id === msg.senderId ? "self" : "other",
       avatar: avatar,
       timestamp: new Date(msg.sendTime),
       type: type,
-      isRead: msg.groupMessageUserReadVO.some(user => user.userId === chatInfo.value.id && user.isRead),
+      isRead: msg.groupMessageUserReadVO.some((user) => user.userId === chatInfo.value.id && user.isRead),
       messageType: msg.messageType,
       selfDestruct: msg.selfDestruct,
-      senderName: msg.groupMessageUserReadVO.find(user => user.userId === msg.senderId)?.userName || '未知用户'
-    };
+      senderName: msg.groupMessageUserReadVO.find((user) => user.userId === msg.senderId)?.userName || "未知用户",
+    }
 
-    console.log('映射后的群聊消息:', mappedMessage)
-    return mappedMessage;
-  };
+    console.log("映射后的群聊消息:", mappedMessage)
+    return mappedMessage
+  }
 
   const handleFileSelected = async (fileInfo) => {
-    console.log('处理文件选择:', fileInfo)
-    if (!fileInfo || typeof fileInfo !== 'object') {
-      console.log('文件信息无效');
+    console.log("处理文件选择:", fileInfo)
+    if (!fileInfo || typeof fileInfo !== "object") {
+      console.log("文件信息无效")
       uni.showToast({
-        title: '文件信息无效，请重试',
-        icon: 'none'
-      });
-      return;
+        title: "文件信息无效，请重试",
+        icon: "none",
+      })
+      return
     }
 
     if (!fileInfo.path) {
-      console.log('文件路径缺失');
+      console.log("文件路径缺失")
       uni.showToast({
-        title: '文件路径缺失，请重试',
-        icon: 'none'
-      });
-      return;
+        title: "文件路径缺失，请重试",
+        icon: "none",
+      })
+      return
     }
 
     try {
-      console.log('开始发送文件')
+      console.log("开始发送文件")
       const response = await sendFilesToUser({
         files: [fileInfo.path],
-        isGroup: chatInfo.value.type === 'group',
+        isGroup: chatInfo.value.type === "group",
         isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
-        latitude: '0',
-        longitude: '0',
+        latitude: "0",
+        longitude: "0",
         missionId: chatInfo.value.missionId,
         receptionId: chatInfo.value.id,
-        voiceMessage: fileInfo.fromVoiceInput || false
-      });
+        voiceMessage: fileInfo.fromVoiceInput || false,
+      })
 
-      console.log('文件发送响应:', response)
+      console.log("文件发送响应:", response)
 
       if (response.code === 200) {
-        await updateMessageList();
-        console.log('消息列表已更新')
+        await updateMessageList()
+        console.log("消息列表已更新")
         nextTick(() => {
-          scrollToBottom();
-          console.log('滚动到底部')
-        });
+          scrollToBottom()
+          console.log("滚动到底部")
+        })
       } else {
-        throw new Error(response.msg || '发送文件消息失败');
+        throw new Error(response.msg || "发送文件消息失败")
       }
     } catch (error) {
-      console.log('发送文件消息出错:', error);
+      console.log("发送文件消息出错:", error)
       uni.showToast({
-        title: '发送失败，请重试',
-        icon: 'none'
-      });
+        title: "发送失败，请重试",
+        icon: "none",
+      })
     }
-  };
+  }
 
   const handleMessageDeleted = (messageId) => {
-    console.log('处理消息删除:', messageId)
-    const index = list.value.findIndex(msg => msg.id === messageId);
+    console.log("处理消息删除:", messageId)
+    const index = list.value.findIndex((msg) => msg.id === messageId)
     if (index !== -1) {
-      list.value.splice(index, 1);
-      console.log('消息已从列表中删除')
+      list.value.splice(index, 1)
+      console.log("消息已从列表中删除")
     } else {
-      console.log('未找到要删除的消息')
+      console.log("未找到要删除的消息")
     }
-  };
+  }
 
-  console.log('消息处理模块初始化完成');
+  console.log("消息处理模块初始化完成")
 
   return {
     sendMessage,
@@ -403,7 +419,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     loadHistoryMessages,
     updateMessageList,
     handleFileSelected,
-    handleMessageDeleted
-  };
+    handleMessageDeleted,
+  }
 }
 

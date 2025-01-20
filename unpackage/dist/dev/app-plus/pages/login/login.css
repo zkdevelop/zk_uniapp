@@ -1,0 +1,48 @@
+/* 水平间距 */
+/* 水平间距 */
+.layout {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+.icon {
+  width: 50px;
+  height: 50px;
+}
+.iconView {
+  margin-top: 100px;
+}
+.text {
+  margin-top: 10px;
+}
+.text uni-text {
+  font-size: 25px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.clicked_text {
+  color: #4c84ff;
+  cursor: pointer;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+.uni-input {
+  height: 40px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 0 15px;
+  margin-bottom: 10px;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+}
+uni-button {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 16px;
+}
