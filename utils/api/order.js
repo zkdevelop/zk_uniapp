@@ -3,16 +3,26 @@ import request from '/utils/request.js'
  
 // 查询指令
 export const getOrderList = (params) => {
+	// return request({
+	// 	url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
+	// 	method: 'get'
+	// })
 	return request({
-		url: `/instruction/search/order/${params.missionId}/${params.curPage}/${params.pageSize}`,
-		method: 'get'
+		url: `/instruction/search/received/orders`,
+		method: 'get',
+		data:params
 	})
 }
 // 查询告警信息
 export const getWarningList = (params) => {
+	// return request({
+	// 	url: `/instruction/search/warning/${params.missionId}/${params.curPage}/${params.pageSize}`,
+	// 	method: 'get'
+	// })
 	return request({
-		url: `/instruction/search/warning/${params.missionId}/${params.curPage}/${params.pageSize}`,
-		method: 'get'
+		url: `/instruction/search/received/warnings`,
+		method: 'get',
+		data:params
 	})
 }
 

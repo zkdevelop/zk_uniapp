@@ -751,8 +751,6 @@
 		// 	this.$refs.popup.open('bottom')
 		// },
 		mounted() {
-			this.getOrder();
-			this.getWarning();
 			uni.showLoading({
 				title: '正在加载任务',
 				mask: true
@@ -775,6 +773,8 @@
 				this.position.latitude = this.taskItem.latitude;
 				this.position.longitude = this.taskItem.longitude;
 				this.geoJson = this.taskItem.geoJson;
+				this.getOrder();
+				this.getWarning();
 				// console.log(toRaw(this.position),'taskItem');
 				uni.hideLoading()
 			});
@@ -1113,10 +1113,9 @@
 					pageSize: 20
 				}).then(res => {
 					if (res.code === 200) {
-						// console.log(res.data.records)
 						this.task_instructions = res.data.records.map(item => ({
 							src: '../../../static/uni.png',
-							sender_name: item.senderId,
+							sender_name: item.user.name,
 							detail: item.message,
 							isConfirmed: item.isRead
 						}))
@@ -1124,14 +1123,6 @@
 							this.instruct_none = true;
 						} else {
 							this.instruct_none = false;
-						}
-						// 根据用户id查询账号名称
-						for (let order of this.task_instructions) {
-							searchUser(order.sender_name).then(res => {
-								if (res.code === 200) {
-									order.sender_name = res.data.name;
-								}
-							})
 						}
 					}else {
 						this.instruct_none = true;
@@ -1156,25 +1147,26 @@
 					curPage: 1,
 					pageSize: 20
 				}).then(res => {
+					console.log(res.data.records,'res')
 					if (res.code === 200) {
 						const userInfo = uni.getStorageSync('userInfo')
-						// 筛选收到的告警信息
-						this.alert_data = res.data.records.filter(item => item.receiverId === userInfo.id).map(
+						// 收到的告警信息
+						this.alert_data = res.data.records.map(
 							item => ({
 								alert_grade: '严重告警',
 								alert_time: item.sendTime,
-								sender_name: item.senderId,
+								sender_name: item.user.name,
 								alert_content: item.message,
 								isConfirmed: item.isRead
 							}))
-						// 筛选发送的告警信息
-						this.alert_data_mine = res.data.records.filter(item => item.senderId === userInfo.id).map(
-							item => ({
-								alert_grade: '严重告警',
-								alert_time: item.sendTime,
-								sender_name: item.senderId,
-								alert_content: item.message,
-							}))
+						// // 筛选发送的告警信息
+						// this.alert_data_mine = res.data.records.filter(item => item.senderId === userInfo.id).map(
+						// 	item => ({
+						// 		alert_grade: '严重告警',
+						// 		alert_time: item.sendTime,
+						// 		sender_name: item.senderId,
+						// 		alert_content: item.message,
+						// 	}))
 						if(this.alert_data.length === 0){
 							this.alert_none1 = true;
 						} else {
@@ -1184,21 +1176,6 @@
 							this.alert_none2 = true;
 						} else {
 							this.alert_none2 = false;
-						}
-						// 根据用户id查询账号名称
-						for (let order of this.alert_data) {
-							searchUser(order.sender_name).then(res => {
-								if (res.code === 200) {
-									order.sender_name = res.data.name;
-								}
-							})
-						}
-						for (let order of this.alert_data_mine) {
-							searchUser(order.sender_name).then(res => {
-								if (res.code === 200) {
-									order.sender_name = res.data.name;
-								}
-							})
 						}
 					}
 				})
