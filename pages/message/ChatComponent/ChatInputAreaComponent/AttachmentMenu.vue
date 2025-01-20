@@ -1,5 +1,5 @@
 <template>
-  <view class="attach-menu" :class="{ 'active': true }">
+  <view class="attach-menu">
     <view class="attach-row">
       <view 
         v-for="option in attachOptions.slice(0, 4)" 
@@ -58,12 +58,7 @@ export default {
 
 <style scoped>
 .attach-menu {
-  background-color: #F6F6F6;
   padding: 20px 15px;
-}
-
-.attach-menu.active {
-  padding-bottom: 0px;
 }
 
 .attach-row {

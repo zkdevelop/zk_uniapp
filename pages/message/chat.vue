@@ -28,6 +28,7 @@
       @video-call="openVideoPage"
       @file-selected="handleFileSelected"
       @toggle-burn-after-reading="handleBurnAfterReadingToggle"
+      @message-sent="handleMessageSent"
       :recipientId="chatInfo && chatInfo.id || ''"
       :missionId="chatInfo && chatInfo.missionId"
       :initial-burn-after-reading-mode="chatInfo && chatInfo.isBurnAfterReadingMode"
@@ -86,6 +87,7 @@ export default {
     LoadingAnimation
   },
   setup() {
+    // 聊天信息
     const chatInfo = ref({
       id: '',
       name: '',
@@ -95,29 +97,43 @@ export default {
       isBurnAfterReadingMode: false
     })
     
+    // 消息列表
     const list = ref([])
+    // 是否显示附件菜单
     const showAttachMenu = ref(false)
+    // 是否显示滚动到底部按钮
     const showScrollToBottom = ref(false)
+    // 是否显示新消息提示
     const showNewMessageTip = ref(false)
+    // 是否有新消息
     const hasNewMessages = ref(false)
+    // 是否已滚动到底部
     const isScrolledToBottom = ref(true)
+    // 当前消息加载范围
     const currentFrom = ref(0)
     const currentTo = ref(10)
+    // 是否还有更多消息
     const hasMoreMessages = ref(true) 
+    // 是否正在加载
     const isLoading = ref(false)
     
+    // 存储
     const peerStore = usePeerStore()
     const friendStore = useFriendStore()
     const userStore = useUserStore()
     
+    // 是否为阅后即焚模式
     const isBurnAfterReadingMode = ref(false)
+    // 消息列表引用
     const messageListRef = ref(null)
 
+    // 使用聊天初始化相关功能
     const {
       goBack,
       setupChatInfo
     } = useChatInitialization()
 
+    // 使用消息处理相关功能
     const {
       sendMessage,
       handleMessageFailed,
@@ -127,6 +143,7 @@ export default {
       handleMessageDeleted
     } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, () => scrollToBottom())
 
+    // 使用UI交互相关功能
     const {
       handleAttachment,
       toggleAttachMenu,
@@ -149,16 +166,19 @@ export default {
       hasMoreMessages
     })
 
+    // 使用视频通话处理相关功能
     const {
       openVideoPage,
       acceptVideoCall,
       rejectVideoCall
     } = useVideoCallHandling()
 
+    // 使用自毁消息处理相关功能
     const {
       handleSelfDestructMessage
     } = useSelfDestructMessageHandling()
 
+    // 使用聊天数据管理相关功能
     const {
       loadCachedData,
       saveCachedData,
@@ -168,9 +188,12 @@ export default {
       cleanupWebSocketListener
     } = useChatDataManagement(chatInfo, list)
 
+    // 是否正在初始加载
     const isInitialLoading = ref(true)
+    // 是否有缓存的消息
     const hasCachedMessages = ref(false)
 
+    // 初始化聊天
     const initializeChat = async () => {
       console.log('开始初始化聊天');
       if (chatInfo.value && chatInfo.value.id) {
@@ -228,11 +251,13 @@ export default {
       }
     };
 
+    // 处理阅后即焚模式切换
     const handleBurnAfterReadingToggle = (isActive) => {
       chatInfo.value.isBurnAfterReadingMode = isActive
       console.log('阅后即焚模式切换:', isActive)
     }
 
+    // 监听聊天信息变化
     watch(chatInfo, async (newChatInfo) => {
       console.log('聊天信息变化:', newChatInfo)
       if (newChatInfo && newChatInfo.id) {
@@ -311,7 +336,7 @@ export default {
       cleanupWebSocketListener()
     })
 
-    // 新增：处理消息列表点击
+    // 处理消息列表点击
     const handleMessageListClick = (event) => {
       console.log('消息列表被点击');
       if (showAttachMenu.value) {
@@ -319,6 +344,16 @@ export default {
         showAttachMenu.value = false;
       }
     }
+
+    // 处理消息发送完成
+    const handleMessageSent = () => {
+      console.log('消息已发送，准备滚动到底部');
+      nextTick(() => {
+        if (messageListRef.value) {
+          messageListRef.value.scrollToBottom(true);
+        }
+      });
+    };
 
     return {
       chatInfo,
@@ -363,6 +398,7 @@ export default {
       isInitialLoading,
       hasCachedMessages,
       handleMessageListClick,
+      handleMessageSent,
     }
   }
 }

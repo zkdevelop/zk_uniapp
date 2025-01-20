@@ -51,26 +51,38 @@ export default {
   },
   data() {
     return {
-      showLoadMore: false, // 控制是否显示"加载更多"按钮
-      internalScrollTop: 0, // 内部管理的滚动位置
-      scrollViewHeight: 0, // 滚动视图的高度
-      lastContentHeight: 0 // 上一次内容的高度
+      showLoadMore: false,
+      internalScrollTop: 0,
+      scrollViewHeight: 0,
+      lastContentHeight: 0,
+      isScrolling: false // 新增：标记是否正在滚动
     }
   },
   watch: {
     messages: {
       handler(newMessages, oldMessages) {
-        this.$nextTick(() => {
-          const newContentHeight = this.getContentHeight();
-          if (newMessages.length > oldMessages.length) {
+        console.log('消息列表变化:', {
+          新消息数量: newMessages.length,
+          旧消息数量: oldMessages?.length || 0
+        });
+
+        this.$nextTick(async () => {
+          const newContentHeight = await this.getContentHeight();
+          console.log('新内容高度:', newContentHeight);
+
+          if (!oldMessages || newMessages.length > oldMessages.length) {
             // 新消息被添加
-            if (newMessages.length - oldMessages.length === 1 && newMessages[newMessages.length - 1].userType === 'self') {
-              // 如果是用户发送的新消息，滚动到底部
-              this.scrollToBottom();
+            if (!oldMessages || (newMessages.length - oldMessages.length === 1 && 
+                newMessages[newMessages.length - 1].userType === 'self')) {
+              console.log('检测到新发送的消息，滚动到底部');
+              this.scrollToBottom(true); // 强制滚动
             } else {
               // 如果是加载更多消息，保持滚动位置
               const heightDifference = newContentHeight - this.lastContentHeight;
-              this.internalScrollTop += heightDifference;
+              console.log('加载更多消息，保持位置。高度差:', heightDifference);
+              if (heightDifference > 0) {
+                this.setScrollTop(this.internalScrollTop + heightDifference);
+              }
             }
           }
           this.lastContentHeight = newContentHeight;
@@ -80,53 +92,76 @@ export default {
     }
   },
   mounted() {
-    // 组件挂载后初始化滚动视图高度和内容高度
+    console.log('MessageList组件挂载');
     this.initScrollViewHeight();
-    this.lastContentHeight = this.getContentHeight();
+    this.getContentHeight().then(height => {
+      this.lastContentHeight = height;
+      console.log('初始内容高度:', height);
+      this.$nextTick(() => {
+        this.scrollToBottom(true);
+      });
+    });
   },
   methods: {
-    // 初始化滚动视图高度
     initScrollViewHeight() {
       const query = uni.createSelectorQuery().in(this);
       query.select('.message-list-container').boundingClientRect(data => {
         if (data) {
           this.scrollViewHeight = data.height;
-          console.log('滚动视图高度:', this.scrollViewHeight);
+          console.log('滚动视图高度初始化:', this.scrollViewHeight);
         }
       }).exec();
     },
-    // 获取内容高度
-    getContentHeight() {
-      const query = uni.createSelectorQuery().in(this);
+    async getContentHeight() {
       return new Promise((resolve) => {
+        const query = uni.createSelectorQuery().in(this);
         query.select('.message-list-content').boundingClientRect(data => {
           if (data) {
-            console.log('内容高度:', data.height);
+            console.log('获取内容高度:', data.height);
             resolve(data.height);
           } else {
+            console.log('无法获取内容高度');
             resolve(0);
           }
         }).exec();
       });
     },
-    // 处理滚动事件
     onScroll(event) {
+      if (this.isScrolling) return;
+      
       const { scrollTop, scrollHeight } = event.detail;
-      this.showLoadMore = scrollTop < 50; // 当滚动到顶部附近时显示加载更多按钮
-      this.$emit('scroll', event); // 将滚动事件传递给父组件
+      console.log('滚动事件:', { scrollTop, scrollHeight });
+      
+      this.showLoadMore = scrollTop < 50;
+      this.$emit('scroll', event);
     },
-    // 处理加载更多按钮点击事件
     handleLoadMore() {
-      this.$emit('load-more'); // 触发加载更多事件，由父组件处理
+      console.log('触发加载更多');
+      this.$emit('load-more');
     },
-    // 滚动到底部
-    scrollToBottom() {
-      this.$nextTick(async () => {
+    async scrollToBottom(force = false) {
+      console.log('尝试滚动到底部, force:', force);
+      if (this.isScrolling && !force) {
+        console.log('已在滚动中，跳过');
+        return;
+      }
+
+      this.isScrolling = true;
+      try {
         const contentHeight = await this.getContentHeight();
-        this.internalScrollTop = contentHeight - this.scrollViewHeight;
-      });
+        console.log('滚动到底部，内容高度:', contentHeight);
+        const scrollTop = Math.max(0, contentHeight - this.scrollViewHeight);
+        this.setScrollTop(scrollTop);
+        
+        // 确保滚动完成
+        await new Promise(resolve => setTimeout(resolve, 100));
+        this.setScrollTop(scrollTop); // 再次设置以确保滚动到位
+      } finally {
+        setTimeout(() => {
+          this.isScrolling = false;
+        }, 200);
+      }
     },
-    // 设置滚动位置
     setScrollTop(value) {
       console.log('设置滚动位置:', value);
       this.internalScrollTop = value;
@@ -156,6 +191,5 @@ export default {
   padding: 20rpx 0;
   background: transparent;
 }
-
 </style>
 

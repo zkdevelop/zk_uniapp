@@ -292,7 +292,7 @@ export default {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: transform 0.15s ease-out;
+  /* transition: transform 0.2s ease-out; */
 }
 
 .slide-up-enter-from,
