@@ -16834,6 +16834,7 @@ ${i3}
     },
     emits: ["view-burn-after-reading", "message-deleted"],
     setup(props, { emit }) {
+      const userStore = useUserStore();
       const formatTime2 = (timestamp) => {
         if (!timestamp)
           return "Invalid Date";
@@ -16850,10 +16851,17 @@ ${i3}
       const handleMessageDeleted = (messageId) => {
         emit("message-deleted", messageId);
       };
+      vue.onMounted(() => {
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:116", "Message component mounted");
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:117", "Message avatar:", props.message.avatar);
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:118", "User avatar from store:", userStore.state.avatar);
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:119", "Message user type:", props.message.userType);
+      });
       return {
         formatTime: formatTime2,
         viewBurnAfterReading,
-        handleMessageDeleted
+        handleMessageDeleted,
+        userStore
       };
     }
   };
@@ -16884,9 +16892,14 @@ ${i3}
             class: vue.normalizeClass(["message-content", { "self-message": $props.message.userType === "self" }])
           },
           [
+            vue.createTextVNode(
+              vue.toDisplayString($setup.userStore.state.avatar) + " ",
+              1
+              /* TEXT */
+            ),
             vue.createElementVNode("view", { class: "avatar-container" }, [
               vue.createElementVNode("image", {
-                src: $props.message.avatar || "/static/message/默认头像.png",
+                src: $props.message.userType === "self" ? $props.message.avatar || $setup.userStore.state.avatar || "/static/message/默认头像.png" : $props.message.avatar || "/static/message/默认头像.png",
                 class: "avatar",
                 mode: "aspectFill"
               }, null, 8, ["src"]),
@@ -24873,23 +24886,19 @@ ${i3}
       SendButton
     },
     props: {
-      // 控制附件菜单显示状态
       modelValue: {
         type: Boolean,
         default: false
       },
-      // 接收者ID
       recipientId: {
         type: String,
         required: true
       },
-      // 任务ID
       missionId: {
         type: String,
         required: true,
         default: ""
       },
-      // 初始阅后即焚模式状态
       initialBurnAfterReadingMode: {
         type: Boolean,
         default: false
@@ -24897,15 +24906,16 @@ ${i3}
     },
     emits: ["send-message", "update:modelValue", "attach", "video-call", "file-selected", "toggle-burn-after-reading"],
     setup(props, { emit }) {
+      formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:115", "ChatInputArea setup function called");
       const newMessage = vue.ref("");
       const showLocationSharing = vue.ref(false);
       const isVoiceInputActive = vue.ref(false);
       const isBurnAfterReadingMode = vue.ref(props.initialBurnAfterReadingMode);
       const handleVoiceFileSelected = (fileInfo) => {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:130", "语音输入回调被触发，完整的文件信息:", JSON.stringify(fileInfo));
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:123", "语音输入回调被触发，完整的文件信息:", JSON.stringify(fileInfo));
         if (fileInfo && typeof fileInfo === "object" && fileInfo.fromVoiceInput) {
           if (!fileInfo.path) {
-            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:134", "语音文件路径缺失:", fileInfo);
+            formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:127", "语音文件路径缺失:", fileInfo);
             uni.showToast({
               title: "语音文件保存失败，请重试",
               icon: "none"
@@ -24914,7 +24924,7 @@ ${i3}
           }
           emit("file-selected", fileInfo);
         } else {
-          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:144", "无效的文件信息:", fileInfo);
+          formatAppLog("error", "at pages/message/ChatComponent/ChatInputArea.vue:137", "无效的文件信息:", fileInfo);
         }
       };
       const {
@@ -24937,20 +24947,21 @@ ${i3}
       } = useAttachmentHandling(emit, props);
       const { sendMessage: sendMessageHandler } = useMessageSending(newMessage, emit, props);
       const sendMessage = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:175", "发送消息");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:164", "发送消息");
         sendMessageHandler();
         emit("update:modelValue", false);
       };
       const toggleVoiceInput = () => {
         isVoiceInputActive.value = !isVoiceInputActive.value;
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:171", "切换语音输入状态:", isVoiceInputActive.value);
         emit("update:modelValue", false);
       };
       const toggleAttachMenu = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:190", "切换附件菜单状态:", !props.modelValue);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:176", "切换附件菜单状态:", !props.modelValue);
         emit("update:modelValue", !props.modelValue);
       };
       const closeAttachMenu = () => {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:196", "关闭附件菜单");
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:181", "关闭附件菜单");
         emit("update:modelValue", false);
       };
       vue.watch(() => props.recipientId, (newVal) => {
@@ -24966,11 +24977,14 @@ ${i3}
         emit("toggle-burn-after-reading", newVal);
       });
       vue.watch(isBurnAfterReadingMode, (newVal) => {
-        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:220", "阅后即焚模式状态变化:", newVal);
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:201", "阅后即焚模式状态变化:", newVal);
         emit("toggle-burn-after-reading", newVal);
       });
       vue.watch(() => props.initialBurnAfterReadingMode, (newVal) => {
         isBurnAfterReadingMode.value = newVal;
+      });
+      vue.watch(() => props.modelValue, (newValue) => {
+        formatAppLog("log", "at pages/message/ChatComponent/ChatInputArea.vue:210", "附件菜单状态变化:", newValue);
       });
       return {
         newMessage,
@@ -26129,7 +26143,6 @@ ${i3}
       } = useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, () => scrollToBottom());
       const {
         handleAttachment,
-        toggleAttachMenu,
         handleOverlayClick,
         scrollToBottom,
         onScroll,
@@ -26167,68 +26180,68 @@ ${i3}
       const isInitialLoading = vue.ref(true);
       const hasCachedMessages = vue.ref(false);
       const initializeChat = async () => {
-        formatAppLog("log", "at pages/message/chat.vue:198", "开始初始化聊天");
+        formatAppLog("log", "at pages/message/chat.vue:197", "开始初始化聊天");
         if (chatInfo.value && chatInfo.value.id) {
           isInitialLoading.value = true;
-          formatAppLog("log", "at pages/message/chat.vue:201", "尝试加载缓存数据");
+          formatAppLog("log", "at pages/message/chat.vue:200", "尝试加载缓存数据");
           const cachedData = await loadCachedData();
           if (cachedData) {
-            formatAppLog("log", "at pages/message/chat.vue:205", "找到缓存数据，长度:", cachedData.length);
+            formatAppLog("log", "at pages/message/chat.vue:204", "找到缓存数据，长度:", cachedData.length);
             hasCachedMessages.value = true;
             list.value = cachedData;
             vue.nextTick(() => {
               scrollToBottom();
-              formatAppLog("log", "at pages/message/chat.vue:210", "使用缓存数据后滚动到底部");
+              formatAppLog("log", "at pages/message/chat.vue:209", "使用缓存数据后滚动到底部");
             });
           } else {
-            formatAppLog("log", "at pages/message/chat.vue:213", "没有找到缓存数据");
+            formatAppLog("log", "at pages/message/chat.vue:212", "没有找到缓存数据");
             hasCachedMessages.value = false;
           }
           if (chatInfo.value.type === "group") {
-            formatAppLog("log", "at pages/message/chat.vue:218", "获取群基本信息");
+            formatAppLog("log", "at pages/message/chat.vue:217", "获取群基本信息");
             await loadAndCacheGroupMembers(chatInfo.value.id);
           }
-          formatAppLog("log", "at pages/message/chat.vue:222", "开始获取最新消息");
+          formatAppLog("log", "at pages/message/chat.vue:221", "开始获取最新消息");
           try {
             const newMessages = await fetchAndUpdateData();
             if (newMessages) {
               list.value = newMessages;
               vue.nextTick(() => {
                 scrollToBottom();
-                formatAppLog("log", "at pages/message/chat.vue:229", "加载新消息后滚动到底部");
+                formatAppLog("log", "at pages/message/chat.vue:228", "加载新消息后滚动到底部");
               });
             }
           } catch (error) {
-            formatAppLog("log", "at pages/message/chat.vue:233", "获取最新消息失败:", error);
+            formatAppLog("log", "at pages/message/chat.vue:232", "获取最新消息失败:", error);
             uni.showToast({
               title: "加载消息失败，请重试",
               icon: "none"
             });
           }
           isInitialLoading.value = false;
-          formatAppLog("log", "at pages/message/chat.vue:241", "初始加载完成，isInitialLoading 设置为 false");
-          formatAppLog("log", "at pages/message/chat.vue:243", "聊天初始化完成:", {
+          formatAppLog("log", "at pages/message/chat.vue:240", "初始加载完成，isInitialLoading 设置为 false");
+          formatAppLog("log", "at pages/message/chat.vue:242", "聊天初始化完成:", {
             缓存数据: !!cachedData,
             缓存数据长度: cachedData ? cachedData.length : 0,
             历史消息长度: list.value.length
           });
         } else {
-          formatAppLog("log", "at pages/message/chat.vue:249", "聊天信息无效，无法初始化");
+          formatAppLog("log", "at pages/message/chat.vue:248", "聊天信息无效，无法初始化");
           isInitialLoading.value = false;
         }
       };
       const handleBurnAfterReadingToggle = (isActive) => {
         chatInfo.value.isBurnAfterReadingMode = isActive;
-        formatAppLog("log", "at pages/message/chat.vue:257", "阅后即焚模式切换:", isActive);
+        formatAppLog("log", "at pages/message/chat.vue:256", "阅后即焚模式切换:", isActive);
       };
       vue.watch(chatInfo, async (newChatInfo) => {
-        formatAppLog("log", "at pages/message/chat.vue:262", "聊天信息变化:", newChatInfo);
+        formatAppLog("log", "at pages/message/chat.vue:261", "聊天信息变化:", newChatInfo);
         if (newChatInfo && newChatInfo.id) {
           await initializeChat();
         }
       }, { deep: true, immediate: true });
       vue.onMounted(() => {
-        formatAppLog("log", "at pages/message/chat.vue:269", "聊天组件挂载");
+        formatAppLog("log", "at pages/message/chat.vue:268", "聊天组件挂载");
         const pages2 = getCurrentPages();
         const currentPage = pages2[pages2.length - 1];
         let eventChannel;
@@ -26242,47 +26255,47 @@ ${i3}
           eventChannel = enterOptions.eventChannel;
         }
         const initializeChatFromData = (data) => {
-          formatAppLog("log", "at pages/message/chat.vue:286", "初始化聊天数据:", data);
+          formatAppLog("log", "at pages/message/chat.vue:285", "初始化聊天数据:", data);
           if (data && data.chatInfo) {
             chatInfo.value = {
               ...chatInfo.value,
               ...data.chatInfo
             };
-            formatAppLog("log", "at pages/message/chat.vue:292", "使用接收到的聊天信息初始化聊天");
+            formatAppLog("log", "at pages/message/chat.vue:291", "使用接收到的聊天信息初始化聊天");
             initializeChat();
           } else {
-            formatAppLog("log", "at pages/message/chat.vue:295", "接收到的聊天信息无效");
+            formatAppLog("log", "at pages/message/chat.vue:294", "接收到的聊天信息无效");
             isInitialLoading.value = false;
             uni.showToast({
               title: "无法加载聊天信息",
               icon: "none"
             });
             setTimeout(() => {
-              formatAppLog("log", "at pages/message/chat.vue:302", "无法加载聊天信息，返回上一页");
+              formatAppLog("log", "at pages/message/chat.vue:301", "无法加载聊天信息，返回上一页");
               uni.navigateBack();
             }, 2e3);
           }
         };
         if (eventChannel) {
-          formatAppLog("log", "at pages/message/chat.vue:309", "找到事件通道，设置聊天信息");
+          formatAppLog("log", "at pages/message/chat.vue:308", "找到事件通道，设置聊天信息");
           eventChannel.on("chatInfo", initializeChatFromData);
         } else if (query) {
-          formatAppLog("log", "at pages/message/chat.vue:312", "从存储中找到聊天信息");
+          formatAppLog("log", "at pages/message/chat.vue:311", "从存储中找到聊天信息");
           const parsedQuery = JSON.parse(query);
           initializeChatFromData({ chatInfo: parsedQuery });
         } else {
-          formatAppLog("log", "at pages/message/chat.vue:316", "无法加载聊天信息");
+          formatAppLog("log", "at pages/message/chat.vue:315", "无法加载聊天信息");
           isInitialLoading.value = false;
           uni.showToast({
             title: "无法加载聊天信息",
             icon: "none"
           });
           setTimeout(() => {
-            formatAppLog("log", "at pages/message/chat.vue:323", "无法加载聊天信息，返回上一页");
+            formatAppLog("log", "at pages/message/chat.vue:322", "无法加载聊天信息，返回上一页");
             uni.navigateBack();
           }, 2e3);
         }
-        formatAppLog("log", "at pages/message/chat.vue:327", "聊天组件挂载完成:", {
+        formatAppLog("log", "at pages/message/chat.vue:326", "聊天组件挂载完成:", {
           有事件通道: !!eventChannel,
           存储中有聊天信息: !!query
         });
@@ -26292,19 +26305,36 @@ ${i3}
         cleanupWebSocketListener();
       });
       const handleMessageListClick = (event) => {
-        formatAppLog("log", "at pages/message/chat.vue:341", "消息列表被点击");
-        if (showAttachMenu.value) {
-          formatAppLog("log", "at pages/message/chat.vue:343", "关闭附件菜单");
+        formatAppLog("log", "at pages/message/chat.vue:340", "消息列表被点击");
+        event.stopPropagation();
+        showAttachMenu.value = false;
+      };
+      const handlePageClick = (event) => {
+        formatAppLog("log", "at pages/message/chat.vue:347", "页面被点击", event.target);
+        const isClickedOnChatInput = (target) => {
+          if (!target)
+            return false;
+          if (target.className && typeof target.className === "string" && target.className.includes("chat-input-wrapper")) {
+            return true;
+          }
+          return isClickedOnChatInput(target.parentElement);
+        };
+        if (!isClickedOnChatInput(event.target)) {
+          formatAppLog("log", "at pages/message/chat.vue:359", "点击了聊天输入区域以外的地方，关闭附件菜单");
           showAttachMenu.value = false;
         }
       };
       const handleMessageSent = () => {
-        formatAppLog("log", "at pages/message/chat.vue:350", "消息已发送，准备滚动到底部");
+        formatAppLog("log", "at pages/message/chat.vue:366", "消息已发送，准备滚动到底部");
         vue.nextTick(() => {
           if (messageListRef.value) {
             messageListRef.value.scrollToBottom(true);
           }
         });
+      };
+      const toggleAttachMenu = (value) => {
+        formatAppLog("log", "at pages/message/chat.vue:375", "切换附件菜单状态:", value);
+        showAttachMenu.value = value;
       };
       return {
         chatInfo,
@@ -26329,7 +26359,6 @@ ${i3}
         updateMessageList,
         handleFileSelected,
         handleAttachment,
-        toggleAttachMenu,
         handleOverlayClick,
         scrollToBottom,
         onScroll,
@@ -26349,7 +26378,9 @@ ${i3}
         isInitialLoading,
         hasCachedMessages,
         handleMessageListClick,
-        handleMessageSent
+        handleMessageSent,
+        handlePageClick,
+        toggleAttachMenu
       };
     }
   };
@@ -26360,13 +26391,16 @@ ${i3}
     const _component_LoadingAnimation = vue.resolveComponent("LoadingAnimation");
     const _component_ChatInputArea = vue.resolveComponent("ChatInputArea");
     const _component_ScrollToBottomButton = vue.resolveComponent("ScrollToBottomButton");
-    return vue.openBlock(), vue.createElementBlock("view", { class: "chat-page" }, [
+    return vue.openBlock(), vue.createElementBlock("view", {
+      class: "chat-page",
+      onClick: _cache[4] || (_cache[4] = (...args) => $setup.handlePageClick && $setup.handlePageClick(...args))
+    }, [
       vue.createCommentVNode(" 聊天头部 "),
       vue.createVNode(_component_ChatHeader, {
         "chat-info": $setup.chatInfo,
         onGoBack: $setup.goBack
       }, null, 8, ["chat-info", "onGoBack"]),
-      vue.createCommentVNode(" 消息列表 - 添加点击处理 "),
+      vue.createCommentVNode(" 消息列表 "),
       !$setup.isInitialLoading || $setup.hasCachedMessages ? (vue.openBlock(), vue.createBlock(_component_MessageList, {
         key: 0,
         ref: "messageListRef",
@@ -26391,9 +26425,9 @@ ${i3}
         onFileSelected: $setup.handleFileSelected,
         onToggleBurnAfterReading: $setup.handleBurnAfterReadingToggle,
         onMessageSent: $setup.handleMessageSent,
-        recipientId: $setup.chatInfo && $setup.chatInfo.id || "",
-        missionId: $setup.chatInfo && $setup.chatInfo.missionId,
-        "initial-burn-after-reading-mode": $setup.chatInfo && $setup.chatInfo.isBurnAfterReadingMode,
+        recipientId: $setup.chatInfo.id,
+        missionId: $setup.chatInfo.missionId,
+        "initial-burn-after-reading-mode": $setup.chatInfo.isBurnAfterReadingMode,
         ref: "chatInputAreaRef"
       }, null, 8, ["modelValue", "onSendMessage", "onMessageFailed", "onAttach", "onVideoCall", "onFileSelected", "onToggleBurnAfterReading", "onMessageSent", "recipientId", "missionId", "initial-burn-after-reading-mode"]),
       vue.createCommentVNode(" 滚动到底部按钮 "),
@@ -26806,30 +26840,35 @@ ${i3}
         online: false,
         missionId: ""
       });
-      const missionId = vue.computed(() => {
-        return Array.isArray(userStore.state.missionId) ? userStore.state.missionId.join(",") : userStore.state.missionId || "";
-      });
       vue.onMounted(() => {
         const pages2 = getCurrentPages();
         const currentPage = pages2[pages2.length - 1];
-        const { user } = currentPage.$page.options;
+        const options = currentPage.$page ? currentPage.$page.options : currentPage.options;
+        const { user, missionId: pageMissionId } = options;
         if (user) {
-          const decodedUser = JSON.parse(decodeURIComponent(user));
-          contact.value = {
-            ...decodedUser,
-            missionId: missionId.value
-          };
+          try {
+            const decodedUser = JSON.parse(decodeURIComponent(user));
+            contact.value = {
+              ...decodedUser,
+              missionId: pageMissionId || userStore.state.missionId[0]
+            };
+            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:54", "联系人详情:", contact.value);
+          } catch (error) {
+            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:56", "解析用户数据失败:", error);
+          }
+        } else {
+          formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:59", "未接收到用户数据");
         }
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:61", "联系人详情页面已加载");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:62", "联系人详情页面已加载");
       });
       const handleMessage = () => {
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:66", "正在跳转到聊天界面");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:67", "正在跳转到聊天界面");
         const chatInfo = {
           id: contact.value.id,
           name: contact.value.name,
           avatar: contact.value.avatarUrl,
           type: "single",
-          missionId: contact.value.missionId || missionId.value,
+          missionId: contact.value.missionId,
           isBurnAfterReadingMode: false
         };
         uni.navigateTo({
@@ -26837,24 +26876,24 @@ ${i3}
           success: (res) => {
             if (res.eventChannel && res.eventChannel.emit) {
               res.eventChannel.emit("chatInfo", { chatInfo });
-              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:81", "通过 eventChannel 发送 chatInfo");
+              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:82", "通过 eventChannel 发送 chatInfo");
             } else {
-              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:83", "eventChannel 不可用，将使用本地存储的数据");
+              formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:84", "eventChannel 不可用，将使用本地存储的数据");
               uni.setStorageSync("chatQuery", JSON.stringify(chatInfo));
             }
           },
           fail: (error) => {
-            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:88", "跳转到聊天界面失败:", error);
+            formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:89", "跳转到聊天界面失败:", error);
           }
         });
       };
       const handleClearHistory = () => {
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:95", "正在处理清除历史");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:96", "正在处理清除历史");
       };
       const handleDelete = () => {
-        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:101", "正在处理删除联系人");
+        formatAppLog("log", "at pages/contacts/components/ContactDetail/ContactDetailView.vue:102", "正在处理删除联系人");
       };
-      const __returned__ = { userStore, contact, missionId, handleMessage, handleClearHistory, handleDelete, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, ContactInfo, get useUserStore() {
+      const __returned__ = { userStore, contact, handleMessage, handleClearHistory, handleDelete, ref: vue.ref, onMounted: vue.onMounted, ContactInfo, get useUserStore() {
         return useUserStore;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -27048,41 +27087,16 @@ ${i3}
       handleContainerClick
     };
   }
-  /*!
-    * vue-router v4.3.0
-    * (c) 2024 Eduardo San Martin Morote
-    * @license MIT
-    */
-  var NavigationType;
-  (function(NavigationType2) {
-    NavigationType2["pop"] = "pop";
-    NavigationType2["push"] = "push";
-  })(NavigationType || (NavigationType = {}));
-  var NavigationDirection;
-  (function(NavigationDirection2) {
-    NavigationDirection2["back"] = "back";
-    NavigationDirection2["forward"] = "forward";
-    NavigationDirection2["unknown"] = "";
-  })(NavigationDirection || (NavigationDirection = {}));
-  var NavigationFailureType;
-  (function(NavigationFailureType2) {
-    NavigationFailureType2[NavigationFailureType2["aborted"] = 4] = "aborted";
-    NavigationFailureType2[NavigationFailureType2["cancelled"] = 8] = "cancelled";
-    NavigationFailureType2[NavigationFailureType2["duplicated"] = 16] = "duplicated";
-  })(NavigationFailureType || (NavigationFailureType = {}));
-  const routerKey = Symbol("router");
-  function useRouter$1() {
-    return vue.inject(routerKey);
-  }
   function useContactNavigation() {
-    const router = useRouter$1();
     useUserStore();
     const handleSearch = () => {
-      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:9", "搜索按钮被点击");
+      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:7", "搜索按钮被点击");
     };
     const handleGroupChat = () => {
-      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:13", "发起群聊被点击");
-      router.push("/pages/contacts/pages/contacts/create-group-chat/index");
+      formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:11", "发起群聊被点击");
+      uni.navigateTo({
+        url: "/pages/contacts/pages/contacts/create-group-chat/index"
+      });
     };
     const handleAddFriend = () => {
       formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:18", "添加朋友被点击");
@@ -27109,14 +27123,19 @@ ${i3}
           }
         },
         fail: (err) => {
-          formatAppLog("error", "at pages/contacts/composables/useContactNavigation.js:44", "导航到聊天页面失败:", err);
+          formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:44", "导航到聊天页面失败:", err);
         }
       });
     };
     const selectUser = (user, missionId) => {
       formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:50", "选择用户:", user);
       const userString = encodeURIComponent(JSON.stringify(user));
-      router.push(`/pages/contacts/components/ContactDetail/ContactDetailView?user=${userString}&missionId=${missionId}`);
+      uni.navigateTo({
+        url: `/pages/contacts/components/ContactDetail/ContactDetailView?user=${userString}&missionId=${missionId}`,
+        fail: (error) => {
+          formatAppLog("log", "at pages/contacts/composables/useContactNavigation.js:55", "导航到联系人详情页面失败:", error);
+        }
+      });
     };
     return {
       handleSearch,

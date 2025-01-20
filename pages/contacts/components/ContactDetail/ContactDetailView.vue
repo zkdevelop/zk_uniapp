@@ -19,11 +19,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import ContactInfo from './ContactInfo.vue';
-import { useUserStore } from '@/store/userStore';
+import { ref, onMounted } from 'vue'
+import ContactInfo from './ContactInfo.vue'
+import { useUserStore } from '@/store/userStore'
 
-const userStore = useUserStore();
+const userStore = useUserStore()
 
 // 定义联系人数据结构
 const contact = ref({
@@ -33,74 +33,75 @@ const contact = ref({
   departmentName: '',
   online: false,
   missionId: '',
-});
-
-// 计算 missionId
-const missionId = computed(() => {
-  return Array.isArray(userStore.state.missionId) 
-    ? userStore.state.missionId.join(',') 
-    : (userStore.state.missionId || '');
-});
+})
 
 // 组件挂载时的处理函数
 onMounted(() => {
   // 获取页面参数
-  const pages = getCurrentPages();
-  const currentPage = pages[pages.length - 1];
-  const { user } = currentPage.$page.options;
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const options = currentPage.$page ? currentPage.$page.options : currentPage.options
+  const { user, missionId: pageMissionId } = options
 
   // 解析传递的用户数据
   if (user) {
-    const decodedUser = JSON.parse(decodeURIComponent(user));
-    contact.value = {
-      ...decodedUser,
-      missionId: missionId.value
-    };
+    try {
+      const decodedUser = JSON.parse(decodeURIComponent(user))
+      contact.value = {
+        ...decodedUser,
+        missionId: pageMissionId || userStore.state.missionId[0]
+      }
+      console.log('联系人详情:', contact.value)
+    } catch (error) {
+      console.log('解析用户数据失败:', error)
+    }
+  } else {
+    console.log('未接收到用户数据')
   }
 
-  console.log('联系人详情页面已加载');
-});
+  console.log('联系人详情页面已加载')
+})
 
 // 处理发送消息
 const handleMessage = () => {
-  console.log('正在跳转到聊天界面');
+  console.log('正在跳转到聊天界面')
   const chatInfo = {
     id: contact.value.id,
     name: contact.value.name,
     avatar: contact.value.avatarUrl,
     type: 'single',
-    missionId: contact.value.missionId || missionId.value,
+    missionId: contact.value.missionId,
     isBurnAfterReadingMode: false
-  };
+  }
 
   uni.navigateTo({
     url: '/pages/message/chat',
     success: (res) => {
       if (res.eventChannel && res.eventChannel.emit) {
-        res.eventChannel.emit('chatInfo', { chatInfo });
-        console.log('通过 eventChannel 发送 chatInfo');
+        res.eventChannel.emit('chatInfo', { chatInfo })
+        console.log('通过 eventChannel 发送 chatInfo')
       } else {
-        console.log('eventChannel 不可用，将使用本地存储的数据');
-        uni.setStorageSync('chatQuery', JSON.stringify(chatInfo));
+        console.log('eventChannel 不可用，将使用本地存储的数据')
+        uni.setStorageSync('chatQuery', JSON.stringify(chatInfo))
       }
     },
     fail: (error) => {
-      console.log('跳转到聊天界面失败:', error);
+      console.log('跳转到聊天界面失败:', error)
     }
-  });
-};
+  })
+}
 
 // 处理清除历史
 const handleClearHistory = () => {
-  console.log('正在处理清除历史');
+  console.log('正在处理清除历史')
   // 这里添加处理清除历史的逻辑
-};
+}
 
 // 处理删除联系人
 const handleDelete = () => {
-  console.log('正在处理删除联系人');
+  console.log('正在处理删除联系人')
   // 这里添加处理删除联系人的逻辑
-};
+}
 </script>
 
 <style scoped>

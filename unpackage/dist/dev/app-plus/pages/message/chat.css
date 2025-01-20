@@ -385,9 +385,9 @@
 }
 .message.self .message-content[data-v-1cea873d] {
   flex-direction: row-reverse;
-  align-items: center;
+  justify-content: flex-start;
 }
-.message.self .avatar[data-v-1cea873d] {
+.message.self .avatar-container[data-v-1cea873d] {
   margin-right: 0;
   margin-left: 0.625rem;
 }
@@ -783,7 +783,7 @@
 }
 .slide-up-enter-active[data-v-e8a570ad],
 .slide-up-leave-active[data-v-e8a570ad] {
-  /* transition: transform 0.2s ease-out; */
+  transition: transform 0.2s ease-out;
 }
 .slide-up-enter-from[data-v-e8a570ad],
 .slide-up-leave-to[data-v-e8a570ad] {
