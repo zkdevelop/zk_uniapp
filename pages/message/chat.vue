@@ -1,9 +1,9 @@
 <template>
-  <view class="chat-page">
+  <view class="chat-page" @click="handlePageClick">
     <!-- 聊天头部 -->
     <ChatHeader :chat-info="chatInfo" @go-back="goBack" />
 
-    <!-- 消息列表 - 添加点击处理 -->
+    <!-- 消息列表 -->
     <MessageList
       v-if="!isInitialLoading || hasCachedMessages"
       ref="messageListRef"
@@ -21,7 +21,7 @@
 
     <!-- 聊天输入区域 -->
     <ChatInputArea 
-      v-model="showAttachMenu"
+      v-model:modelValue="showAttachMenu"
       @send-message="sendMessage"
       @message-failed="handleMessageFailed"
       @attach="handleAttachment"
@@ -29,9 +29,9 @@
       @file-selected="handleFileSelected"
       @toggle-burn-after-reading="handleBurnAfterReadingToggle"
       @message-sent="handleMessageSent"
-      :recipientId="chatInfo && chatInfo.id || ''"
-      :missionId="chatInfo && chatInfo.missionId"
-      :initial-burn-after-reading-mode="chatInfo && chatInfo.isBurnAfterReadingMode"
+      :recipientId="chatInfo.id"
+      :missionId="chatInfo.missionId"
+      :initial-burn-after-reading-mode="chatInfo.isBurnAfterReadingMode"
       ref="chatInputAreaRef"
     />
 
@@ -146,7 +146,6 @@ export default {
     // 使用UI交互相关功能
     const {
       handleAttachment,
-      toggleAttachMenu,
       handleOverlayClick,
       scrollToBottom,
       onScroll,
@@ -195,61 +194,61 @@ export default {
 
     // 初始化聊天
     const initializeChat = async () => {
-      console.log('开始初始化聊天');
+      console.log('开始初始化聊天')
       if (chatInfo.value && chatInfo.value.id) {
-        isInitialLoading.value = true;
-        console.log('尝试加载缓存数据');
-        const cachedData = await loadCachedData();
+        isInitialLoading.value = true
+        console.log('尝试加载缓存数据')
+        const cachedData = await loadCachedData()
     
         if (cachedData) {
-          console.log('找到缓存数据，长度:', cachedData.length);
-          hasCachedMessages.value = true;
-          list.value = cachedData;
+          console.log('找到缓存数据，长度:', cachedData.length)
+          hasCachedMessages.value = true
+          list.value = cachedData
           nextTick(() => {
-            scrollToBottom();
-            console.log('使用缓存数据后滚动到底部');
-          });
+            scrollToBottom()
+            console.log('使用缓存数据后滚动到底部')
+          })
         } else {
-          console.log('没有找到缓存数据');
-          hasCachedMessages.value = false;
+          console.log('没有找到缓存数据')
+          hasCachedMessages.value = false
         }
 
         if (chatInfo.value.type === 'group') {
-          console.log('获取群基本信息');
-          await loadAndCacheGroupMembers(chatInfo.value.id);
+          console.log('获取群基本信息')
+          await loadAndCacheGroupMembers(chatInfo.value.id)
         }
 
-        console.log('开始获取最新消息');
+        console.log('开始获取最新消息')
         try {
-          const newMessages = await fetchAndUpdateData();
+          const newMessages = await fetchAndUpdateData()
           if (newMessages) {
-            list.value = newMessages;
+            list.value = newMessages
             nextTick(() => {
-              scrollToBottom();
-              console.log('加载新消息后滚动到底部');
-            });
+              scrollToBottom()
+              console.log('加载新消息后滚动到底部')
+            })
           }
         } catch (error) {
-          console.log('获取最新消息失败:', error);
+          console.log('获取最新消息失败:', error)
           uni.showToast({
             title: '加载消息失败，请重试',
             icon: 'none'
-          });
+          })
         }
         
-        isInitialLoading.value = false;
-        console.log('初始加载完成，isInitialLoading 设置为 false');
+        isInitialLoading.value = false
+        console.log('初始加载完成，isInitialLoading 设置为 false')
 
         console.log('聊天初始化完成:', {
           缓存数据: !!cachedData,
           缓存数据长度: cachedData ? cachedData.length : 0,
           历史消息长度: list.value.length
-        });
+        })
       } else {
-        console.log('聊天信息无效，无法初始化');
-        isInitialLoading.value = false;
+        console.log('聊天信息无效，无法初始化')
+        isInitialLoading.value = false
       }
-    };
+    }
 
     // 处理阅后即焚模式切换
     const handleBurnAfterReadingToggle = (isActive) => {
@@ -338,21 +337,43 @@ export default {
 
     // 处理消息列表点击
     const handleMessageListClick = (event) => {
-      console.log('消息列表被点击');
-      if (showAttachMenu.value) {
-        console.log('关闭附件菜单');
-        showAttachMenu.value = false;
+      console.log('消息列表被点击')
+      event.stopPropagation()
+      showAttachMenu.value = false
+    }
+
+    // 处理页面点击
+    const handlePageClick = (event) => {
+      console.log('页面被点击', event.target)
+      
+      // 检查是否点击了聊天输入区域
+      const isClickedOnChatInput = (target) => {
+        if (!target) return false
+        if (target.className && typeof target.className === 'string' && target.className.includes('chat-input-wrapper')) {
+          return true
+        }
+        return isClickedOnChatInput(target.parentElement)
+      }
+
+      if (!isClickedOnChatInput(event.target)) {
+        console.log('点击了聊天输入区域以外的地方，关闭附件菜单')
+        showAttachMenu.value = false
       }
     }
 
     // 处理消息发送完成
     const handleMessageSent = () => {
-      console.log('消息已发送，准备滚动到底部');
+      console.log('消息已发送，准备滚动到底部')
       nextTick(() => {
         if (messageListRef.value) {
-          messageListRef.value.scrollToBottom(true);
+          messageListRef.value.scrollToBottom(true)
         }
-      });
+      })
+    }
+
+    const toggleAttachMenu = (value) => {
+      console.log('切换附件菜单状态:', value);
+      showAttachMenu.value = value;
     };
 
     return {
@@ -378,7 +399,6 @@ export default {
       updateMessageList,
       handleFileSelected,
       handleAttachment,
-      toggleAttachMenu,
       handleOverlayClick,
       scrollToBottom,
       onScroll,
@@ -399,6 +419,8 @@ export default {
       hasCachedMessages,
       handleMessageListClick,
       handleMessageSent,
+      handlePageClick,
+      toggleAttachMenu
     }
   }
 }

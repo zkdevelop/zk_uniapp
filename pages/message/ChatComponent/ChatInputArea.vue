@@ -92,23 +92,19 @@ export default {
     SendButton
   },
   props: {
-    // 控制附件菜单显示状态
     modelValue: {
       type: Boolean,
       default: false
     },
-    // 接收者ID
     recipientId: {
       type: String,
       required: true
     },
-    // 任务ID
     missionId: {
       type: String,
       required: true,
       default: ''
     },
-    // 初始阅后即焚模式状态
     initialBurnAfterReadingMode: {
       type: Boolean,
       default: false
@@ -116,16 +112,13 @@ export default {
   },
   emits: ['send-message', 'update:modelValue', 'attach', 'video-call', 'file-selected', 'toggle-burn-after-reading'],
   setup(props, { emit }) {
-    // 新消息内容
+    console.log('ChatInputArea setup function called')
+    
     const newMessage = ref('')
-    // 位置共享显示状态
     const showLocationSharing = ref(false)
-    // 语音输入激活状态
     const isVoiceInputActive = ref(false)
-    // 阅后即焚模式状态
     const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode)
 
-    // 处理语音文件选择
     const handleVoiceFileSelected = (fileInfo) => {
       console.log('语音输入回调被触发，完整的文件信息:', JSON.stringify(fileInfo))
       
@@ -145,7 +138,6 @@ export default {
       }
     }
 
-    // 使用语音输入相关功能
     const { 
       isRecording, 
       recordAuth, 
@@ -155,7 +147,6 @@ export default {
       stopVoiceRecord
     } = useVoiceInput(handleVoiceFileSelected)
     
-    // 使用附件处理相关功能
     const { 
       attachItem: handleAttachItem, 
       handleFileSelected, 
@@ -167,64 +158,57 @@ export default {
       toggleBurnAfterReadingMode
     } = useAttachmentHandling(emit, props)
 
-    // 使用消息发送相关功能
     const { sendMessage: sendMessageHandler } = useMessageSending(newMessage, emit, props, isBurnAfterReadingMode)
 
-    // 发送消息
     const sendMessage = () => {
       console.log('发送消息')
       sendMessageHandler()
-      // 发送消息后关闭附件菜单
       emit('update:modelValue', false)
     }
 
-    // 切换语音输入状态
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
-      // 切换语音输入时关闭附件菜单
+      console.log('切换语音输入状态:', isVoiceInputActive.value)
       emit('update:modelValue', false)
     }
 
-    // 切换附件菜单状态
     const toggleAttachMenu = () => {
-      console.log('切换附件菜单状态:', !props.modelValue)
-      emit('update:modelValue', !props.modelValue)
-    }
+      console.log('切换附件菜单状态:', !props.modelValue);
+      emit('update:modelValue', !props.modelValue);
+    };
 
-    // 关闭附件菜单
     const closeAttachMenu = () => {
-      console.log('关闭附件菜单')
-      emit('update:modelValue', false)
-    }
+      console.log('关闭附件菜单');
+      emit('update:modelValue', false);
+    };
 
-    // 监听接收者ID变化
     watch(() => props.recipientId, (newVal) => {
       if (!newVal) {
         showLocationSharing.value = false
       }
     })
 
-    // 监听位置共享状态变化
     watch(locationSharingState, (newVal) => {
       showLocationSharing.value = newVal
     })
 
-    // 监听阅后即焚模式状态变化
     watch(burnMode, (newVal) => {
       isBurnAfterReadingMode.value = newVal
       emit('toggle-burn-after-reading', newVal)
     })
 
-    // 监听阅后即焚模式状态变化
     watch(isBurnAfterReadingMode, (newVal) => {
       console.log('阅后即焚模式状态变化:', newVal)
       emit('toggle-burn-after-reading', newVal)
     })
 
-    // 监听初始阅后即焚模式状态变化
     watch(() => props.initialBurnAfterReadingMode, (newVal) => {
       isBurnAfterReadingMode.value = newVal
     })
+
+    watch(() => props.modelValue, (newValue) => {
+      console.log('附件菜单状态变化:', newValue);
+    });
 
     return {
       newMessage,
@@ -292,7 +276,7 @@ export default {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  /* transition: transform 0.2s ease-out; */
+  transition: transform 0.2s ease-out;
 }
 
 .slide-up-enter-from,

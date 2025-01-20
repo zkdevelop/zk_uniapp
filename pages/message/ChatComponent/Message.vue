@@ -1,9 +1,10 @@
 <template> 
   <view class="message" :class="[message.userType]"> 
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
-    <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
-      <view class="avatar-container">
-        <image :src="message.avatar || '/static/message/默认头像.png'" class="avatar" mode="aspectFill"></image>
+    <view class="message-content" :class="{ 'self-message': message.userType === 'self' }"> 
+	 {{userStore.state.avatar}}
+	  <view class="avatar-container">
+        <image :src="message.userType === 'self' ? (message.avatar || userStore.state.avatar || '/static/message/默认头像.png') : (message.avatar || '/static/message/默认头像.png')" class="avatar" mode="aspectFill"></image>
         <view v-if="isGroup && message.userType === 'other'" class="sender-name">
           {{ message.senderName }}
         </view>
@@ -56,7 +57,8 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useUserStore } from '@/store/userStore'
 import LocationMessage from './MessageComponent/LocationMessage.vue';
 import ImageMessage from './MessageComponent/ImageMessage.vue';
 import FileMessage from './MessageComponent/FileMessage.vue';
@@ -88,6 +90,7 @@ export default {
   },
   emits: ['view-burn-after-reading', 'message-deleted'],
   setup(props, { emit }) {
+    const userStore = useUserStore()
     // 格式化时间显示
     const formatTime = (timestamp) => {
       if (!timestamp) return 'Invalid Date';
@@ -109,10 +112,18 @@ export default {
       emit('message-deleted', messageId);
     };
 
+    onMounted(() => {
+      console.log('Message component mounted');
+      console.log('Message avatar:', props.message.avatar);
+      console.log('User avatar from store:', userStore.state.avatar);
+      console.log('Message user type:', props.message.userType);
+    });
+
     return {
       formatTime,
       viewBurnAfterReading,
-      handleMessageDeleted
+      handleMessageDeleted,
+      userStore
     };
   }
 };
@@ -175,10 +186,10 @@ export default {
 
     .message-content {
       flex-direction: row-reverse;
-      align-items: center;
+      justify-content: flex-start;
     }
 
-    .avatar {
+    .avatar-container {
       margin-right: 0;
       margin-left: 20rpx;
     }
