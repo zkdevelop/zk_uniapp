@@ -183,6 +183,7 @@ export default {
       saveCachedData,
       fetchAndUpdateData,
       loadAndCacheGroupMembers,
+      loadAndCacheUserInfo,
       initWebSocketListener,
       cleanupWebSocketListener
     } = useChatDataManagement(chatInfo, list)
@@ -216,6 +217,9 @@ export default {
         if (chatInfo.value.type === 'group') {
           console.log('获取群基本信息')
           await loadAndCacheGroupMembers(chatInfo.value.id)
+        } else {
+          console.log('获取用户基本信息')
+          await loadAndCacheUserInfo(chatInfo.value.id)
         }
 
         console.log('开始获取最新消息')
@@ -344,21 +348,24 @@ export default {
 
     // 处理页面点击
     const handlePageClick = (event) => {
-      console.log('页面被点击', event.target)
-      
-      // 检查是否点击了聊天输入区域
-      const isClickedOnChatInput = (target) => {
-        if (!target) return false
-        if (target.className && typeof target.className === 'string' && target.className.includes('chat-input-wrapper')) {
-          return true
-        }
-        return isClickedOnChatInput(target.parentElement)
-      }
+     //  console.log('handlePageClick triggered, showAttachMenu before:', showAttachMenu.value);
+     
+     //  // 检查是否点击了聊天输入区域或附件按钮
+     //  const isClickedOnChatInput = (target) => {
+     //    if (!target) return false
+     //    if (target.className && typeof target.className === 'string' && 
+     //        (target.className.includes('chat-input-wrapper') || target.className.includes('attach-button'))) {
+     //      return true
+     //    }
+     //    return isClickedOnChatInput(target.parentElement)
+     //  }
 
-      if (!isClickedOnChatInput(event.target)) {
-        console.log('点击了聊天输入区域以外的地方，关闭附件菜单')
-        showAttachMenu.value = false
-      }
+     //  if (!isClickedOnChatInput(event.target)) {
+     //    console.log('点击了聊天输入区域外部');
+     //    showAttachMenu.value = false;
+     //  } else {
+     //    console.log('点击了聊天输入区域或附件按钮，不关闭菜单');
+     //  }
     }
 
     // 处理消息发送完成
@@ -372,7 +379,7 @@ export default {
     }
 
     const toggleAttachMenu = (value) => {
-      console.log('切换附件菜单状态:', value);
+      console.log('toggleAttachMenu 被调用，值为:', value);
       showAttachMenu.value = value;
     };
 
@@ -415,12 +422,18 @@ export default {
       saveCachedData,
       fetchAndUpdateData,
       loadAndCacheGroupMembers,
+      loadAndCacheUserInfo,
       isInitialLoading,
       hasCachedMessages,
       handleMessageListClick,
       handleMessageSent,
       handlePageClick,
       toggleAttachMenu
+    }
+  },
+  watch: {
+    showAttachMenu: (newValue) => {
+      console.log('showAttachMenu changed in chat.vue:', newValue);
     }
   }
 }

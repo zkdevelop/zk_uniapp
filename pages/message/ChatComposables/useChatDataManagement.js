@@ -1,5 +1,10 @@
 import { ref } from "vue"
-import { getHistoryChatMessages, getGroupChatMessages, getGroupBasicInfo } from "@/utils/api/message.js"
+import {
+  getHistoryChatMessages,
+  getGroupChatMessages,
+  getGroupBasicInfo,
+  getUserBasicInfo,
+} from "@/utils/api/message.js"
 import { useUserStore } from "@/store/userStore"
 import { useGroupStore } from "@/pages/message/store/groupStore"
 import { useWebSocket } from "@/pages/WebSocket/WebSocketService.vue"
@@ -59,9 +64,9 @@ export function useChatDataManagement(chatInfo, list) {
       if (response.code === 200) {
         let newMessages
         if (chatInfo.value.type === "group") {
-          newMessages = response.data.groupMessageVOS.reverse().map((msg) => mapGroupMessage(msg))
+          newMessages = await Promise.all(response.data.groupMessageVOS.reverse().map((msg) => mapGroupMessage(msg)))
         } else {
-          newMessages = response.data.messageVOList.reverse().map((msg) => mapPrivateMessage(msg))
+          newMessages = await Promise.all(response.data.messageVOList.reverse().map((msg) => mapPrivateMessage(msg)))
         }
 
         // 直接更新消息列表
@@ -90,7 +95,7 @@ export function useChatDataManagement(chatInfo, list) {
   }
 
   // 映射私聊消息
-  const mapPrivateMessage = (msg) => {
+  const mapPrivateMessage = async (msg) => {
     let content = msg.message
     let type = msg.messageType.toLowerCase()
 
@@ -109,11 +114,18 @@ export function useChatDataManagement(chatInfo, list) {
       content = msg.previewUrl || msg.message
     }
 
+    const userInfo = await loadAndCacheUserInfo(msg.senderId)
+    const avatarUrl = userInfo
+      ? userInfo.avatarUrl
+      : msg.senderId === chatInfo.value.id
+        ? chatInfo.value.avatar[0]
+        : chatInfo.value._selfAvatar
+
     const mappedMessage = {
       id: msg.id,
       content: content,
       userType: msg.senderId === chatInfo.value.id ? "other" : "self",
-      avatar: msg.senderId === chatInfo.value.id ? chatInfo.value.avatar[0] : chatInfo.value._selfAvatar,
+      avatar: avatarUrl,
       timestamp: new Date(msg.sendTime),
       type: type,
       isRead: msg.isRead,
@@ -221,6 +233,33 @@ export function useChatDataManagement(chatInfo, list) {
     }
   }
 
+  // 加载并缓存用户信息
+  const loadAndCacheUserInfo = async (userId) => {
+    const cacheKey = `user_info_${userId}`
+    const cachedUserInfo = uni.getStorageSync(cacheKey)
+
+    if (cachedUserInfo) {
+      console.log("使用缓存的用户信息")
+      return JSON.parse(cachedUserInfo)
+    }
+
+    try {
+      console.log("从服务器获取用户信息")
+      const response = await getUserBasicInfo(userId)
+      if (response.code === 200) {
+        const userInfo = response.data
+        uni.setStorageSync(cacheKey, JSON.stringify(userInfo))
+        return userInfo
+      } else {
+        console.log("获取用户信息失败:", response.msg)
+        return null
+      }
+    } catch (error) {
+      console.log("获取用户信息时发生错误:", error)
+      return null
+    }
+  }
+
   // 插入新消息并更新缓存
   const insertNewMessage = (newMessage) => {
     console.log("插入新消息:", newMessage)
@@ -229,11 +268,11 @@ export function useChatDataManagement(chatInfo, list) {
   }
 
   // 处理WebSocket消息
-  const handleWebSocketMessage = (message) => {
+  const handleWebSocketMessage = async (message) => {
     console.log("收到WebSocket消息:", message)
     if (message.sessionId === chatInfo.value.id) {
       const isGroupMessage = message.senderId !== message.sessionId
-      const mappedMessage = mapWebSocketMessage(message, isGroupMessage)
+      const mappedMessage = await (isGroupMessage ? mapGroupMessage(message) : mapPrivateMessage(message))
       insertNewMessage(mappedMessage)
     } else {
       console.log("收到的消息不属于当前对话")
@@ -314,6 +353,7 @@ export function useChatDataManagement(chatInfo, list) {
     handleWebSocketMessage,
     initWebSocketListener,
     cleanupWebSocketListener,
+    loadAndCacheUserInfo,
   }
 }
 

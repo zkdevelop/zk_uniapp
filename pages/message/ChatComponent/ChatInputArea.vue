@@ -1,16 +1,13 @@
-<!-- ChatInputArea.vue - 聊天输入区域组件 -->
 <template>
   <view class="chat-input-wrapper">
     <view class="chat-content">
       <!-- 附件菜单 -->
-      <transition name="slide-up">
-        <view v-if="modelValue" class="attachment-menu">
-          <attachment-menu
-            @attach="handleAttachItem"
-            @close="closeAttachMenu"
-          />
-        </view>
-      </transition>
+      <view v-if="isAttachMenuVisible" class="attachment-menu">
+        <attachment-menu
+          @attach="handleAttachItem"
+          @close="closeAttachMenu"
+        />
+      </view>
 
       <!-- 输入区域 -->
       <view class="input-container">
@@ -42,14 +39,13 @@
           
           <!-- 附件按钮 -->
           <attach-button
-            v-if="!modelValue"
             @click="toggleAttachMenu"
             :is-burn-after-reading-mode="isBurnAfterReadingMode"
           />
           
           <!-- 发送按钮 -->
           <send-button
-            v-if="!isVoiceInputActive && (modelValue || newMessage.trim().length > 0)"
+            v-if="!isVoiceInputActive && (isAttachMenuVisible || newMessage.trim().length > 0)"
             @click="sendMessage"
           />
         </view>
@@ -101,9 +97,8 @@ export default {
       required: true
     },
     missionId: {
-      type: String,
-      required: true,
-      default: ''
+      type: [String, Array],
+      required: true
     },
     initialBurnAfterReadingMode: {
       type: Boolean,
@@ -118,6 +113,7 @@ export default {
     const showLocationSharing = ref(false)
     const isVoiceInputActive = ref(false)
     const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode)
+    const isAttachMenuVisible = ref(false)
 
     const handleVoiceFileSelected = (fileInfo) => {
       console.log('语音输入回调被触发，完整的文件信息:', JSON.stringify(fileInfo))
@@ -163,24 +159,26 @@ export default {
     const sendMessage = () => {
       console.log('发送消息')
       sendMessageHandler()
-      emit('update:modelValue', false)
+      closeAttachMenu()
     }
 
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
       console.log('切换语音输入状态:', isVoiceInputActive.value)
-      emit('update:modelValue', false)
+      closeAttachMenu()
     }
 
     const toggleAttachMenu = () => {
-      console.log('切换附件菜单状态:', !props.modelValue);
-      emit('update:modelValue', !props.modelValue);
-    };
+      console.log('切换附件菜单状态');
+      isAttachMenuVisible.value = !isAttachMenuVisible.value;
+      emit('update:modelValue', isAttachMenuVisible.value);
+    }
 
     const closeAttachMenu = () => {
       console.log('关闭附件菜单');
+      isAttachMenuVisible.value = false;
       emit('update:modelValue', false);
-    };
+    }
 
     watch(() => props.recipientId, (newVal) => {
       if (!newVal) {
@@ -208,6 +206,7 @@ export default {
 
     watch(() => props.modelValue, (newValue) => {
       console.log('附件菜单状态变化:', newValue);
+      isAttachMenuVisible.value = newValue;
     });
 
     return {
@@ -230,7 +229,8 @@ export default {
       closeLocationSharing,
       handleLocationSelected,
       isBurnAfterReadingMode,
-      toggleBurnAfterReadingMode
+      toggleBurnAfterReadingMode,
+      isAttachMenuVisible
     }
   }
 }
@@ -273,20 +273,4 @@ export default {
   flex: 1;
   margin: 0 10px;
 }
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.2s ease-out;
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
-
-.slide-up-enter-to,
-.slide-up-leave-from {
-  transform: translateY(0);
-}
 </style>
-

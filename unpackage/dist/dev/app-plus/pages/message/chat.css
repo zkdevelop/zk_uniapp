@@ -781,18 +781,6 @@
   flex: 1;
   margin: 0 10px;
 }
-.slide-up-enter-active[data-v-e8a570ad],
-.slide-up-leave-active[data-v-e8a570ad] {
-  transition: transform 0.2s ease-out;
-}
-.slide-up-enter-from[data-v-e8a570ad],
-.slide-up-leave-to[data-v-e8a570ad] {
-  transform: translateY(100%);
-}
-.slide-up-enter-to[data-v-e8a570ad],
-.slide-up-leave-from[data-v-e8a570ad] {
-  transform: translateY(0);
-}
 
 /* 水平间距 */
 /* 水平间距 */
