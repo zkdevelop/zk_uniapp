@@ -1,9 +1,8 @@
-<template> 
-  <view class="message" :class="[message.userType]"> 
+<template>
+  <view class="message" :class="[message.userType]">
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
-    <view class="message-content" :class="{ 'self-message': message.userType === 'self' }"> 
-	 {{userStore.state.avatar}}
-	  <view class="avatar-container">
+    <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
+      <view class="avatar-container">
         <image :src="message.userType === 'self' ? (message.avatar || userStore.state.avatar || '/static/message/默认头像.png') : (message.avatar || '/static/message/默认头像.png')" class="avatar" mode="aspectFill"></image>
         <view v-if="isGroup && message.userType === 'other'" class="sender-name">
           {{ message.senderName }}
@@ -11,40 +10,46 @@
       </view>
       <view class="content-wrapper">
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
-        <view class="content" :class="{ 
-          'location-content': message.type === 'location', 
-          'file-message': message.type === 'file', 
-          'message-image': message.type === 'image', 
-          'voice-message': message.type === 'voice_message',
-          'audio-message': message.type === 'audio'
-        }">
-          <!-- 根据消息类型渲染不同的组件 -->
-          <LocationMessage v-if="message.type === 'location'" :content="message.content" />
-          <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
-          <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
-          <VoiceMessageBubble 
-            v-else-if="message.type === 'voice_message'" 
-            :content="{ 
-              url: message.content, 
-              duration: message.duration, 
-              isSelf: message.userType === 'self' 
-            }" 
-          />
-          <AudioMessage
-            v-else-if="message.type === 'audio'"
-            :content="message.content"
-            :messageType="message.messageType"
-          />
-          <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
-          <BurnAfterReadingTextMessage
-            v-else-if="message.selfDestruct && message.messageType === 'MESSAGE'"
-            :messageId="message.id"
-            :isGroup="isGroup"
-            @message-deleted="handleMessageDeleted"
-          />
-          <template v-else>
-            {{ message.content || '' }}
-          </template>
+        <view class="content-container">
+          <view class="content" :class="{ 
+            'location-content': message.type === 'location', 
+            'file-message': message.type === 'file', 
+            'message-image': message.type === 'image', 
+            'voice-message': message.type === 'voice_message',
+            'audio-message': message.type === 'audio'
+          }">
+            <!-- 根据消息类型渲染不同的组件 -->
+            <LocationMessage v-if="message.type === 'location'" :content="message.content" />
+            <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
+            <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
+            <VoiceMessageBubble 
+              v-else-if="message.type === 'voice_message'" 
+              :content="{ 
+                url: message.content, 
+                duration: message.duration, 
+                isSelf: message.userType === 'self' 
+              }" 
+            />
+            <AudioMessage
+              v-else-if="message.type === 'audio'"
+              :content="message.content"
+              :messageType="message.messageType"
+            />
+            <BurnAfterReadingMessage v-else-if="message.type === 'burn-after-reading'" :content="message.content" @view-burn-after-reading="viewBurnAfterReading" />
+            <BurnAfterReadingTextMessage
+              v-else-if="message.selfDestruct && message.messageType === 'MESSAGE'"
+              :messageId="message.id"
+              :isGroup="isGroup"
+              @message-deleted="handleMessageDeleted"
+            />
+            <template v-else>
+              {{ message.content || '' }}
+            </template>
+          </view>
+          <!-- 已读人数指示器 -->
+          <view v-if="isGroup " class="read-count" :class="{ 'read-count-self': message.userType === 'self' }">
+            {{ getReadCount }}
+          </view>
         </view>
       </view>
       <!-- 消息状态（仅对自己发送的消息显示） -->
@@ -57,7 +62,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '@/store/userStore'
 import LocationMessage from './MessageComponent/LocationMessage.vue';
 import ImageMessage from './MessageComponent/ImageMessage.vue';
@@ -91,9 +96,10 @@ export default {
   emits: ['view-burn-after-reading', 'message-deleted'],
   setup(props, { emit }) {
     const userStore = useUserStore()
-    // 格式化时间显示
+    
+    // 格式化时间戳为可读格式
     const formatTime = (timestamp) => {
-      if (!timestamp) return 'Invalid Date';
+      if (!timestamp) return '无效日期';
       const date = new Date(timestamp);
       const month = date.getMonth() + 1;
       const day = date.getDate();
@@ -102,7 +108,7 @@ export default {
       return `${month}-${day} ${hours}:${minutes}`;
     };
 
-    // 查看阅后即焚消息
+    // 处理查看阅后即焚消息
     const viewBurnAfterReading = (message) => {
       emit('view-burn-after-reading', message);
     };
@@ -112,33 +118,38 @@ export default {
       emit('message-deleted', messageId);
     };
 
+    // 计算已读人数
+    const getReadCount = computed(() => {
+      if (!props.isGroup || !props.message.groupMessageUserReadVO) return 0;
+      return props.message.groupMessageUserReadVO.filter(user => user.isRead).length;
+    });
+
     onMounted(() => {
-      console.log('Message component mounted');
-      console.log('Message avatar:', props.message.avatar);
-      console.log('User avatar from store:', userStore.state.avatar);
-      console.log('Message user type:', props.message.userType);
+      console.log('消息组件已挂载');
+      console.log('消息头像:', props.message.avatar);
+      console.log('用户头像来自存储:', userStore.state.avatar);
+      console.log('消息用户类型:', props.message.userType);
+      console.log('群组消息已读状态:', props.message.groupMessageUserReadVO);
     });
 
     return {
       formatTime,
       viewBurnAfterReading,
       handleMessageDeleted,
-      userStore
+      userStore,
+      getReadCount
     };
   }
 };
-</script> 
-
-
-
-
+</script>
 
 <style lang="scss" scoped>
 .message {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
   width: 100%;
+  position: relative;
 
   .message-time {
     width: 100%;
@@ -153,6 +164,7 @@ export default {
     align-items: flex-start;
     width: 100%;
     max-width: 100%;
+    position: relative;
   }
 
   .avatar {
@@ -162,7 +174,14 @@ export default {
     margin-right: 20rpx;
   }
 
+  .content-container {
+    position: relative;
+    padding-bottom: 0;
+    margin-bottom: 16rpx;
+  }
+
   .content {
+    position: relative;
     min-height: 80rpx;
     max-width: 60vw;
     box-sizing: border-box;
@@ -174,13 +193,11 @@ export default {
     white-space: normal;
   }
 
-  // 为不同类型的消息设置样式
   .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
     padding: 20rpx;
     background: #fff;
   }
 
-  // 自己发送的消息样式
   &.self {
     align-items: flex-end;
 
@@ -198,10 +215,15 @@ export default {
       background: #4e8cff;
       color: #fff;
     }
+
+    .read-count {
+      left: -48rpx;
+      bottom: 17rpx;
+      transform: translateY(50%);
+    }
   }
 
-  // 好友发送的消息样式
-  &.friend {
+  &.friend, &.other {
     align-items: flex-start;
 
     .message-content {
@@ -212,46 +234,13 @@ export default {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    .read-count {
+      right: -48rpx;
+      bottom: 17rpx;
+      transform: translateY(50%);
+    }
   }
-}
-
-// 消息状态样式
-.message-status {
-  display: flex;
-  align-items: center;
-  margin-left: 20rpx;
-  height: 100%;
-  padding: 0 5rpx;
-}
-
-// 加载中图标样式
-.loading-icon {
-  width: 30rpx;
-  height: 30rpx;
-  border: 3rpx solid #ccc;
-  border-top: 3rpx solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// 发送失败图标样式
-.failed-icon {
-  width: 30rpx;
-  height: 30rpx;
-  background-color: #e74c3c;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 12px;
 }
 
 .content-wrapper {
@@ -266,7 +255,6 @@ export default {
   margin-bottom: 5rpx;
 }
 
-// 特殊消息类型的样式
 .message-image, .voice-message, .audio-message {
   background: transparent !important;
   padding: 0 !important;
@@ -289,6 +277,60 @@ export default {
   flex-direction: column;
   align-items: center;
   margin-right: 20rpx;
+}
+
+.read-count {
+  position: absolute;
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 50%;
+  border: 1.2rpx solid rgba(61,138,245,1); 
+  font-family: NotoSansCJKsc-Bold;
+  font-size: 18rpx;
+  color: #3D8AF5;
+  letter-spacing: 0;
+  text-align: center;
+  line-height: 16rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+.message-status {
+  display: flex;
+  align-items: center;
+  margin-left: 20rpx;
+  height: 100%;
+  padding: 0 5rpx;
+}
+
+.loading-icon {
+  width: 30rpx;
+  height: 30rpx;
+  border: 3rpx solid #ccc;
+  border-top: 3rpx solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.failed-icon {
+  width: 30rpx;
+  height: 30rpx;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 12px;
 }
 </style>
 

@@ -188,6 +188,7 @@ export function useChatDataManagement(chatInfo, list) {
       selfDestruct: msg.selfDestruct,
       senderName: senderName,
       senderId: msg.senderId,
+      groupMessageUserReadVO: msg.groupMessageUserReadVO,
     }
 
     return mappedMessage
