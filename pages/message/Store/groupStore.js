@@ -7,10 +7,8 @@ export const useGroupStore = defineStore('group', () => {
     groupInfo: null
   })
 
-  function setGroupInfo(groupData) {
-    console.log('设置群组信息:', groupData)
-    state.groupInfo = groupData
-    console.log('更新后的群组信息:', state.groupInfo)
+  function setGroupInfo(groupData) { 
+    state.groupInfo = groupData 
   }
 
   function clearGroupInfo() {

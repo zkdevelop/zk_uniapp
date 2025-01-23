@@ -60,21 +60,14 @@ export default {
   },
   watch: {
     messages: {
-      handler(newMessages, oldMessages) {
-        console.log('消息列表变化:', {
-          新消息数量: newMessages.length,
-          旧消息数量: oldMessages?.length || 0
-        });
-
+      handler(newMessages, oldMessages) { 
         this.$nextTick(async () => {
-          const newContentHeight = await this.getContentHeight();
-          console.log('新内容高度:', newContentHeight);
+          const newContentHeight = await this.getContentHeight(); 
 
           if (!oldMessages || newMessages.length > oldMessages.length) {
             // 新消息被添加
             if (!oldMessages || (newMessages.length - oldMessages.length === 1 && 
-                newMessages[newMessages.length - 1].userType === 'self')) {
-              console.log('检测到新发送的消息，滚动到底部');
+                newMessages[newMessages.length - 1].userType === 'self')) { 
               this.scrollToBottom(true); // 强制滚动
             } else {
               // 如果是加载更多消息，保持滚动位置
@@ -95,8 +88,7 @@ export default {
     console.log('MessageList组件挂载');
     this.initScrollViewHeight();
     this.getContentHeight().then(height => {
-      this.lastContentHeight = height;
-      console.log('初始内容高度:', height);
+      this.lastContentHeight = height; 
       this.$nextTick(() => {
         this.scrollToBottom(true);
       });
@@ -116,8 +108,7 @@ export default {
       return new Promise((resolve) => {
         const query = uni.createSelectorQuery().in(this);
         query.select('.message-list-content').boundingClientRect(data => {
-          if (data) {
-            console.log('获取内容高度:', data.height);
+          if (data) { 
             resolve(data.height);
           } else {
             console.log('无法获取内容高度');
@@ -139,8 +130,7 @@ export default {
       console.log('触发加载更多');
       this.$emit('load-more');
     },
-    async scrollToBottom(force = false) {
-      console.log('尝试滚动到底部, force:', force);
+    async scrollToBottom(force = false) { 
       if (this.isScrolling && !force) {
         console.log('已在滚动中，跳过');
         return;
@@ -148,8 +138,7 @@ export default {
 
       this.isScrolling = true;
       try {
-        const contentHeight = await this.getContentHeight();
-        console.log('滚动到底部，内容高度:', contentHeight);
+        const contentHeight = await this.getContentHeight(); 
         const scrollTop = Math.max(0, contentHeight - this.scrollViewHeight);
         this.setScrollTop(scrollTop);
         
@@ -162,8 +151,7 @@ export default {
         }, 200);
       }
     },
-    setScrollTop(value) {
-      console.log('设置滚动位置:', value);
+    setScrollTop(value) { 
       this.internalScrollTop = value;
     }
   }

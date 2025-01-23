@@ -27,8 +27,7 @@ export function useMessageList() {
       avatar: message.avatarUrl || '/static/message/默认头像.png',
       type: message.group ? 'group' : 'single',
       missionId: missionId.value
-    }
-    console.log('准备导航到聊天页面，chatInfo:', JSON.stringify(chatInfo));
+    } 
     
     uni.setStorageSync('chatQuery', JSON.stringify(chatInfo));
     
@@ -50,8 +49,7 @@ export function useMessageList() {
 
   // 加载消息列表
   const loadMessages = async () => {
-    missionId.value = userStore.state.missionId
-    console.log('从 store 获取的 missionId:', missionId.value)
+    missionId.value = userStore.state.missionId 
     scrollViewHeight.value = calculateScrollViewHeight()
 
     // 直接加载缓存数据
@@ -73,8 +71,7 @@ export function useMessageList() {
         if (hasChanges) {
           // 更新缓存和界面
           mainInterfaceStore.setCachedMessages(newMessages)
-          realMessages.value = newMessages
-          console.log('消息列表已更新');
+          realMessages.value = newMessages 
         } else {
           console.log('消息列表无变化');
         }

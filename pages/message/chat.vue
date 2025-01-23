@@ -194,42 +194,34 @@ export default {
     const hasCachedMessages = ref(false)
 
     // 初始化聊天
-    const initializeChat = async () => {
-      console.log('开始初始化聊天')
+    const initializeChat = async () => { 
       if (chatInfo.value && chatInfo.value.id) {
-        isInitialLoading.value = true
-        console.log('尝试加载缓存数据')
+        isInitialLoading.value = true 
         const cachedData = await loadCachedData()
     
-        if (cachedData) {
-          console.log('找到缓存数据，长度:', cachedData.length)
+        if (cachedData) { 
           hasCachedMessages.value = true
           list.value = cachedData
           nextTick(() => {
-            scrollToBottom()
-            console.log('使用缓存数据后滚动到底部')
+            scrollToBottom() 
           })
         } else {
           console.log('没有找到缓存数据')
           hasCachedMessages.value = false
         }
 
-        if (chatInfo.value.type === 'group') {
-          console.log('获取群基本信息')
+        if (chatInfo.value.type === 'group') { 
           await loadAndCacheGroupMembers(chatInfo.value.id)
-        } else {
-          console.log('获取用户基本信息')
+        } else { 
           await loadAndCacheUserInfo(chatInfo.value.id)
         }
-
-        console.log('开始获取最新消息')
+ 
         try {
           const newMessages = await fetchAndUpdateData()
           if (newMessages) {
             list.value = newMessages
             nextTick(() => {
-              scrollToBottom()
-              console.log('加载新消息后滚动到底部')
+              scrollToBottom() 
             })
           }
         } catch (error) {
@@ -241,13 +233,7 @@ export default {
         }
         
         isInitialLoading.value = false
-        console.log('初始加载完成，isInitialLoading 设置为 false')
-
-        console.log('聊天初始化完成:', {
-          缓存数据: !!cachedData,
-          缓存数据长度: cachedData ? cachedData.length : 0,
-          历史消息长度: list.value.length
-        })
+     
       } else {
         console.log('聊天信息无效，无法初始化')
         isInitialLoading.value = false
@@ -261,18 +247,15 @@ export default {
     }
 
     // 监听聊天信息变化
-    watch(chatInfo, async (newChatInfo) => {
-      console.log('聊天信息变化:', newChatInfo)
+    watch(chatInfo, async (newChatInfo) => { 
       if (newChatInfo && newChatInfo.id) {
         await initializeChat()
       }
     }, { deep: true, immediate: true })
 
-    onMounted(() => {
-      console.log('聊天组件挂载')
+    onMounted(() => { 
       const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      
+      const currentPage = pages[pages.length - 1] 
       let eventChannel
       const query = uni.getStorageSync('chatQuery')
 
@@ -369,8 +352,7 @@ export default {
     }
 
     // 处理消息发送完成
-    const handleMessageSent = () => {
-      console.log('消息已发送，准备滚动到底部')
+    const handleMessageSent = () => { 
       nextTick(() => {
         if (messageListRef.value) {
           messageListRef.value.scrollToBottom(true)

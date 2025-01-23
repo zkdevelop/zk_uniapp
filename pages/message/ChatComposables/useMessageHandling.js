@@ -55,14 +55,11 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
             timestamp: new Date(),
             type: message.type || "text",
             messageType: message.type === "text" ? "MESSAGE" : message.type.toUpperCase(),
-          }
-          console.log("消息发送成功，处理已发送消息:", sentMessage)
+          } 
           handleMessageSent(sentMessage)
-          await updateMessageList()
-          console.log("消息列表已更新")
+          await updateMessageList() 
           nextTick(() => {
-            scrollToBottom()
-            console.log("已滚动到底部")
+            scrollToBottom() 
           })
         } else {
           throw new Error(response.msg || "发送消息失败")
@@ -157,8 +154,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
         if (!isLoadingMore) {
           nextTick(() => {
-            scrollToBottom()
-            console.log("滚动到底部")
+            scrollToBottom() 
           })
         }
 
@@ -227,18 +223,15 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         } else {
           newMessages = response.data.messageVOList.reverse().map((msg) => mapPrivateMessage(msg))
         }
-
-        console.log("新消息数量:", newMessages.length)
+ 
 
         // 合并新消息和现有消息，去重
         const mergedMessages = [...list.value, ...newMessages]
         const uniqueMessages = Array.from(new Map(mergedMessages.map((item) => [item.id, item])).values())
         list.value = uniqueMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-
-        console.log("更新后的消息列表长度:", list.value.length)
+ 
         nextTick(() => {
-          scrollToBottom()
-          console.log("滚动到底部")
+          scrollToBottom() 
         })
       } else {
         console.log("没有新消息或获取失败")
@@ -294,8 +287,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     return mappedMessage
   }
 
-  const mapGroupMessage = (msg) => {
-    console.log("映射群聊消息:", msg)
+  const mapGroupMessage = (msg) => { 
     let content = msg.message
     let type = msg.messageType.toLowerCase()
 
@@ -382,11 +374,9 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       console.log("文件发送响应:", response)
 
       if (response.code === 200) {
-        await updateMessageList()
-        console.log("消息列表已更新")
+        await updateMessageList() 
         nextTick(() => {
-          scrollToBottom()
-          console.log("滚动到底部")
+          scrollToBottom() 
         })
       } else {
         throw new Error(response.msg || "发送文件消息失败")

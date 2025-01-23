@@ -47,7 +47,12 @@
             </template>
           </view>
           <!-- 已读人数指示器 -->
-          <view v-if="isGroup " class="read-count" :class="{ 'read-count-self': message.userType === 'self' }">
+          <view 
+            v-if="isGroup" 
+            class="read-count" 
+            :class="{ 'read-count-self': message.userType === 'self' }"
+            @click="handleReadCountClick"
+          >
             {{ getReadCount }}
           </view>
         </view>
@@ -84,10 +89,12 @@ export default {
     BurnAfterReadingTextMessage
   },
   props: {
+    // 消息对象
     message: {
       type: Object,
       required: true
     },
+    // 是否为群聊
     isGroup: {
       type: Boolean,
       default: false
@@ -118,18 +125,41 @@ export default {
       emit('message-deleted', messageId);
     };
 
-    // 计算已读人数
-    const getReadCount = computed(() => {
-      if (!props.isGroup || !props.message.groupMessageUserReadVO) return 0;
-      return props.message.groupMessageUserReadVO.filter(user => user.isRead).length;
+    // 计算已读人数和准备跳转数据
+    const readStatusData = computed(() => {
+      if (!props.isGroup || !props.message.groupMessageUserReadVO) {
+        return { readCount: 0, groupMessageUserReadVO: [] };
+      }
+      const groupMessageUserReadVO = props.message.groupMessageUserReadVO;
+      const readCount = groupMessageUserReadVO.filter(user => user.isRead).length;
+      return { readCount, groupMessageUserReadVO };
     });
 
+    // 获取已读人数
+    const getReadCount = computed(() => readStatusData.value.readCount);
+
+    // 处理已读人数点击事件
+    const handleReadCountClick = () => {
+      uni.navigateTo({
+        url: '/pages/message/ChatComponent/MessageReadStatus',
+        success: (res) => {
+          // 只传递 groupMessageUserReadVO 数据
+          res.eventChannel.emit('messageData', { 
+            groupMessageUserReadVO: readStatusData.value.groupMessageUserReadVO,
+            senderName: props.message.senderName,
+            content: props.message.content,
+            timestamp: props.message.timestamp
+          })
+        }
+      })
+    }
+
     onMounted(() => {
-      console.log('消息组件已挂载');
-      console.log('消息头像:', props.message.avatar);
-      console.log('用户头像来自存储:', userStore.state.avatar);
-      console.log('消息用户类型:', props.message.userType);
-      console.log('群组消息已读状态:', props.message.groupMessageUserReadVO);
+      // console.log('消息组件已挂载');
+      // console.log('消息头像:', props.message.avatar);
+      // console.log('用户头像来自存储:', userStore.state.avatar);
+      // console.log('消息用户类型:', props.message.userType);
+      // console.log('群组消息已读状态:', props.message.groupMessageUserReadVO);
     });
 
     return {
@@ -137,7 +167,8 @@ export default {
       viewBurnAfterReading,
       handleMessageDeleted,
       userStore,
-      getReadCount
+      getReadCount,
+      handleReadCountClick
     };
   }
 };
@@ -284,7 +315,8 @@ export default {
   width: 32rpx;
   height: 32rpx;
   border-radius: 50%;
-  border: 1.2rpx solid rgba(61,138,245,1); 
+  border: 1.2rpx solid rgba(61,138,245,1);
+  background-color: #fff;
   font-family: NotoSansCJKsc-Bold;
   font-size: 18rpx;
   color: #3D8AF5;
@@ -294,7 +326,8 @@ export default {
   font-weight: 700;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
+  z-index: 1;
 }
 
 .message-status {

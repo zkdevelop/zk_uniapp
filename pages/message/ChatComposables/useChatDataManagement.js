@@ -73,10 +73,7 @@ export function useChatDataManagement(chatInfo, list) {
         list.value = newMessages
         saveCachedData(newMessages)
 
-        console.log("聊天数据更新:", {
-          消息数量: newMessages.length,
-          聊天类型: chatInfo.value.type,
-        })
+        
       }
     } catch (error) {
       console.log("获取新消息出错:", error)
@@ -168,13 +165,7 @@ export function useChatDataManagement(chatInfo, list) {
         senderName = sender.userName
       }
     }
-
-    console.log("映射群聊消息:", {
-      发送者ID: msg.senderId,
-      发送者名称: senderName,
-      群组信息: groupInfo,
-      消息内容: content,
-    })
+ 
 
     const mappedMessage = {
       id: msg.id,
@@ -205,13 +196,11 @@ export function useChatDataManagement(chatInfo, list) {
     const cacheKey = `group_members_${groupId}`
     const cachedMembers = uni.getStorageSync(cacheKey)
 
-    if (cachedMembers) {
-      console.log("使用缓存的群成员信息")
+    if (cachedMembers) { 
       groupStore.setGroupInfo(JSON.parse(cachedMembers))
     }
 
-    try {
-      console.log("从服务器获取群成员信息")
+    try { 
       const response = await getGroupBasicInfo(groupId)
       if (response.code === 200) {
         const groupInfo = {
@@ -239,8 +228,7 @@ export function useChatDataManagement(chatInfo, list) {
     const cacheKey = `user_info_${userId}`
     const cachedUserInfo = uni.getStorageSync(cacheKey)
 
-    if (cachedUserInfo) {
-      console.log("使用缓存的用户信息")
+    if (cachedUserInfo) { 
       return JSON.parse(cachedUserInfo)
     }
 
