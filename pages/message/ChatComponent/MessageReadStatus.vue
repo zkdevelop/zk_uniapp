@@ -12,7 +12,40 @@
         <text class="sender-name">{{ messageData.senderName }}</text>
         <text class="message-time">{{ formatTime(messageData.timestamp) }}</text>
       </view>
-      <view class="message-content">{{ messageData.content }}</view>
+      <view class="message-content" :class="{ 
+        'location-content': messageData.type === 'location', 
+        'file-message': messageData.type === 'file', 
+        'message-image': messageData.type === 'image', 
+        'voice-message': messageData.type === 'voice_message',
+        'audio-message': messageData.type === 'audio'
+      }">
+        <LocationMessage v-if="messageData.type === 'location'" :content="messageData.content" />
+        <ImageMessage v-else-if="messageData.type === 'image'" :content="messageData.content" />
+        <FileMessage v-else-if="messageData.type === 'file'" :content="messageData.content" :messageType="messageData.messageType" />
+        <VoiceMessageBubble 
+          v-else-if="messageData.type === 'voice_message'" 
+          :content="{ 
+            url: messageData.content, 
+            duration: messageData.duration, 
+            isSelf: false 
+          }" 
+        />
+        <AudioMessage
+          v-else-if="messageData.type === 'audio'"
+          :content="messageData.content"
+          :messageType="messageData.messageType"
+        />
+        <BurnAfterReadingMessage v-else-if="messageData.type === 'burn-after-reading'" :content="messageData.content" @view-burn-after-reading="viewBurnAfterReading" />
+        <BurnAfterReadingTextMessage
+          v-else-if="messageData.selfDestruct && messageData.messageType === 'MESSAGE'"
+          :messageId="messageData.id"
+          :isGroup="true"
+          @message-deleted="handleMessageDeleted"
+        />
+        <template v-else>
+          {{ messageData.content || '' }}
+        </template>
+      </view>
     </view>
 
     <view class="read-status-container">
@@ -58,9 +91,25 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import LocationMessage from './MessageComponent/LocationMessage.vue'
+import ImageMessage from './MessageComponent/ImageMessage.vue'
+import FileMessage from './MessageComponent/FileMessage.vue'
+import VoiceMessageBubble from './MessageComponent/VoiceMessageBubble.vue'
+import BurnAfterReadingMessage from './MessageComponent/BurnAfterReadingMessage.vue'
+import AudioMessage from './MessageComponent/AudioMessage.vue'
+import BurnAfterReadingTextMessage from './MessageComponent/BurnAfterReadingTextMessage.vue'
 
 export default {
   name: 'MessageReadStatus',
+  components: {
+    LocationMessage,
+    ImageMessage,
+    FileMessage,
+    VoiceMessageBubble,
+    BurnAfterReadingMessage,
+    AudioMessage,
+    BurnAfterReadingTextMessage
+  },
   setup() {
     const messageData = ref(null)
     const activeTab = ref('read')
@@ -97,8 +146,14 @@ export default {
 
       if (eventChannel) {
         eventChannel.on('messageData', (data) => {
-          messageData.value = data
-          console.log('接收到的消息数据：', data)
+          messageData.value = {
+            ...data,
+            type: data.type || 'text',
+            messageType: data.messageType || 'MESSAGE',
+            selfDestruct: data.selfDestruct || false,
+            id: data.id
+          }
+          console.log('接收到的消息数据：', messageData.value)
         })
       } else {
         console.log('无法获取事件通道')
@@ -119,6 +174,14 @@ export default {
       uni.navigateBack()
     }
 
+    const viewBurnAfterReading = (message) => {
+      console.log('查看阅后即焚消息', message)
+    }
+
+    const handleMessageDeleted = (messageId) => {
+      console.log('消息已删除', messageId)
+    }
+
     return {
       messageData,
       activeTab,
@@ -127,7 +190,9 @@ export default {
       displayUsers,
       formatTime,
       handleBack,
-      setActiveTab
+      setActiveTab,
+      viewBurnAfterReading,
+      handleMessageDeleted
     }
   }
 }
@@ -199,6 +264,16 @@ export default {
   font-weight: 500;
   line-height: 1.5;
   word-break: break-all;
+
+  &.location-content,
+  &.file-message,
+  &.message-image,
+  &.voice-message,
+  &.audio-message {
+    background: transparent;
+    padding: 0;
+    overflow: hidden;
+  }
 }
 
 .read-status-container {
@@ -279,7 +354,7 @@ export default {
     position: absolute;
     right: 0;
     bottom: 0;
-    left: 132rpx;  // 头像宽度 + 右边距 + 左边距
+    left: 132rpx;
     height: 1rpx;
     background-color: #EEEEEE;
   }

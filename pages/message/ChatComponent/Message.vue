@@ -1,5 +1,6 @@
 <template>
   <view class="message" :class="[message.userType]">
+	  {{message}}
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <view class="avatar-container">
@@ -143,12 +144,15 @@ export default {
       uni.navigateTo({
         url: '/pages/message/ChatComponent/MessageReadStatus',
         success: (res) => {
-          // 只传递 groupMessageUserReadVO 数据
           res.eventChannel.emit('messageData', { 
             groupMessageUserReadVO: readStatusData.value.groupMessageUserReadVO,
             senderName: props.message.senderName,
             content: props.message.content,
-            timestamp: props.message.timestamp
+            timestamp: props.message.timestamp,
+            type: props.message.type,
+            messageType: props.message.messageType,
+            selfDestruct: props.message.selfDestruct,
+            id: props.message.id
           })
         }
       })

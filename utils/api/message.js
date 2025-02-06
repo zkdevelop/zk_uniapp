@@ -177,8 +177,7 @@ export const getGroupBasicInfo = (groupId) => {
     method: "get",
   })
 }
-
-// Add this new function to the existing message.js file
+ 
 export const getUserBasicInfo = (userId) => {
   if (!userId) {
     console.log("getUserBasicInfo 需要 userId 参数")
