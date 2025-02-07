@@ -1,6 +1,5 @@
 <template>
-  <view class="message" :class="[message.userType]">
-	  {{message}}
+  <view class="message" :class="[message.userType]"> 
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <view class="avatar-container">
@@ -17,7 +16,8 @@
             'file-message': message.type === 'file', 
             'message-image': message.type === 'image', 
             'voice-message': message.type === 'voice_message',
-            'audio-message': message.type === 'audio'
+            'audio-message': message.type === 'audio',
+            'burn-after-reading': message.selfDestruct && message.messageType === 'MESSAGE'
           }">
             <!-- 根据消息类型渲染不同的组件 -->
             <LocationMessage v-if="message.type === 'location'" :content="message.content" />
@@ -158,14 +158,6 @@ export default {
       })
     }
 
-    onMounted(() => {
-      // console.log('消息组件已挂载');
-      // console.log('消息头像:', props.message.avatar);
-      // console.log('用户头像来自存储:', userStore.state.avatar);
-      // console.log('消息用户类型:', props.message.userType);
-      // console.log('群组消息已读状态:', props.message.groupMessageUserReadVO);
-    });
-
     return {
       formatTime,
       viewBurnAfterReading,
@@ -228,7 +220,7 @@ export default {
     white-space: normal;
   }
 
-  .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
+  .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message):not(.burn-after-reading) {
     padding: 20rpx;
     background: #fff;
   }
@@ -246,7 +238,7 @@ export default {
       margin-left: 20rpx;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message):not(.burn-after-reading) {
       background: #4e8cff;
       color: #fff;
     }
@@ -265,7 +257,7 @@ export default {
       flex-direction: row;
     }
 
-    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message) {
+    .content:not(.location-content):not(.file-message):not(.message-image):not(.voice-message):not(.audio-message):not(.burn-after-reading) {
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -368,6 +360,23 @@ export default {
   align-items: center;
   font-weight: bold;
   font-size: 12px;
+}
+
+// 阅后即焚消息的特殊样式
+.burn-after-reading {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  
+  &:not(.revealed) {
+    .burn-after-reading-text {
+      background: #FFFFFF !important;
+      box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.16) !important;
+      border-radius: 2px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+  }
 }
 </style>
 

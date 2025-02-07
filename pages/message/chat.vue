@@ -11,7 +11,7 @@
       :is-group="chatInfo.type === 'group'"
       @load-more="loadMoreMessages"
       @scroll="onScroll"
-      @message-deleted="handleMessageDeleted"
+      :onMessageDeleted="handleMessageDeleted"
       @click="handleMessageListClick"
       class="message-list"
     />
@@ -364,6 +364,7 @@ export default {
       console.log('toggleAttachMenu 被调用，值为:', value);
       showAttachMenu.value = value;
     };
+
 
     return {
       chatInfo,

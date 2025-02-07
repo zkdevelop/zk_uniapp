@@ -21,6 +21,7 @@
           :message="item"
           :is-group="isGroup"
           @view-burn-after-reading="$emit('view-burn-after-reading', $event)"
+          @message-deleted="onMessageDeleted"
         />
       </view>
     </scroll-view>
@@ -47,6 +48,10 @@ export default {
     isGroup: {
       type: Boolean,
       default: false
+    },
+    onMessageDeleted: {
+      type: Function,
+      required: true
     }
   },
   data() {
@@ -55,7 +60,7 @@ export default {
       internalScrollTop: 0,
       scrollViewHeight: 0,
       lastContentHeight: 0,
-      isScrolling: false // 新增：标记是否正在滚动
+      isScrolling: false // 标记是否正在滚动
     }
   },
   watch: {
