@@ -91,7 +91,7 @@ export function useChatDataManagement(chatInfo, list) {
 
   // 映射私聊消息
   const mapPrivateMessage = async (msg) => {
-    // console.log("开始映射私聊消息:", msg)
+    console.log("开始映射私聊消息:", msg)
     let content = msg.content
     let type = msg.type.toLowerCase()
 
@@ -114,8 +114,10 @@ export function useChatDataManagement(chatInfo, list) {
     const avatarUrl = userInfo
       ? userInfo.avatarUrl
       : msg.senderId === chatInfo.value.id
-        ? chatInfo.value.avatar[0]
-        : chatInfo.value._selfAvatar
+        ? chatInfo.value.avatar && chatInfo.value.avatar[0]
+          ? chatInfo.value.avatar[0]
+          : ""
+        : chatInfo.value._selfAvatar || ""
 
     const mappedMessage = {
       id: msg.id,
@@ -161,9 +163,11 @@ export function useChatDataManagement(chatInfo, list) {
     if (groupInfo && groupInfo.groupMembers) {
       const sender = groupInfo.groupMembers.find((member) => member.userId === msg.senderId)
       if (sender) {
-        avatar = sender.avatarUrl
-        senderName = sender.userName
+        avatar = sender.avatarUrl || ""
+        senderName = sender.userName || "未知用户"
       }
+    } else {
+      console.log("群组信息不完整或未找到发送者")
     }
 
     const mappedMessage = {
@@ -184,7 +188,7 @@ export function useChatDataManagement(chatInfo, list) {
     return mappedMessage
   }
 
-  // 加载并缓存群组成员��息
+  // 加载并缓存群组成员信息
   const loadAndCacheGroupMembers = async (groupId) => {
     if (isLoadingGroupInfo.value) {
       console.log("正在获取群组信息，跳过重复请求")
@@ -259,6 +263,10 @@ export function useChatDataManagement(chatInfo, list) {
   const handleWebSocketMessage = async (message) => {
     console.log("收到WebSocket消息:", message, message.sessionId, chatInfo.value.id)
     if (message.sessionId === chatInfo.value.id || message.senderId === chatInfo.value.id) {
+      if (!message.type) {
+        console.log("收到的消息缺少类型信息:", message)
+        return
+      }
       const isGroupMessage = chatInfo.value.type === "group"
       let mappedMessage
 

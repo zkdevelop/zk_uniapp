@@ -1,4 +1,4 @@
-import { ref, nextTick } from "vue"
+import { nextTick } from "vue"
 import {
   getHistoryChatMessages,
   sendMessageToUser,
@@ -7,7 +7,7 @@ import {
   getGroupChatMessages,
 } from "@/utils/api/message.js"
 import { useUserStore } from "@/store/userStore"
-import { useGroupStore } from "@/pages/message/store/groupStore"
+import { useGroupStore } from "@/pages/message/store/groupStore" 
 
 export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMoreMessages, scrollToBottom) {
   const userStore = useUserStore()
@@ -55,11 +55,11 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
             timestamp: new Date(),
             type: message.type || "text",
             messageType: message.type === "text" ? "MESSAGE" : message.type.toUpperCase(),
-          } 
+          }
           handleMessageSent(sentMessage)
-          await updateMessageList() 
+          await updateMessageList()
           nextTick(() => {
-            scrollToBottom() 
+            scrollToBottom()
           })
         } else {
           throw new Error(response.msg || "发送消息失败")
@@ -154,7 +154,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
         if (!isLoadingMore) {
           nextTick(() => {
-            scrollToBottom() 
+            scrollToBottom()
           })
         }
 
@@ -223,15 +223,14 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
         } else {
           newMessages = response.data.messageVOList.reverse().map((msg) => mapPrivateMessage(msg))
         }
- 
 
         // 合并新消息和现有消息，去重
         const mergedMessages = [...list.value, ...newMessages]
         const uniqueMessages = Array.from(new Map(mergedMessages.map((item) => [item.id, item])).values())
         list.value = uniqueMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
- 
+
         nextTick(() => {
-          scrollToBottom() 
+          scrollToBottom()
         })
       } else {
         console.log("没有新消息或获取失败")
@@ -270,12 +269,14 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       id: msg.id,
       content: content,
       userType: msg.senderId === chatInfo.value.id ? "other" : "self",
-      avatar:
-        msg.senderId === chatInfo.value.id
-          ? chatInfo.value.avatar && chatInfo.value.avatar[0]
-            ? chatInfo.value.avatar[0]
-            : ""
-          : chatInfo.value._selfAvatar || "",
+      avatar: (() => {
+        if (msg.senderId === chatInfo.value.id) {
+          return chatInfo.value.avatar && chatInfo.value.avatar[0] ? chatInfo.value.avatar[0] : ""
+        } else {
+          const userInfo = userStore.state.userInfo
+          return userInfo && userInfo.avatarUrl ? userInfo.avatarUrl : chatInfo.value._selfAvatar || ""
+        }
+      })(),
       timestamp: new Date(msg.sendTime),
       type: type,
       isRead: msg.isRead,
@@ -287,7 +288,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     return mappedMessage
   }
 
-  const mapGroupMessage = (msg) => { 
+  const mapGroupMessage = (msg) => {
     let content = msg.message
     let type = msg.messageType.toLowerCase()
 
@@ -312,13 +313,17 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     }
 
     const groupInfo = groupStore.state.groupInfo
-    let avatar = chatInfo.value._selfAvatar
+    let avatar = chatInfo.value._selfAvatar || ""
+    let senderName = "未知用户"
 
     if (groupInfo && groupInfo.groupMembers) {
       const sender = groupInfo.groupMembers.find((member) => member.userId === msg.senderId)
       if (sender) {
-        avatar = sender.avatarUrl
+        avatar = sender.avatarUrl || ""
+        senderName = sender.userName || "未知用户"
       }
+    } else {
+      console.log("群组信息不完整或未找到发送者")
     }
 
     const mappedMessage = {
@@ -331,7 +336,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       isRead: msg.groupMessageUserReadVO.some((user) => user.userId === chatInfo.value.id && user.isRead),
       messageType: msg.messageType,
       selfDestruct: msg.selfDestruct,
-      senderName: msg.groupMessageUserReadVO.find((user) => user.userId === msg.senderId)?.userName || "未知用户",
+      senderName: senderName,
     }
 
     console.log("映射后的群聊消息:", mappedMessage)
@@ -374,9 +379,9 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       console.log("文件发送响应:", response)
 
       if (response.code === 200) {
-        await updateMessageList() 
+        await updateMessageList()
         nextTick(() => {
-          scrollToBottom() 
+          scrollToBottom()
         })
       } else {
         throw new Error(response.msg || "发送文件消息失败")
