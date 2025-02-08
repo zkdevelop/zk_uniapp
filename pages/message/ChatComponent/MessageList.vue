@@ -126,7 +126,7 @@ export default {
       if (this.isScrolling) return;
       
       const { scrollTop, scrollHeight } = event.detail;
-      console.log('滚动事件:', { scrollTop, scrollHeight });
+      // console.log('滚动事件:', { scrollTop, scrollHeight });
       
       this.showLoadMore = scrollTop < 50;
       this.$emit('scroll', event);

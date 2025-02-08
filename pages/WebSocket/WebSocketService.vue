@@ -113,30 +113,32 @@ export const useWebSocket = () => {
   }
 
   const handleMessage = (message) => {
-    switch (message.type) {
-      case 'auth':
-        if (message.status === 'success') {
-          console.log('认证成功')
-        } else {
-          console.error('认证失败:', message.error)
-          disconnect()
-        }
-        break
-      case 'chat':
-        // 处理聊天消息
-        uni.$emit('newChatMessage', message)
-        break
-      case 'notification':
-        // 处理通知消息
-        uni.$emit('newNotification', message)
-        break
-      case 'pong':
-        console.log('收到服务器的 pong 响应')
-        break
-      default:
-        console.log('未知消息类型:', message)
-		uni.$emit('newChatMessage', message)
-    }
+	   console.log('消息', message)
+	  uni.$emit('newChatMessage', message)
+  //   switch (message.type) {
+  //     case 'auth':
+  //       if (message.status === 'success') {
+  //         console.log('认证成功')
+  //       } else {
+  //         console.error('认证失败:', message.error)
+  //         disconnect()
+  //       }
+  //       break
+  //     case 'chat':
+  //       // 处理聊天消息
+  //       uni.$emit('newChatMessage', message)
+  //       break
+  //     case 'notification':
+  //       // 处理通知消息
+  //       uni.$emit('newNotification', message)
+  //       break
+  //     case 'pong':
+  //       console.log('收到服务器的 pong 响应')
+  //       break
+  //     default:
+  //       console.log('未知消息类型:', message)
+		// uni.$emit('newChatMessage', message)
+  //   }
   }
 
   const ping = () => {

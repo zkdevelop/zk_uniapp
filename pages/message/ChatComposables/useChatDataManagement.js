@@ -7,7 +7,7 @@ import {
 } from "@/utils/api/message.js"
 import { useUserStore } from "@/store/userStore"
 import { useGroupStore } from "@/pages/message/store/groupStore"
-import { useWebSocket } from "@/pages/WebSocket/WebSocketService.vue"
+import { useWebSocket } from "@/pages/WebSocket/WebSocketService.vue" 
 
 export function useChatDataManagement(chatInfo, list) {
   const userStore = useUserStore()
@@ -50,13 +50,13 @@ export function useChatDataManagement(chatInfo, list) {
         response = await getGroupChatMessages({
           opponentId: chatInfo.value.id,
           from: 0,
-          to: 20, // 增加获取的消息数量
+          to: 20,
         })
       } else {
         response = await getHistoryChatMessages({
           opponentId: chatInfo.value.id,
           from: 0,
-          to: 20, // 增加获取的消息数量
+          to: 20,
           missionId: chatInfo.value.missionId,
         })
       }
@@ -72,8 +72,6 @@ export function useChatDataManagement(chatInfo, list) {
         // 直接更新消息列表
         list.value = newMessages
         saveCachedData(newMessages)
-
-        
       }
     } catch (error) {
       console.log("获取新消息出错:", error)
@@ -93,22 +91,23 @@ export function useChatDataManagement(chatInfo, list) {
 
   // 映射私聊消息
   const mapPrivateMessage = async (msg) => {
-    let content = msg.message
-    let type = msg.messageType.toLowerCase()
+    // console.log("开始映射私聊消息:", msg)
+    let content = msg.content
+    let type = msg.type.toLowerCase()
 
     if (type === "position") {
       try {
-        content = JSON.parse(msg.message)
+        content = JSON.parse(msg.content)
         type = "location"
       } catch (e) {
         console.log("解析位置数据失败:", e)
       }
     } else if (type === "image") {
-      content = msg.previewUrl || msg.message
-    } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+      content = msg.previewUrl || msg.content
+    } else if (type === "text" && msg.content.toLowerCase().endsWith(".txt")) {
       type = "file"
     } else if (type === "audio" || type === "video") {
-      content = msg.previewUrl || msg.message
+      content = msg.previewUrl || msg.content
     }
 
     const userInfo = await loadAndCacheUserInfo(msg.senderId)
@@ -123,13 +122,14 @@ export function useChatDataManagement(chatInfo, list) {
       content: content,
       userType: msg.senderId === chatInfo.value.id ? "other" : "self",
       avatar: avatarUrl,
-      timestamp: new Date(msg.sendTime),
+      timestamp: new Date(msg.date),
       type: type,
-      isRead: msg.isRead,
-      messageType: msg.messageType,
-      selfDestruct: msg.selfDestruct,
+      isRead: msg.readFlag,
+      messageType: msg.type,
+      selfDestruct: msg.isSelfDestruct,
     }
 
+    console.log("私聊消息映射结果:", mappedMessage)
     return mappedMessage
   }
 
@@ -165,7 +165,6 @@ export function useChatDataManagement(chatInfo, list) {
         senderName = sender.userName
       }
     }
- 
 
     const mappedMessage = {
       id: msg.id,
@@ -185,7 +184,7 @@ export function useChatDataManagement(chatInfo, list) {
     return mappedMessage
   }
 
-  // 加载并缓存群组成员信息
+  // 加载并缓存群组成员��息
   const loadAndCacheGroupMembers = async (groupId) => {
     if (isLoadingGroupInfo.value) {
       console.log("正在获取群组信息，跳过重复请求")
@@ -196,11 +195,11 @@ export function useChatDataManagement(chatInfo, list) {
     const cacheKey = `group_members_${groupId}`
     const cachedMembers = uni.getStorageSync(cacheKey)
 
-    if (cachedMembers) { 
+    if (cachedMembers) {
       groupStore.setGroupInfo(JSON.parse(cachedMembers))
     }
 
-    try { 
+    try {
       const response = await getGroupBasicInfo(groupId)
       if (response.code === 200) {
         const groupInfo = {
@@ -228,7 +227,7 @@ export function useChatDataManagement(chatInfo, list) {
     const cacheKey = `user_info_${userId}`
     const cachedUserInfo = uni.getStorageSync(cacheKey)
 
-    if (cachedUserInfo) { 
+    if (cachedUserInfo) {
       return JSON.parse(cachedUserInfo)
     }
 
@@ -258,11 +257,32 @@ export function useChatDataManagement(chatInfo, list) {
 
   // 处理WebSocket消息
   const handleWebSocketMessage = async (message) => {
-    console.log("收到WebSocket消息:", message)
-    if (message.sessionId === chatInfo.value.id) {
-      const isGroupMessage = message.senderId !== message.sessionId
-      const mappedMessage = await (isGroupMessage ? mapGroupMessage(message) : mapPrivateMessage(message))
-      insertNewMessage(mappedMessage)
+    console.log("收到WebSocket消息:", message, message.sessionId, chatInfo.value.id)
+    if (message.sessionId === chatInfo.value.id || message.senderId === chatInfo.value.id) {
+      const isGroupMessage = chatInfo.value.type === "group"
+      let mappedMessage
+
+      console.log("处理消息类型:", isGroupMessage ? "群聊" : "私聊")
+      if (isGroupMessage) {
+        // 为群聊消息添加必要的字段
+        const messageWithReadInfo = {
+          ...message,
+          groupMessageUserReadVO: message.groupMessageUserReadVO || [],
+        }
+        mappedMessage = await mapGroupMessage(messageWithReadInfo)
+      } else {
+        console.log("开始处理私聊消息:", message)
+        mappedMessage = await mapPrivateMessage(message)
+        console.log("私聊消息处理结果:", mappedMessage)
+      }
+
+      if (mappedMessage) {
+        console.log("插入新消息到列表")
+        list.value.push(mappedMessage)
+        saveCachedData(list.value)
+      } else {
+        console.log("消息映射失败，无法插入")
+      }
     } else {
       console.log("收到的消息不属于当前对话")
     }
