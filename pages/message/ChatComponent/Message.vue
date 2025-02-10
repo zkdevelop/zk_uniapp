@@ -52,8 +52,7 @@
             v-if="isGroup" 
             class="read-count" 
             :class="{ 'read-count-self': message.userType === 'self' }"
-            @click="handleReadCountClick"
-          >
+            @click="handleReadCountClick" >
             {{ getReadCount }}
           </view>
         </view>
@@ -157,7 +156,6 @@ export default {
         }
       })
     }
-
     return {
       formatTime,
       viewBurnAfterReading,

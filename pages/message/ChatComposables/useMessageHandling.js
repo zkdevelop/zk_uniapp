@@ -288,60 +288,60 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
     return mappedMessage
   }
 
-  const mapGroupMessage = (msg) => {
-    let content = msg.message
-    let type = msg.messageType.toLowerCase()
-
-    if (content === null) {
-      content = ""
-      console.log("警告: 消息内容为空", msg)
-    }
-
-    if (type === "position") {
-      try {
-        content = JSON.parse(msg.message)
-        type = "location"
-      } catch (e) {
-        console.log("解析位置数据失败:", e)
-      }
-    } else if (type === "image") {
-      content = msg.previewUrl || msg.message
-    } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
-      type = "file"
-    } else if (type === "audio" || type === "voice_message") {
-      content = msg.previewUrl || msg.message
-    }
-
-    const groupInfo = groupStore.state.groupInfo
-    let avatar = chatInfo.value._selfAvatar || ""
-    let senderName = "未知用户"
-
-    if (groupInfo && groupInfo.groupMembers) {
-      const sender = groupInfo.groupMembers.find((member) => member.userId === msg.senderId)
-      if (sender) {
-        avatar = sender.avatarUrl || ""
-        senderName = sender.userName || "未知用户"
-      }
-    } else {
-      console.log("群组信息不完整或未找到发送者")
-    }
-
-    const mappedMessage = {
-      id: msg.id,
-      content: content,
-      userType: userStore.state.id === msg.senderId ? "self" : "other",
-      avatar: avatar,
-      timestamp: new Date(msg.sendTime),
-      type: type,
-      isRead: msg.groupMessageUserReadVO.some((user) => user.userId === chatInfo.value.id && user.isRead),
-      messageType: msg.messageType,
-      selfDestruct: msg.selfDestruct,
-      senderName: senderName,
-    }
-
-    console.log("映射后的群聊消息:", mappedMessage)
-    return mappedMessage
-  }
+ const mapGroupMessage = (msg) => {
+   let content = msg.message
+   let type = msg.messageType.toLowerCase()
+ 
+   if (content === null) {
+     content = ""
+   }
+ 
+   if (type === "position") {
+     try {
+       content = JSON.parse(msg.message)
+       type = "location"
+     } catch (e) {
+       // 解析位置数据失败
+     }
+   } else if (type === "image") {
+     content = msg.previewUrl || msg.message
+   } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+     type = "file"
+   } else if (type === "audio" || type === "voice_message") {
+     content = msg.previewUrl || msg.message
+   }
+ 
+   const groupInfo = groupStore.state.groupInfo
+   let avatar = chatInfo.value._selfAvatar || ""
+   let senderName = "未知用户"
+ 
+   if (groupInfo && groupInfo.groupMembers) {
+     const sender = groupInfo.groupMembers.find((member) => member.userId === msg.senderId)
+     if (sender) {
+       avatar = sender.avatarUrl || ""
+       senderName = sender.userName || "未知用户"
+     }
+   }
+ 
+   const mappedMessage = {
+     id: msg.id,
+     content: content,
+     userType: userStore.state.id === msg.senderId ? "self" : "other",
+     avatar: avatar,
+     timestamp: new Date(msg.sendTime),
+     type: type,
+     isRead:
+       Array.isArray(msg.groupMessageUserReadVO) &&
+       msg.groupMessageUserReadVO.some((user) => user.userId === chatInfo.value.id && user.isRead),
+     messageType: msg.messageType,
+     selfDestruct: msg.selfDestruct,
+     senderName: senderName,
+     senderId: msg.senderId,
+     groupMessageUserReadVO: Array.isArray(msg.groupMessageUserReadVO) ? msg.groupMessageUserReadVO : [],
+   }
+ 
+   return mappedMessage
+ }
 
   const handleFileSelected = async (fileInfo) => {
     console.log("处理文件选择:", fileInfo)
