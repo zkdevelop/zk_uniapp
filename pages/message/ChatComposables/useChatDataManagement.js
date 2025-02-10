@@ -7,7 +7,7 @@ import {
 } from "@/utils/api/message.js"
 import { useUserStore } from "@/store/userStore"
 import { useGroupStore } from "@/pages/message/store/groupStore"
-import { useWebSocket } from "@/pages/WebSocket/WebSocketService.vue" 
+import { useWebSocket } from "@/pages/WebSocket/WebSocketService.vue"
 
 export function useChatDataManagement(chatInfo, list) {
   const userStore = useUserStore()
@@ -137,22 +137,22 @@ export function useChatDataManagement(chatInfo, list) {
 
   // 映射群聊消息
   const mapGroupMessage = (msg) => {
-    let content = msg.message
-    let type = msg.messageType.toLowerCase()
+    let content = msg.message || msg.content
+    let type = (msg.messageType || msg.type || "").toLowerCase()
 
     if (type === "position") {
       try {
-        content = JSON.parse(msg.message)
+        content = JSON.parse(content)
         type = "location"
       } catch (e) {
         console.log("解析位置数据失败:", e)
       }
     } else if (type === "image") {
-      content = msg.previewUrl || msg.message
-    } else if (type === "text" && msg.message.toLowerCase().endsWith(".txt")) {
+      content = msg.previewUrl || content
+    } else if (type === "text" && content.toLowerCase().endsWith(".txt")) {
       type = "file"
     } else if (type === "audio" || type === "video") {
-      content = msg.previewUrl || msg.message
+      content = msg.previewUrl || content
     }
 
     // 从 groupStore 中获取群组信息
@@ -175,14 +175,16 @@ export function useChatDataManagement(chatInfo, list) {
       content: content,
       userType: userStore.state.id === msg.senderId ? "self" : "other",
       avatar: avatar,
-      timestamp: new Date(msg.sendTime),
+      timestamp: new Date(msg.sendTime || msg.date),
       type: type,
-      isRead: msg.groupMessageUserReadVO.some((user) => user.userId === chatInfo.value.id && user.isRead),
-      messageType: msg.messageType,
-      selfDestruct: msg.selfDestruct,
+      isRead:
+        Array.isArray(msg.groupMessageUserReadVO) &&
+        msg.groupMessageUserReadVO.some((user) => user.userId === chatInfo.value.id && user.isRead),
+      messageType: msg.messageType || msg.type,
+      selfDestruct: msg.selfDestruct || msg.isSelfDestruct,
       senderName: senderName,
       senderId: msg.senderId,
-      groupMessageUserReadVO: msg.groupMessageUserReadVO,
+      groupMessageUserReadVO: Array.isArray(msg.groupMessageUserReadVO) ? msg.groupMessageUserReadVO : [],
     }
 
     return mappedMessage
@@ -276,8 +278,10 @@ export function useChatDataManagement(chatInfo, list) {
         const messageWithReadInfo = {
           ...message,
           groupMessageUserReadVO: message.groupMessageUserReadVO || [],
+          messageType: message.type,
+          sendTime: message.date,
         }
-        mappedMessage = await mapGroupMessage(messageWithReadInfo)
+        mappedMessage = mapGroupMessage(messageWithReadInfo)
       } else {
         console.log("开始处理私聊消息:", message)
         mappedMessage = await mapPrivateMessage(message)
@@ -293,60 +297,6 @@ export function useChatDataManagement(chatInfo, list) {
       }
     } else {
       console.log("收到的消息不属于当前对话")
-    }
-  }
-
-  // 映射WebSocket消息
-  const mapWebSocketMessage = (msg, isGroupMessage) => {
-    let type = msg.type.toLowerCase()
-    let content = msg.content
-
-    if (type === "position") {
-      try {
-        content = JSON.parse(msg.content)
-        type = "location"
-      } catch (e) {
-        console.log("解析位置数据失败:", e)
-      }
-    }
-
-    let avatar = ""
-    let senderName = ""
-
-    if (isGroupMessage) {
-      const groupInfo = groupStore.state.groupInfo
-      if (groupInfo && groupInfo.groupMembers) {
-        const sender = groupInfo.groupMembers.find((member) => member.userId === msg.senderId)
-        if (sender) {
-          avatar = sender.avatarUrl
-          senderName = sender.userName
-        } else {
-          console.log("未找到发送者信息，使用默认值")
-          avatar = ""
-          senderName = "未知用户"
-        }
-      } else {
-        console.log("群组信息不完整，使用默认值")
-        avatar = ""
-        senderName = "未知用户"
-      }
-    } else {
-      avatar = chatInfo.value.avatar
-      senderName = msg.title
-    }
-
-    return {
-      id: msg.id,
-      content: content,
-      userType: msg.senderId === userStore.state.id ? "self" : "other",
-      avatar: avatar,
-      timestamp: new Date(msg.date),
-      type: type,
-      isRead: false,
-      messageType: msg.type,
-      selfDestruct: msg.isSelfDestruct,
-      senderName: senderName,
-      senderId: msg.senderId,
     }
   }
 
