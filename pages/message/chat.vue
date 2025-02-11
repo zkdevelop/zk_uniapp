@@ -46,26 +46,19 @@
     新消息
   </view>
 
-  <!-- 来电提醒 -->
-  <view v-if="peerStore.activateNotification" class="modal">
-    <view>
-      <text>{{peerStore.dataConnection?.peer}} 邀请你视频通话</text>
-    </view>
-    <view class="modal-content">
-      <button @click="acceptVideoCall" type="default">接听</button>
-      <button @click="rejectVideoCall" type="warn">拒绝</button>
-    </view>
+    <!-- 来电提醒 -->
+		<VideoCallDialog/>
   </view>
-</view>
 </template>
 
 <script>
-import { ref, onMounted, nextTick, watch, onUnmounted } from 'vue'
+import { ref, onMounted, nextTick, watch, onUnmounted, watchEffect } from 'vue'
 import ChatHeader from './ChatComponent/ChatHeader.vue'
 import MessageList from './ChatComponent/MessageList.vue'
 import ChatInputArea from './ChatComponent/ChatInputArea.vue' 
 import ScrollToBottomButton from './ChatComponent/ScrollToBottomButton.vue'
 import LoadingAnimation from './ChatComponent/LoadingAnimation.vue'
+import VideoCallDialog from './ChatComponent/VideoCallComponent/VideoCallDialog.vue';
 import { getHistoryChatMessages, sendMessageToUser, sendFilesToUser, readSelfDestructMessage } from '@/utils/api/message.js'
 import usePeerStore from '../../store/peer'
 import useFriendStore from '../../store/friend'
@@ -77,54 +70,55 @@ import { useSelfDestructMessageHandling } from './ChatComposables/useSelfDestruc
 import { useChatDataManagement } from './ChatComposables/useChatDataManagement'
 
 export default {
-name: 'Chat',
-components: {
-  ChatHeader,
-  MessageList,
-  ChatInputArea, 
-  ScrollToBottomButton,
-  LoadingAnimation
-},
-setup() {
-  // 聊天信息
-  const chatInfo = ref({
-    id: '',
-    name: '',
-    avatar: '',
-    type: 'single',
-    missionId: '',
-    isBurnAfterReadingMode: false
-  })
-  
-  // 消息列表
-  const list = ref([])
-  // 是否显示附件菜单
-  const showAttachMenu = ref(false)
-  // 是否显示滚动到底部按钮
-  const showScrollToBottom = ref(false)
-  // 是否显示新消息提示
-  const showNewMessageTip = ref(false)
-  // 是否有新消息
-  const hasNewMessages = ref(false)
-  // 是否已滚动到底部
-  const isScrolledToBottom = ref(true)
-  // 当前消息加载范围
-  const currentFrom = ref(0)
-  const currentTo = ref(10)
-  // 是否还有更多消息
-  const hasMoreMessages = ref(true) 
-  // 是否正在加载
-  const isLoading = ref(false)
-  
-  // 存储
-  const peerStore = usePeerStore()
-  const friendStore = useFriendStore()
-  const userStore = useUserStore()
-  
-  // 是否为阅后即焚模式
-  const isBurnAfterReadingMode = ref(false)
-  // 消息列表引用
-  const messageListRef = ref(null)
+  name: 'Chat',
+  components: {
+    ChatHeader,
+    MessageList,
+    ChatInputArea, 
+    ScrollToBottomButton,
+    LoadingAnimation,
+		VideoCallDialog
+  },
+  setup() {
+    // 聊天信息
+    const chatInfo = ref({
+      id: '',
+      name: '',
+      avatar: '',
+      type: 'single',
+      missionId: '',
+      isBurnAfterReadingMode: false
+    })
+    
+    // 消息列表
+    const list = ref([])
+    // 是否显示附件菜单
+    const showAttachMenu = ref(false)
+    // 是否显示滚动到底部按钮
+    const showScrollToBottom = ref(false)
+    // 是否显示新消息提示
+    const showNewMessageTip = ref(false)
+    // 是否有新消息
+    const hasNewMessages = ref(false)
+    // 是否已滚动到底部
+    const isScrolledToBottom = ref(true)
+    // 当前消息加载范围
+    const currentFrom = ref(0)
+    const currentTo = ref(10)
+    // 是否还有更多消息
+    const hasMoreMessages = ref(true) 
+    // 是否正在加载
+    const isLoading = ref(false)
+    
+    // 存储
+    const peerStore = usePeerStore()
+    const friendStore = useFriendStore()
+    const userStore = useUserStore()
+		
+    // 是否为阅后即焚模式
+    const isBurnAfterReadingMode = ref(false)
+    // 消息列表引用
+    const messageListRef = ref(null)
 
   // 使用聊天初始化相关功能
   const {

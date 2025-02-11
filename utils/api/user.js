@@ -40,3 +40,16 @@ export const searchUser = (id) => {
 		method:'get'
 	})
 }
+
+/**
+ * 判断用户是否在线
+ * @param {userId} userId 
+ * @returns 
+ */
+export function checkUserOnline(userId) {
+  return request({
+    method: "get",
+    url: "/user/online",
+    data: { userId:userId }
+  });
+}

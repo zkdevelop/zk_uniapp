@@ -4,6 +4,7 @@
 <script>
 import { ref, onUnmounted } from 'vue'
 import { backendHost } from '@/config.js'
+import { useMeetingStore } from '@/store/meeting'
 
 export const useWebSocket = () => {
   const isConnected = ref(false)
@@ -11,6 +12,9 @@ export const useWebSocket = () => {
   const maxReconnectAttempts = 5
   const reconnectInterval = 5000 // 5 seconds
   let socket = null
+	
+	// 数据存储
+	const meetingStore=useMeetingStore();
 
   const connect = (userId, token) => {
     console.log(token, 'tokentokentokentoken')
@@ -113,32 +117,42 @@ export const useWebSocket = () => {
   }
 
   const handleMessage = (message) => {
-	   console.log('消息', message)
-	  uni.$emit('newChatMessage', message)
-  //   switch (message.type) {
-  //     case 'auth':
-  //       if (message.status === 'success') {
-  //         console.log('认证成功')
-  //       } else {
-  //         console.error('认证失败:', message.error)
-  //         disconnect()
-  //       }
-  //       break
-  //     case 'chat':
-  //       // 处理聊天消息
-  //       uni.$emit('newChatMessage', message)
-  //       break
-  //     case 'notification':
-  //       // 处理通知消息
-  //       uni.$emit('newNotification', message)
-  //       break
-  //     case 'pong':
-  //       console.log('收到服务器的 pong 响应')
-  //       break
-  //     default:
-  //       console.log('未知消息类型:', message)
-		// uni.$emit('newChatMessage', message)
-  //   }
+    console.log('消息', message)
+	  // uni.$emit('newChatMessage', message)
+    switch (message.type) {
+      case 'auth':
+        if (message.status === 'success') {
+          console.log('认证成功')
+        } else {
+          console.error('认证失败:', message.error)
+          disconnect()
+        }
+        break
+      case 'chat':
+        // 处理聊天消息
+        uni.$emit('newChatMessage', message)
+        break
+      case 'notification':
+        // 处理通知消息
+        uni.$emit('newNotification', message)
+        break
+      case 'pong':
+        console.log('收到服务器的 pong 响应')
+        break
+			case 'call-remote':
+				const { senderId,senderName, _receiverId, isGroup, roomType } = message
+				meetingStore.showMeetingDialog = true;
+				meetingStore.isCaller = false;
+				meetingStore.isAnswered = false;
+				meetingStore.callerId = senderId;
+				meetingStore.callerName = senderName;
+				meetingStore.isGroup = isGroup;
+				meetingStore.isVideoCall = roomType === 'video';
+				break;
+      default:
+        console.log('未知消息类型:', message)
+		  uni.$emit('newChatMessage', message)
+    }
   }
 
   const ping = () => {
