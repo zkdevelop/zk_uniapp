@@ -1,11 +1,10 @@
 <template>
-  <view class="message" :class="[message.userType]"> 
+  <view class="message" :class="[message.userType]">
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <view class="avatar-container">
         <image :src="message.userType === 'self' ? (message.avatar || userStore.state.avatar || '/static/message/默认头像.png') : (message.avatar || '/static/message/默认头像.png')" class="avatar" mode="aspectFill"></image>
-        <view v-if="isGroup && message.userType === 'other'" class="sender-name">
-          {{ message.senderName }}
+        <view v-if="isGroup && message.userType === 'other'" class="sender-name"> 
         </view>
       </view>
       <view class="content-wrapper">
@@ -19,7 +18,7 @@
             'audio-message': message.type === 'audio',
             'burn-after-reading': message.selfDestruct && message.messageType === 'MESSAGE'
           }">
-            <!-- 根据消息类型渲染不同的组件 -->
+            <!-- 根据消息类型渲染不同的组件 --> 
             <LocationMessage v-if="message.type === 'location'" :content="message.content" />
             <ImageMessage v-else-if="message.type === 'image'" :content="message.content" />
             <FileMessage v-else-if="message.type === 'file'" :content="message.content" :messageType="message.messageType" />
@@ -52,8 +51,15 @@
             v-if="isGroup" 
             class="read-count" 
             :class="{ 'read-count-self': message.userType === 'self' }"
-            @click="handleReadCountClick" >
+            @click="handleReadCountClick">
             {{ getReadCount }}
+          </view>
+          <!-- 私聊消息阅读状态 -->
+          <view 
+            v-else-if="message.userType === 'self'"
+            class="read-status"
+            :class="{ 'read': message.isRead, 'unread': !message.isRead }">
+            {{ message.isRead ? '已读' : '未读' }}
           </view>
         </view>
       </view>
@@ -156,6 +162,7 @@ export default {
         }
       })
     }
+
     return {
       formatTime,
       viewBurnAfterReading,
@@ -360,7 +367,6 @@ export default {
   font-size: 12px;
 }
 
-// 阅后即焚消息的特殊样式
 .burn-after-reading {
   background: transparent !important;
   padding: 0 !important;
@@ -375,6 +381,27 @@ export default {
       margin: 0 !important;
     }
   }
+}
+
+.read-status {
+  position: absolute;
+  right: -48rpx;
+  bottom: 17rpx;
+  font-size: 24rpx;
+  transform: translateY(50%);
+}
+
+.read-status.read {
+  color: #4CAF50;
+}
+
+.read-status.unread {
+  color: #999;
+}
+
+.self .read-status {
+  left: -68rpx;
+  right: auto;
 }
 </style>
 

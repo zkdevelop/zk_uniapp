@@ -230,7 +230,7 @@ export default {
       handleLocationSelected,
       isBurnAfterReadingMode,
       toggleBurnAfterReadingMode,
-      isAttachMenuVisible
+      isAttachMenuVisible, 
     }
   }
 }

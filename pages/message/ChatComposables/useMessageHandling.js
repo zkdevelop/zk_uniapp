@@ -365,12 +365,13 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
 
     try {
       console.log("开始发送文件")
+	const location = await getCurrentLocation()
       const response = await sendFilesToUser({
         files: [fileInfo.path],
         isGroup: chatInfo.value.type === "group",
         isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
-        latitude: "0",
-        longitude: "0",
+        latitude:1,
+        longitude: 2,
         missionId: chatInfo.value.missionId,
         receptionId: chatInfo.value.id,
         voiceMessage: fileInfo.fromVoiceInput || false,
@@ -405,10 +406,35 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
       console.log("未找到要删除的消息")
     }
   }
-
+ const getCurrentLocation = () => {
+     return new Promise((resolve) => {
+       uni.getLocation({
+         type: "gcj02",
+         success: (res) => {
+           resolve({
+             latitude: res.latitude.toString(),
+             longitude: res.longitude.toString(),
+           })
+         },
+         fail: () => {
+           Toast({
+             // Use Vant Toast
+             message: "获取位置失败，使用默认位置",
+             type: "fail",
+           })
+           resolve({
+             latitude: "0",
+             longitude: "0",
+           })
+         },
+         timeout: 2000,  
+       })
+     })
+   }
   console.log("消息处理模块初始化完成")
 
   return {
+	getCurrentLocation,
     sendMessage,
     handleMessageFailed,
     loadHistoryMessages,
