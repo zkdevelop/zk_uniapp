@@ -30,6 +30,7 @@ import { defineComponent } from 'vue'
 import SystemMessage from './MainComponents/SystemMessage.vue'
 import MessageItem from './MainComponents/MessageItem.vue'
 import { useMessageList } from './MainComposables/useMessageList'
+import { onMounted, onUnmounted } from 'vue'
 
 export default defineComponent({
   name: 'Messages',
@@ -43,19 +44,36 @@ export default defineComponent({
       totalMessageCount,
       systemMessage,
       scrollViewHeight,
-      openChat
+      openChat,
+      fetchAndUpdateMessages
     } = useMessageList()
+
+    const refreshPage = () => {
+      console.log('刷新main.vue页面')
+      fetchAndUpdateMessages()
+    }
+
+    onMounted(() => {
+      uni.$on('refreshMainPage', refreshPage)
+    })
+
+    onUnmounted(() => {
+      uni.$off('refreshMainPage', refreshPage)
+    })
 
     return {
       combinedMessages,
       totalMessageCount,
       systemMessage,
       scrollViewHeight,
-      openChat
+      openChat,
+      refreshPage
     }
   }
 })
-</script>
+</script> 
+
+
 
 <style>
 .messages-container {

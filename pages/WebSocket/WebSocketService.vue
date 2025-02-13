@@ -6,6 +6,17 @@ import { ref, onUnmounted } from 'vue'
 import { backendHost } from '@/config.js'
 import { useMeetingStore } from '@/store/meeting'
 
+// 在文件顶部添加这个辅助函数
+const isCurrentPageMain = () => {
+  const pages = getCurrentPages()
+  if (pages && pages.length > 0) {
+    const currentPage = pages[pages.length - 1]
+	console.log( currentPage,currentPage.route )
+    return currentPage && currentPage.route === 'pages/tabBar/tabBar'
+  }
+  return false
+}
+
 export const useWebSocket = () => {
   const isConnected = ref(false)
   const reconnectAttempts = ref(0)
@@ -118,41 +129,49 @@ export const useWebSocket = () => {
 
   const handleMessage = (message) => {
     console.log('消息', message)
-	  // uni.$emit('newChatMessage', message)
-    switch (message.type) {
-      case 'auth':
-        if (message.status === 'success') {
-          console.log('认证成功')
-        } else {
-          console.error('认证失败:', message.error)
-          disconnect()
-        }
-        break
-      case 'chat':
-        // 处理聊天消息
-        uni.$emit('newChatMessage', message)
-        break
-      case 'notification':
-        // 处理通知消息
-        uni.$emit('newNotification', message)
-        break
-      case 'pong':
-        console.log('收到服务器的 pong 响应')
-        break
-			case 'call-remote':
-				const { senderId,senderName, _receiverId, isGroup, roomType } = message
-				meetingStore.showMeetingDialog = true;
-				meetingStore.isCaller = false;
-				meetingStore.isAnswered = false;
-				meetingStore.callerId = senderId;
-				meetingStore.callerName = senderName;
-				meetingStore.isGroup = isGroup;
-				meetingStore.isVideoCall = roomType === 'video';
-				break;
-      default:
-        console.log('未知消息类型:', message)
-		  uni.$emit('newChatMessage', message)
-    }
+	uni.$emit('newChatMessage', message)
+	// 检查当前页面是否为 main.vue
+	if (isCurrentPageMain()) {
+	  uni.$emit('refreshMainPage')
+	}
+    // switch (message.type) {
+    //   case 'auth':
+    //     if (message.status === 'success') {
+    //       console.log('认证成功')
+    //     } else {
+    //       console.error('认证失败:', message.error)
+    //       disconnect()
+    //     }
+    //     break
+    //   case 'chat':
+    //     // 处理聊天消息
+    //     uni.$emit('newChatMessage', message)
+    //     // 检查当前页面是否为 main.vue
+    //     if (isCurrentPageMain()) {
+    //       uni.$emit('refreshMainPage')
+    //     }
+    //     break
+    //   case 'notification':
+    //     // 处理通知消息
+    //     uni.$emit('newNotification', message)
+    //     break
+    //   case 'pong':
+    //     console.log('收到服务器的 pong 响应')
+    //     break
+    //   case 'call-remote':
+    //     const { senderId,senderName, _receiverId, isGroup, roomType } = message
+    //     meetingStore.showMeetingDialog = true;
+    //     meetingStore.isCaller = false;
+    //     meetingStore.isAnswered = false;
+    //     meetingStore.callerId = senderId;
+    //     meetingStore.callerName = senderName;
+    //     meetingStore.isGroup = isGroup;
+    //     meetingStore.isVideoCall = roomType === 'video';
+    //     break;
+    //   default:
+    //     console.log('未知消息类型:', message)
+    //     uni.$emit('newChatMessage', message)
+    // }
   }
 
   const ping = () => {
@@ -184,3 +203,4 @@ export const useWebSocket = () => {
   }
 }
 </script>
+

@@ -201,9 +201,9 @@ const confirmGroupName = (name) => {
     groupName: name,
     missionId: userStore.state.missionId[0]
   }
-
+  console.log(groupData,'groupData')
   // 调用创建群聊的API
-  createGroup(groupData)
+  createGroup(groupData, groupData.missionId)
     .then(response => {
       console.log('群聊创建成功:', response)
       uni.showToast({
@@ -215,7 +215,7 @@ const confirmGroupName = (name) => {
       console.log('群聊创建成功，准备返回')
       setTimeout(() => {
         navigateToContacts()
-      }, 1500) // 延迟1.5秒后返回，确保Toast消息显示完毕
+      }, 100) // 延迟1.5秒后返回，确保Toast消息显示完毕
     })
     .catch(error => {
       console.log('创建群聊失败:', error)
@@ -243,7 +243,7 @@ const loadCachedContacts = async () => {
 // 获取联系人数据
 const fetchContacts = async () => {
   try {
-    const response = await getMissionAddressBook(userStore.missionId)
+    const response = await getMissionAddressBook( userStore.state.missionId[0])
     if (response.code === 200) {
       contactsStore.setUserInformationVOList(response.data.userInformationVOList)
       uni.setStorageSync('cachedContacts', JSON.stringify(response.data.userInformationVOList))
@@ -253,10 +253,10 @@ const fetchContacts = async () => {
     }
   } catch (error) {
     console.log('获取联系人出错:', error)
-    uni.showToast({
-      title: '获取联系人失败，请重试',
-      icon: 'none'
-    })
+    // uni.showToast({
+    //   title: '获取联系人失败，请重试',
+    //   icon: 'none'
+    // })
   }
 }
 

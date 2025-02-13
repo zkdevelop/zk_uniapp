@@ -9,7 +9,7 @@ export const baiduApiKey = 'A0Pr9wGe6p6C8pFIBeC2tt7QqQ8oDlCD'
 // 后端API地址
 export const backendHost = 'http://139.196.11.210:8500/communicate'
 // export const backendHost = 'http://127.0.0.1:8080'
-
+export const LIVEKITURL = "ws://localhost:7880"
 const webSocketServer = {
 	host: "192.168.224.235",
 	port: 8081,

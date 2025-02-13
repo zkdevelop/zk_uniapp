@@ -4,7 +4,7 @@ import { useUserStore } from "../../store/userStore"
 
 // 获取聊天列表
 export const getChatList = (missionId) => {
-  missionId = "b2279088b13a4828b56420e9ed79965e"
+  // missionId = "b2279088b13a4828b56420e9ed79965e"
   // 检查missionId是否存在
   if (!missionId) {
     console.log("getChatList 需要 missionId 参数")
@@ -20,6 +20,7 @@ export const getChatList = (missionId) => {
 
 // 向用户发送消息
 export const sendMessageToUser = (data) => {
+	console.log('发送消息',data)
   // 发送POST请求发送消息
   return request({
     url: "/message/send/user",
@@ -29,6 +30,7 @@ export const sendMessageToUser = (data) => {
       isSelfDestruct: data.isSelfDestruct !== undefined ? data.isSelfDestruct : false,
       message: data.message,
       recipientId: data.recipientId,
+	  relatedMissionId: data.missionId[0]
     },
   })
 }
@@ -108,6 +110,7 @@ export const getHistoryChatMessages = (data) => {
       from: data.from,
       to: data.to,
       opponentId: data.opponentId,
+	  relatedMissionId: data.missionId[0]
     },
   })
 }
@@ -127,11 +130,11 @@ export const readSelfDestructMessage = (data) => {
 }
 
 // 获取任务通讯录
-export const getMissionAddressBook = () => {
+export const getMissionAddressBook = (missionid) => {
   const userStore = useUserStore()
   return request({
     // url: `/mission/address/book?missionId=${userStore.missionId}`,
-    url: `/mission/address/book?missionId=b2279088b13a4828b56420e9ed79965e`,
+    url: `/mission/address/book?missionId=`+missionid,
     method: "get",
   })
 }
@@ -148,6 +151,7 @@ export const sendGroupMessage = (data) => {
       isSelfDestruct: data.isSelfDestruct !== undefined ? data.isSelfDestruct : false,
       message: data.message,
       recipientId: data.recipientId,
+      relatedMissionId:data.missionId
     },
   })
 }
@@ -162,6 +166,7 @@ export const getGroupChatMessages = (data) => {
       from: data.from,
       opponentId: data.opponentId,
       to: data.to,
+      relatedMissionId:data.missionId
     },
   })
 }

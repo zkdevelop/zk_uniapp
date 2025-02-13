@@ -27,7 +27,7 @@ export function useContacts() {
     }
     loading.value = true
     try {
-      console.log('Fetching contacts with missionId:', missionId.value)
+      console.log('获取任务id:', missionId.value)
       const response = await getMissionAddressBook(missionId.value)
       if (response.code === 200) {
         contactsStore.setGroupVOList(response.data.groupVOList)

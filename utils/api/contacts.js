@@ -11,11 +11,12 @@ export const searchUsers = (params) => {
 }
 
 // 创建群组
-export const createGroup = (params) => {
+export const createGroup = (params,missionid) => {
   return request({
     url: '/group/create',
     method: 'post',
-    data: params
+    data: params,
+    missionId:missionid
   })
 }
 
