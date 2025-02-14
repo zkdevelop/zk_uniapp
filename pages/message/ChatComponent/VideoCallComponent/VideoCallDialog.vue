@@ -11,8 +11,6 @@
 		<!-- 呼叫中 -->
 		<view v-else-if="!isCaller && !isAnswered" class="modal">
 			<view>
-<!-- 				<text>showMeetingDialog</text> -->
-				<!-- <text>{{ meetingStore?.showMeetingDialog }}</text> -->
 				<text>{{meetingStore?.callerName}} 邀请你视频通话</text>
 			</view>
 			<view class="modal-content">
@@ -49,11 +47,13 @@
 	
 	// 接听通话
 	const acceptVideoCall=()=>{
-		meetingStore.acceptVideoCall();
+		meetingStore.showMeetingDialog=false;
+		// meetingStore.acceptVideoCall();
 	}
 	// 挂断通话
 	const rejectVideoCall=()=>{
-		meetingStore.rejectVideoCall();
+		meetingStore.showMeetingDialog=false;
+		// meetingStore.rejectVideoCall();
 	}
 </script>
 
