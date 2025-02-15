@@ -126,7 +126,7 @@ if (uni.restoreGlobal) {
   };
   const onShow = /* @__PURE__ */ createHook(ON_SHOW);
   const backendHost = "http://139.196.11.210:8500/communicate";
-  const LIVEKITURL = "ws://localhost:7880";
+  const LIVEKITURL = "ws://192.168.37.163:7880";
   const BASE_URL = backendHost;
   const timeout = 5e3;
   const request = (params) => {
@@ -10804,7 +10804,7 @@ This will fail in production.`);
   function getOSVersion(ua) {
     return ua.includes("mac os") ? getMatch(/\(.+?(\d+_\d+(:?_\d+)?)/, ua, 1).replace(/_/g, ".") : void 0;
   }
-  var version$1 = "2.9.0";
+  var version$1 = "2.9.1";
   const version = version$1;
   const protocolVersion = 15;
   class CriticalTimers {
@@ -17479,11 +17479,13 @@ This will fail in production.`);
           }
         }),
         return() {
-          reader.releaseLock();
-          return {
-            done: true,
-            value: void 0
-          };
+          return __awaiter(this, void 0, void 0, function* () {
+            reader.releaseLock();
+            return {
+              done: true,
+              value: void 0
+            };
+          });
         }
       };
     }
@@ -17575,11 +17577,13 @@ This will fail in production.`);
           }
         }),
         return() {
-          reader.releaseLock();
-          return {
-            done: true,
-            value: void 0
-          };
+          return __awaiter(this, void 0, void 0, function* () {
+            reader.releaseLock();
+            return {
+              done: true,
+              value: void 0
+            };
+          });
         }
       };
     }
@@ -20031,7 +20035,7 @@ This will fail in production.`);
             });
           },
           abort(err) {
-            formatAppLog("log", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:20903", "Sink error:", err);
+            formatAppLog("log", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:20907", "Sink error:", err);
           }
         });
         let onEngineClose = () => __awaiter(this, void 0, void 0, function* () {
@@ -20168,7 +20172,7 @@ This will fail in production.`);
               resolve: (responsePayload, responseError) => {
                 clearTimeout(responseTimeoutId);
                 if (this.pendingAcks.has(id)) {
-                  formatAppLog("warn", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:21041", "RPC response received before ack", id);
+                  formatAppLog("warn", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:21045", "RPC response received before ack", id);
                   this.pendingAcks.delete(id);
                   clearTimeout(ackTimeoutId);
                 }
@@ -20230,7 +20234,7 @@ This will fail in production.`);
         handler.resolve();
         this.pendingAcks.delete(requestId);
       } else {
-        formatAppLog("error", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:21103", "Ack received for unexpected RPC request", requestId);
+        formatAppLog("error", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:21107", "Ack received for unexpected RPC request", requestId);
       }
     }
     handleIncomingRpcResponse(requestId, payload, error) {
@@ -20239,7 +20243,7 @@ This will fail in production.`);
         handler.resolve(payload, error);
         this.pendingResponses.delete(requestId);
       } else {
-        formatAppLog("error", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:21112", "Response received for unexpected RPC request", requestId);
+        formatAppLog("error", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:21116", "Response received for unexpected RPC request", requestId);
       }
     }
     /** @internal */
@@ -21594,7 +21598,7 @@ This will fail in production.`);
      * room.localParticipant?.registerRpcMethod(
      *   'greet',
      *   async (data: RpcInvocationData) => {
-     *     __f__('log','at node_modules/livekit-client/dist/livekit-client.esm.mjs:22576',`Received greeting from ${data.callerIdentity}: ${data.payload}`);
+     *     __f__('log','at node_modules/livekit-client/dist/livekit-client.esm.mjs:22580',`Received greeting from ${data.callerIdentity}: ${data.payload}`);
      *     return `Hello, ${data.callerIdentity}!`;
      *   }
      * );
@@ -21644,7 +21648,7 @@ This will fail in production.`);
           });
           if (byteLength(response) > MAX_PAYLOAD_BYTES) {
             responseError = RpcError.builtIn("RESPONSE_PAYLOAD_TOO_LARGE");
-            formatAppLog("warn", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:22626", "RPC Response payload too large for ".concat(method));
+            formatAppLog("warn", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:22630", "RPC Response payload too large for ".concat(method));
           } else {
             responsePayload = response;
           }
@@ -21652,7 +21656,7 @@ This will fail in production.`);
           if (error instanceof RpcError) {
             responseError = error;
           } else {
-            formatAppLog("warn", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:22634", "Uncaught error returned by RPC handler for ".concat(method, ". Returning APPLICATION_ERROR instead."), error);
+            formatAppLog("warn", "at node_modules/livekit-client/dist/livekit-client.esm.mjs:22638", "Uncaught error returned by RPC handler for ".concat(method, ". Returning APPLICATION_ERROR instead."), error);
             responseError = RpcError.builtIn("APPLICATION_ERROR");
           }
         }
@@ -23447,7 +23451,7 @@ This will fail in production.`);
       sendMessage
     };
   };
-  const _imports_0$c = "/static/icon/login.png";
+  const _imports_0$d = "/static/icon/login.png";
   const _sfc_main$19 = {
     __name: "login",
     setup(__props, { expose: __expose }) {
@@ -23548,7 +23552,7 @@ This will fail in production.`);
     return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
       vue.createElementVNode("view", { class: "iconView" }, [
         vue.createElementVNode("image", {
-          src: _imports_0$c,
+          src: _imports_0$d,
           class: "icon"
         })
       ]),
@@ -25308,7 +25312,7 @@ This will fail in production.`);
   const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), C = b, P = I(""), T = I("[]") || [];
   let O = "";
   try {
-    O = "__UNI__D000952";
+    O = "__UNI__2368BC0";
   } catch (e2) {
   }
   let E = {};
@@ -29091,7 +29095,7 @@ ${i3}
     return vue.openBlock(), vue.createElementBlock("view");
   }
   const PagesForgetPasswordForgetPassword = /* @__PURE__ */ _export_sfc(_sfc_main$13, [["render", _sfc_render$12], ["__file", "E:/代码/new/zk_uniapp/pages/forgetPassword/forgetPassword.vue"]]);
-  const _imports_0$b = "/static/icon/finger.png";
+  const _imports_0$c = "/static/icon/finger.png";
   const _sfc_main$12 = {
     data() {
       return {
@@ -29182,7 +29186,7 @@ ${i3}
         disabled: $data.disabled
       }, [
         vue.createElementVNode("image", {
-          src: _imports_0$b,
+          src: _imports_0$c,
           class: "fingerIcon"
         })
       ], 8, ["disabled"]),
@@ -29251,7 +29255,7 @@ ${i3}
       }
     });
   };
-  const _imports_0$a = "/static/icon/location_grey.png";
+  const _imports_0$b = "/static/icon/location_grey.png";
   const _imports_1$5 = "/static/icon/time_grey.png";
   const _sfc_main$11 = {
     name: "TaskPage",
@@ -29461,7 +29465,7 @@ ${i3}
                           vue.createElementVNode("view", { class: "item_bottom" }, [
                             vue.createElementVNode("view", null, [
                               vue.createElementVNode("image", {
-                                src: _imports_0$a,
+                                src: _imports_0$b,
                                 style: { "width": "15px", "height": "15px" }
                               })
                             ]),
@@ -33686,7 +33690,7 @@ ${i3}
       data
     });
   };
-  const _imports_0$9 = "/static/icon/alert.png";
+  const _imports_0$a = "/static/icon/alert.png";
   const _imports_1$4 = "/static/icon/flag.png";
   const _imports_2$2 = "/static/icon/document.png";
   const _imports_3$1 = "/static/icon/tuceng.png";
@@ -34353,7 +34357,7 @@ ${i3}
                   style: { "text-align": "center", "padding-top": "5px" }
                 }, [
                   vue.createElementVNode("image", {
-                    src: _imports_0$9,
+                    src: _imports_0$a,
                     style: { "width": "22px", "height": "22px" }
                   })
                 ]),
@@ -36121,7 +36125,7 @@ ${i3}
     );
   }
   const freeAudio = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-615c0603"], ["__file", "E:/代码/new/zk_uniapp/components/chengpeng-audio/free-audio.vue"]]);
-  const _imports_0$8 = "/static/icon/take_video.png";
+  const _imports_0$9 = "/static/icon/take_video.png";
   const _imports_1$3 = "/static/icon/audio.png";
   const _sfc_main$J = {
     components: { freeAudio, yshFileManager: __easycom_5 },
@@ -36496,7 +36500,7 @@ ${i3}
                                   vue.createElementVNode("image", {
                                     onTouchstart: _cache[0] || (_cache[0] = ($event) => $options.openVideo()),
                                     onClick: ($event) => $options.videoShow(item),
-                                    src: _imports_0$8,
+                                    src: _imports_0$9,
                                     style: { "width": "50px", "height": "50px" }
                                   }, null, 40, ["onClick"])
                                 ])
@@ -36739,7 +36743,7 @@ ${i3}
     ]);
   }
   const OptionPicker = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__scopeId", "data-v-2798e3c8"], ["__file", "E:/代码/new/zk_uniapp/pages/profile/OptionPicker.vue"]]);
-  const _imports_0$7 = "/static/my/编辑.svg";
+  const _imports_0$8 = "/static/my/编辑.svg";
   const _imports_1$2 = "/static/my/展开.svg";
   const _sfc_main$G = {
     __name: "profile",
@@ -36899,7 +36903,7 @@ ${i3}
             ),
             vue.createElementVNode("image", {
               class: "edit-icon",
-              src: _imports_0$7
+              src: _imports_0$8
             })
           ]),
           vue.createElementVNode("view", { class: "info-item" }, [
@@ -37691,7 +37695,7 @@ ${i3}
     ]);
   }
   const PagesMessageMain = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__file", "E:/代码/new/zk_uniapp/pages/message/main.vue"]]);
-  const _imports_0$6 = "/static/message/返回.png";
+  const _imports_0$7 = "/static/message/返回.png";
   const _sfc_main$B = {
     name: "ChatHeader",
     components: {},
@@ -37710,7 +37714,7 @@ ${i3}
       }, [
         vue.createElementVNode("div", { class: "uni-page-head-btn" }, [
           vue.createElementVNode("image", {
-            src: _imports_0$6,
+            src: _imports_0$7,
             class: "back-icon",
             mode: "aspectFit"
           })
@@ -37820,7 +37824,7 @@ ${i3}
     }, null, 8, ["src"]);
   }
   const ImageMessage = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-2115df62"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/ImageMessage.vue"]]);
-  const _imports_0$5 = "/assets/text.bd3c6783.png";
+  const _imports_0$6 = "/assets/text.bd3c6783.png";
   const _imports_1$1 = "/assets/docx.b7b68f84.png";
   const _imports_2 = "/assets/jpg.3e4bf7f6.png";
   const _imports_3 = "/assets/png.ea62ff77.png";
@@ -37850,7 +37854,7 @@ ${i3}
       ),
       $props.messageType.toUpperCase() === "TEXT" ? (vue.openBlock(), vue.createElementBlock("image", {
         key: 0,
-        src: _imports_0$5,
+        src: _imports_0$6,
         class: "file-type-icon",
         mode: "aspectFit"
       })) : $props.messageType.toUpperCase() === "DOCX" ? (vue.openBlock(), vue.createElementBlock("image", {
@@ -38365,7 +38369,7 @@ ${i3}
     ]);
   }
   const AudioMessage = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-3578ca20"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/AudioMessage.vue"]]);
-  const _imports_0$4 = "/static/message/信封.png";
+  const _imports_0$5 = "/static/message/信封.png";
   const _sfc_main$u = {
     name: "BurnAfterReadingTextMessage",
     props: {
@@ -38444,7 +38448,7 @@ ${i3}
         class: "burn-button"
       }, [
         vue.createElementVNode("image", {
-          src: _imports_0$4,
+          src: _imports_0$5,
           class: "envelope-icon",
           mode: "aspectFit"
         }),
@@ -38471,6 +38475,7 @@ ${i3}
     ]);
   }
   const BurnAfterReadingTextMessage = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-9ce853fb"], ["__file", "E:/代码/new/zk_uniapp/pages/message/ChatComponent/MessageComponent/BurnAfterReadingTextMessage.vue"]]);
+  const _imports_0$4 = "/static/message/默认头像.png";
   const _sfc_main$t = {
     name: "Message",
     components: {
@@ -38578,10 +38583,10 @@ ${i3}
           [
             vue.createElementVNode("view", { class: "avatar-container" }, [
               vue.createElementVNode("image", {
-                src: $props.message.userType === "self" ? $props.message.avatar || $setup.userStore.state.avatar || "/static/message/默认头像.png" : $props.message.avatar || "/static/message/默认头像.png",
+                src: _imports_0$4,
                 class: "avatar",
                 mode: "aspectFill"
-              }, null, 8, ["src"]),
+              }),
               $props.isGroup && $props.message.userType === "other" ? (vue.openBlock(), vue.createElementBlock("view", {
                 key: 0,
                 class: "sender-name"
@@ -47496,7 +47501,7 @@ ${i3}
         content = msg.previewUrl || content;
       } else if (type === "text" && (content || "").toLowerCase().endsWith(".txt")) {
         type = "file";
-      } else if (type === "audio" || type === "video") {
+      } else if (type === "audio" || type === "video" || type === "voice_message") {
         content = msg.previewUrl || content;
       }
       const userInfo = await loadAndCacheUserInfo(msg.senderId);
@@ -47533,7 +47538,7 @@ ${i3}
         content = msg.previewUrl || content;
       } else if (type === "text" && (content || "").toLowerCase().endsWith(".txt")) {
         type = "file";
-      } else if (type === "audio" || type === "video") {
+      } else if (type === "audio" || type === "video" || type === "voice_message") {
         content = msg.previewUrl || content;
       }
       const groupInfo = groupStore.state.groupInfo;
@@ -48622,7 +48627,7 @@ ${i3}
             }),
             vue.createElementVNode("text", { class: "item-text" }, "发起群聊")
           ]),
-          vue.createCommentVNode(' <div class="dropdown-item" @click="handleAddFriend">\n        <image src="/static/message/添加好友.png" class="item-icon" mode="aspectFit"></image>\n        <text class="item-text">添加朋友</text>\n      </div> ')
+          vue.createCommentVNode(' <div class="dropdown-item" @click="handleAddFriend">\r\n        <image src="/static/message/添加好友.png" class="item-icon" mode="aspectFit"></image>\r\n        <text class="item-text">添加朋友</text>\r\n      </div> ')
         ])
       ],
       512

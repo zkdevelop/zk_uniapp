@@ -9126,7 +9126,7 @@ function getMatch(exp, ua) {
 function getOSVersion(ua) {
   return ua.includes("mac os") ? getMatch(/\(.+?(\d+_\d+(:?_\d+)?)/, ua, 1).replace(/_/g, ".") : void 0;
 }
-var version$1 = "2.9.0";
+var version$1 = "2.9.1";
 var version = version$1;
 var protocolVersion = 15;
 var CriticalTimers = class {
@@ -15859,11 +15859,13 @@ var ByteStreamReader = class extends BaseStreamReader {
         }
       }),
       return() {
-        reader.releaseLock();
-        return {
-          done: true,
-          value: void 0
-        };
+        return __awaiter(this, void 0, void 0, function* () {
+          reader.releaseLock();
+          return {
+            done: true,
+            value: void 0
+          };
+        });
       }
     };
   }
@@ -15955,11 +15957,13 @@ var TextStreamReader = class extends BaseStreamReader {
         }
       }),
       return() {
-        reader.releaseLock();
-        return {
-          done: true,
-          value: void 0
-        };
+        return __awaiter(this, void 0, void 0, function* () {
+          reader.releaseLock();
+          return {
+            done: true,
+            value: void 0
+          };
+        });
       }
     };
   }

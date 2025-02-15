@@ -110,7 +110,7 @@ export function useChatDataManagement(chatInfo, list) {
       content = msg.previewUrl || content
     } else if (type === "text" && (content || "").toLowerCase().endsWith(".txt")) {
       type = "file"
-    } else if (type === "audio" || type === "video") {
+    } else if (type === "audio" || type === "video"||type === "voice_message") {
       content = msg.previewUrl || content
     }
 
@@ -161,7 +161,7 @@ export function useChatDataManagement(chatInfo, list) {
       content = msg.previewUrl || content
     } else if (type === "text" && (content || "").toLowerCase().endsWith(".txt")) {
       type = "file"
-    } else if (type === "audio" || type === "video") {
+    } else if (type === "audio" || type === "video"||type === "voice_message") {
       content = msg.previewUrl || content
     }
 
