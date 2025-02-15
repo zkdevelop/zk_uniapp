@@ -548,6 +548,23 @@
   padding: 0 !important;
   margin: 0 !important;
 }
+.read-status[data-v-1cea873d] {
+  position: absolute;
+  right: -1.5rem;
+  bottom: 0.53125rem;
+  font-size: 0.75rem;
+  transform: translateY(50%);
+}
+.read-status.read[data-v-1cea873d] {
+  color: #4CAF50;
+}
+.read-status.unread[data-v-1cea873d] {
+  color: #999;
+}
+.self .read-status[data-v-1cea873d] {
+  left: -2.125rem;
+  right: auto;
+}
 /* 水平间距 */
 /* 水平间距 */
 .message-list-container[data-v-dee4eb4b] {

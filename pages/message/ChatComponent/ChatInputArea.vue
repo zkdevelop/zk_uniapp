@@ -34,6 +34,8 @@
             v-else
             v-model="newMessage"
             @send="sendMessage"
+            :placeholder="inputPlaceholder"
+            :disabled="isSending"
             class="input-item"
           />
           
@@ -47,6 +49,7 @@
           <send-button
             v-if="!isVoiceInputActive && (isAttachMenuVisible || newMessage.trim().length > 0)"
             @click="sendMessage"
+            :disabled="isSending"
           />
         </view>
       </view>
@@ -64,7 +67,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import AttachmentMenu from './ChatInputAreaComponent/AttachmentMenu.vue'
 import LocationSharing from './ChatInputAreaComponent/LocationSharing.vue'
 import ToggleVoiceButton from './ChatInputAreaComponent/ToggleVoiceButton.vue'
@@ -103,24 +106,28 @@ export default {
     initialBurnAfterReadingMode: {
       type: Boolean,
       default: false
+    },
+    placeholder: {
+      type: String,
+      default: '请输入消息'
     }
   },
   emits: ['send-message', 'update:modelValue', 'attach', 'video-call', 'file-selected', 'toggle-burn-after-reading'],
   setup(props, { emit }) {
-    console.log('ChatInputArea setup function called')
-    
     const newMessage = ref('')
     const showLocationSharing = ref(false)
     const isVoiceInputActive = ref(false)
     const isBurnAfterReadingMode = ref(props.initialBurnAfterReadingMode)
     const isAttachMenuVisible = ref(false)
+    const isSending = ref(false)
+
+    const inputPlaceholder = computed(() => {
+      return isBurnAfterReadingMode.value ? '阅后即焚模式已开启' : props.placeholder
+    })
 
     const handleVoiceFileSelected = (fileInfo) => {
-      console.log('语音输入回调被触发，完整的文件信息:', JSON.stringify(fileInfo))
-      
       if (fileInfo && typeof fileInfo === 'object' && fileInfo.fromVoiceInput) {
         if (!fileInfo.path) {
-          console.error('语音文件路径缺失:', fileInfo)
           uni.showToast({
             title: '语音文件保存失败，请重试',
             icon: 'none'
@@ -129,8 +136,6 @@ export default {
         }
         
         emit('file-selected', fileInfo)
-      } else {
-        console.error('无效的文件信息:', fileInfo)
       }
     }
 
@@ -156,28 +161,33 @@ export default {
 
     const { sendMessage: sendMessageHandler } = useMessageSending(newMessage, emit, props, isBurnAfterReadingMode)
 
-    const sendMessage = () => {
-      console.log('发送消息')
-      sendMessageHandler()
+    const sendMessage = async () => {
+      if (isSending.value || newMessage.value.trim().length === 0) return
+      isSending.value = true
+      try {
+        await sendMessageHandler()
+        newMessage.value = ''
+      } catch (error) {
+        console.log('发送消息失败')
+      } finally {
+        isSending.value = false
+      }
       closeAttachMenu()
     }
 
     const toggleVoiceInput = () => {
       isVoiceInputActive.value = !isVoiceInputActive.value
-      console.log('切换语音输入状态:', isVoiceInputActive.value)
       closeAttachMenu()
     }
 
     const toggleAttachMenu = () => {
-      console.log('切换附件菜单状态');
-      isAttachMenuVisible.value = !isAttachMenuVisible.value;
-      emit('update:modelValue', isAttachMenuVisible.value);
+      isAttachMenuVisible.value = !isAttachMenuVisible.value
+      emit('update:modelValue', isAttachMenuVisible.value)
     }
 
     const closeAttachMenu = () => {
-      console.log('关闭附件菜单');
-      isAttachMenuVisible.value = false;
-      emit('update:modelValue', false);
+      isAttachMenuVisible.value = false
+      emit('update:modelValue', false)
     }
 
     watch(() => props.recipientId, (newVal) => {
@@ -196,7 +206,6 @@ export default {
     })
 
     watch(isBurnAfterReadingMode, (newVal) => {
-      console.log('阅后即焚模式状态变化:', newVal)
       emit('toggle-burn-after-reading', newVal)
     })
 
@@ -205,9 +214,8 @@ export default {
     })
 
     watch(() => props.modelValue, (newValue) => {
-      console.log('附件菜单状态变化:', newValue);
-      isAttachMenuVisible.value = newValue;
-    });
+      isAttachMenuVisible.value = newValue
+    })
 
     return {
       newMessage,
@@ -231,6 +239,8 @@ export default {
       isBurnAfterReadingMode,
       toggleBurnAfterReadingMode,
       isAttachMenuVisible, 
+      inputPlaceholder,
+      isSending
     }
   }
 }
@@ -275,3 +285,4 @@ export default {
   margin: 0 10px;
 }
 </style>
+

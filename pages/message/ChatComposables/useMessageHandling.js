@@ -343,58 +343,50 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
    return mappedMessage
  }
 
-  const handleFileSelected = async (fileInfo) => {
-    console.log("处理文件选择:", fileInfo)
-    if (!fileInfo || typeof fileInfo !== "object") {
-      console.log("文件信息无效")
-      uni.showToast({
-        title: "文件信息无效，请重试",
-        icon: "none",
-      })
-      return
-    }
-
-    if (!fileInfo.path) {
-      console.log("文件路径缺失")
-      uni.showToast({
-        title: "文件路径缺失，请重试",
-        icon: "none",
-      })
-      return
-    }
-
-    try {
-      console.log("开始发送文件")
-	const location = await getCurrentLocation()
-      const response = await sendFilesToUser({
-        files: [fileInfo.path],
-        isGroup: chatInfo.value.type === "group",
-        isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
-        latitude:1,
-        longitude: 2,
-        missionId: chatInfo.value.missionId,
-        receptionId: chatInfo.value.id,
-        voiceMessage: fileInfo.fromVoiceInput || false,
-      })
-
-      console.log("文件发送响应:", response)
-
-      if (response.code === 200) {
-        await updateMessageList()
-        nextTick(() => {
-          scrollToBottom()
-        })
-      } else {
-        throw new Error(response.msg || "发送文件消息失败")
-      }
-    } catch (error) {
-      console.log("发送文件消息出错:", error)
-      uni.showToast({
-        title: "发送失败，请重试",
-        icon: "none",
-      })
-    }
+const handleFileSelected = async (fileInfo) => {
+  if (!fileInfo || typeof fileInfo !== "object") {
+    uni.showToast({
+      title: "文件信息无效，请重试",
+      icon: "none",
+    })
+    return
   }
+
+  if (!fileInfo.path) {
+    uni.showToast({
+      title: "文件路径缺失，请重试",
+      icon: "none",
+    })
+    return
+  }
+
+  try {
+    const response = await sendFilesToUser({
+      files: [fileInfo.path],
+      isGroup: chatInfo.value.type === "group",
+      isSelfDestruct: chatInfo.value.isBurnAfterReadingMode || false,
+      latitude: chatInfo.value.currentLocation?.latitude || "0",
+      longitude: chatInfo.value.currentLocation?.longitude || "0",
+      missionId: chatInfo.value.missionId,
+      receptionId: chatInfo.value.id,
+      voiceMessage: fileInfo.fromVoiceInput || false,
+    })
+
+    if (response.code === 200) {
+      await updateMessageList()
+      nextTick(() => {
+        scrollToBottom()
+      })
+    } else {
+      throw new Error(response.msg || "发送文件消息失败")
+    }
+  } catch (error) {
+    uni.showToast({
+      title: "发送失败，请重试",
+      icon: "none",
+    })
+  }
+}
 
   const handleMessageDeleted = (messageId) => {
     console.log("处理消息删除:", messageId)
@@ -417,8 +409,7 @@ export function useMessageHandling(chatInfo, list, currentFrom, currentTo, hasMo
            })
          },
          fail: () => {
-           Toast({
-             // Use Vant Toast
+           Toast({ 
              message: "获取位置失败，使用默认位置",
              type: "fail",
            })
