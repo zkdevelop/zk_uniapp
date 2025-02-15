@@ -1,6 +1,6 @@
 {
     "name" : "zk_uniapp",
-    "appid" : "__UNI__D000952",
+    "appid" : "__UNI__2368BC0",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -57,7 +57,9 @@
                 ],
                 "abiFilters" : [ "arm64-v8a", "x86" ]
             },
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             /* ios打包配置 */
             "sdkConfigs" : {
                 "maps" : {
