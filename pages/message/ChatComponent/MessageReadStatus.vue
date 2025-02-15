@@ -111,6 +111,7 @@ export default {
     BurnAfterReadingTextMessage
   },
   setup() {
+    console.log('消息已读状态组件设置开始')
     const messageData = ref(null)
     const activeTab = ref('read')
 
@@ -131,34 +132,47 @@ export default {
     }
 
     onMounted(() => {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      let eventChannel
-
-      if (currentPage && currentPage.$getAppWebview) {
-        eventChannel = currentPage.$getAppWebview().eventChannel
-      } else if (currentPage && currentPage.getOpenerEventChannel) {
-        eventChannel = currentPage.getOpenerEventChannel()
-      } else if (uni && uni.getEnterOptionsSync) {
-        const enterOptions = uni.getEnterOptionsSync()
-        eventChannel = enterOptions.eventChannel
-      }
-
-      if (eventChannel) {
-        eventChannel.on('messageData', (data) => {
+      console.log('消息已读状态组件挂载')
+      
+      // 从缓存中读取数据
+      const cachedData = uni.getStorageSync('messageReadStatusData')
+      if (cachedData) {
+        try {
+          const parsedData = JSON.parse(cachedData)
+          console.log('从缓存中读取的消息数据:', parsedData)
           messageData.value = {
-            ...data,
-            type: data.type || 'text',
-            messageType: data.messageType || 'MESSAGE',
-            selfDestruct: data.selfDestruct || false,
-            id: data.id
+            ...parsedData,
+            type: parsedData.type || 'text',
+            messageType: parsedData.messageType || 'MESSAGE',
+            selfDestruct: parsedData.selfDestruct || false,
+            id: parsedData.id
           }
-          console.log('接收到的消息数据：', messageData.value)
-        })
+          console.log('设置的消息数据:', messageData.value)
+          // 使用后清除缓存数据
+          uni.removeStorageSync('messageReadStatusData')
+          console.log('已清除缓存的消息数据')
+        } catch (error) {
+          console.log('解析缓存数据失败:', error)
+          handleDataLoadError()
+        }
       } else {
-        console.log('无法获取事件通道')
+        console.log('缓存中没有找到消息数据')
+        handleDataLoadError()
       }
+
+      console.log('消息已读状态组件挂载完成')
     })
+
+    const handleDataLoadError = () => {
+      uni.showToast({
+        title: '无法加载消息数据',
+        icon: 'none'
+      })
+      setTimeout(() => {
+        console.log('无法加载消息数据，返回上一页')
+        uni.navigateBack()
+      }, 2000)
+    }
 
     const formatTime = (timestamp) => {
       if (!timestamp) return ''
@@ -171,6 +185,7 @@ export default {
     }
 
     const handleBack = () => {
+      console.log('返回上一页')
       uni.navigateBack()
     }
 
@@ -182,6 +197,7 @@ export default {
       console.log('消息已删除', messageId)
     }
 
+    console.log('消息已读状态组件设置完成')
     return {
       messageData,
       activeTab,

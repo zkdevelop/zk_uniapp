@@ -2,25 +2,37 @@
   "hash": "64eb956f",
   "configHash": "46d06baf",
   "lockfileHash": "e6caa6c0",
-  "browserHash": "215b9dad",
+  "browserHash": "79d196ed",
   "optimized": {
     "pinia-plugin-persistedstate": {
       "src": "../../../../../node_modules/pinia-plugin-persistedstate/dist/index.js",
       "file": "pinia-plugin-persistedstate.js",
-      "fileHash": "6a5e5146",
+      "fileHash": "eadde4f3",
       "needsInterop": false
     },
-    "livekit-client": {
-      "src": "../../../../../node_modules/livekit-client/dist/livekit-client.esm.mjs",
-      "file": "livekit-client.js",
-      "fileHash": "00fc874c",
+    "lodash-es": {
+      "src": "../../../../../node_modules/lodash-es/lodash.js",
+      "file": "lodash-es.js",
+      "fileHash": "b73b27c8",
       "needsInterop": false
     },
     "crypto-js": {
       "src": "../../../../../node_modules/crypto-js/index.js",
       "file": "crypto-js.js",
-      "fileHash": "b024d9b7",
+      "fileHash": "abc7f6c3",
       "needsInterop": true
+    },
+    "pinyin-pro": {
+      "src": "../../../../../node_modules/pinyin-pro/dist/index.mjs",
+      "file": "pinyin-pro.js",
+      "fileHash": "4df963b3",
+      "needsInterop": false
+    },
+    "livekit-client": {
+      "src": "../../../../../node_modules/livekit-client/dist/livekit-client.esm.mjs",
+      "file": "livekit-client.js",
+      "fileHash": "f75b2eff",
+      "needsInterop": false
     }
   },
   "chunks": {

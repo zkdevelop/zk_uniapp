@@ -38528,18 +38528,47 @@ ${i3}
       });
       const getReadCount = vue.computed(() => readStatusData.value.readCount);
       const handleReadCountClick = () => {
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:150", "处理已读人数点击事件");
+        const messageData = {
+          // 群消息用户阅读状态
+          groupMessageUserReadVO: readStatusData.value.groupMessageUserReadVO,
+          // 发送者名称
+          senderName: props.message.senderName,
+          // 消息内容
+          content: props.message.content,
+          // 消息发送时间戳
+          timestamp: props.message.timestamp,
+          // 消息类型（如text, image, file等）
+          type: props.message.type,
+          // 消息类型（如MESSAGE, SYSTEM等）
+          messageType: props.message.messageType,
+          // 是否为阅后即焚消息
+          selfDestruct: props.message.selfDestruct,
+          // 消息ID
+          id: props.message.id
+        };
+        formatAppLog("log", "at pages/message/ChatComponent/Message.vue:172", "准备写入缓存的消息数据:", messageData);
+        try {
+          uni.setStorageSync("messageReadStatusData", JSON.stringify(messageData));
+          formatAppLog("log", "at pages/message/ChatComponent/Message.vue:177", "消息数据已成功写入缓存");
+        } catch (error) {
+          formatAppLog("error", "at pages/message/ChatComponent/Message.vue:179", "写入缓存失败:", error);
+          uni.showToast({
+            title: "保存消息数据失败",
+            icon: "none"
+          });
+          return;
+        }
         uni.navigateTo({
           url: "/pages/message/ChatComponent/MessageReadStatus",
           success: (res) => {
-            res.eventChannel.emit("messageData", {
-              groupMessageUserReadVO: readStatusData.value.groupMessageUserReadVO,
-              senderName: props.message.senderName,
-              content: props.message.content,
-              timestamp: props.message.timestamp,
-              type: props.message.type,
-              messageType: props.message.messageType,
-              selfDestruct: props.message.selfDestruct,
-              id: props.message.id
+            formatAppLog("log", "at pages/message/ChatComponent/Message.vue:191", "成功跳转到消息已读状态页面");
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/message/ChatComponent/Message.vue:194", "跳转到消息已读状态页面失败:", err);
+            uni.showToast({
+              title: "页面跳转失败",
+              icon: "none"
             });
           }
         });
@@ -47515,7 +47544,7 @@ ${i3}
         type,
         isRead: msg.isRead,
         messageType: msg.type || msg.messageType,
-        selfDestruct: msg.isSelfDestruct
+        selfDestruct: msg.selfDestruct
       };
       return mappedMessage;
     };
@@ -74429,6 +74458,7 @@ ${i3}
       BurnAfterReadingTextMessage
     },
     setup() {
+      formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:114", "消息已读状态组件设置开始");
       const messageData = vue.ref(null);
       const activeTab = vue.ref("read");
       const readUsers = vue.computed(() => {
@@ -74446,32 +74476,42 @@ ${i3}
         activeTab.value = tab;
       };
       vue.onMounted(() => {
-        const pages2 = getCurrentPages();
-        const currentPage = pages2[pages2.length - 1];
-        let eventChannel;
-        if (currentPage && currentPage.$getAppWebview) {
-          eventChannel = currentPage.$getAppWebview().eventChannel;
-        } else if (currentPage && currentPage.getOpenerEventChannel) {
-          eventChannel = currentPage.getOpenerEventChannel();
-        } else if (uni && uni.getEnterOptionsSync) {
-          const enterOptions = uni.getEnterOptionsSync();
-          eventChannel = enterOptions.eventChannel;
-        }
-        if (eventChannel) {
-          eventChannel.on("messageData", (data) => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:135", "消息已读状态组件挂载");
+        const cachedData = uni.getStorageSync("messageReadStatusData");
+        if (cachedData) {
+          try {
+            const parsedData = JSON.parse(cachedData);
+            formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:142", "从缓存中读取的消息数据:", parsedData);
             messageData.value = {
-              ...data,
-              type: data.type || "text",
-              messageType: data.messageType || "MESSAGE",
-              selfDestruct: data.selfDestruct || false,
-              id: data.id
+              ...parsedData,
+              type: parsedData.type || "text",
+              messageType: parsedData.messageType || "MESSAGE",
+              selfDestruct: parsedData.selfDestruct || false,
+              id: parsedData.id
             };
-            formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:156", "接收到的消息数据：", messageData.value);
-          });
+            formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:150", "设置的消息数据:", messageData.value);
+            uni.removeStorageSync("messageReadStatusData");
+            formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:153", "已清除缓存的消息数据");
+          } catch (error) {
+            formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:155", "解析缓存数据失败:", error);
+            handleDataLoadError();
+          }
         } else {
-          formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:159", "无法获取事件通道");
+          formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:159", "缓存中没有找到消息数据");
+          handleDataLoadError();
         }
+        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:163", "消息已读状态组件挂载完成");
       });
+      const handleDataLoadError = () => {
+        uni.showToast({
+          title: "无法加载消息数据",
+          icon: "none"
+        });
+        setTimeout(() => {
+          formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:172", "无法加载消息数据，返回上一页");
+          uni.navigateBack();
+        }, 2e3);
+      };
       const formatTime2 = (timestamp) => {
         if (!timestamp)
           return "";
@@ -74483,14 +74523,16 @@ ${i3}
         return `${month}-${day} ${hours}:${minutes}`;
       };
       const handleBack = () => {
+        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:188", "返回上一页");
         uni.navigateBack();
       };
       const viewBurnAfterReading = (message) => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:178", "查看阅后即焚消息", message);
+        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:193", "查看阅后即焚消息", message);
       };
       const handleMessageDeleted = (messageId) => {
-        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:182", "消息已删除", messageId);
+        formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:197", "消息已删除", messageId);
       };
+      formatAppLog("log", "at pages/message/ChatComponent/MessageReadStatus.vue:200", "消息已读状态组件设置完成");
       return {
         messageData,
         activeTab,

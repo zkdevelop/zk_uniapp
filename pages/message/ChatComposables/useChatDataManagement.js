@@ -132,7 +132,7 @@ export function useChatDataManagement(chatInfo, list) {
       type: type,
       isRead: msg.isRead,
       messageType: msg.type || msg.messageType,
-      selfDestruct: msg.isSelfDestruct,
+      selfDestruct:msg.selfDestruct,
     }
 
     // console.log("私聊消息映射结果:", mappedMessage)

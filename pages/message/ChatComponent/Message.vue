@@ -7,7 +7,8 @@
 		<view v-if="isGroup && message.userType === 'other'" class="sender-name"> 
         </view>
       </view>
-      <view class="content-wrapper"> 
+	   
+      <view class="content-wrapper">  
         <view v-if="message.userType === 'friend'" class="friend-name">{{ message.name }}</view>
         <view class="content-container">
           <view class="content" :class="{ 
@@ -145,23 +146,59 @@ export default {
     const getReadCount = computed(() => readStatusData.value.readCount);
 
     // 处理已读人数点击事件
-    const handleReadCountClick = () => {
-      uni.navigateTo({
-        url: '/pages/message/ChatComponent/MessageReadStatus',
-        success: (res) => {
-          res.eventChannel.emit('messageData', { 
-            groupMessageUserReadVO: readStatusData.value.groupMessageUserReadVO,
-            senderName: props.message.senderName,
-            content: props.message.content,
-            timestamp: props.message.timestamp,
-            type: props.message.type,
-            messageType: props.message.messageType,
-            selfDestruct: props.message.selfDestruct,
-            id: props.message.id
-          })
-        }
-      })
-    }
+   const handleReadCountClick = () => {
+         console.log('处理已读人数点击事件');
+   
+         // 准备要传递的消息数据
+         const messageData = {
+           // 群消息用户阅读状态
+           groupMessageUserReadVO: readStatusData.value.groupMessageUserReadVO,
+           // 发送者名称
+           senderName: props.message.senderName,
+           // 消息内容
+           content: props.message.content,
+           // 消息发送时间戳
+           timestamp: props.message.timestamp,
+           // 消息类型（如text, image, file等）
+           type: props.message.type,
+           // 消息类型（如MESSAGE, SYSTEM等）
+           messageType: props.message.messageType,
+           // 是否为阅后即焚消息
+           selfDestruct: props.message.selfDestruct,
+           // 消息ID
+           id: props.message.id
+         }
+         
+         console.log('准备写入缓存的消息数据:', messageData);
+   
+         // 将数据写入缓存
+         try {
+           uni.setStorageSync('messageReadStatusData', JSON.stringify(messageData))
+           console.log('消息数据已成功写入缓存');
+         } catch (error) {
+           console.error('写入缓存失败:', error);
+           uni.showToast({
+             title: '保存消息数据失败',
+             icon: 'none'
+           });
+           return; // 如果写入失败，不进行页面跳转
+         }
+         
+         // 跳转到消息已读状态页面
+         uni.navigateTo({
+           url: '/pages/message/ChatComponent/MessageReadStatus',
+           success: (res) => {
+             console.log('成功跳转到消息已读状态页面');
+           },
+           fail: (err) => {
+             console.error('跳转到消息已读状态页面失败:', err);
+             uni.showToast({
+               title: '页面跳转失败',
+               icon: 'none'
+             });
+           }
+         })
+       }
 
     return {
       formatTime,
