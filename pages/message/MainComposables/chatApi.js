@@ -13,7 +13,7 @@ export const fetchChatList = async (missionId) => {
     if (response.code === 200) {  
       const messages = response.data.map(item => ({
         ...item,
-        avatar: item.avatar || '/static/message/默认头像.png',
+        avatar: item.avatar || '/static/message/defaultimg.png',
         preview: item.latestMessage,
         date: item.sendTime
       }))

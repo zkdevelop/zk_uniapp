@@ -1,23 +1,26 @@
 <template>
   <view class="container">
-	  <view>
-		<uni-nav-bar :fixed="true" status-bar title="我的" />
-	  </view>
+    <view>
+      <uni-nav-bar :fixed="true" status-bar title="我的" />
+    </view>
     <!-- 用户头像、姓名、用户名和电话 -->
     <view class="user-info">
-      <image class="avatar" :src="userData.avatarUrl || '/static/my/默认头像.svg'"></image>
+      <image
+        class="avatar"
+        :src="userData.avatarUrl || '/static/my/defaultimg.svg'"
+      ></image>
       <view class="user-details">
         <view class="name-container">
-          <text class="name">{{ userData.name || '未设置' }}</text>
-          <image class="edit-icon" src="/static/my/编辑.svg"></image>
+          <text class="name">{{ userData.name || "未设置" }}</text>
+          <image class="edit-icon" src="/static/my/edit.svg"></image>
         </view>
         <view class="info-item">
           <text class="info-label">用户名：</text>
-          <text class="info-value">{{ userData.account || '未设置' }}</text>
+          <text class="info-value">{{ userData.account || "未设置" }}</text>
         </view>
         <view class="info-item">
           <text class="info-label">手机：</text>
-          <text class="info-value">{{ userData.phone || '未设置' }}</text>
+          <text class="info-value">{{ userData.phone || "未设置" }}</text>
         </view>
       </view>
     </view>
@@ -25,7 +28,11 @@
     <!-- 位置共享开关 -->
     <view class="switch-item">
       <text>是否开启位置共享</text>
-      <switch color="#4285f4" :checked="locationSharing" @change="onLocationSharingChange" />
+      <switch
+        color="#4285f4"
+        :checked="locationSharing"
+        @change="onLocationSharingChange"
+      />
     </view>
 
     <!-- 设置列表 -->
@@ -34,20 +41,20 @@
         <text>定位信息回传间隔</text>
         <view class="setting-value">
           <text class="setting-value-text">{{ selectedLocationInterval }}</text>
-          <image class="expand-icon" src="/static/my/展开.svg"></image>
+          <image class="expand-icon" src="/static/my/open.svg"></image>
         </view>
       </view>
       <view class="setting-item" @click="onSettingItemClick(settingItems[1])">
         <text>文件本地存储策略</text>
         <view class="setting-value">
           <text class="setting-value-text">{{ selectedStorageStrategy }}</text>
-          <image class="expand-icon" src="/static/my/展开.svg"></image>
+          <image class="expand-icon" src="/static/my/open.svg"></image>
         </view>
       </view>
       <view class="setting-item" @click="onSettingItemClick(settingItems[2])">
         <text>修改密码</text>
         <view class="setting-value">
-          <image class="expand-icon" src="/static/my/展开.svg"></image>
+          <image class="expand-icon" src="/static/my/open.svg"></image>
         </view>
       </view>
     </view>
@@ -72,12 +79,16 @@
           <text>{{ confirmMessage }}</text>
         </view>
         <view class="dialog-footer">
-          <button class="dialog-btn cancel-btn" @click="cancelDelete">取消</button>
-          <button class="dialog-btn confirm-btn" @click="confirmDelete">确认</button>
+          <button class="dialog-btn cancel-btn" @click="cancelDelete">
+            取消
+          </button>
+          <button class="dialog-btn confirm-btn" @click="confirmDelete">
+            确认
+          </button>
         </view>
       </view>
     </view>
-    
+
     <!-- 选项选择器 -->
     <OptionPicker
       v-if="showPicker"
@@ -91,59 +102,59 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
-import OptionPicker from './OptionPicker.vue'
-import { useUserStore } from '@/store/userStore'
-import { logout } from '@/utils/api/user'
+import { ref, reactive, onMounted, computed } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import OptionPicker from "./OptionPicker.vue";
+import { useUserStore } from "@/store/userStore";
+import { logout } from "@/utils/api/user";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
-const userData = computed(() => userStore.getUserData())
+const userData = computed(() => userStore.getUserData());
 
-const locationSharing = ref(false)
-const showConfirmDialog = ref(false)
-const confirmMessage = ref('')
-const deleteType = ref('')
-const selectedStorageStrategy = ref('7天')
+const locationSharing = ref(false);
+const showConfirmDialog = ref(false);
+const confirmMessage = ref("");
+const deleteType = ref("");
+const selectedStorageStrategy = ref("7天");
 const storageOptions = [
-  { label: '7天', value: '7天' },
-  { label: '15天', value: '15天' },
-  { label: '30天', value: '30天' },
-]
-const selectedLocationInterval = ref('5分钟')
+  { label: "7天", value: "7天" },
+  { label: "15天", value: "15天" },
+  { label: "30天", value: "30天" },
+];
+const selectedLocationInterval = ref("5分钟");
 const locationIntervalOptions = [
-  { label: '1分钟', value: '1分钟' },
-  { label: '5分钟', value: '5分钟' },
-  { label: '10分钟', value: '10分钟' },
-  { label: '30分钟', value: '30分钟' },
-]
-const showPicker = ref(false)
-const pickerTitle = ref('')
-const pickerOptions = ref([])
-const pickerSelectedValue = ref('')
-const pickerType = ref('')
+  { label: "1分钟", value: "1分钟" },
+  { label: "5分钟", value: "5分钟" },
+  { label: "10分钟", value: "10分钟" },
+  { label: "30分钟", value: "30分钟" },
+];
+const showPicker = ref(false);
+const pickerTitle = ref("");
+const pickerOptions = ref([]);
+const pickerSelectedValue = ref("");
+const pickerType = ref("");
 
 const settingItems = reactive([
-  { label: '定位信息回传间隔', value: '5分钟' },
-  { label: '文件本地存储策略', value: '7天' },
-  { label: '修改密码', value: '' },
-])
+  { label: "定位信息回传间隔", value: "5分钟" },
+  { label: "文件本地存储策略", value: "7天" },
+  { label: "修改密码", value: "" },
+]);
 
 const loadUserData = async () => {
   if (!userData.value.id) {
-    const userInfo = uni.getStorageSync('userInfo')
-    if (userInfo && typeof userInfo === 'object') {
-      userStore.setUserData(userInfo)
+    const userInfo = uni.getStorageSync("userInfo");
+    if (userInfo && typeof userInfo === "object") {
+      userStore.setUserData(userInfo);
     } else {
       // await fetchUserInfo()
     }
   }
-}
+};
 
 // const fetchUserInfo = async () => {
 //   uni.showLoading({ title: '加载中...', mask: true })
-//   try { 
+//   try {
 //     userStore.setUserData(userInfo)
 //     uni.setStorageSync('userInfo', userInfo)
 //   } catch (error) {
@@ -155,95 +166,108 @@ const loadUserData = async () => {
 // }
 
 onMounted(() => {
-  loadUserData()
-})
+  loadUserData();
+});
 
 onShow(() => {
-  loadUserData().catch(error => {
-    console.error('onShow 中出现错误:', error)
-  })
-})
+  loadUserData().catch((error) => {
+    console.error("onShow 中出现错误:", error);
+  });
+});
 
 const onSettingItemClick = (item) => {
-  if (item.label === '文件本地存储策略') {
-    openPicker('storage', '文件本地存储策略', storageOptions, selectedStorageStrategy.value)
-  } else if (item.label === '定位信息回传间隔') {
-    openPicker('location', '定位信息回传间隔', locationIntervalOptions, selectedLocationInterval.value)
-  } else if (item.label === '修改密码') {
+  if (item.label === "文件本地存储策略") {
+    openPicker(
+      "storage",
+      "文件本地存储策略",
+      storageOptions,
+      selectedStorageStrategy.value
+    );
+  } else if (item.label === "定位信息回传间隔") {
+    openPicker(
+      "location",
+      "定位信息回传间隔",
+      locationIntervalOptions,
+      selectedLocationInterval.value
+    );
+  } else if (item.label === "修改密码") {
     uni.navigateTo({
-      url: '/pages/forgetPassword/forgetPassword'
-    })
+      url: "/pages/forgetPassword/forgetPassword",
+    });
   }
-}
+};
 
 const openPicker = (type, title, options, selectedValue) => {
-  pickerType.value = type
-  pickerTitle.value = title
-  pickerOptions.value = options
-  pickerSelectedValue.value = selectedValue
-  showPicker.value = true
-}
+  pickerType.value = type;
+  pickerTitle.value = title;
+  pickerOptions.value = options;
+  pickerSelectedValue.value = selectedValue;
+  showPicker.value = true;
+};
 
 const closePicker = () => {
-  showPicker.value = false
-}
+  showPicker.value = false;
+};
 
 const selectOption = (value) => {
-  if (pickerType.value === 'storage') {
-    selectedStorageStrategy.value = value
-    settingItems.find(item => item.label === '文件本地存储策略').value = value
-  } else if (pickerType.value === 'location') {
-    selectedLocationInterval.value = value
-    settingItems.find(item => item.label === '定位信息回传间隔').value = value
+  if (pickerType.value === "storage") {
+    selectedStorageStrategy.value = value;
+    settingItems.find((item) => item.label === "文件本地存储策略").value =
+      value;
+  } else if (pickerType.value === "location") {
+    selectedLocationInterval.value = value;
+    settingItems.find((item) => item.label === "定位信息回传间隔").value =
+      value;
   }
-  closePicker()
-}
+  closePicker();
+};
 
 const showDeleteConfirm = (type) => {
-  deleteType.value = type
-  confirmMessage.value = type === 'chat' ? '确定删除聊天记录吗？' : '您确认要删除所有数据吗？'
-  showConfirmDialog.value = true
-}
+  deleteType.value = type;
+  confirmMessage.value =
+    type === "chat" ? "确定删除聊天记录吗？" : "您确认要删除所有数据吗？";
+  showConfirmDialog.value = true;
+};
 
 const cancelDelete = () => {
-  showConfirmDialog.value = false
-}
+  showConfirmDialog.value = false;
+};
 
 const confirmDelete = () => {
-  if (deleteType.value === 'chat') {
-    console.log('聊天记录已删除')
+  if (deleteType.value === "chat") {
+    console.log("聊天记录已删除");
   } else {
-    console.log('所有数据已删除')
+    console.log("所有数据已删除");
   }
-  showConfirmDialog.value = false
-}
+  showConfirmDialog.value = false;
+};
 
 const performLogout = async () => {
   uni.showLoading({
-    title: '正在退出登录',
-    mask: true
-  })
+    title: "正在退出登录",
+    mask: true,
+  });
 
   try {
-    if (uni.getStorageSync('token')) {
-      await logout()
+    if (uni.getStorageSync("token")) {
+      await logout();
     }
   } catch (error) {
-    console.error('退出登录失败:', error)
+    console.error("退出登录失败:", error);
   } finally {
-    uni.removeStorageSync('token')
-    uni.removeStorageSync('userInfo')
-    userStore.clearUserData()
+    uni.removeStorageSync("token");
+    uni.removeStorageSync("userInfo");
+    userStore.clearUserData();
     uni.redirectTo({
-      url: '/pages/login/camouflageLogin/camouflageLogin'
-    })
-    uni.hideLoading()
+      url: "/pages/login/camouflageLogin/camouflageLogin",
+    });
+    uni.hideLoading();
   }
-}
+};
 
 const onLocationSharingChange = (e) => {
-  locationSharing.value = e.detail.value
-}
+  locationSharing.value = e.detail.value;
+};
 </script>
 
 <style>

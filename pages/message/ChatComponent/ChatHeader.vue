@@ -2,7 +2,11 @@
   <view class="chat-header">
     <div class="uni-page-head-hd" @click="$emit('goBack')">
       <div class="uni-page-head-btn">
-        <image src="/static/message/返回.png" class="back-icon" mode="aspectFit"></image>
+        <image
+          src="/static/message/back.png"
+          class="back-icon"
+          mode="aspectFit"
+        ></image>
       </div>
     </div>
     <view class="chat-title-container">
@@ -12,19 +16,17 @@
   </view>
 </template>
 
-<script> 
-
+<script>
 export default {
-  name: 'ChatHeader',
-  components: { 
-  },
+  name: "ChatHeader",
+  components: {},
   props: {
     chatInfo: {
       type: Object,
-      required: true
-    }
-  }
-}
+      required: true,
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -33,13 +35,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   color: #000000;
   position: sticky;
   top: 0;
   z-index: 100;
   height: 50px;
-  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.11);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.11);
 }
 
 .chat-title-container {
@@ -62,7 +64,8 @@ export default {
   text-align: center;
 }
 
-.uni-page-head-hd, .menu-button {
+.uni-page-head-hd,
+.menu-button {
   z-index: 1;
 }
 

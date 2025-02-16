@@ -3,7 +3,7 @@
     <view class="message-time">{{ formatTime(message.timestamp) }}</view>
     <view class="message-content" :class="{ 'self-message': message.userType === 'self' }">
       <view class="avatar-container"> 
-              <image  src=" /static/message/默认头像.png " class="avatar" mode="aspectFill"></image>
+              <image  src=" /static/message/defaultimg.png " class="avatar" mode="aspectFill"></image>
 		<view v-if="isGroup && message.userType === 'other'" class="sender-name"> 
         </view>
       </view>
@@ -110,7 +110,7 @@ export default {
   emits: ['view-burn-after-reading', 'message-deleted'],
   setup(props, { emit }) {
     const userStore = useUserStore()
-    // <image :src="message.userType === 'self' ? (message.avatar || userStore.state.avatar || '/static/message/默认头像.png') : (message.avatar || '/static/message/默认头像.png')" class="avatar" mode="aspectFill"></image>
+    // <image :src="message.userType === 'self' ? (message.avatar || userStore.state.avatar || '/static/message/defaultimg.png') : (message.avatar || '/static/message/defaultimg.png')" class="avatar" mode="aspectFill"></image>
     // 格式化时间戳为可读格式
     const formatTime = (timestamp) => {
       if (!timestamp) return '无效日期';

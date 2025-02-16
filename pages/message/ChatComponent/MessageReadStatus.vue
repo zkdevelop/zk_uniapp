@@ -75,7 +75,7 @@
           class="user-item"
         >
           <image 
-            :src="user.avatarUrl || '/static/message/默认头像.png'" 
+            :src="user.avatarUrl || '/static/message/defaultimg.png'" 
             class="user-avatar"
             mode="aspectFill"
           />

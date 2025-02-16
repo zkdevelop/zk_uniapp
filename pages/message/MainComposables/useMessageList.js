@@ -29,7 +29,7 @@ export function useMessageList() {
     const chatInfo = {
       id: message.group ? message.groupId : message.id || message.userId,
       name: message.group ? message.groupName : message.name || message.userName,
-      avatar: message.avatarUrl || "/static/message/默认头像.png",
+      avatar: message.avatarUrl || "/static/message/defaultimg.png",
       type: message.group ? "group" : "single",
       missionId: missionId.value,
     }

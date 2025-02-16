@@ -23,7 +23,7 @@ export default {
   },
   data() {
     return {
-      defaultAvatarPath: '../../static/message/默认头像.png'
+      defaultAvatarPath: '../../static/message/defaultimg.png'
     }
   },
   computed: {

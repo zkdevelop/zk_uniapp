@@ -1,8 +1,12 @@
 <!-- AttachButton.vue - 附件按钮组件，用于打开附件菜单 -->
 <template>
   <view class="attach-button" @click="$emit('click')">
-    <image 
-      :src="isBurnAfterReadingMode ? '/static/message/fire-展开对话工具.png' : '/static/message/展开对话工具.png'" 
+    <image
+      :src="
+        isBurnAfterReadingMode
+          ? '/static/message/fire-expand.png'
+          : '/static/message/expandDialog.png'
+      "
       class="attach-icon"
     />
   </view>
@@ -10,15 +14,15 @@
 
 <script>
 export default {
-  name: 'AttachButton',
-  emits: ['click'],
+  name: "AttachButton",
+  emits: ["click"],
   props: {
     isBurnAfterReadingMode: {
       type: Boolean,
-      default: false
-    }
-  }
-}
+      default: false,
+    },
+  },
+};
 </script>
 
 <style scoped>

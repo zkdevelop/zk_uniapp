@@ -1,9 +1,9 @@
 <template>
   <view class="attach-menu">
     <view class="attach-row">
-      <view 
-        v-for="option in attachOptions.slice(0, 4)" 
-        :key="option.action" 
+      <view
+        v-for="option in attachOptions.slice(0, 4)"
+        :key="option.action"
         class="attach-option"
         @click="handleAttachItem(option.action)"
       >
@@ -14,9 +14,9 @@
       </view>
     </view>
     <view class="attach-row second-row">
-      <view 
-        v-for="option in attachOptions.slice(4, 6)" 
-        :key="option.action" 
+      <view
+        v-for="option in attachOptions.slice(4, 6)"
+        :key="option.action"
         class="attach-option"
         @click="handleAttachItem(option.action)"
       >
@@ -31,29 +31,49 @@
 
 <script>
 export default {
-  name: 'AttachmentMenu',
+  name: "AttachmentMenu",
   data() {
     return {
       // 附件选项配置
       attachOptions: [
-        { icon: '/static/message/相册.png', label: '相册', action: 'album' },
-        { icon: '/static/message/拍摄.png', label: '拍摄', action: 'camera' },
-        { icon: '/static/message/视频通话.png', label: '视频通话', action: 'video-call' },
-        { icon: '/static/message/文件传输.png', label: '文件传输', action: 'file' },
-        { icon: '/static/message/阅后即焚.png', label: '阅后即焚', action: 'burn-after-reading' },
-        { icon: '/static/message/位置.png', label: '位置', action: 'location' },
-      ]
-    }
+        {
+          icon: "/static/message/photolist.png",
+          label: "相册",
+          action: "album",
+        },
+        { icon: "/static/message/shoot.png", label: "拍摄", action: "camera" },
+        {
+          icon: "/static/message/vedioCall.png",
+          label: "视频通话",
+          action: "video-call",
+        },
+        {
+          icon: "/static/message/filetrans.png",
+          label: "文件传输",
+          action: "file",
+        },
+        {
+          icon: "/static/message/onceread.png",
+          label: "阅后即焚",
+          action: "burn-after-reading",
+        },
+        {
+          icon: "/static/message/location.png",
+          label: "位置",
+          action: "location",
+        },
+      ],
+    };
   },
   methods: {
     // 处理附件项点击
-    handleAttachItem(action) { 
-      this.$emit('attach', action)
+    handleAttachItem(action) {
+      this.$emit("attach", action);
       // 发送关闭事件
-      this.$emit('close')
-    }
-  }
-}
+      this.$emit("close");
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -90,7 +110,7 @@ export default {
 .icon-wrapper {
   width: 58px;
   height: 58px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -114,4 +134,3 @@ export default {
   text-align: center;
 }
 </style>
-

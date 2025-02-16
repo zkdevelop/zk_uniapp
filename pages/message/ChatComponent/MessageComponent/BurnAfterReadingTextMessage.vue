@@ -1,7 +1,11 @@
 <template>
   <view class="burn-after-reading-text" @click="viewBurnAfterReading">
     <view v-if="!revealed" class="burn-button">
-      <image src="/static/message/信封.png" class="envelope-icon" mode="aspectFit" />
+      <image
+        src="/static/message/envelope.png"
+        class="envelope-icon"
+        mode="aspectFit"
+      />
       <text class="burn-text">阅后即焚</text>
     </view>
     <view v-else class="revealed-message">
@@ -12,29 +16,29 @@
 </template>
 
 <script>
-import { ref, onUnmounted } from 'vue';
-import { readSelfDestructMessage } from '@/utils/api/message.js';
+import { ref, onUnmounted } from "vue";
+import { readSelfDestructMessage } from "@/utils/api/message.js";
 
 export default {
-  name: 'BurnAfterReadingTextMessage',
+  name: "BurnAfterReadingTextMessage",
   props: {
     // 消息ID
     messageId: {
       type: String,
-      required: true
+      required: true,
     },
     // 是否为群组消息
     isGroup: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  emits: ['message-deleted'],
+  emits: ["message-deleted"],
   setup(props, { emit }) {
     // 是否已显示内容
     const revealed = ref(false);
     // 显示的内容
-    const revealedContent = ref('');
+    const revealedContent = ref("");
     // 倒计时秒数
     const countdown = ref(10);
     // 倒计时定时器
@@ -48,7 +52,7 @@ export default {
         const response = await readSelfDestructMessage({
           isGroup: props.isGroup,
           messageId: props.messageId,
-          messageType: 'MESSAGE'
+          messageType: "MESSAGE",
         });
 
         if (response.code === 200) {
@@ -57,7 +61,7 @@ export default {
           startCountdown();
         }
       } catch (error) {
-        console.log('读取阅后即焚消息失败:', error);
+        console.log("读取阅后即焚消息失败:", error);
       }
     };
 
@@ -68,9 +72,9 @@ export default {
         if (countdown.value === 0) {
           clearInterval(countdownTimer);
           revealed.value = false;
-          revealedContent.value = '';
-          emit('message-deleted', props.messageId);
-          console.log('阅后即焚消息倒计时结束，已触发删除事件');
+          revealedContent.value = "";
+          emit("message-deleted", props.messageId);
+          console.log("阅后即焚消息倒计时结束，已触发删除事件");
         }
       }, 1000);
     };
@@ -79,11 +83,11 @@ export default {
     onUnmounted(() => {
       if (countdownTimer) {
         clearInterval(countdownTimer);
-        console.log('组件卸载，清除定时器');
+        console.log("组件卸载，清除定时器");
       }
       if (revealed.value && countdown.value > 0) {
-        emit('message-deleted', props.messageId);
-        console.log('组件卸载时消息仍在显示，触发删除事件');
+        emit("message-deleted", props.messageId);
+        console.log("组件卸载时消息仍在显示，触发删除事件");
       }
     });
 
@@ -91,9 +95,9 @@ export default {
       revealed,
       revealedContent,
       countdown,
-      viewBurnAfterReading
+      viewBurnAfterReading,
     };
-  }
+  },
 };
 </script>
 
@@ -106,8 +110,8 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #FFFFFF;
-  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.16);
+  background: #ffffff;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.16);
   border-radius: 2px;
   padding: 12px;
 }
@@ -118,7 +122,7 @@ export default {
 }
 
 .burn-text {
-  background: #EDF1F2;
+  background: #edf1f2;
   padding: 8px 12px;
   border-radius: 2px;
   font-family: NotoSansCJKsc-Medium;
@@ -131,8 +135,7 @@ export default {
 
 .revealed-message {
   position: relative;
-  width: 100%; 
-  
+  width: 100%;
 }
 
 .revealed-content {
@@ -146,8 +149,7 @@ export default {
   line-height: 1.3;
   word-wrap: break-word;
   word-break: break-all;
-  white-space: normal; 
-   
+  white-space: normal;
 }
 
 .countdown {
@@ -155,7 +157,6 @@ export default {
   bottom: 30%;
   left: -70%;
   font-size: 24rpx;
-  color: #FF0000;
+  color: #ff0000;
 }
 </style>
-

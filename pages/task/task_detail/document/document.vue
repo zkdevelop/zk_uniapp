@@ -111,8 +111,8 @@
 				audioPath: [
 				],
 				content: [{
-						iconPath: '../../../../static/icon/图片-选中.png',
-						selectedIconPath: '../../../../static/icon/图片-选中.png',
+						iconPath: '../../../../static/icon/imgno.png',
+						selectedIconPath: '../../../../static/icon/imgyes.png',
 						text: '上传图片',
 						active: false
 					},
